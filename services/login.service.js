@@ -1,6 +1,6 @@
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
-const { user } = require('../models');
+const { USR_Users } = require('../models');
 
 const generateJwt = async (data) => {
   const token = jwt.sign(data, process.env.JWT_PRIVATE_KEY, {
@@ -21,13 +21,8 @@ const verifyJwt = async (password, correctPassword) => {
 const loginService = async (username, password) => {
   // eslint-disable-next-line no-useless-catch
   try {
-    // Check if input data empty / missing
-    if (!username || !password) {
-      throw { code: 400, status: 'Unauthorized Request', message: 'Data is incomplete!' };
-    }
-
     // Get userData related to input
-    const userData = await user.findOne({
+    const userData = await USR_Users.findOne({
       where: { username },
     });
 
@@ -42,7 +37,7 @@ const loginService = async (username, password) => {
       throw { code: 400, status: 'Unauthorized Request', message: 'Username or Password is incorrect!' };
     }
 
-    const payload = { id: userData.id, roleId: user.roleId };
+    const payload = { id: userData.id, roleId: USR_Users.roleId };
     const token = await generateJwt(payload);
 
     return {
