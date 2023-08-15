@@ -1,11 +1,10 @@
 /* eslint-disable no-unused-vars */
-
+/* eslint-disable lines-around-directive */
 'use strict';
-
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable('USR_Users', {
+    await queryInterface.createTable('USR_RoleFeatures', {
       id: {
         allowNull: false,
         autoIncrement: true,
@@ -14,30 +13,25 @@ module.exports = {
       },
       roleId: {
         type: Sequelize.INTEGER,
+        allowNull: false,
+        primaryKey: true,
         references: {
           model: 'USR_Roles',
           key: 'id',
         },
         onUpdate: 'CASCADE',
-        onDelete: 'SET NULL',
+        onDelete: 'CASCADE',
       },
-      username: {
-        type: Sequelize.STRING,
-      },
-      password: {
-        type: Sequelize.STRING,
-      },
-      email: {
-        type: Sequelize.STRING,
-      },
-      phoneNbr: {
-        type: Sequelize.STRING,
-      },
-      lastLogin: {
-        type: Sequelize.DATE,
-      },
-      deletedAt: {
-        type: Sequelize.DATE,
+      featureId: {
+        type: Sequelize.INTEGER,
+        allowNull: false,
+        primaryKey: true,
+        references: {
+          model: 'USR_Features',
+          key: 'id',
+        },
+        onUpdate: 'CASCADE',
+        onDelete: 'CASCADE',
       },
       createdAt: {
         allowNull: false,
@@ -47,11 +41,9 @@ module.exports = {
         allowNull: false,
         type: Sequelize.DATE,
       },
-    }, {
-      paranoid: true,
     });
   },
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable('USR_Users');
+    await queryInterface.dropTable('USR_RoleFeatures');
   },
 };

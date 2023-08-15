@@ -1,7 +1,9 @@
+/* eslint-disable lines-around-directive */
 'use strict';
 const {
-  Model
+  Model,
 } = require('sequelize');
+
 module.exports = (sequelize, DataTypes) => {
   class USR_RoleFeature extends Model {
     /**
@@ -10,12 +12,21 @@ module.exports = (sequelize, DataTypes) => {
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
-      // define association here
+      USR_RoleFeature.belongsTo(models.USR_Role, { foreignKey: 'roleId' });
+      USR_RoleFeature.belongsTo(models.USR_Feature, { foreignKey: 'featureId' });
     }
   }
   USR_RoleFeature.init({
-    moduleId: DataTypes.INTEGER,
-    name: DataTypes.STRING
+    roleId: {
+      type: DataTypes.integer,
+      allowNull: false,
+      primaryKey: true,
+    },
+    featureId: {
+      type: DataTypes.UUID,
+      allowNull: false,
+      primaryKey: true,
+    },
   }, {
     sequelize,
     modelName: 'USR_RoleFeature',

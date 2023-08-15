@@ -1,7 +1,9 @@
 'use strict';
+
 const {
-  Model
+  Model,
 } = require('sequelize');
+
 module.exports = (sequelize, DataTypes) => {
   class USR_Feature extends Model {
     /**
@@ -10,12 +12,18 @@ module.exports = (sequelize, DataTypes) => {
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
-      // define association here
+      USR_Feature.belongsToMany(models.USR_Role, {
+        through: 'USR_RoleFeature',
+        foreignKey: 'featureId',
+        otherKey: 'roleId',
+      });
+
+      USR_Feature.hasMany(models.USR_RoleFeature, { foreignKey: 'featureId' });
     }
   }
   USR_Feature.init({
     moduleId: DataTypes.INTEGER,
-    name: DataTypes.STRING
+    name: DataTypes.STRING,
   }, {
     sequelize,
     modelName: 'USR_Feature',

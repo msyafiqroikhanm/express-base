@@ -1,6 +1,6 @@
 ## USER MODEL
 sequelize model:generate --name USR_Module --attributes name:string
 sequelize model:generate --name USR_Feature --attributes moduleId:integer, name:string
-sequelize model:generate --name USR_RoleFeature --attributes moduleId:integer, name:string
+sequelize model:generate --name USR_RoleFeature --attributes roleId:integer, featureId:integer, name:string
 sequelize model:generate --name USR_Role --attributes name:string
 sequelize model:generate --name USR_User --attributes roleId:integer,username:string,password:string,email:string,phoneNbr:string,lastLogin:date,deletedAt:date
