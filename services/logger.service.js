@@ -138,28 +138,16 @@ class LoggerService {
     this.log_data = log_data;
   }
 
-  async info(message) {
-    this.logger.log('info', message);
-  }
-
   async info(message, obj) {
     this.logger.log('info', message, {
       obj,
     });
   }
 
-  async warn(message) {
-    this.logger.log('warn', message);
-  }
-
   async warn(message, obj) {
     this.logger.log('warn', message, {
       obj,
     });
-  }
-
-  async error(message) {
-    this.logger.log('error', message);
   }
 
   async error(message, obj) {

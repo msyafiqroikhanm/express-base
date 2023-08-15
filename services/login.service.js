@@ -14,11 +14,12 @@ const verifyJwt = async (password, correctPassword) => {
     const isCorrect = await bcrypt.compare(password, correctPassword);
     return isCorrect;
   } catch (error) {
-    console.log(error);
+    console.error(error);
   }
 };
 
 const loginService = async (username, password) => {
+  // eslint-disable-next-line no-useless-catch
   try {
     // Check if input data empty / missing
     if (!username || !password) {
@@ -48,7 +49,6 @@ const loginService = async (username, password) => {
       token: `Bearer ${token}`,
     };
   } catch (error) {
-    console.error(error);
     throw error;
   }
 };

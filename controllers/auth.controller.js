@@ -6,7 +6,7 @@ class AuthController {
   static async login(req, res, next) {
     try {
       const logger = new LoggerService(`${req.method} ${req.originalUrl}`);
-      const data = await loginService(req.username, req.password);
+      const data = await loginService(req.body.user, req.body.password);
 
       const message = 'Berhasil Login';
       logger.info(message, data);
