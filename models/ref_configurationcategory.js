@@ -16,7 +16,10 @@ module.exports = (sequelize, DataTypes) => {
     }
   }
   REF_ConfigurationCategory.init({
-    name: DataTypes.STRING,
+    name: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
   }, {
     sequelize,
     modelName: 'REF_ConfigurationCategory',
