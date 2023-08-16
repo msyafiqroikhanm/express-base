@@ -1,3 +1,5 @@
+/* eslint-disable no-unused-vars */
+/* eslint-disable lines-around-directive */
 'use strict';
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
@@ -7,25 +9,29 @@ module.exports = {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
-        type: Sequelize.INTEGER
+        type: Sequelize.INTEGER,
       },
-      moduleId: {
-        type: Sequelize.INTEGER
+      roleId: {
+        type: Sequelize.INTEGER,
+        allowNull: false,
+        primaryKey: true,
       },
-      name: {
-        type: Sequelize.STRING
+      featureId: {
+        type: Sequelize.INTEGER,
+        allowNull: false,
+        primaryKey: true,
       },
       createdAt: {
         allowNull: false,
-        type: Sequelize.DATE
+        type: Sequelize.DATE,
       },
       updatedAt: {
         allowNull: false,
-        type: Sequelize.DATE
-      }
+        type: Sequelize.DATE,
+      },
     });
   },
   async down(queryInterface, Sequelize) {
     await queryInterface.dropTable('USR_RoleFeatures');
-  }
+  },
 };
