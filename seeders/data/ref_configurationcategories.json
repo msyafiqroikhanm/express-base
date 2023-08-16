@@ -1,0 +1,20 @@
+[
+  {
+    "name": "Application"
+  },
+  {
+    "name": "Google Maps"
+  },
+  {
+    "name": "Whatsapp"
+  },
+  {
+    "name": "Email"
+  },
+  {
+    "name": "Redis"
+  },
+  {
+    "name": "RabbitMQ"
+  }
+]

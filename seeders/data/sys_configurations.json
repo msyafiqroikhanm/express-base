@@ -1,0 +1,12 @@
+[
+  {
+    "categoryId": 1,
+    "name": "Name",
+    "value": "JXB Conference Management System"
+  },
+  {
+    "categoryId": 1,
+    "name": "Logo",
+    "value": "../../public/image/application/default_logo.png"
+  }
+]

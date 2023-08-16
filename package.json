@@ -10,6 +10,7 @@
     "migration:reset": "npx sequelize-cli db:migrate:undo:all",
     "seed": "npx sequelize-cli db:seed:all",
     "seed:reset": "npx sequelize-cli db:seed:undo:all",
+    "seed:fresh": "npm run seed:reset && npm run seed",
     "db:fresh": "npx sequelize-cli db:migrate:undo:all && npx sequelize-cli db:migrate && npx sequelize-cli db:seed:all"
   },
   "keywords": [],

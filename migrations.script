@@ -4,3 +4,5 @@ sequelize model:generate --name USR_Feature --attributes moduleId:integer, name:
 sequelize model:generate --name USR_RoleFeature --attributes roleId:integer, featureId:integer, name:string
 sequelize model:generate --name USR_Role --attributes name:string
 sequelize model:generate --name USR_User --attributes roleId:integer,username:string,password:string,email:string,phoneNbr:string,lastLogin:date,deletedAt:date
+sequelize model:generate --name REF_ConfigurationCategory --attributes name:string
+sequelize model:generate --name SYS_Configuration --attributes categoryId:integer, name:string, value:string
