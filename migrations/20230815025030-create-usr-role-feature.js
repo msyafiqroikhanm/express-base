@@ -15,23 +15,11 @@ module.exports = {
         type: Sequelize.INTEGER,
         allowNull: false,
         primaryKey: true,
-        references: {
-          model: 'USR_Roles',
-          key: 'id',
-        },
-        onUpdate: 'CASCADE',
-        onDelete: 'CASCADE',
       },
       featureId: {
         type: Sequelize.INTEGER,
         allowNull: false,
         primaryKey: true,
-        references: {
-          model: 'USR_Features',
-          key: 'id',
-        },
-        onUpdate: 'CASCADE',
-        onDelete: 'CASCADE',
       },
       createdAt: {
         allowNull: false,
