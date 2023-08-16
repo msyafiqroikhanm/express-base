@@ -1,0 +1,34 @@
+[
+    {
+        "moduleId":1,
+        "name":"View Module"
+    },
+    {
+        "moduleId":1,
+        "name":"Create Module"
+    },
+    {
+        "moduleId":1,
+        "name":"Update Module"
+    },
+    {
+        "moduleId":1,
+        "name":"Delete Module"
+    },
+    {
+        "moduleId":1,
+        "name":"View Feature"
+    },
+    {
+        "moduleId":1,
+        "name":"Create Feature"
+    },
+    {
+        "moduleId":1,
+        "name":"Update Feature"
+    },
+    {
+        "moduleId":1,
+        "name":"Delete Feature"
+    }
+]
