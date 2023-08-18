@@ -41,9 +41,9 @@ const imageStorage = multer.diskStorage({
     }
 
     if (target) {
-      dirPath = path.join(__dirname, `../../public/images/${target}s`);
+      dirPath = path.join(__dirname, `../public/images/${target}s`);
     } else {
-      dirPath = path.join(__dirname, '../../public/images');
+      dirPath = path.join(__dirname, '../public/images');
     }
     if (!fs.existsSync(dirPath)) {
       fs.mkdirSync(dirPath, { recursive: true });
@@ -68,9 +68,9 @@ const documentStorage = multer.diskStorage({
     }
 
     if (target) {
-      dirPath = path.join(__dirname, `../../public/documents/${target}s`);
+      dirPath = path.join(__dirname, `../public/documents/${target}s`);
     } else {
-      dirPath = path.join(__dirname, '../../public/documents');
+      dirPath = path.join(__dirname, '../public/documents');
     }
     if (!fs.existsSync(dirPath)) {
       fs.mkdirSync(dirPath, { recursive: true });
@@ -95,9 +95,9 @@ const videoStorage = multer.diskStorage({
     }
 
     if (target) {
-      dirPath = path.join(__dirname, `../../public/videos/${target}s`);
+      dirPath = path.join(__dirname, `../public/videos/${target}s`);
     } else {
-      dirPath = path.join(__dirname, '../../public/videos');
+      dirPath = path.join(__dirname, '../public/videos');
     }
     if (!fs.existsSync(dirPath)) {
       fs.mkdirSync(dirPath, { recursive: true });
@@ -121,9 +121,9 @@ const combineStorage = multer.diskStorage({
     folder = fieldname.folderName.toLowerCase();
 
     if (target) {
-      dirPath = path.join(__dirname, `../../public/${folder}s/${target}s`);
+      dirPath = path.join(__dirname, `../public/${folder}s/${target}s`);
     } else {
-      dirPath = path.join(__dirname, '../../public/');
+      dirPath = path.join(__dirname, '../public/');
     }
     if (!fs.existsSync(dirPath)) {
       fs.mkdirSync(dirPath, { recursive: true });
