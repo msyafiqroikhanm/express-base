@@ -10,6 +10,7 @@ const {
   createQRType,
   updateQRType,
   deleteQRType,
+  deleteSysConfigCategory,
 } = require('../services/reference.service');
 
 class SysConfigCategory {
@@ -31,13 +32,11 @@ class SysConfigCategory {
       res.url = `${req.method} ${req.originalUrl}`;
 
       const data = await selectConfiCategory(req.params.id);
-      if (!data) {
-        const message = 'System Configuration Category Data Not Found';
-        return ResponseFormatter.error404(res, message);
+      if (!data.success) {
+        return ResponseFormatter.error404(res, 'Data Not Found', data.message);
       }
 
-      const message = 'System Configuration Category Data Found';
-      return ResponseFormatter.success200(res, message, data);
+      return ResponseFormatter.success200(res, data.message, data.content);
     } catch (error) {
       next(error);
     }
@@ -48,8 +47,7 @@ class SysConfigCategory {
       res.url = `${req.method} ${req.originalUrl}`;
       const data = await createSysConfigCategory(req.body);
 
-      const message = 'New System Configuration Category Successfully Created';
-      return ResponseFormatter.success201(res, message, data);
+      return ResponseFormatter.success201(res, data.message, data.content);
     } catch (error) {
       next(error);
     }
@@ -59,9 +57,26 @@ class SysConfigCategory {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
       const data = await updateSysConfigCategory(req.params.id, req.body);
+      if (!data.success) {
+        return ResponseFormatter.error404(res, 'Data Not Found', data.message);
+      }
 
-      const message = 'System Configuration Category Successfully Updated';
-      return ResponseFormatter.success200(res, message, data);
+      return ResponseFormatter.success200(res, data.message, data.content);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  static async delete(req, res, next) {
+    try {
+      res.url = `${req.method} ${req.originalUrl}`;
+
+      const data = await deleteSysConfigCategory(req.params.id);
+      if (!data.success) {
+        return ResponseFormatter.error404(res, 'Data Not Found', data.message);
+      }
+
+      return ResponseFormatter.success200(res, data.message, data.content);
     } catch (error) {
       next(error);
     }

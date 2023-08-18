@@ -26,6 +26,11 @@ router.put(
   SysConfigCategory.update,
 );
 
+router.delete(
+  '/config-categories/:id',
+  SysConfigCategory.delete,
+);
+
 router.get(
   '/config-categories/:id',
   SysConfigCategory.getDetail,

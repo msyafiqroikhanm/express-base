@@ -9,12 +9,17 @@ const selectConfiCategory = async (id) => {
   const data = await REF_ConfigurationCategory.findByPk(id, {
     include: { model: SYS_Configuration },
   });
-  return data;
+
+  if (!data) {
+    const error = { success: false, message: 'System Configuration Category Not Found' };
+    return error;
+  }
+  return { success: true, message: 'Successfully Getting System Configuration Category', content: data };
 };
 
 const createSysConfigCategory = async (form) => {
   const data = await REF_ConfigurationCategory.create(form);
-  return data;
+  return { success: true, message: 'System Configuration Category Successfully Created', content: data };
 };
 
 const updateSysConfigCategory = async (id, form) => {
@@ -23,18 +28,34 @@ const updateSysConfigCategory = async (id, form) => {
 
   // when category data is not found throw an error
   if (!categoryInstance) {
-    throw {
-      code: 404,
-      status: 'Update System Configuration Category Failed',
-      message: 'System Configuration Category Data Not Found',
-    };
+    const error = { success: false, message: 'System Configuration Category Data Not Found' };
+    return error;
   }
 
   // update category data after pass all the check
   categoryInstance.name = form.name;
   await categoryInstance.save();
 
-  return categoryInstance;
+  return { success: true, message: 'System Configuration Category Successfully Updated', content: categoryInstance };
+};
+
+const deleteSysConfigCategory = async (id) => {
+  // check validity of sys config id
+  const configInstance = await REF_ConfigurationCategory.findByPk(id);
+  if (!configInstance) {
+    const error = { success: false, message: 'System Configuration Data Not Found' };
+    return error;
+  }
+
+  const { name } = configInstance.dataValues;
+
+  // delete sys config after passing the check
+  await configInstance.destroy();
+  return {
+    success: true,
+    message: 'System Configuration Successfully Deleted',
+    content: `System Configuration ${name} Successfully Deleted`,
+  };
 };
 
 const selectAllQRTypes = async () => {
@@ -98,6 +119,7 @@ module.exports = {
   selectConfiCategory,
   createSysConfigCategory,
   updateSysConfigCategory,
+  deleteSysConfigCategory,
   selectAllQRTypes,
   selectQRType,
   createQRType,
