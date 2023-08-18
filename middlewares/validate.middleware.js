@@ -1,15 +1,17 @@
 const { validationResult } = require('express-validator');
+const ResponseFormatter = require('../helpers/responseFormatter.helper');
 
 class ValidateMiddleware {
   static async result(req, res, next) {
     try {
+      res.url = req.originalUrl;
       const errors = validationResult(req);
       if (!errors.isEmpty()) {
-        next({
-          code: 400,
-          status: 'Bad Request',
-          message: errors.errors,
+        const resErrors = [];
+        errors.errors.forEach((element) => {
+          resErrors.push(element.msg);
         });
+        return ResponseFormatter.error400(res, resErrors);
       }
       next();
     } catch (error) {
