@@ -11,7 +11,7 @@ class ValidateMiddleware {
         errors.errors.forEach((element) => {
           resErrors.push(element.msg);
         });
-        return ResponseFormatter.error400(res, resErrors);
+        return ResponseFormatter.error400(res, 'Data tidak lengkap', resErrors);
       }
       next();
     } catch (error) {
