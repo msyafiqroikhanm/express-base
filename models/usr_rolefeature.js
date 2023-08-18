@@ -18,12 +18,12 @@ module.exports = (sequelize, DataTypes) => {
   }
   USR_RoleFeature.init({
     roleId: {
-      type: DataTypes.integer,
+      type: DataTypes.INTEGER,
       allowNull: false,
       primaryKey: true,
     },
     featureId: {
-      type: DataTypes.UUID,
+      type: DataTypes.INTEGER,
       allowNull: false,
       primaryKey: true,
     },

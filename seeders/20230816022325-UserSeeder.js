@@ -30,6 +30,31 @@ module.exports = {
     }));
     // console.log(features);
     await queryInterface.bulkInsert('USR_Features', features);
+
+    //* USR_Roles
+    const usr_roles = JSON.parse(
+      fs.readFileSync('./seeders/data/usr_roles.json')
+    );
+    const roles = usr_roles.map((element) => ({
+      name: element.name,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    }));
+    // console.log(roles);
+    await queryInterface.bulkInsert('USR_Roles', roles);
+
+    //* USR_RoleFeatures
+    const usr_rolefeatures = JSON.parse(
+      fs.readFileSync('./seeders/data/usr_rolefeatures.json')
+    );
+    const roleFeatures = usr_rolefeatures.map((element) => ({
+      roleId: element.roleId,
+      featureId: element.featureId,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    }));
+    // console.log(roleFeatures);
+    await queryInterface.bulkInsert('USR_RoleFeatures', roleFeatures);
   },
 
   async down(queryInterface) {

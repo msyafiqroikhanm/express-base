@@ -1,4 +1,5 @@
-const responseFormatter = require("./responseFormatter.helper");
+const responseFormatter = require('./responseFormatter.helper');
+
 module.exports = async (err, req, res, next) => {
   console.log(err);
   if (!err.code) {
