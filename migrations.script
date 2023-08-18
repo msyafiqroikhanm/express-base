@@ -6,3 +6,21 @@ sequelize model:generate --name USR_Role --attributes name:string
 sequelize model:generate --name USR_User --attributes roleId:integer,username:string,password:string,email:string,phoneNbr:string,lastLogin:date,deletedAt:date
 sequelize model:generate --name REF_ConfigurationCategory --attributes name:string
 sequelize model:generate --name SYS_Configuration --attributes categoryId:integer, name:string, value:string
+sequelize model:generate --name REF_PassengerStatus --attributes name:string
+sequelize model:generate --name REF_Region --attributes name:string
+sequelize model:generate --name REF_VehicleType --attributes name:string
+sequelize model:generate --name REF_VehicleScheduleStatus --attributes name:string
+sequelize model:generate --name REF_RoomType --attributes name:string
+sequelize model:generate --name REF_RoomStatus --attributes name:string
+sequelize model:generate --name REF_LodgerStatus --attributes name:string
+sequelize model:generate --name REF_FoodType --attributes name:string
+sequelize model:generate --name REF_FoodScheduleStatus --attributes name:string
+sequelize model:generate --name REF_ChatBotResponseType --attributes name:string
+sequelize model:generate --name REF_FeedbackTarget --attributes name:string
+sequelize model:generate --name REF_FeedbackStatus --attributes name:string
+sequelize model:generate --name REF_FeedbackType --attributes name:string
+sequelize model:generate --name REF_LocationType --attributes name:string
+model:generate --name REF_FAQType --attributes name:string
+sequelize model:generate --name REF_TemplateCategory --attributes name:string
+sequelize model:generate --name REF_MetaTemplateCategory --attributes name:string
+sequelize model:generate --name REF_QRType --attributes name:string
