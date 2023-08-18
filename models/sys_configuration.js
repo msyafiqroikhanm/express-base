@@ -17,8 +17,14 @@ module.exports = (sequelize, DataTypes) => {
   }
   SYS_Configuration.init({
     categoryId: DataTypes.INTEGER,
-    name: DataTypes.STRING,
-    value: DataTypes.STRING,
+    name: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    value: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
   }, {
     sequelize,
     modelName: 'SYS_Configuration',
