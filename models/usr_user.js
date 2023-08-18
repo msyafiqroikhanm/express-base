@@ -1,9 +1,8 @@
+/* eslint-disable comma-dangle */
 /* eslint-disable no-param-reassign */
 /* eslint-disable lines-around-directive */
 'use strict';
-const {
-  Model,
-} = require('sequelize');
+const { Model } = require('sequelize');
 const bcrypt = require('bcryptjs');
 
 module.exports = (sequelize, DataTypes) => {
@@ -14,22 +13,27 @@ module.exports = (sequelize, DataTypes) => {
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
-      USR_User.belongsTo(models.USR_Role, { foreignKey: 'roleId' });
+      USR_User.belongsTo(models.USR_Role, { foreignKey: 'roleId', as: 'Role' });
     }
   }
-  USR_User.init({
-    roleId: DataTypes.INTEGER,
-    username: DataTypes.STRING,
-    password: DataTypes.STRING,
-    email: DataTypes.STRING,
-    phoneNbr: DataTypes.STRING,
-    lastLogin: DataTypes.DATE,
-    deletedAt: DataTypes.DATE,
-  }, {
-    sequelize,
-    modelName: 'USR_User',
-    paranoid: true,
-  });
+  USR_User.init(
+    {
+      roleId: DataTypes.INTEGER,
+      username: DataTypes.STRING,
+      password: DataTypes.STRING,
+      name: DataTypes.STRING,
+      email: DataTypes.STRING,
+      phoneNbr: DataTypes.STRING,
+      lastLogin: DataTypes.DATE,
+      isGoogle: DataTypes.BOOLEAN,
+      deletedAt: DataTypes.DATE,
+    },
+    {
+      sequelize,
+      modelName: 'USR_User',
+      paranoid: true,
+    }
+  );
 
   // Add hook to hash password before saving (create) to database
   USR_User.beforeCreate(async (users) => {

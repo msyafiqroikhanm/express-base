@@ -2,15 +2,14 @@ const winston = require('winston');
 const LokiTransport = require('winston-loki');
 require('dotenv').config();
 
-const {
-  combine, timestamp, json, printf, label,
-} = winston.format;
-const dateFormat = () => new Date(Date.now()).toLocaleTimeString('id-ID', {
-  weekday: 'long',
-  year: 'numeric',
-  month: 'long',
-  day: 'numeric',
-});
+const { combine, timestamp, json, printf, label } = winston.format;
+const dateFormat = () =>
+  new Date(Date.now()).toLocaleTimeString('id-ID', {
+    weekday: 'long',
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+  });
 
 const myFormatter = winston.format((info) => {
   const { message } = info;
@@ -18,11 +17,17 @@ const myFormatter = winston.format((info) => {
   return info;
 })();
 
-const errorFilter = winston.format((info, opts) => (info.level === 'error' ? info : false));
+const errorFilter = winston.format((info, opts) =>
+  info.level === 'error' ? info : false
+);
 
-const warnFilter = winston.format((info, opts) => (info.level === 'warn' ? info : false));
+const warnFilter = winston.format((info, opts) =>
+  info.level === 'warn' ? info : false
+);
 
-const infoFilter = winston.format((info, opts) => (info.level === 'info' ? info : false));
+const infoFilter = winston.format((info, opts) =>
+  info.level === 'info' ? info : false
+);
 
 class LoggerService {
   constructor(route) {
@@ -52,7 +57,7 @@ class LoggerService {
                 : message;
               return message;
             }),
-            winston.format.colorize({ all: true }),
+            winston.format.colorize({ all: true })
           ),
         }),
         new winston.transports.File({
@@ -74,7 +79,7 @@ class LoggerService {
                 ? `${message}log_data:${JSON.stringify(this.log_data)} | `
                 : message;
               return message;
-            }),
+            })
           ),
         }),
         new winston.transports.File({
@@ -93,7 +98,7 @@ class LoggerService {
                 ? `${message}log_data:${JSON.stringify(this.log_data)} | `
                 : message;
               return message;
-            }),
+            })
           ),
         }),
         new winston.transports.File({
@@ -112,7 +117,7 @@ class LoggerService {
                 ? `${message}log_data:${JSON.stringify(this.log_data)} | `
                 : message;
               return message;
-            }),
+            })
           ),
         }),
       ],
@@ -128,7 +133,7 @@ class LoggerService {
             ? `${message}log_data:${JSON.stringify(this.log_data)} | `
             : message;
           return message;
-        }),
+        })
       ),
     });
     this.logger = logger;

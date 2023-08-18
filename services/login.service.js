@@ -26,15 +26,23 @@ const loginService = async (username, password) => {
       where: { username },
     });
 
-    if (!userData || username !== userData.username) {
-      throw { code: 400, status: 'Unauthorized Request', message: 'Username or Password is incorrect!' };
+    if (!userData) {
+      throw {
+        code: 400,
+        status: 'Unauthorized Request',
+        message: 'Username or Password is incorrect!',
+      };
     }
 
     // Check if password correct with the the hashes one in database
     // if incorrect return the same message as username incorrect
     const isCorrect = await verifyJwt(password, userData.password);
     if (!isCorrect) {
-      throw { code: 400, status: 'Unauthorized Request', message: 'Username or Password is incorrect!' };
+      throw {
+        code: 400,
+        status: 'Unauthorized Request',
+        message: 'Username or Password is incorrect!',
+      };
     }
 
     const payload = { id: userData.id, roleId: USR_User.roleId };
@@ -48,4 +56,4 @@ const loginService = async (username, password) => {
   }
 };
 
-module.exports = { loginService };
+module.exports = { loginService, generateJwt };

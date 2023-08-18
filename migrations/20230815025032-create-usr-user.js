@@ -27,8 +27,14 @@ module.exports = {
         email: {
           type: Sequelize.STRING,
         },
+        name: {
+          type: Sequelize.STRING,
+        },
         phoneNbr: {
           type: Sequelize.STRING,
+        },
+        isGoogle: {
+          type: Sequelize.BOOLEAN,
         },
         lastLogin: {
           type: Sequelize.DATE,
