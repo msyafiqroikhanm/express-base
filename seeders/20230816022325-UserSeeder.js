@@ -66,6 +66,7 @@ module.exports = {
       roleId: element.roleId,
       username: element.username,
       email: element.email,
+      name: element.name,
       isGoogle: element.isGoogle,
       password: bcryptjs.hashSync(`${element.username}.123`, salt),
       createdAt: new Date(),

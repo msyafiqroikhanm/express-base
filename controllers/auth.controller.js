@@ -1,7 +1,7 @@
 const { Op } = require('sequelize');
 const bcryptjs = require('bcryptjs');
 const ResponseFormatter = require('../helpers/responseFormatter.helper');
-const { selectDetailUser } = require('../services/user.service');
+const { selectDetailUser, updateUser } = require('../services/user.service');
 const { generateJwt } = require('../services/login.service');
 
 class AuthController {
@@ -26,6 +26,7 @@ class AuthController {
       };
       const access_token = await generateJwt(payload);
 
+      await updateUser({ id: user.id }, { lastLogin: new Date() });
       console.log(user);
       const message = 'Berhasil Login';
       return ResponseFormatter.success(res, 200, 'OK', message, {

@@ -11,4 +11,8 @@ const selectDetailUser = async (where) => {
   return user;
 };
 
-module.exports = { selectDetailUser };
+const updateUser = async (where, form) => {
+  await USR_User.update(form, { where });
+};
+
+module.exports = { selectDetailUser, updateUser };

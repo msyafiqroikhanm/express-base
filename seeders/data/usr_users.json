@@ -3,6 +3,7 @@
         "roleId":1,
         "username":"admin",
         "email": "admin@jxboard.id",
+        "name": "Admin Utama",
         "isGoogle":false
     }
 ]
