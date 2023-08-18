@@ -3,6 +3,7 @@
 'use strict';
 
 const fs = require('fs');
+const bcryptjs = require('bcryptjs');
 
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
@@ -55,6 +56,23 @@ module.exports = {
     }));
     // console.log(roleFeatures);
     await queryInterface.bulkInsert('USR_RoleFeatures', roleFeatures);
+
+    //* USR_Users
+    const usr_users = JSON.parse(
+      fs.readFileSync('./seeders/data/usr_users.json')
+    );
+    const salt = bcryptjs.genSaltSync(10);
+    const users = usr_users.map((element) => ({
+      roleId: element.roleId,
+      username: element.username,
+      email: element.email,
+      isGoogle: element.isGoogle,
+      password: bcryptjs.hashSync(`${element.username}.123`, salt),
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    }));
+    // console.log(users);
+    await queryInterface.bulkInsert('USR_Users', users);
   },
 
   async down(queryInterface) {
@@ -63,6 +81,18 @@ module.exports = {
       restartIdentity: true,
     });
     await queryInterface.bulkDelete('USR_Features', null, {
+      truncate: true,
+      restartIdentity: true,
+    });
+    await queryInterface.bulkDelete('USR_Roles', null, {
+      truncate: true,
+      restartIdentity: true,
+    });
+    await queryInterface.bulkDelete('USR_RoleFeatures', null, {
+      truncate: true,
+      restartIdentity: true,
+    });
+    await queryInterface.bulkDelete('USR_Users', null, {
       truncate: true,
       restartIdentity: true,
     });

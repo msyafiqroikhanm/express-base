@@ -1,0 +1,8 @@
+[
+    {
+        "roleId":1,
+        "username":"admin",
+        "email": "admin@jxboard.id",
+        "isGoogle":false
+    }
+]

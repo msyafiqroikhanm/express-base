@@ -30,6 +30,9 @@ module.exports = {
         phoneNbr: {
           type: Sequelize.STRING,
         },
+        isGoogle: {
+          type: Sequelize.BOOLEAN,
+        },
         lastLogin: {
           type: Sequelize.DATE,
         },
