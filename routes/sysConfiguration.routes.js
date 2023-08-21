@@ -1,6 +1,5 @@
 const router = require('express').Router();
 const { check } = require('express-validator');
-// const { check } = require('express-validator');
 const configController = require('../controllers/sysConfiguration.controller');
 const ValidateMiddleware = require('../middlewares/validate.middleware');
 
