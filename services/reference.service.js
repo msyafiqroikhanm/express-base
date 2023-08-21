@@ -89,6 +89,7 @@ const updateQRType = async (id, form) => {
 
   // update data after success pass the check
   qrTypeInstance.name = form.name;
+  qrTypeInstance.label = form.label;
   await qrTypeInstance.save();
 
   return { success: true, message: 'QR Type Successfully Updated', content: qrTypeInstance };

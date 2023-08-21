@@ -45,6 +45,7 @@ router.post(
   '/qr-types',
   [
     check('name', 'Name attribute can\'t be empty').notEmpty(),
+    check('label', 'Label attribute can\'t be empty').notEmpty(),
   ],
   ValidateMiddleware.result,
   QrType.create,
@@ -54,6 +55,7 @@ router.put(
   '/qr-types/:id',
   [
     check('name', 'Name attribute can\'t be empty').notEmpty(),
+    check('label', 'Label attribute can\'t be empty').notEmpty(),
   ],
   ValidateMiddleware.result,
   QrType.update,
