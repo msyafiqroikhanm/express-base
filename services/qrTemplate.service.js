@@ -22,19 +22,6 @@ const selectQrTemplate = async (id) => {
 };
 
 const validateQRTemplateInputs = async (file, form) => {
-  if (!form.name) {
-    const error = { isValid: false, message: 'Name attribute can\'t be empty' };
-    return error;
-  }
-  if (!form.xCoordinate) {
-    const error = { isValid: false, message: 'X Coordinate attribute can\'t be empty' };
-    return error;
-  }
-  if (!form.yCoordinate) {
-    const error = { isValid: false, message: 'Y Coordinate attribute can\'t be empty' };
-    return error;
-  }
-
   if (!file) {
     const error = { isValid: false, message: 'Template File Required' };
     return error;
