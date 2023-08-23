@@ -26,6 +26,14 @@ const validateQRTemplateInputs = async (file, form) => {
     const error = { isValid: false, message: 'Name attribute can\'t be empty' };
     return error;
   }
+  if (!form.xCoordinate) {
+    const error = { isValid: false, message: 'X Coordinate attribute can\'t be empty' };
+    return error;
+  }
+  if (!form.yCoordinate) {
+    const error = { isValid: false, message: 'Y Coordinate attribute can\'t be empty' };
+    return error;
+  }
 
   if (!file) {
     const error = { isValid: false, message: 'Template File Required' };
@@ -36,13 +44,21 @@ const validateQRTemplateInputs = async (file, form) => {
     const error = { isValid: false, message: 'Upload only supports file types [png and jpeg]' };
     return error;
   }
-  return { isValid: true, name: form.name, file: `public/images/qrTemplates/${file.filename}` };
+  return {
+    isValid: true,
+    name: form.name,
+    xCoordinate: form.xCoordinate,
+    yCoordinate: form.yCoordinate,
+    file: `public/images/qrTemplates/${file.filename}`,
+  };
 };
 
-const createQRTemplate = async (name, file) => {
+const createQRTemplate = async (form, file) => {
   try {
     const templateInstance = await QRM_QRTemplate.create({
-      name,
+      name: form.name,
+      xCoordinate: form.xCoordinate,
+      yCoordinate: form.yCoordinate,
       file,
     });
 
@@ -53,7 +69,7 @@ const createQRTemplate = async (name, file) => {
   }
 };
 
-const updateQRTemplate = async (id, name, file) => {
+const updateQRTemplate = async (id, form, file) => {
   // check if qr template id is valid
   const templateInstance = await QRM_QRTemplate.findByPk(id);
   if (!templateInstance) {
@@ -65,7 +81,9 @@ const updateQRTemplate = async (id, name, file) => {
   await deleteFile(templateInstance.file);
 
   // update QR Template after passed all the check
-  templateInstance.name = name;
+  templateInstance.name = form.name;
+  templateInstance.xCoordinate = form.xCoordinate;
+  templateInstance.yCoordinate = form.yCoordinate;
   templateInstance.file = file;
   await templateInstance.save();
 

@@ -21,6 +21,8 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false,
     },
     file: DataTypes.STRING,
+    xCoordinate: DataTypes.STRING,
+    yCoordinate: DataTypes.STRING,
   }, {
     sequelize,
     modelName: 'QRM_QRTemplate',

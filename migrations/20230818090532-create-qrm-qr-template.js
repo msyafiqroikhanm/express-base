@@ -19,6 +19,12 @@ module.exports = {
       file: {
         type: Sequelize.STRING,
       },
+      xCoordinate: {
+        type: Sequelize.STRING,
+      },
+      yCoordinate: {
+        type: Sequelize.STRING,
+      },
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE,
