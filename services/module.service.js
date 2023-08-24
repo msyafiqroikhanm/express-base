@@ -43,7 +43,7 @@ const updateModule = async (id, form) => {
     moduleInstance.name = form.name;
     await moduleInstance.save();
 
-    return { success: true, message: 'Module Successfully Created', content: moduleInstance };
+    return { success: true, message: 'Module Successfully Updated', content: moduleInstance };
   } catch (error) {
     return { success: false, message: error.errors[0].message };
   }
