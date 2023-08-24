@@ -1,8 +1,8 @@
 const { check } = require('express-validator');
 const router = require('express').Router();
-const templateController = require('../controllers/qrTemplate.controller');
-const { uploadImage } = require('../services/multerStorage.service');
-const ValidateMiddleware = require('../middlewares/validate.middleware');
+const templateController = require('../../controllers/qrTemplate.controller');
+const { uploadImage } = require('../../services/multerStorage.service');
+const ValidateMiddleware = require('../../middlewares/validate.middleware');
 
 router.get(
   '/',

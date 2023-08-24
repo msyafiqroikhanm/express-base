@@ -1,7 +1,7 @@
 const router = require('express').Router();
 const { check } = require('express-validator');
-const { SysConfigCategory, QrType } = require('../controllers/reference.controller');
-const ValidateMiddleware = require('../middlewares/validate.middleware');
+const { SysConfigCategory, QrType } = require('../../controllers/reference.controller');
+const ValidateMiddleware = require('../../middlewares/validate.middleware');
 
 router.get(
   '/config-categories',
