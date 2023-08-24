@@ -51,7 +51,6 @@ const createQRTemplate = async (form, file) => {
 
     return { success: true, message: 'QR Template Successfully Created', content: templateInstance };
   } catch (error) {
-    console.log(JSON.stringify(error, null, 4));
     return { success: false, message: error.errors[0].message };
   }
 };
