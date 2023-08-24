@@ -24,6 +24,7 @@ module.exports = {
     );
     const qrTypes = ref_qrtypes.map((element) => ({
       name: element.name,
+      label: element.label,
       createdAt: new Date(),
       updatedAt: new Date(),
     }));

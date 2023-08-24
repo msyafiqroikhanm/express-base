@@ -51,7 +51,7 @@ class QrTemplate {
         return ResponseFormatter.error400(res, 'Missing Input Data', inputs.message);
       }
 
-      const data = await createQRTemplate(inputs.name, inputs.file);
+      const data = await createQRTemplate(inputs, inputs.file);
       if (!data.success) {
         // Delete uploaded file when error happens
         if (req.file) {
@@ -84,7 +84,7 @@ class QrTemplate {
         return ResponseFormatter.error400(res, 'Missing Input Data', inputs.message);
       }
 
-      const data = await updateQRTemplate(req.params.id, inputs.name, inputs.file);
+      const data = await updateQRTemplate(req.params.id, inputs, inputs.file);
       if (!data.success && data.code === 404) {
         // Delete uploaded file when error happens
         if (req.file) {

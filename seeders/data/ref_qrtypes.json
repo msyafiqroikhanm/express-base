@@ -1,14 +1,18 @@
 [
   {
-    "name": "Lodger"
+    "name": "Participant",
+    "label": "prtcpnt"
   },
   {
-    "name": "Food Delivery Tracking"
+    "name": "committee",
+    "label": "cmte"
   },
   {
-    "name": "Passenger Tracking"
+    "name": "Vehicle",
+    "label": "vhcl"
   },
   {
-    "name": "Location Ticket"
+    "name": "Food Delivery",
+    "label": "fd"
   }
 ]
