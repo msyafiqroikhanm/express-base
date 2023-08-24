@@ -24,3 +24,4 @@ model:generate --name REF_FAQType --attributes name:string
 sequelize model:generate --name REF_TemplateCategory --attributes name:string
 sequelize model:generate --name REF_MetaTemplateCategory --attributes name:string
 sequelize model:generate --name REF_QRType --attributes name:string
+sequelize model:generate --name QRM_QRTemplate --attributes name:string, file:string
