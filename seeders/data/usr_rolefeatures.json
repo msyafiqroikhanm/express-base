@@ -2,5 +2,21 @@
     {
         "roleId":1,
         "featureId":1
+    },
+    {
+        "roleId":1,
+        "featureId":2
+    },
+    {
+        "roleId":1,
+        "featureId":3
+    },
+    {
+        "roleId":1,
+        "featureId":4
+    },
+    {
+        "roleId":1,
+        "featureId":5
     }
 ]

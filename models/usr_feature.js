@@ -19,6 +19,8 @@ module.exports = (sequelize, DataTypes) => {
       });
 
       USR_Feature.hasMany(models.USR_RoleFeature, { foreignKey: 'featureId' });
+
+      USR_Feature.belongsTo(models.USR_Module, { foreignKey: 'moduleId' });
     }
   }
   USR_Feature.init({
