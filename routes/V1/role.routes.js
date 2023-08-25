@@ -17,6 +17,7 @@ router.post(
   '/',
   [
     check('name', 'Name attribute can\'t be empty').notEmpty(),
+    check('qrTypeId', 'Qr Type attribute can\'t be empty').notEmpty(),
     check('features', 'Feature attribute can\'t be empty').notEmpty(),
   ],
   ValidateMiddleware.result,
@@ -27,6 +28,7 @@ router.put(
   '/:id',
   [
     check('name', 'Name attribute can\'t be empty').notEmpty(),
+    check('qrTypeId', 'Qr Type attribute can\'t be empty').notEmpty(),
     check('features', 'Feature attribute can\'t be empty').notEmpty(),
   ],
   ValidateMiddleware.result,

@@ -18,11 +18,14 @@ module.exports = (sequelize, DataTypes) => {
         otherKey: 'featureId',
       });
 
+      USR_Role.belongsTo(models.REF_QRType, { foreignKey: 'qrTypeId' });
+
       USR_Role.hasMany(models.USR_RoleFeature, { foreignKey: 'roleId' });
       USR_Role.hasMany(models.USR_User, { foreignKey: 'roleId' });
     }
   }
   USR_Role.init({
+    qrTypeId: DataTypes.INTEGER,
     name: DataTypes.STRING,
   }, {
     sequelize,

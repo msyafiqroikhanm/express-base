@@ -1,6 +1,8 @@
 /* eslint-disable no-param-reassign */
 const { Op } = require('sequelize');
-const { USR_Role, USR_Feature, USR_Module } = require('../models');
+const {
+  USR_Role, USR_Feature, USR_Module, REF_QRType,
+} = require('../models');
 
 const selectAllRoles = async () => {
   const data = await USR_Role.findAll({
@@ -73,12 +75,20 @@ const validateRoleInputs = async (form) => {
     },
   });
 
-  return { name: form.name, features: validFeatures };
+  const qrTypeInstance = await REF_QRType.findByPk(form.qrTypeId);
+  if (!qrTypeInstance) {
+    return { isValid: false, code: 404, message: 'Qr Type Data Not Found' };
+  }
+
+  return {
+    isValid: true, name: form.name, qrTypeId: form.qrTypeId, features: validFeatures,
+  };
 };
 
 const createRole = async (form) => {
   // create new role first
-  const roleInstance = await USR_Role.create({ name: form.name });
+  console.log(JSON.stringify(form, null, 2));
+  const roleInstance = await USR_Role.create({ name: form.name, qrTypeId: form.qrTypeId });
 
   await roleInstance.addUSR_Features(form.features);
 
@@ -129,6 +139,7 @@ const updateRole = async (id, form) => {
   });
 
   data.name = form.name;
+  data.qrTypeId = form.qrTypeId;
   await data.save();
 
   // parse response to rename USR_Features to features and USR_Module to module

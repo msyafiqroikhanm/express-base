@@ -15,6 +15,9 @@ module.exports = {
       name: {
         type: Sequelize.STRING,
       },
+      qrTypeId: {
+        type: Sequelize.INTEGER,
+      },
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE,

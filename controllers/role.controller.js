@@ -36,6 +36,9 @@ class Role {
       res.url = `${req.method} ${req.originalUrl}`;
 
       const inputs = await validateRoleInputs(req.body);
+      if (!inputs.isValid) {
+        return ResponseFormatter.error404(res, 'Data Not Found', inputs.message);
+      }
 
       const data = await createRole(inputs);
 
