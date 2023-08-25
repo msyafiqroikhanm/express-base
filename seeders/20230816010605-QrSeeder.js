@@ -12,6 +12,7 @@ module.exports = {
       fs.readFileSync('./seeders/data/qrm_qrtemplates.json'),
     );
     const qrTemplates = qr_qrTemplates.map((element) => ({
+      typeId: element.typeId,
       name: element.name,
       file: element.file,
       xCoordinate: element.xCoordinate,
@@ -26,7 +27,6 @@ module.exports = {
       fs.readFileSync('./seeders/data/qrm_qrs.json'),
     );
     const qrs = qr_qrs.map((element) => ({
-      typeId: element.typeId,
       templateId: element.templateId,
       code: element.code,
       rawFile: element.rawFile,

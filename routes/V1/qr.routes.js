@@ -17,7 +17,6 @@ router.post(
   '/',
   [
     check('templateId', 'Template Id attribute can\'t be empty').notEmpty(),
-    check('typeId', 'Type Id attribute can\'t be empty').notEmpty(),
   ],
   ValidateMiddleware.result,
   qrController.create,
@@ -28,7 +27,6 @@ router.put(
   [
     param('id', 'Template Id attribute can\'t be empty').notEmpty(),
     check('templateId', 'Template Id attribute can\'t be empty').notEmpty(),
-    check('typeId', 'Type Id attribute can\'t be empty').notEmpty(),
   ],
   ValidateMiddleware.result,
   qrController.update,

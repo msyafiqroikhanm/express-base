@@ -12,12 +12,18 @@ module.exports = (sequelize, DataTypes) => {
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
+      QRM_QRTemplate.belongsTo(models.REF_QRType, { foreignKey: 'typeId', as: 'Type' });
+
       QRM_QRTemplate.hasMany(models.QRM_QR, { foreignKey: 'templateId', as: 'Template' });
     }
   }
   QRM_QRTemplate.init({
     name: {
       type: DataTypes.STRING,
+      allowNull: false,
+    },
+    typeId: {
+      type: DataTypes.INTEGER,
       allowNull: false,
     },
     file: DataTypes.STRING,

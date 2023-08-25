@@ -16,10 +16,6 @@ module.exports = {
         type: Sequelize.INTEGER,
         allowNull: false,
       },
-      typeId: {
-        type: Sequelize.INTEGER,
-        allowNull: false,
-      },
       code: {
         type: Sequelize.STRING,
       },

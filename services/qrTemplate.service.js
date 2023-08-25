@@ -1,5 +1,5 @@
 const deleteFile = require('../helpers/deleteFile.helper');
-const { QRM_QRTemplate } = require('../models');
+const { QRM_QRTemplate, REF_QRType } = require('../models');
 
 const selectAllQRTemplates = async () => {
   const templates = await QRM_QRTemplate.findAll();
@@ -27,12 +27,19 @@ const validateQRTemplateInputs = async (file, form) => {
     return error;
   }
 
+  const typeInstance = await REF_QRType.findByPk(form.typeId);
+  if (!typeInstance) {
+    const error = { isValid: false, code: 404, message: 'QR Type Data Not Found' };
+    return error;
+  }
+
   if (!['png', 'jpeg'].includes(file.originalname.split('.')[1])) {
     const error = { isValid: false, message: 'Upload only supports file types [png and jpeg]' };
     return error;
   }
   return {
     isValid: true,
+    typeId: form.typeId,
     name: form.name,
     xCoordinate: form.xCoordinate,
     yCoordinate: form.yCoordinate,
@@ -43,6 +50,7 @@ const validateQRTemplateInputs = async (file, form) => {
 const createQRTemplate = async (form, file) => {
   try {
     const templateInstance = await QRM_QRTemplate.create({
+      typeId: form.typeId,
       name: form.name,
       xCoordinate: form.xCoordinate,
       yCoordinate: form.yCoordinate,
@@ -67,6 +75,7 @@ const updateQRTemplate = async (id, form, file) => {
   await deleteFile(templateInstance.file);
 
   // update QR Template after passed all the check
+  templateInstance.typeId = form.typeId;
   templateInstance.name = form.name;
   templateInstance.xCoordinate = form.xCoordinate;
   templateInstance.yCoordinate = form.yCoordinate;

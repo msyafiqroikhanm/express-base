@@ -28,7 +28,7 @@ const selectQR = async (id) => {
 
 const validateQRInputs = async (form) => {
   const {
-    templateId, typeId,
+    templateId,
   } = form;
 
   // check validity of template id
@@ -38,18 +38,11 @@ const validateQRInputs = async (form) => {
     return error;
   }
 
-  // check validity of type id
-  const typeInstance = await REF_QRType.findByPk(typeId);
-  if (!typeInstance) {
-    const error = { isValid: false, code: 404, message: 'Invalid typeId Value, QR Type Data Not Found' };
-    return error;
-  }
-
   console.log(JSON.stringify(templateInstance, null, 2));
 
   return {
     isValid: true,
-    form: { templateId, typeId },
+    form: { templateId },
     file: {
       rawFile: `public/images/qrs/qrs-${Date.now()}.png`,
       combineFile: `public/images/qrCombines/combines-${Date.now()}.png`,
@@ -58,9 +51,11 @@ const validateQRInputs = async (form) => {
 };
 
 const generateQRCode = async (form, qrInstance) => {
-  const typeInstance = await REF_QRType.findByPk(form.typeId);
+  const templateInstance = await QRM_QRTemplate.findByPk(form.templateId, {
+    include: { model: REF_QRType, as: 'Type' },
+  });
   const uuid = randomUUID();
-  return `${typeInstance.label}-${qrInstance.id}-${uuid}`;
+  return `${templateInstance.Type.label}-${qrInstance.id}-${uuid}`;
 };
 
 const generateQRFile = async (data, code) => {
@@ -93,11 +88,11 @@ const combineQrFile = async (filePath = { qr: '', template: '', output: '' }, co
   }
 };
 
-const createQR = async (form, file) => {
-  const { templateId, typeId } = form;
+const createQR = async (form = { templateId: '' }, file = { rawFile: '', combineFile: '' }) => {
+  const { templateId } = form;
   const { rawFile, combineFile } = file;
   const qrInstance = await QRM_QR.create({
-    templateId, typeId, rawFile, combineFile,
+    templateId, rawFile, combineFile,
   });
 
   const code = await generateQRCode(form, qrInstance);
@@ -129,8 +124,8 @@ const createQR = async (form, file) => {
 };
 
 const updateQR = async (id, form, file) => {
-  const { templateId, typeId } = form;
-  const { rawFile, combineFile } = file;
+  const { templateId } = form;
+  const { combineFile } = file;
 
   // check qr id validity
   const qrInstance = await QRM_QR.findByPk(id);
@@ -142,44 +137,7 @@ const updateQR = async (id, form, file) => {
   // getting path for the template image
   const templateInstance = await QRM_QRTemplate.findByPk(templateId, { attributes: ['file', 'xCoordinate', 'yCoordinate'] });
 
-  if (qrInstance.typeId !== Number(typeId)) {
-    // when type id change, delete and regenerate rawfile and combinefile
-    qrInstance.typeId = typeId;
-    const tempQrFile = qrInstance.rawFile;
-    const tempCombineFile = qrInstance.combineFile;
-
-    // regenerate file
-    const code = await generateQRCode(form, qrInstance);
-    try {
-      // creating new file
-      await generateQRFile(file, code).then(async () => {
-        await combineQrFile(
-          { qr: rawFile, template: templateInstance.file, output: combineFile },
-          { x: Number(templateInstance.xCoordinate), y: Number(templateInstance.yCoordinate) },
-        );
-      });
-    } catch (error) {
-      // when error happen delete all related file and delete qr data
-      await deleteFile(relative(__dirname, rawFile));
-      await deleteFile(relative(__dirname, combineFile));
-      console.error('Failed Updating QR');
-      console.log(JSON.stringify(error, null, 4));
-      const newError = { success: false, code: 500, message: error };
-      return newError;
-    }
-
-    // delete old file
-    console.log(tempCombineFile);
-    console.log(tempQrFile);
-    await deleteFile(relative(__dirname, tempQrFile));
-    await deleteFile(relative(__dirname, tempCombineFile));
-
-    // saving new data
-    qrInstance.code = code;
-    qrInstance.rawFile = rawFile;
-    qrInstance.combineFile = combineFile;
-    await qrInstance.save();
-  } else if (qrInstance.templateId !== Number(form.templateId)) {
+  if (qrInstance.templateId !== Number(form.templateId)) {
     // when template id change, delete and reqenerate combinefile
     qrInstance.templateId = form.templateId;
 

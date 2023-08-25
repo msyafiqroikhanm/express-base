@@ -1,5 +1,6 @@
 [
   {
+    "typeId":2,
     "name":"Main Committe",
     "file":"public/images/qrTemplates/default.png",
     "xCoordinate":"200",
