@@ -18,5 +18,37 @@
     {
         "roleId":1,
         "featureId":5
+    },
+    {
+        "roleId":1,
+        "featureId":6
+    },
+    {
+        "roleId":1,
+        "featureId":7
+    },
+    {
+        "roleId":1,
+        "featureId":8
+    },
+    {
+        "roleId":1,
+        "featureId":9
+    },
+    {
+        "roleId":1,
+        "featureId":10
+    },
+    {
+        "roleId":1,
+        "featureId":11
+    },
+    {
+        "roleId":1,
+        "featureId":12
+    },
+    {
+        "roleId":1,
+        "featureId":13
     }
 ]

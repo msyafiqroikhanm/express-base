@@ -1,5 +1,6 @@
 /* eslint-disable no-param-reassign */
 const bcrypt = require('bcryptjs');
+const { Op } = require('sequelize');
 const {
   USR_User, USR_Role, QRM_QR, QRM_QRTemplate,
 } = require('../models');
@@ -186,13 +187,27 @@ const updateUserPassword = async (form) => {
   };
 };
 
+const selectUser = async (query) => {
+  const userInstance = await USR_User.findOne({
+    include: { model: USR_Role, attributes: ['name'], as: 'Role' },
+    [Op.or]: query,
+  });
+  return userInstance;
+};
+
+const updateUserLogin = async (where, form) => {
+  await USR_User.update(form, { where });
+};
+
 module.exports = {
   validateUserInputs,
   validatePasswordInputs,
   selectAllUsers,
   selectDetailUser,
+  selectUser,
   createUser,
   updateUser,
   deleteUser,
   updateUserPassword,
+  updateUserLogin,
 };

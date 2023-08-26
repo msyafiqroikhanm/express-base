@@ -30,5 +30,25 @@
     {
         "moduleId":1,
         "name":"Delete Feature"
+    },
+    {
+        "moduleId":2,
+        "name":"View User"
+    },
+    {
+        "moduleId":2,
+        "name":"Create User"
+    },
+    {
+        "moduleId":2,
+        "name":"Update User"
+    },
+    {
+        "moduleId":2,
+        "name":"Delete User"
+    },
+    {
+        "moduleId":2,
+        "name":"Change Password"
     }
 ]

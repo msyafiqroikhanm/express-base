@@ -1,15 +1,14 @@
-const { Op } = require('sequelize');
 const bcryptjs = require('bcryptjs');
 const ResponseFormatter = require('../helpers/responseFormatter.helper');
-const { selectDetailUser, updateUser } = require('../services/user.service');
+const { selectUser, updateUserLogin } = require('../services/user.service');
 const { generateJwt } = require('../services/login.service');
 
 class AuthController {
   static async login(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
-      const user = await selectDetailUser({
-        [Op.or]: { email: req.body.user, username: req.body.user },
+      const user = await selectUser({
+        email: req.body.user, username: req.body.user,
       });
 
       if (!user) {
@@ -26,8 +25,7 @@ class AuthController {
       };
       const access_token = await generateJwt(payload);
 
-      await updateUser({ id: user.id }, { lastLogin: new Date() });
-      console.log(user);
+      await updateUserLogin({ id: user.id }, { lastLogin: new Date() });
       const message = 'Berhasil Login';
       return ResponseFormatter.success(res, 200, 'OK', message, {
         name: user.name,

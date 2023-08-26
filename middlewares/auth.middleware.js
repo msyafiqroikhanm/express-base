@@ -23,14 +23,10 @@ class AuthMiddleware {
     }
   }
 
-  static async authorization(req, res, next, allowedRoles) {
+  static async authorization(req, res, next, requiredFeature) {
     try {
-      let authorized;
-      for (let i = 0; i < allowedRoles.length; i += 1) {
-        if (req.user.roleId === allowedRoles[i]) {
-          authorized = true;
-        }
-      }
+      const authorized = req.user.Role.USR_Features
+        .some((feature) => feature.id === requiredFeature);
 
       if (!authorized) {
         throw {
