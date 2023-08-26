@@ -1,20 +1,27 @@
 /* eslint-disable no-param-reassign */
 const { Op } = require('sequelize');
 const {
-  USR_Role, USR_Feature, USR_Module, REF_QRType,
+  USR_Role, USR_Feature, USR_Module, QRM_QRTemplate,
 } = require('../models');
 
 const selectAllRoles = async () => {
   const data = await USR_Role.findAll({
     attributes: ['id', 'name'],
-    include: {
-      model: USR_Feature,
-      attributes: ['id', 'name'],
-      include: { model: USR_Module, attributes: ['id', 'name'] },
-      through: {
-        attributes: [],
+    include: [
+      {
+        model: USR_Feature,
+        attributes: ['id', 'name'],
+        include: { model: USR_Module, attributes: ['id', 'name'] },
+        through: {
+          attributes: [],
+        },
       },
-    },
+      {
+        model: QRM_QRTemplate,
+        as: 'template',
+        attributes: ['id', 'name'],
+      },
+    ],
   });
 
   // parse response to rename USR_Features to features and USR_Module to module
@@ -40,14 +47,21 @@ const selectAllRoles = async () => {
 const selectRole = async (id) => {
   // validate role id
   const roleInstance = await USR_Role.findByPk(id, {
-    include: {
-      model: USR_Feature,
-      attributes: ['id', 'name'],
-      include: { model: USR_Module, attributes: ['id', 'name'] },
-      through: {
-        attributes: [],
+    include: [
+      {
+        model: USR_Feature,
+        attributes: ['id', 'name'],
+        include: { model: USR_Module, attributes: ['id', 'name'] },
+        through: {
+          attributes: [],
+        },
       },
-    },
+      {
+        model: QRM_QRTemplate,
+        as: 'template',
+        attributes: ['id', 'name', 'file'],
+      },
+    ],
   });
   if (!roleInstance) {
     const error = { success: false, message: 'Role Not Found' };
@@ -75,20 +89,19 @@ const validateRoleInputs = async (form) => {
     },
   });
 
-  const qrTypeInstance = await REF_QRType.findByPk(form.qrTypeId);
-  if (!qrTypeInstance) {
-    return { isValid: false, code: 404, message: 'Qr Type Data Not Found' };
+  const templateInstance = await QRM_QRTemplate.findByPk(form.templateId);
+  if (!templateInstance) {
+    return { isValid: false, code: 404, message: 'Qr Template Data Not Found' };
   }
 
   return {
-    isValid: true, name: form.name, qrTypeId: form.qrTypeId, features: validFeatures,
+    isValid: true, name: form.name, templateId: Number(form.templateId), features: validFeatures,
   };
 };
 
 const createRole = async (form) => {
   // create new role first
-  console.log(JSON.stringify(form, null, 2));
-  const roleInstance = await USR_Role.create({ name: form.name, qrTypeId: form.qrTypeId });
+  const roleInstance = await USR_Role.create({ name: form.name, templateId: form.templateId });
 
   await roleInstance.addUSR_Features(form.features);
 
@@ -139,7 +152,7 @@ const updateRole = async (id, form) => {
   });
 
   data.name = form.name;
-  data.qrTypeId = form.qrTypeId;
+  data.templateId = form.templateId;
   await data.save();
 
   // parse response to rename USR_Features to features and USR_Module to module

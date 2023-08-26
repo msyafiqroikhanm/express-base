@@ -13,7 +13,6 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       REF_QRType.hasMany(models.QRM_QRTemplate, { foreignKey: 'typeId', as: 'Type' });
-      REF_QRType.hasMany(models.USR_Role, { foreignKey: 'qrTypeId' });
     }
   }
   REF_QRType.init({

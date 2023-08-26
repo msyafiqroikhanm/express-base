@@ -15,6 +15,7 @@ module.exports = (sequelize, DataTypes) => {
       QRM_QRTemplate.belongsTo(models.REF_QRType, { foreignKey: 'typeId', as: 'Type' });
 
       QRM_QRTemplate.hasMany(models.QRM_QR, { foreignKey: 'templateId', as: 'Template' });
+      QRM_QRTemplate.hasMany(models.USR_Role, { foreignKey: 'templateId', as: 'template' });
     }
   }
   QRM_QRTemplate.init({

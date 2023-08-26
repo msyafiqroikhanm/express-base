@@ -12,11 +12,11 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.INTEGER,
       },
+      templateId: {
+        type: Sequelize.INTEGER,
+      },
       name: {
         type: Sequelize.STRING,
-      },
-      qrTypeId: {
-        type: Sequelize.INTEGER,
       },
       createdAt: {
         allowNull: false,

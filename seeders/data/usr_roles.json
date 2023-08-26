@@ -1,4 +1,4 @@
 [
-    {"name":"Super User", "qrTypeId":2 },
-    {"name":"PIC", "qrTypeId":2 }
+    {"name":"Super User", "templateId":1 },
+    {"name":"PIC", "templateId":1 }
 ]

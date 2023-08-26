@@ -38,7 +38,7 @@ module.exports = {
     );
     const roles = usr_roles.map((element) => ({
       name: element.name,
-      qrTypeId: element.qrTypeId,
+      templateId: element.templateId,
       createdAt: new Date(),
       updatedAt: new Date(),
     }));

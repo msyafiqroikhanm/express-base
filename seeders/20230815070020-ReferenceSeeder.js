@@ -18,7 +18,7 @@ module.exports = {
     }));
     await queryInterface.bulkInsert('REF_ConfigurationCategories', categories);
 
-    //* REF_configurationCategory
+    //* REF_qrtype
     const ref_qrtypes = JSON.parse(
       fs.readFileSync('./seeders/data/ref_qrtypes.json'),
     );
