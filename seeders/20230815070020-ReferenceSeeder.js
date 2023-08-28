@@ -29,6 +29,17 @@ module.exports = {
       updatedAt: new Date(),
     }));
     await queryInterface.bulkInsert('REF_QRTypes', qrTypes);
+
+    //* REF_EventCategories
+    const ref_eventcategories = JSON.parse(
+      fs.readFileSync('./seeders/data/ref_eventcategories.json'),
+    );
+    const eventCategories = ref_eventcategories.map((element) => ({
+      name: element.name,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    }));
+    await queryInterface.bulkInsert('REF_EventCategories', eventCategories);
   },
 
   async down(queryInterface, Sequelize) {
@@ -37,6 +48,10 @@ module.exports = {
       restartIdentity: true,
     });
     await queryInterface.bulkDelete('REF_QRTypes', null, {
+      truncate: true,
+      restartIdentity: true,
+    });
+    await queryInterface.bulkDelete('REF_EventCategories', null, {
       truncate: true,
       restartIdentity: true,
     });

@@ -1,7 +1,9 @@
 const router = require('express').Router();
 const { check } = require('express-validator');
-const { SysConfigCategory, QrType } = require('../../controllers/reference.controller');
+const features = require('../../helpers/features.helper');
+const { SysConfigCategory, QrType, EventCategory } = require('../../controllers/reference.controller');
 const ValidateMiddleware = require('../../middlewares/validate.middleware');
+const Authentication = require('../../middlewares/auth.middleware');
 
 router.get(
   '/config-categories',
@@ -69,6 +71,94 @@ router.delete(
 router.get(
   '/qr-types/:id',
   QrType.getDetail,
+);
+
+router.get(
+  '/event-categories',
+  async (req, res, next) => {
+    Authentication.authenticate(
+      req,
+      res,
+      next,
+      await features().then((feature) => [
+        feature.view_event_category,
+        feature.create_event_category,
+        feature.update_event_category,
+        feature.delete_event_category,
+      ]),
+    );
+  },
+  EventCategory.getAll,
+);
+
+router.post(
+  '/event-categories',
+  async (req, res, next) => {
+    Authentication.authenticate(
+      req,
+      res,
+      next,
+      await features().then((feature) => [
+        feature.create_event_category,
+      ]),
+    );
+  },
+  [
+    check('name', 'Name attribute can\'t be empty').notEmpty(),
+  ],
+  ValidateMiddleware.result,
+  EventCategory.create,
+);
+
+router.get(
+  '/event-categories/:id',
+  async (req, res, next) => {
+    Authentication.authenticate(
+      req,
+      res,
+      next,
+      await features().then((feature) => [
+        feature.view_event_category,
+        feature.update_event_category,
+        feature.delete_event_category,
+      ]),
+    );
+  },
+  EventCategory.getDetail,
+);
+
+router.put(
+  '/event-categories/:id',
+  async (req, res, next) => {
+    Authentication.authenticate(
+      req,
+      res,
+      next,
+      await features().then((feature) => [
+        feature.update_event_category,
+      ]),
+    );
+  },
+  [
+    check('name', 'Name attribute can\'t be empty').notEmpty(),
+  ],
+  ValidateMiddleware.result,
+  EventCategory.update,
+);
+
+router.delete(
+  '/event-categories/:id',
+  async (req, res, next) => {
+    Authentication.authenticate(
+      req,
+      res,
+      next,
+      await features().then((feature) => [
+        feature.delete_event_category,
+      ]),
+    );
+  },
+  EventCategory.delete,
 );
 
 module.exports = router;
