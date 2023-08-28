@@ -14,18 +14,28 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       USR_User.belongsTo(models.USR_Role, { foreignKey: 'roleId', as: 'Role' });
+      USR_User.belongsTo(models.QRM_QR, { foreignKey: 'qrId', as: 'Qr' });
+
+      USR_User.hasMany(models.ENV_Event, { foreignKey: 'picId', as: 'pic' });
     }
   }
   USR_User.init(
     {
-      roleId: DataTypes.INTEGER,
+      qrId: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+      },
+      roleId: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+      },
+      name: DataTypes.STRING,
       username: DataTypes.STRING,
       password: DataTypes.STRING,
-      name: DataTypes.STRING,
       email: DataTypes.STRING,
       phoneNbr: DataTypes.STRING,
+      file: DataTypes.STRING,
       lastLogin: DataTypes.DATE,
-      isGoogle: DataTypes.BOOLEAN,
       deletedAt: DataTypes.DATE,
     },
     {

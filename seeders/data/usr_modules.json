@@ -1,3 +1,13 @@
 [
-    {"name": "Access Management"}
+    {"name":"Access Management"},
+    {"name":"User Management"},
+    {"name":"Participant Management"},
+    {"name":"Accomodation Management"},
+    {"name":"Transportation Management"},
+    {"name":"FnB Management"},
+    {"name":"Event Management"},
+    {"name":"Customer Service Management"},
+    {"name":"QR Management"},
+    {"name":"Asset Management"},
+    {"name":"System Configuration"}
 ]

@@ -38,6 +38,7 @@ module.exports = {
     );
     const roles = usr_roles.map((element) => ({
       name: element.name,
+      templateId: element.templateId,
       createdAt: new Date(),
       updatedAt: new Date(),
     }));
@@ -63,11 +64,11 @@ module.exports = {
     );
     const salt = bcryptjs.genSaltSync(10);
     const users = usr_users.map((element) => ({
+      qrId: element.qrId,
       roleId: element.roleId,
       username: element.username,
       email: element.email,
       name: element.name,
-      isGoogle: element.isGoogle,
       password: bcryptjs.hashSync(`${element.username}.123`, salt),
       createdAt: new Date(),
       updatedAt: new Date(),

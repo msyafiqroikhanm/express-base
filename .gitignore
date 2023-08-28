@@ -4,3 +4,4 @@ node_modules
 /public/**
 !/public/**/
 !.gitkeep
+!*default.png

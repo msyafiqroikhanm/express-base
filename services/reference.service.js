@@ -1,4 +1,9 @@
-const { REF_ConfigurationCategory, SYS_Configuration, REF_QRType } = require('../models');
+const {
+  REF_ConfigurationCategory,
+  SYS_Configuration,
+  REF_QRType,
+  REF_EventCategory,
+} = require('../models');
 
 const selectAllConfigCategories = async () => {
   const data = await REF_ConfigurationCategory.findAll();
@@ -115,6 +120,71 @@ const deleteQRType = async (id) => {
   };
 };
 
+const selectAllEventCategories = async () => {
+  const data = await REF_EventCategory.findAll();
+  return {
+    success: true, message: 'Successfully Getting All Event Category', content: data,
+  };
+};
+
+const selectEventCategory = async (id) => {
+  // check validity of event category id
+  const categoryInstance = await REF_EventCategory.findByPk(id);
+  if (!categoryInstance) {
+    return {
+      success: false, code: 404, message: 'Event Category Data Not Found',
+    };
+  }
+
+  return {
+    success: true, message: 'Successfully Getting Event Category', content: categoryInstance,
+  };
+};
+
+const createEventCategory = async (form) => {
+  const categoryInstance = await REF_EventCategory.create({ name: form.name });
+
+  return {
+    success: true, message: 'Event Category Successfully Created', content: categoryInstance,
+  };
+};
+
+const updateEventCategory = async (id, form) => {
+  // check validity of event category id
+  const categoryInstance = await REF_EventCategory.findByPk(id);
+  if (!categoryInstance) {
+    return {
+      success: false, code: 404, message: 'Event Category Data Not Found',
+    };
+  }
+
+  categoryInstance.name = form.name;
+  await categoryInstance.save();
+  return {
+    success: true, message: 'Event Category Successfully Updated', content: categoryInstance,
+  };
+};
+
+const deleteEventCategory = async (id) => {
+  // check validity of event category id
+  const categoryInstance = await REF_EventCategory.findByPk(id);
+  if (!categoryInstance) {
+    return {
+      success: false, code: 404, message: 'Event Category Data Not Found',
+    };
+  }
+
+  const { name } = categoryInstance.dataValues;
+
+  await categoryInstance.destroy();
+
+  return {
+    success: true,
+    message: 'Event Category Successfully Deleted',
+    content: `Event Category ${name} Successfully Deleted`,
+  };
+};
+
 module.exports = {
   selectAllConfigCategories,
   selectConfiCategory,
@@ -126,4 +196,11 @@ module.exports = {
   createQRType,
   updateQRType,
   deleteQRType,
+  eventCategory: {
+    selectEventCategory,
+    selectAllEventCategories,
+    createEventCategory,
+    updateEventCategory,
+    deleteEventCategory,
+  },
 };

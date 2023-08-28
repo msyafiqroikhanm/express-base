@@ -15,8 +15,14 @@ module.exports = {
           primaryKey: true,
           type: Sequelize.INTEGER,
         },
+        qrId: {
+          type: Sequelize.INTEGER,
+        },
         roleId: {
           type: Sequelize.INTEGER,
+        },
+        name: {
+          type: Sequelize.STRING,
         },
         username: {
           type: Sequelize.STRING,
@@ -27,14 +33,11 @@ module.exports = {
         email: {
           type: Sequelize.STRING,
         },
-        name: {
-          type: Sequelize.STRING,
-        },
         phoneNbr: {
           type: Sequelize.STRING,
         },
-        isGoogle: {
-          type: Sequelize.BOOLEAN,
+        file: {
+          type: Sequelize.STRING,
         },
         lastLogin: {
           type: Sequelize.DATE,

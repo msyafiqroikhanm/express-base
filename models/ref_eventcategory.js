@@ -5,28 +5,21 @@ const {
 } = require('sequelize');
 
 module.exports = (sequelize, DataTypes) => {
-  class REF_QRType extends Model {
+  class REF_EventCategory extends Model {
     /**
      * Helper method for defining associations.
      * This method is not a part of Sequelize lifecycle.
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
-      REF_QRType.hasMany(models.QRM_QRTemplate, { foreignKey: 'typeId', as: 'Type' });
+      REF_EventCategory.hasMany(models.ENV_Event, { foreignKey: 'categoryId', as: 'category' });
     }
   }
-  REF_QRType.init({
-    name: {
-      type: DataTypes.STRING,
-      allowNull: false,
-    },
-    label: {
-      type: DataTypes.STRING,
-      allowNull: false,
-    },
+  REF_EventCategory.init({
+    name: DataTypes.STRING,
   }, {
     sequelize,
-    modelName: 'REF_QRType',
+    modelName: 'REF_EventCategory',
   });
-  return REF_QRType;
+  return REF_EventCategory;
 };

@@ -5,28 +5,23 @@ const {
 } = require('sequelize');
 
 module.exports = (sequelize, DataTypes) => {
-  class REF_QRType extends Model {
+  class ENV_TimeEvent extends Model {
     /**
      * Helper method for defining associations.
      * This method is not a part of Sequelize lifecycle.
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
-      REF_QRType.hasMany(models.QRM_QRTemplate, { foreignKey: 'typeId', as: 'Type' });
+      ENV_TimeEvent.belongsTo(models.ENV_Event, { foreignKey: 'eventId', as: 'event' });
     }
   }
-  REF_QRType.init({
-    name: {
-      type: DataTypes.STRING,
-      allowNull: false,
-    },
-    label: {
-      type: DataTypes.STRING,
-      allowNull: false,
-    },
+  ENV_TimeEvent.init({
+    eventId: DataTypes.INTEGER,
+    start: DataTypes.DATE,
+    end: DataTypes.DATE,
   }, {
     sequelize,
-    modelName: 'REF_QRType',
+    modelName: 'ENV_TimeEvent',
   });
-  return REF_QRType;
+  return ENV_TimeEvent;
 };

@@ -1,8 +1,8 @@
 /* eslint-disable comma-dangle */
 const router = require('express').Router();
 const { check } = require('express-validator');
-const AuthController = require('../controllers/auth.controller');
-const ValidateMiddleware = require('../middlewares/validate.middleware');
+const AuthController = require('../../controllers/auth.controller');
+const ValidateMiddleware = require('../../middlewares/validate.middleware');
 // const AuthMiddleware = require('../middlewares/auth.middleware');
 // const ResponseFormatter = require('../helpers/responseFormatter.helper');
 

@@ -142,12 +142,12 @@ const combineStorage = multer.diskStorage({
 
 const uploadImage = multer({
   storage: imageStorage,
-  limits: { fileSize: 2000000 },
+  limits: { fileSize: 100000000 },
 });
 
 const uploadDocument = multer({
   storage: documentStorage,
-  limits: { fileSize: 5000000 },
+  limits: { fileSize: 100000000 },
 });
 
 const uploadVideo = multer({

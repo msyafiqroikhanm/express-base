@@ -18,11 +18,14 @@ module.exports = (sequelize, DataTypes) => {
         otherKey: 'featureId',
       });
 
+      USR_Role.belongsTo(models.QRM_QRTemplate, { foreignKey: 'templateId', as: 'template' });
+
       USR_Role.hasMany(models.USR_RoleFeature, { foreignKey: 'roleId' });
       USR_Role.hasMany(models.USR_User, { foreignKey: 'roleId' });
     }
   }
   USR_Role.init({
+    templateId: DataTypes.INTEGER,
     name: DataTypes.STRING,
   }, {
     sequelize,

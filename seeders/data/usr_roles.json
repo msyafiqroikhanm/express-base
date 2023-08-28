@@ -1,3 +1,4 @@
 [
-    {"name":"Super User"}
+    {"name":"Super User", "templateId":1 },
+    {"name":"PIC", "templateId":1 }
 ]

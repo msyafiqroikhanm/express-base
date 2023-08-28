@@ -1,9 +1,9 @@
 [
     {
+        "qrId":1,
         "roleId":1,
         "username":"admin",
         "email": "admin@jxboard.id",
-        "name": "Admin Utama",
-        "isGoogle":false
+        "name": "Admin Utama"
     }
 ]
