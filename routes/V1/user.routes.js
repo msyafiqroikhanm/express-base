@@ -8,13 +8,14 @@ const Authentication = require('../../middlewares/auth.middleware');
 
 router.get(
   '/',
-  Authentication.authenticate,
   async (req, res, next) => {
-    Authentication.authorization(
+    Authentication.authenticate(
       req,
       res,
       next,
-      await features().then((feature) => feature.view_user),
+      await features().then((feature) => [
+        feature.view_user,
+      ]),
     );
   },
   userController.getAll,
@@ -22,13 +23,16 @@ router.get(
 
 router.get(
   '/:id',
-  Authentication.authenticate,
   async (req, res, next) => {
-    Authentication.authorization(
+    Authentication.authenticate(
       req,
       res,
       next,
-      await features().then((feature) => feature.view_user),
+      await features().then((feature) => [
+        feature.view_user,
+        feature.update_user,
+        feature.change_password,
+      ]),
     );
   },
   userController.getDetail,
@@ -36,13 +40,14 @@ router.get(
 
 router.post(
   '/',
-  Authentication.authenticate,
   async (req, res, next) => {
-    Authentication.authorization(
+    Authentication.authenticate(
       req,
       res,
       next,
-      await features().then((feature) => feature.create_user),
+      await features().then((feature) => [
+        feature.create_user,
+      ]),
     );
   },
   uploadImage.single('userImage'),
@@ -60,13 +65,14 @@ router.post(
 
 router.put(
   '/:id',
-  Authentication.authenticate,
   async (req, res, next) => {
-    Authentication.authorization(
+    Authentication.authenticate(
       req,
       res,
       next,
-      await features().then((feature) => feature.update_user),
+      await features().then((feature) => [
+        feature.update_user,
+      ]),
     );
   },
   uploadImage.single('userImage'),
@@ -82,13 +88,14 @@ router.put(
 
 router.delete(
   '/:id',
-  Authentication.authenticate,
   async (req, res, next) => {
-    Authentication.authorization(
+    Authentication.authenticate(
       req,
       res,
       next,
-      await features().then((feature) => feature.delete_user),
+      await features().then((feature) => [
+        feature.delete_user,
+      ]),
     );
   },
   userController.delete,
@@ -96,13 +103,14 @@ router.delete(
 
 router.put(
   '/:id/change-password',
-  Authentication.authenticate,
   async (req, res, next) => {
-    Authentication.authorization(
+    Authentication.authenticate(
       req,
       res,
       next,
-      await features().then((feature) => feature.change_password),
+      await features().then((feature) => [
+        feature.change_password,
+      ]),
     );
   },
   [
