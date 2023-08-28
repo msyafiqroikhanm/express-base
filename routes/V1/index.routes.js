@@ -9,6 +9,7 @@ const moduleRoutes = require('./module.routes');
 const featureRoutes = require('./feature.routes');
 const roleRoutes = require('./role.routes');
 const userRoutes = require('./user.routes');
+const eventRoutes = require('./event.routes');
 
 router.use('/auth', authRoutes);
 router.use('/config', configRoutes);
@@ -19,5 +20,6 @@ router.use('/modules', moduleRoutes);
 router.use('/features', featureRoutes);
 router.use('/roles', roleRoutes);
 router.use('/users', userRoutes);
+router.use('/events', eventRoutes);
 
 module.exports = router;

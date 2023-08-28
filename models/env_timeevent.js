@@ -12,7 +12,7 @@ module.exports = (sequelize, DataTypes) => {
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
-      ENV_TimeEvent.belongsTo(models.ENV_Event, { foreignKey: 'eventId', as: 'event' });
+      ENV_TimeEvent.belongsTo(models.ENV_Event, { foreignKey: 'eventId', as: 'event', onDelete: 'CASCADE' });
     }
   }
   ENV_TimeEvent.init({
