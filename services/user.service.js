@@ -1,10 +1,13 @@
 /* eslint-disable no-param-reassign */
+const fs = require('fs/promises');
+const { relative } = require('path');
 const bcrypt = require('bcryptjs');
 const { Op } = require('sequelize');
 const {
   USR_User, USR_Role, QRM_QR, QRM_QRTemplate,
 } = require('../models');
 const { createQR, updateQR } = require('./qr.service');
+const deleteFile = require('../helpers/deleteFile.helper');
 
 const selectAllUsers = async () => {
   const users = await USR_User.findAll({
@@ -58,10 +61,25 @@ const selectDetailUser = async (id) => {
   return { success: true, message: 'Successfully Getting User', content: userInstance };
 };
 
-const validateUserInputs = async (form) => {
+const validateUserInputs = async (form, file) => {
   const roleInstance = await USR_Role.findByPk(form.roleId);
   if (!roleInstance) {
     return { isValid: false, code: 404, message: 'Role Data Not Found' };
+  }
+
+  if (!file) {
+    return { isValid: false, code: 400, message: 'User Image File Not Found' };
+  }
+
+  if (!['png', 'jpeg', 'jpg'].includes(file.originalname.split('.')[1])) {
+    const error = { isValid: false, code: 400, message: 'Upload only supports file types [png and jpeg]' };
+    return error;
+  }
+
+  const imageBuffer = await fs.readFile(file.path);
+  const maxSizeInByte = 2000000;
+  if (imageBuffer.length > maxSizeInByte) {
+    return { isValid: false, code: 400, message: 'The file size exceeds the maximum size limit of 2 Megabyte' };
   }
 
   return {
@@ -73,6 +91,7 @@ const validateUserInputs = async (form) => {
       password: form.password,
       email: form.email,
       phoneNbr: form.phoneNbr,
+      file: `public/images/users/${file.filename}`,
     },
   };
 };
@@ -88,7 +107,10 @@ const createUser = async (form) => {
     password: form.password,
     email: form.email,
     phoneNbr: form.phoneNbr,
+    file: form.file,
   });
+
+  delete userInstance.dataValues.password;
 
   return { success: true, message: 'User Successfully Created', content: userInstance };
 };
@@ -107,7 +129,10 @@ const updateUser = async (id, form) => {
 
   // regenerate qrcode when changing user role
   if (userInstance.roleId !== form.roleId) {
-    const roleInstance = await USR_Role.findByPk(form.roleId, { include: { model: QRM_QRTemplate, as: 'template' } });
+    const roleInstance = await USR_Role.findByPk(form.roleId, {
+      include: { model: QRM_QRTemplate, as: 'template' },
+      attributes: { exclude: ['password'] },
+    });
     await updateQR(
       userInstance.Qr.id,
       {
@@ -120,11 +145,15 @@ const updateUser = async (id, form) => {
     );
   }
 
+  // delete old file
+  await deleteFile(relative(__dirname, userInstance.file));
+
   userInstance.qrId = form.qrId;
   userInstance.roleId = form.roleId;
   userInstance.name = form.name;
   userInstance.email = form.email;
   userInstance.phoneNbr = form.phoneNbr;
+  userInstance.file = form.file;
   await userInstance.save();
 
   return { success: true, message: 'User Successfully Updated', content: userInstance };

@@ -1,6 +1,7 @@
 const router = require('express').Router();
 const { check } = require('express-validator');
 const features = require('../../helpers/features.helper');
+const { uploadImage } = require('../../services/multerStorage.service');
 const userController = require('../../controllers/user.controller');
 const ValidateMiddleware = require('../../middlewares/validate.middleware');
 const Authentication = require('../../middlewares/auth.middleware');
@@ -44,6 +45,7 @@ router.post(
       await features().then((feature) => feature.create_user),
     );
   },
+  uploadImage.single('userImage'),
   [
     check('roleId', 'RoleId attribute can\'t be empty').notEmpty(),
     check('name', 'Name attribute can\'t be empty').notEmpty(),
@@ -52,7 +54,7 @@ router.post(
     check('email', 'Email attribute can\'t be empty').notEmpty(),
     check('phoneNbr', 'Phone Number attribute can\'t be empty').notEmpty(),
   ],
-  ValidateMiddleware.result,
+  ValidateMiddleware.resultWithMandatoryFile,
   userController.create,
 );
 
@@ -67,13 +69,14 @@ router.put(
       await features().then((feature) => feature.update_user),
     );
   },
+  uploadImage.single('userImage'),
   [
     check('roleId', 'RoleId attribute can\'t be empty').notEmpty(),
     check('name', 'Name attribute can\'t be empty').notEmpty(),
     check('email', 'Email attribute can\'t be empty').notEmpty(),
     check('phoneNbr', 'Phone Number attribute can\'t be empty').notEmpty(),
   ],
-  ValidateMiddleware.result,
+  ValidateMiddleware.resultWithMandatoryFile,
   userController.update,
 );
 

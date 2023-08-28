@@ -36,6 +36,9 @@ module.exports = {
         phoneNbr: {
           type: Sequelize.STRING,
         },
+        file: {
+          type: Sequelize.STRING,
+        },
         lastLogin: {
           type: Sequelize.DATE,
         },
