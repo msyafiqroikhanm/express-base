@@ -32,6 +32,23 @@
         "name":"Delete Feature"
     },
     {
+        "moduleId":1,
+        "name":"View Role"
+    },
+    {
+        "moduleId":1,
+        "name":"Create Role"
+    },
+    {
+        "moduleId":1,
+        "name":"Update Role"
+    },
+    {
+        "moduleId":1,
+        "name":"Delete Role"
+    },
+
+    {
         "moduleId":2,
         "name":"View User"
     },
@@ -50,5 +67,838 @@
     {
         "moduleId":2,
         "name":"Change Password"
+    },
+
+    {
+        "moduleId":3,
+        "name":"View Participant"
+    },
+    {
+        "moduleId":3,
+        "name":"Create Participant"
+    },
+    {
+        "moduleId":3,
+        "name":"Update Participant"
+    },
+    {
+        "moduleId":3,
+        "name":"Delete Participant"
+    },
+    {
+        "moduleId":3,
+        "name":"View Contingent"
+    },
+    {
+        "moduleId":3,
+        "name":"Create Contingent"
+    },
+    {
+        "moduleId":3,
+        "name":"Update Contingent"
+    },
+    {
+        "moduleId":3,
+        "name":"Delete Contingent"
+    },
+    {
+        "moduleId":3,
+        "name":"View Contingent Group"
+    },
+    {
+        "moduleId":3,
+        "name":"Create Contingent Group"
+    },
+    {
+        "moduleId":3,
+        "name":"Update Contingent Group"
+    },
+    {
+        "moduleId":3,
+        "name":"Delete Contingent Group"
+    },
+
+    {
+        "moduleId":4,
+        "name":"View Location"
+    },
+    {
+        "moduleId":4,
+        "name":"Create Location"
+    },
+    {
+        "moduleId":4,
+        "name":"Update Location"
+    },
+    {
+        "moduleId":4,
+        "name":"Delete Location"
+    },
+    {
+        "moduleId":4,
+        "name":"View SubLocation"
+    },
+    {
+        "moduleId":4,
+        "name":"Create SubLocation"
+    },
+    {
+        "moduleId":4,
+        "name":"Update SubLocation"
+    },
+    {
+        "moduleId":4,
+        "name":"Delete SubLocation"
+    },
+    {
+        "moduleId":4,
+        "name":"View Facility"
+    },
+    {
+        "moduleId":4,
+        "name":"Create Facility"
+    },
+    {
+        "moduleId":4,
+        "name":"Update Facility"
+    },
+    {
+        "moduleId":4,
+        "name":"Delete Facility"
+    },
+    {
+        "moduleId":4,
+        "name":"View Room"
+    },
+    {
+        "moduleId":4,
+        "name":"Create Room"
+    },
+    {
+        "moduleId":4,
+        "name":"Update Room"
+    },
+    {
+        "moduleId":4,
+        "name":"Delete Room"
+    },
+    {
+        "moduleId":4,
+        "name":"View Room Night"
+    },
+    {
+        "moduleId":4,
+        "name":"Create Room Night"
+    },
+    {
+        "moduleId":4,
+        "name":"Update Room Night"
+    },
+    {
+        "moduleId":4,
+        "name":"Delete Room Night"
+    },
+
+    {
+        "moduleId":5,
+        "name":"View Vehicle"
+    },
+    {
+        "moduleId":5,
+        "name":"Create Vehicle"
+    },
+    {
+        "moduleId":5,
+        "name":"Update Vehicle"
+    },
+    {
+        "moduleId":5,
+        "name":"Delete Vehicle"
+    },
+    {
+        "moduleId":5,
+        "name":"View Driver"
+    },
+    {
+        "moduleId":5,
+        "name":"Create Driver"
+    },
+    {
+        "moduleId":5,
+        "name":"Update Driver"
+    },
+    {
+        "moduleId":5,
+        "name":"Delete Driver"
+    },
+    {
+        "moduleId":5,
+        "name":"View Vendor"
+    },
+    {
+        "moduleId":5,
+        "name":"Create Vendor"
+    },
+    {
+        "moduleId":5,
+        "name":"Update Vendor"
+    },
+    {
+        "moduleId":5,
+        "name":"Delete Vendor"
+    },
+    {
+        "moduleId":5,
+        "name":"View Vehicle Schedule"
+    },
+    {
+        "moduleId":5,
+        "name":"Create Vehicle Schedule"
+    },
+    {
+        "moduleId":5,
+        "name":"Update Vehicle Schedule"
+    },
+    {
+        "moduleId":5,
+        "name":"Delete Vehicle Schedule"
+    },
+
+    {
+        "moduleId":6,
+        "name":"View Menu"
+    },
+    {
+        "moduleId":6,
+        "name":"Create Menu"
+    },
+    {
+        "moduleId":6,
+        "name":"Update Menu"
+    },
+    {
+        "moduleId":6,
+        "name":"Delete Menu"
+    },
+    {
+        "moduleId":6,
+        "name":"View Kitchen"
+    },
+    {
+        "moduleId":6,
+        "name":"Create Kitchen"
+    },
+    {
+        "moduleId":6,
+        "name":"Update Kitchen"
+    },
+    {
+        "moduleId":6,
+        "name":"Delete Kitchen"
+    },
+    {
+        "moduleId":6,
+        "name":"View Kitchen Target"
+    },
+    {
+        "moduleId":6,
+        "name":"Create Kitchen Target"
+    },
+    {
+        "moduleId":6,
+        "name":"Update Kitchen Target"
+    },
+    {
+        "moduleId":6,
+        "name":"Delete Kitchen Target"
+    },
+    {
+        "moduleId":6,
+        "name":"View Courier"
+    },
+    {
+        "moduleId":6,
+        "name":"Create Courier"
+    },
+    {
+        "moduleId":6,
+        "name":"Update Courier"
+    },
+    {
+        "moduleId":6,
+        "name":"Delete Courier"
+    },
+    {
+        "moduleId":6,
+        "name":"View Food Delivery"
+    },
+    {
+        "moduleId":6,
+        "name":"Create Food Delivery"
+    },
+    {
+        "moduleId":6,
+        "name":"Update Food Delivery"
+    },
+    {
+        "moduleId":6,
+        "name":"Delete Food Delivery"
+    },
+
+    {
+        "moduleId":7,
+        "name":"View Event"
+    },
+    {
+        "moduleId":7,
+        "name":"Create Event"
+    },
+    {
+        "moduleId":7,
+        "name":"Update Event"
+    },
+    {
+        "moduleId":7,
+        "name":"Delete Event"
+    },
+
+    {
+        "moduleId":8,
+        "name":"View Chatbot Response"
+    },
+    {
+        "moduleId":8,
+        "name":"Create Chatbot Response"
+    },
+    {
+        "moduleId":8,
+        "name":"Update Chatbot Response"
+    },
+    {
+        "moduleId":8,
+        "name":"Delete Chatbot Response"
+    },
+    {
+        "moduleId":8,
+        "name":"View Feedback"
+    },
+    {
+        "moduleId":8,
+        "name":"Create Feedback"
+    },
+    {
+        "moduleId":8,
+        "name":"Update Feedback"
+    },
+    {
+        "moduleId":8,
+        "name":"Delete Feedback"
+    },
+    {
+        "moduleId":8,
+        "name":"View FAQ"
+    },
+    {
+        "moduleId":8,
+        "name":"Create FAQ"
+    },
+    {
+        "moduleId":8,
+        "name":"Update FAQ"
+    },
+    {
+        "moduleId":8,
+        "name":"Delete FAQ"
+    },
+    {
+        "moduleId":8,
+        "name":"View Broadcast Template"
+    },
+    {
+        "moduleId":8,
+        "name":"Create Broadcast Template"
+    },
+    {
+        "moduleId":8,
+        "name":"Update Broadcast Template"
+    },
+    {
+        "moduleId":8,
+        "name":"Delete Broadcast Template"
+    },
+    {
+        "moduleId":8,
+        "name":"View Broadcast"
+    },
+    {
+        "moduleId":8,
+        "name":"Create Broadcast"
+    },
+    {
+        "moduleId":8,
+        "name":"Update Broadcast"
+    },
+    {
+        "moduleId":8,
+        "name":"Delete Broadcast"
+    },
+    {
+        "moduleId":8,
+        "name":"Approve Broadcast"
+    },
+    {
+        "moduleId":8,
+        "name":"Reject Broadcast"
+    },
+    {
+        "moduleId":8,
+        "name":"View Information Center"
+    },
+    {
+        "moduleId":8,
+        "name":"Create Information Center"
+    },
+    {
+        "moduleId":8,
+        "name":"Update Information Center"
+    },
+    {
+        "moduleId":8,
+        "name":"Delete Information Center"
+    },
+
+    {
+        "moduleId":9,
+        "name":"View QR"
+    },
+    {
+        "moduleId":9,
+        "name":"Create QR"
+    },
+    {
+        "moduleId":9,
+        "name":"Update QR"
+    },
+    {
+        "moduleId":9,
+        "name":"Delete QR"
+    },
+    {
+        "moduleId":9,
+        "name":"View QR Template"
+    },
+    {
+        "moduleId":9,
+        "name":"Create QR Template"
+    },
+    {
+        "moduleId":9,
+        "name":"Update QR Template"
+    },
+    {
+        "moduleId":9,
+        "name":"Delete QR Template"
+    },
+
+    {
+        "moduleId":10,
+        "name":"View Configuration Category"
+    },
+    {
+        "moduleId":10,
+        "name":"Create Configuration Category"
+    },
+    {
+        "moduleId":10,
+        "name":"Update Configuration Category"
+    },
+    {
+        "moduleId":10,
+        "name":"Delete Configuration Category"
+    },
+    {
+        "moduleId":10,
+        "name":"View QR Type"
+    },
+    {
+        "moduleId":10,
+        "name":"Create QR Type"
+    },
+    {
+        "moduleId":10,
+        "name":"Update QR Type"
+    },
+    {
+        "moduleId":10,
+        "name":"Delete QR Type"
+    },
+    {
+        "moduleId":10,
+        "name":"View Participant Type"
+    },
+    {
+        "moduleId":10,
+        "name":"Create Participant Type"
+    },
+    {
+        "moduleId":10,
+        "name":"Update Participant Type"
+    },
+    {
+        "moduleId":10,
+        "name":"Delete Participant Type"
+    },
+    {
+        "moduleId":10,
+        "name":"View Region"
+    },
+    {
+        "moduleId":10,
+        "name":"Create Region"
+    },
+    {
+        "moduleId":10,
+        "name":"Update Region"
+    },
+    {
+        "moduleId":10,
+        "name":"Delete Region"
+    },
+    {
+        "moduleId":10,
+        "name":"View Group Status"
+    },
+    {
+        "moduleId":10,
+        "name":"Create Group Status"
+    },
+    {
+        "moduleId":10,
+        "name":"Update Group Status"
+    },
+    {
+        "moduleId":10,
+        "name":"Delete Group Status"
+    },
+    {
+        "moduleId":10,
+        "name":"View Location Type"
+    },
+    {
+        "moduleId":10,
+        "name":"Create Location Type"
+    },
+    {
+        "moduleId":10,
+        "name":"Update Location Type"
+    },
+    {
+        "moduleId":10,
+        "name":"Delete Location Type"
+    },
+    {
+        "moduleId":10,
+        "name":"View Room Type"
+    },
+    {
+        "moduleId":10,
+        "name":"Create Room Type"
+    },
+    {
+        "moduleId":10,
+        "name":"Update Room Type"
+    },
+    {
+        "moduleId":10,
+        "name":"Delete Room Type"
+    },
+    {
+        "moduleId":10,
+        "name":"View Room Status"
+    },
+    {
+        "moduleId":10,
+        "name":"Create Room Status"
+    },
+    {
+        "moduleId":10,
+        "name":"Update Room Status"
+    },
+    {
+        "moduleId":10,
+        "name":"Delete Room Status"
+    },
+    {
+        "moduleId":10,
+        "name":"View Lodger Status"
+    },
+    {
+        "moduleId":10,
+        "name":"Create Lodger Status"
+    },
+    {
+        "moduleId":10,
+        "name":"Update Lodger Status"
+    },
+    {
+        "moduleId":10,
+        "name":"Delete Lodger Status"
+    },
+    {
+        "moduleId":10,
+        "name":"View Event Category"
+    },
+    {
+        "moduleId":10,
+        "name":"Create Event Category"
+    },
+    {
+        "moduleId":10,
+        "name":"Update Event Category"
+    },
+    {
+        "moduleId":10,
+        "name":"Delete Event Category"
+    },
+    {
+        "moduleId":10,
+        "name":"View Vehicle Type"
+    },
+    {
+        "moduleId":10,
+        "name":"Create Vehicle Type"
+    },
+    {
+        "moduleId":10,
+        "name":"Update Vehicle Type"
+    },
+    {
+        "moduleId":10,
+        "name":"Delete Vehicle Type"
+    },
+    {
+        "moduleId":10,
+        "name":"View Vehicle Category"
+    },
+    {
+        "moduleId":10,
+        "name":"Create Vehicle Category"
+    },
+    {
+        "moduleId":10,
+        "name":"Update Vehicle Category"
+    },
+    {
+        "moduleId":10,
+        "name":"Delete Vehicle Category"
+    },
+    {
+        "moduleId":10,
+        "name":"View Vehicle Schedule Status"
+    },
+    {
+        "moduleId":10,
+        "name":"Create Vehicle Schedule Status"
+    },
+    {
+        "moduleId":10,
+        "name":"Update Vehicle Schedule Status"
+    },
+    {
+        "moduleId":10,
+        "name":"Delete Vehicle Schedule Status"
+    },
+    {
+        "moduleId":10,
+        "name":"View Passenger Status"
+    },
+    {
+        "moduleId":10,
+        "name":"Create Passenger Status"
+    },
+    {
+        "moduleId":10,
+        "name":"Update Passenger Status"
+    },
+    {
+        "moduleId":10,
+        "name":"Delete Passenger Status"
+    },
+    {
+        "moduleId":10,
+        "name":"View Food Type"
+    },
+    {
+        "moduleId":10,
+        "name":"Create Food Type"
+    },
+    {
+        "moduleId":10,
+        "name":"Update Food Type"
+    },
+    {
+        "moduleId":10,
+        "name":"Delete Food Type"
+    },
+    {
+        "moduleId":10,
+        "name":"View Food Schedule Status"
+    },
+    {
+        "moduleId":10,
+        "name":"Create Food Schedule Status"
+    },
+    {
+        "moduleId":10,
+        "name":"Update Food Schedule Status"
+    },
+    {
+        "moduleId":10,
+        "name":"Delete Food Schedule Status"
+    },
+    {
+        "moduleId":10,
+        "name":"View Feedback Type"
+    },
+    {
+        "moduleId":10,
+        "name":"Create Feedback Type"
+    },
+    {
+        "moduleId":10,
+        "name":"Update Feedback Type"
+    },
+    {
+        "moduleId":10,
+        "name":"Delete Feedback Type"
+    },
+    {
+        "moduleId":10,
+        "name":"View Feedback Target"
+    },
+    {
+        "moduleId":10,
+        "name":"Create Feedback Target"
+    },
+    {
+        "moduleId":10,
+        "name":"Update Feedback Target"
+    },
+    {
+        "moduleId":10,
+        "name":"Delete Feedback Target"
+    },
+    {
+        "moduleId":10,
+        "name":"View Feedback Status"
+    },
+    {
+        "moduleId":10,
+        "name":"Create Feedback Status"
+    },
+    {
+        "moduleId":10,
+        "name":"Update Feedback Status"
+    },
+    {
+        "moduleId":10,
+        "name":"Delete Feedback Status"
+    },
+    {
+        "moduleId":10,
+        "name":"View FAQ Target"
+    },
+    {
+        "moduleId":10,
+        "name":"Create FAQ Target"
+    },
+    {
+        "moduleId":10,
+        "name":"Update FAQ Target"
+    },
+    {
+        "moduleId":10,
+        "name":"Delete FAQ Target"
+    },
+    {
+        "moduleId":10,
+        "name":"View Chatbot Response Type"
+    },
+    {
+        "moduleId":10,
+        "name":"Create Chatbot Response Type"
+    },
+    {
+        "moduleId":10,
+        "name":"Update Chatbot Response Type"
+    },
+    {
+        "moduleId":10,
+        "name":"Delete Chatbot Response Type"
+    },
+    {
+        "moduleId":10,
+        "name":"View Template Category"
+    },
+    {
+        "moduleId":10,
+        "name":"Create Template Category"
+    },
+    {
+        "moduleId":10,
+        "name":"Update Template Category"
+    },
+    {
+        "moduleId":10,
+        "name":"Delete Template Category"
+    },
+    {
+        "moduleId":10,
+        "name":"View Meta Template Category"
+    },
+    {
+        "moduleId":10,
+        "name":"Create Meta Template Category"
+    },
+    {
+        "moduleId":10,
+        "name":"Update Meta Template Category"
+    },
+    {
+        "moduleId":10,
+        "name":"Delete Meta Template Category"
+    },
+    {
+        "moduleId":10,
+        "name":"View Information Center Target Type"
+    },
+    {
+        "moduleId":10,
+        "name":"Create Information Center Target Type"
+    },
+    {
+        "moduleId":10,
+        "name":"Update Information Center Target Type"
+    },
+    {
+        "moduleId":10,
+        "name":"Delete Information Center Target Type"
+    },
+
+    {
+        "moduleId":11,
+        "name":"View System Configuration"
+    },
+    {
+        "moduleId":11,
+        "name":"Create System Configuration"
+    },
+    {
+        "moduleId":11,
+        "name":"Update System Configuration"
+    },
+    {
+        "moduleId":11,
+        "name":"Delete System Configuration"
     }
 ]
