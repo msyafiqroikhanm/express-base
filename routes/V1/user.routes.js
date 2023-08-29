@@ -15,6 +15,10 @@ router.get(
       next,
       await features().then((feature) => [
         feature.view_user,
+        feature.create_user,
+        feature.update_user,
+        feature.delete_user,
+        feature.change_password,
       ]),
     );
   },
@@ -31,6 +35,7 @@ router.get(
       await features().then((feature) => [
         feature.view_user,
         feature.update_user,
+        feature.delete_user,
         feature.change_password,
       ]),
     );

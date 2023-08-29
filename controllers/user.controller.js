@@ -3,7 +3,7 @@ const deleteFile = require('../helpers/deleteFile.helper');
 const ResponseFormatter = require('../helpers/responseFormatter.helper');
 const {
   selectAllUsers, createUser, validateUserInputs, updateUser,
-  deleteUser, validatePasswordInputs, updateUserPassword,
+  deleteUser, validatePasswordInputs, updateUserPassword, selectDetailUser,
 } = require('../services/user.service');
 
 class User {
@@ -22,6 +22,13 @@ class User {
   static async getDetail(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+
+      const data = await selectDetailUser(req.params.id);
+      if (!data.success) {
+        return ResponseFormatter.error404(res, 'Data Not Found', data.message);
+      }
+
+      return ResponseFormatter.success200(res, data.message, data.content);
     } catch (error) {
       next(error);
     }
