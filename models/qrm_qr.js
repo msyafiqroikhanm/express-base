@@ -14,7 +14,8 @@ module.exports = (sequelize, DataTypes) => {
     static associate(models) {
       QRM_QR.belongsTo(models.QRM_QRTemplate, { foreignKey: 'templateId', as: 'Template' });
 
-      QRM_QR.hasOne(models.USR_User, { foreignKey: 'qrId', as: 'Qr' });
+      QRM_QR.hasOne(models.USR_User, { foreignKey: 'qrId', as: 'userQr' });
+      QRM_QR.hasOne(models.PAR_Participant, { foreignKey: 'qrId', as: 'participantQr' });
     }
   }
   QRM_QR.init({

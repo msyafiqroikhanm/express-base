@@ -29,3 +29,10 @@ sequelize model:generate --name QRM_QR --attributes typeId:integer, templateId:i
 sequelize model:generate --name REF_EventCategory --attributes name:string
 sequelize model:generate --name ENV_Event --attributes picId:integer, categoryId:integer, locationId:integer, name:string
 sequelize model:generate --name ENV_TimeEvent --attributes eventId:integer, start:date, end:date
+sequelize model:generate --name REF_ParticipantType --attributes name:string
+sequelize model:generate --name REF_GroupStatus --attributes name:string
+sequelize model:generate --name REF_IdentityType --attributes name:string
+sequelize model:generate --name PAR_Contingent --attributes regionId:integer, name:string
+sequelize model:generate --name PAR_ContingentGroup --attributes eventId:integer, statusId:integer, contingentId:integer, name:string
+sequelize model:generate --name PAR_Participant --attributes groupId:integer, qrId:integer, typeId:integer, identityTypeId:integer, name:string, gender:boolean, birthDate:dateonly, identityNo:string, phoneNbr:string, email:string, address:text
+sequelize model:generate --name PAR_ParticipantTracking --attributes participantId:integer, latitude:string, longtitude:string, accuracy:string, time:date

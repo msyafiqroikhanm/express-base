@@ -5,24 +5,21 @@ const {
 } = require('sequelize');
 
 module.exports = (sequelize, DataTypes) => {
-  class REF_Region extends Model {
+  class REF_IdentityType extends Model {
     /**
      * Helper method for defining associations.
      * This method is not a part of Sequelize lifecycle.
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
-      REF_Region.hasMany(models.PAR_Contingent, { foreignKey: 'regionId', as: 'contingents' });
+      REF_IdentityType.hasMany(models.PAR_Participant, { foreignKey: 'identityTypeId', as: 'users' });
     }
   }
-  REF_Region.init({
-    name: {
-      type: DataTypes.STRING,
-      allowNull: false,
-    },
+  REF_IdentityType.init({
+    name: DataTypes.STRING,
   }, {
     sequelize,
-    modelName: 'REF_Region',
+    modelName: 'REF_IdentityType',
   });
-  return REF_Region;
+  return REF_IdentityType;
 };
