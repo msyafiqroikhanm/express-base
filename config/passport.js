@@ -83,7 +83,10 @@ passport.use(new JWTStrategy(opts, async (jwtPayload, done) => {
 
     // parsing userData
     userData.Role.dataValues.modules = groupedArray;
+    userData.Role.modules = groupedArray;
     delete userData.Role.dataValues.USR_Features;
+
+    console.log(JSON.stringify(userData, null, 2));
     return done(null, userData);
   } catch (err) {
     return done(err, false);
