@@ -7,11 +7,34 @@ const Authentication = require('../../middlewares/auth.middleware');
 
 router.get(
   '/config-categories',
+  async (req, res, next) => {
+    Authentication.authenticate(
+      req,
+      res,
+      next,
+      await features().then((feature) => [
+        feature.view_configuration_category,
+        feature.create_configuration_category,
+        feature.update_configuration_category,
+        feature.delete_configuration_category,
+      ]),
+    );
+  },
   SysConfigCategory.getAll,
 );
 
 router.post(
   '/config-categories/add',
+  async (req, res, next) => {
+    Authentication.authenticate(
+      req,
+      res,
+      next,
+      await features().then((feature) => [
+        feature.create_configuration_category,
+      ]),
+    );
+  },
   [
     check('name', 'Name attribute can\'t be empty').notEmpty(),
   ],
@@ -21,6 +44,16 @@ router.post(
 
 router.put(
   '/config-categories/:id',
+  async (req, res, next) => {
+    Authentication.authenticate(
+      req,
+      res,
+      next,
+      await features().then((feature) => [
+        feature.update_configuration_category,
+      ]),
+    );
+  },
   [
     check('name', 'Name attribute can\'t be empty').notEmpty(),
   ],
@@ -30,21 +63,66 @@ router.put(
 
 router.delete(
   '/config-categories/:id',
+  async (req, res, next) => {
+    Authentication.authenticate(
+      req,
+      res,
+      next,
+      await features().then((feature) => [
+        feature.delete_configuration_category,
+      ]),
+    );
+  },
   SysConfigCategory.delete,
 );
 
 router.get(
   '/config-categories/:id',
+  async (req, res, next) => {
+    Authentication.authenticate(
+      req,
+      res,
+      next,
+      await features().then((feature) => [
+        feature.view_configuration_category,
+        feature.update_configuration_category,
+        feature.delete_configuration_category,
+      ]),
+    );
+  },
   SysConfigCategory.getDetail,
 );
 
 router.get(
   '/qr-types',
+  async (req, res, next) => {
+    Authentication.authenticate(
+      req,
+      res,
+      next,
+      await features().then((feature) => [
+        feature.view_qr_type,
+        feature.create_qr_type,
+        feature.update_qr_type,
+        feature.delete_qr_type,
+      ]),
+    );
+  },
   QrType.getAll,
 );
 
 router.post(
   '/qr-types',
+  async (req, res, next) => {
+    Authentication.authenticate(
+      req,
+      res,
+      next,
+      await features().then((feature) => [
+        feature.create_qr_type,
+      ]),
+    );
+  },
   [
     check('name', 'Name attribute can\'t be empty').notEmpty(),
     check('label', 'Label attribute can\'t be empty').notEmpty(),
@@ -55,6 +133,16 @@ router.post(
 
 router.put(
   '/qr-types/:id',
+  async (req, res, next) => {
+    Authentication.authenticate(
+      req,
+      res,
+      next,
+      await features().then((feature) => [
+        feature.update_qr_type,
+      ]),
+    );
+  },
   [
     check('name', 'Name attribute can\'t be empty').notEmpty(),
     check('label', 'Label attribute can\'t be empty').notEmpty(),
@@ -65,11 +153,33 @@ router.put(
 
 router.delete(
   '/qr-types/:id',
+  async (req, res, next) => {
+    Authentication.authenticate(
+      req,
+      res,
+      next,
+      await features().then((feature) => [
+        feature.delete_qr_type,
+      ]),
+    );
+  },
   QrType.delete,
 );
 
 router.get(
   '/qr-types/:id',
+  async (req, res, next) => {
+    Authentication.authenticate(
+      req,
+      res,
+      next,
+      await features().then((feature) => [
+        feature.view_qr_type,
+        feature.update_qr_type,
+        feature.delete_qr_type,
+      ]),
+    );
+  },
   QrType.getDetail,
 );
 
