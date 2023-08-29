@@ -1,0 +1,14 @@
+[
+  {
+    "picId":1,
+    "categoryId":1,
+    "locationId":1,
+    "name":"Children's Choir Competition"
+  },
+  {
+    "picId":1,
+    "categoryId":2,
+    "locationId":2,
+    "name":"Singing Competition"
+  }
+]

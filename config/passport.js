@@ -34,7 +34,7 @@ passport.use(new JWTStrategy(opts, async (jwtPayload, done) => {
               },
               include: {
                 model: USR_Module,
-                attributes: ['name'],
+                attributes: ['id', 'name'],
               },
             },
           },
@@ -45,14 +45,45 @@ passport.use(new JWTStrategy(opts, async (jwtPayload, done) => {
       return done(null, false, { message: 'User not found!' });
     }
 
-    // parsing userData
+    // get parsed feature and module in user
+    const parsedFeatures = [];
     userData.Role.USR_Features.forEach((feature) => {
-      feature.dataValues.module = feature.USR_Module.name;
-      feature.module = feature.USR_Module.name;
-
-      delete feature.USR_Module;
-      delete feature.dataValues.USR_Module;
+      parsedFeatures.push({
+        id: feature.dataValues.id,
+        name: feature.dataValues.name,
+        moduleId: feature.USR_Module.dataValues.id,
+        modulesName: feature.USR_Module.dataValues.name,
+      });
     });
+
+    // getting array that group by module
+    const groupedArray = parsedFeatures.reduce((result, item) => {
+      const existingModule = result.find((module) => module.id === item.moduleId);
+
+      if (existingModule) {
+        existingModule.features.push({
+          id: item.id,
+          name: item.name,
+        });
+      } else {
+        result.push({
+          id: item.moduleId,
+          name: item.modulesName,
+          features: [
+            {
+              id: item.id,
+              name: item.name,
+            },
+          ],
+        });
+      }
+
+      return result;
+    }, []);
+
+    // parsing userData
+    userData.Role.dataValues.modules = groupedArray;
+    delete userData.Role.dataValues.USR_Features;
     return done(null, userData);
   } catch (err) {
     return done(err, false);
