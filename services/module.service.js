@@ -1,4 +1,5 @@
-const { USR_Module } = require('../models');
+const { Op } = require('sequelize');
+const { USR_Module, USR_Feature, USR_RoleFeature } = require('../models');
 
 const selectAllModules = async () => {
   const modules = await USR_Module.findAll();
@@ -61,6 +62,20 @@ const deleteModule = async (id) => {
     const { name } = moduleInstance.dataValues;
 
     await moduleInstance.destroy();
+
+    // delete all feature data and feature association in juntion table
+    const deletedFeature = await USR_Feature.findAll({
+      where: { moduleId: moduleInstance.id },
+    });
+    const deletedFeatureId = deletedFeature.map((feature) => feature.id);
+
+    await USR_RoleFeature.destroy({
+      where: { featureId: { [Op.in]: deletedFeatureId } },
+    });
+
+    await USR_Feature.destroy({
+      where: { moduleId: moduleInstance.id },
+    });
 
     return {
       success: true,
