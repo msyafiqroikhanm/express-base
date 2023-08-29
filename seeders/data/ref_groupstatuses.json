@@ -1,0 +1,9 @@
+[
+  {"name":"Active"},
+  {"name":"Inactive"},
+  {"name":"Group Stage"},
+  {"name":"Semi-Final"},
+  {"name":"Final"},
+  {"name":"Win"},
+  {"name":"Lose"}
+]
