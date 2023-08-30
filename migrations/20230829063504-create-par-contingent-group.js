@@ -39,7 +39,6 @@ module.exports = {
     });
   },
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable('PAR_ContingentGroups');
     await queryInterface.dropTable('PAR_Groups');
   },
 };
