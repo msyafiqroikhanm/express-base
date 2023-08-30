@@ -76,7 +76,7 @@ module.exports = {
 
     //* REF_IdentityTypes
     const ref_identitytypes = JSON.parse(
-      fs.readFileSync('./seeders/data/ref_participanttypes.json'),
+      fs.readFileSync('./seeders/data/ref_identitytypes.json'),
     );
     const identityTypes = ref_identitytypes.map((element) => ({
       name: element.name,
