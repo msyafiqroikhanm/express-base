@@ -1,7 +1,7 @@
 const router = require('express').Router();
 const { check } = require('express-validator');
 const features = require('../../helpers/features.helper');
-const EventController = require('../../controllers/event.controller');
+const GroupController = require('../../controllers/group.controller');
 const ValidateMiddleware = require('../../middlewares/validate.middleware');
 const Authentication = require('../../middlewares/auth.middleware');
 
@@ -13,39 +13,14 @@ router.get(
       res,
       next,
       await features().then((feature) => [
-        feature.view_event,
-        feature.create_event,
-        feature.update_event,
-        feature.delete_event,
+        feature.view_group,
         feature.create_group,
         feature.update_group,
+        feature.delete_group,
       ]),
     );
   },
-  EventController.getAll,
-);
-
-router.post(
-  '/',
-  async (req, res, next) => {
-    Authentication.authenticate(
-      req,
-      res,
-      next,
-      await features().then((feature) => [
-        feature.create_event,
-      ]),
-    );
-  },
-  [
-    check('picId', 'Pic Id attribute can\'t be empty').notEmpty(),
-    check('categoryId', 'Category Id attribute can\'t be empty').notEmpty(),
-    check('locationId', 'Location Id attribute can\'t be empty').notEmpty(),
-    check('name', 'Name attribute can\'t be empty').notEmpty(),
-    check('schedules', 'Schedules attribute can\'t be empty').notEmpty(),
-  ],
-  ValidateMiddleware.result,
-  EventController.create,
+  GroupController.getAll,
 );
 
 router.get(
@@ -56,13 +31,35 @@ router.get(
       res,
       next,
       await features().then((feature) => [
-        feature.view_event,
-        feature.update_event,
-        feature.delete_event,
+        feature.view_group,
+        feature.update_group,
+        feature.delete_group,
       ]),
     );
   },
-  EventController.getDetail,
+  GroupController.getDetail,
+);
+
+router.post(
+  '/',
+  async (req, res, next) => {
+    Authentication.authenticate(
+      req,
+      res,
+      next,
+      await features().then((feature) => [
+        feature.create_group,
+      ]),
+    );
+  },
+  [
+    check('eventId', 'Event Id attribute can\'t be empty').notEmpty(),
+    check('contingentId', 'Contingent Id attribute can\'t be empty').notEmpty(),
+    check('statusId', 'Status Id attribute can\'t be empty').notEmpty(),
+    check('name', 'Name attribute can\'t be empty').notEmpty(),
+  ],
+  ValidateMiddleware.result,
+  GroupController.create,
 );
 
 router.put(
@@ -73,19 +70,18 @@ router.put(
       res,
       next,
       await features().then((feature) => [
-        feature.update_event,
+        feature.update_group,
       ]),
     );
   },
   [
-    check('picId', 'Pic Id attribute can\'t be empty').notEmpty(),
-    check('categoryId', 'Category Id attribute can\'t be empty').notEmpty(),
-    check('locationId', 'Location Id attribute can\'t be empty').notEmpty(),
+    check('eventId', 'Event Id attribute can\'t be empty').notEmpty(),
+    check('contingentId', 'Contingent Id attribute can\'t be empty').notEmpty(),
+    check('statusId', 'Status Id attribute can\'t be empty').notEmpty(),
     check('name', 'Name attribute can\'t be empty').notEmpty(),
-    check('schedules', 'Schedules attribute can\'t be empty').notEmpty(),
   ],
   ValidateMiddleware.result,
-  EventController.update,
+  GroupController.update,
 );
 
 router.delete(
@@ -96,11 +92,11 @@ router.delete(
       res,
       next,
       await features().then((feature) => [
-        feature.delete_event,
+        feature.delete_group,
       ]),
     );
   },
-  EventController.delete,
+  GroupController.delete,
 );
 
 module.exports = router;

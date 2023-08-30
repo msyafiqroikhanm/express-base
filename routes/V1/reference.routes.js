@@ -375,6 +375,8 @@ router.get(
         feature.create_group_status,
         feature.update_group_status,
         feature.delete_group_status,
+        feature.create_group,
+        feature.update_group,
       ]),
     );
   },

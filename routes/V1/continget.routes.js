@@ -17,6 +17,8 @@ router.get(
         feature.create_contingent,
         feature.update_contingent,
         feature.delete_contingent,
+        feature.create_group,
+        feature.update_group,
       ]),
     );
   },
