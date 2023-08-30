@@ -550,6 +550,22 @@
     },
     {
         "moduleId":10,
+        "name":"View Identity Type"
+    },
+    {
+        "moduleId":10,
+        "name":"Create Identity Type"
+    },
+    {
+        "moduleId":10,
+        "name":"Update Identity Type"
+    },
+    {
+        "moduleId":10,
+        "name":"Delete Identity Type"
+    },
+    {
+        "moduleId":10,
         "name":"View Region"
     },
     {

@@ -1,7 +1,9 @@
 const router = require('express').Router();
 const { check } = require('express-validator');
 const features = require('../../helpers/features.helper');
-const { SysConfigCategory, QrType, EventCategory } = require('../../controllers/reference.controller');
+const {
+  SysConfigCategory, QrType, EventCategory, Region, GroupStatus, ParticipantType, IdentityType,
+} = require('../../controllers/reference.controller');
 const ValidateMiddleware = require('../../middlewares/validate.middleware');
 const Authentication = require('../../middlewares/auth.middleware');
 
@@ -269,6 +271,358 @@ router.delete(
     );
   },
   EventCategory.delete,
+);
+
+router.get(
+  '/regions',
+  async (req, res, next) => {
+    Authentication.authenticate(
+      req,
+      res,
+      next,
+      await features().then((feature) => [
+        feature.view_region,
+        feature.create_region,
+        feature.update_region,
+        feature.delete_region,
+      ]),
+    );
+  },
+  Region.getAll,
+);
+
+router.get(
+  '/regions/:id',
+  async (req, res, next) => {
+    Authentication.authenticate(
+      req,
+      res,
+      next,
+      await features().then((feature) => [
+        feature.view_region,
+        feature.update_region,
+        feature.delete_region,
+      ]),
+    );
+  },
+  Region.getDetail,
+);
+
+router.post(
+  '/regions',
+  async (req, res, next) => {
+    Authentication.authenticate(
+      req,
+      res,
+      next,
+      await features().then((feature) => [
+        feature.create_region,
+      ]),
+    );
+  },
+  [
+    check('name', 'Name attribute can\'t be empty').notEmpty(),
+  ],
+  ValidateMiddleware.result,
+  Region.create,
+);
+
+router.put(
+  '/regions/:id',
+  async (req, res, next) => {
+    Authentication.authenticate(
+      req,
+      res,
+      next,
+      await features().then((feature) => [
+        feature.update_region,
+      ]),
+    );
+  },
+  [
+    check('name', 'Name attribute can\'t be empty').notEmpty(),
+  ],
+  ValidateMiddleware.result,
+  Region.update,
+);
+
+router.delete(
+  '/regions/:id',
+  async (req, res, next) => {
+    Authentication.authenticate(
+      req,
+      res,
+      next,
+      await features().then((feature) => [
+        feature.delete_region,
+      ]),
+    );
+  },
+  Region.delete,
+);
+
+router.get(
+  '/group-statuses',
+  async (req, res, next) => {
+    Authentication.authenticate(
+      req,
+      res,
+      next,
+      await features().then((feature) => [
+        feature.view_group_status,
+        feature.create_group_status,
+        feature.update_group_status,
+        feature.delete_group_status,
+      ]),
+    );
+  },
+  GroupStatus.getAll,
+);
+
+router.get(
+  '/group-statuses/:id',
+  async (req, res, next) => {
+    Authentication.authenticate(
+      req,
+      res,
+      next,
+      await features().then((feature) => [
+        feature.view_group_status,
+        feature.update_group_status,
+        feature.delete_group_status,
+      ]),
+    );
+  },
+  GroupStatus.getDetail,
+);
+
+router.post(
+  '/group-statuses',
+  async (req, res, next) => {
+    Authentication.authenticate(
+      req,
+      res,
+      next,
+      await features().then((feature) => [
+        feature.create_group_status,
+      ]),
+    );
+  },
+  [
+    check('name', 'Name attribute can\'t be empty').notEmpty(),
+  ],
+  ValidateMiddleware.result,
+  GroupStatus.create,
+);
+
+router.put(
+  '/group-statuses/:id',
+  async (req, res, next) => {
+    Authentication.authenticate(
+      req,
+      res,
+      next,
+      await features().then((feature) => [
+        feature.update_group_status,
+      ]),
+    );
+  },
+  [
+    check('name', 'Name attribute can\'t be empty').notEmpty(),
+  ],
+  ValidateMiddleware.result,
+  GroupStatus.update,
+);
+
+router.delete(
+  '/group-statuses/:id',
+  async (req, res, next) => {
+    Authentication.authenticate(
+      req,
+      res,
+      next,
+      await features().then((feature) => [
+        feature.delete_group_status,
+      ]),
+    );
+  },
+  GroupStatus.delete,
+);
+
+router.get(
+  '/participant-types',
+  async (req, res, next) => {
+    Authentication.authenticate(
+      req,
+      res,
+      next,
+      await features().then((feature) => [
+        feature.view_participant_type,
+        feature.create_participant_type,
+        feature.update_participant_type,
+        feature.delete_participant_type,
+      ]),
+    );
+  },
+  ParticipantType.getAll,
+);
+
+router.get(
+  '/participant-types/:id',
+  async (req, res, next) => {
+    Authentication.authenticate(
+      req,
+      res,
+      next,
+      await features().then((feature) => [
+        feature.view_participant_type,
+        feature.update_participant_type,
+        feature.delete_participant_type,
+      ]),
+    );
+  },
+  ParticipantType.getDetail,
+);
+
+router.post(
+  '/participant-types',
+  async (req, res, next) => {
+    Authentication.authenticate(
+      req,
+      res,
+      next,
+      await features().then((feature) => [
+        feature.create_participant_type,
+      ]),
+    );
+  },
+  [
+    check('name', 'Name attribute can\'t be empty').notEmpty(),
+  ],
+  ValidateMiddleware.result,
+  ParticipantType.create,
+);
+
+router.put(
+  '/participant-types/:id',
+  async (req, res, next) => {
+    Authentication.authenticate(
+      req,
+      res,
+      next,
+      await features().then((feature) => [
+        feature.update_participant_type,
+      ]),
+    );
+  },
+  [
+    check('name', 'Name attribute can\'t be empty').notEmpty(),
+  ],
+  ValidateMiddleware.result,
+  ParticipantType.update,
+);
+
+router.delete(
+  '/participant-types/:id',
+  async (req, res, next) => {
+    Authentication.authenticate(
+      req,
+      res,
+      next,
+      await features().then((feature) => [
+        feature.delete_participant_type,
+      ]),
+    );
+  },
+  ParticipantType.delete,
+);
+
+router.get(
+  '/identity-types',
+  async (req, res, next) => {
+    Authentication.authenticate(
+      req,
+      res,
+      next,
+      await features().then((feature) => [
+        feature.view_identity_type,
+        feature.create_identity_type,
+        feature.update_identity_type,
+        feature.delete_identity_type,
+      ]),
+    );
+  },
+  IdentityType.getAll,
+);
+
+router.get(
+  '/identity-types/:id',
+  async (req, res, next) => {
+    Authentication.authenticate(
+      req,
+      res,
+      next,
+      await features().then((feature) => [
+        feature.view_identity_type,
+        feature.update_identity_type,
+        feature.delete_identity_type,
+      ]),
+    );
+  },
+  IdentityType.getDetail,
+);
+
+router.post(
+  '/identity-types',
+  async (req, res, next) => {
+    Authentication.authenticate(
+      req,
+      res,
+      next,
+      await features().then((feature) => [
+        feature.create_identity_type,
+      ]),
+    );
+  },
+  [
+    check('name', 'Name attribute can\'t be empty').notEmpty(),
+  ],
+  ValidateMiddleware.result,
+  IdentityType.create,
+);
+
+router.put(
+  '/identity-types/:id',
+  async (req, res, next) => {
+    Authentication.authenticate(
+      req,
+      res,
+      next,
+      await features().then((feature) => [
+        feature.update_identity_type,
+      ]),
+    );
+  },
+  [
+    check('name', 'Name attribute can\'t be empty').notEmpty(),
+  ],
+  ValidateMiddleware.result,
+  IdentityType.update,
+);
+
+router.delete(
+  '/identity-types/:id',
+  async (req, res, next) => {
+    Authentication.authenticate(
+      req,
+      res,
+      next,
+      await features().then((feature) => [
+        feature.delete_identity_type,
+      ]),
+    );
+  },
+  IdentityType.delete,
 );
 
 module.exports = router;

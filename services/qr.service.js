@@ -168,6 +168,7 @@ const updateQR = async (id, form, file) => {
     qrInstance.code = code;
     qrInstance.rawFile = rawFile;
     qrInstance.combineFile = combineFile;
+    qrInstance.templateId = templateId;
     await qrInstance.save();
   }
   return { success: true, message: 'Success Updating QR', content: qrInstance };

@@ -1,0 +1,20 @@
+[
+  {
+    "eventId":1,
+    "contingentId":1,
+    "statusId":1,
+    "name":"Biru 1 Choir Female"
+  },
+  {
+    "eventId":1,
+    "contingentId":1,
+    "statusId":1,
+    "name":"Biru 1 Choir Male"
+  },
+  {
+    "eventId":2,
+    "contingentId":3,
+    "statusId":2,
+    "name":"Merah 1 Choir Male"
+  }
+]

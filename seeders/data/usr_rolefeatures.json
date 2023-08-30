@@ -221,5 +221,9 @@
     {"roleId": 1, "featureId": 220},
     {"roleId": 1, "featureId": 221},
     {"roleId": 1, "featureId": 222},
-    {"roleId": 1, "featureId": 223}
+    {"roleId": 1, "featureId": 223},
+    {"roleId": 1, "featureId": 224},
+    {"roleId": 1, "featureId": 225},
+    {"roleId": 1, "featureId": 226},
+    {"roleId": 1, "featureId": 227}
 ]
