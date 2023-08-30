@@ -5,28 +5,22 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable('PAR_Groups', {
+    await queryInterface.createTable('PAR_GroupMembers', {
       id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
         type: Sequelize.INTEGER,
       },
-      eventId: {
+      groupId: {
         type: Sequelize.INTEGER,
         allowNull: false,
         primaryKey: true,
       },
-      contingentId: {
+      participantId: {
         type: Sequelize.INTEGER,
         allowNull: false,
         primaryKey: true,
-      },
-      statusId: {
-        type: Sequelize.INTEGER,
-      },
-      name: {
-        type: Sequelize.STRING,
       },
       createdAt: {
         allowNull: false,
@@ -39,7 +33,6 @@ module.exports = {
     });
   },
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable('PAR_ContingentGroups');
-    await queryInterface.dropTable('PAR_Groups');
+    await queryInterface.dropTable('PAR_GroupMembers');
   },
 };

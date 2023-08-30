@@ -5,21 +5,27 @@ const {
 } = require('sequelize');
 
 module.exports = (sequelize, DataTypes) => {
-  class PAR_ContingentGroup extends Model {
+  class PAR_Group extends Model {
     /**
      * Helper method for defining associations.
      * This method is not a part of Sequelize lifecycle.
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
-      PAR_ContingentGroup.belongsTo(models.ENV_Event, { foreignKey: 'eventId' });
-      PAR_ContingentGroup.belongsTo(models.PAR_Contingent, { foreignKey: 'contingetId' });
-      PAR_ContingentGroup.belongsTo(models.REF_GroupStatus, { foreignKey: 'statusId', as: 'status' });
+      PAR_Group.belongsToMany(models.PAR_Participant, {
+        through: 'PAR_GroupMember',
+        foreignKey: 'groupId',
+        otherKey: 'participantId',
+      });
 
-      PAR_ContingentGroup.hasMany(models.PAR_Participant, { foreignKey: 'groupId', as: 'participants' });
+      PAR_Group.belongsTo(models.ENV_Event, { foreignKey: 'eventId' });
+      PAR_Group.belongsTo(models.PAR_Contingent, { foreignKey: 'contingetId' });
+      PAR_Group.belongsTo(models.REF_GroupStatus, { foreignKey: 'statusId', as: 'status' });
+
+      PAR_Group.hasMany(models.PAR_GroupMember, { foreignKey: 'groupId' });
     }
   }
-  PAR_ContingentGroup.init({
+  PAR_Group.init({
     eventId: {
       type: DataTypes.INTEGER,
       allowNull: false,
@@ -34,7 +40,7 @@ module.exports = (sequelize, DataTypes) => {
     name: DataTypes.STRING,
   }, {
     sequelize,
-    modelName: 'PAR_ContingentGroup',
+    modelName: 'PAR_Group',
   });
-  return PAR_ContingentGroup;
+  return PAR_Group;
 };

@@ -12,14 +12,23 @@ module.exports = (sequelize, DataTypes) => {
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
-      PAR_Participant.belongsTo(models.PAR_ContingentGroup, { foreignKey: 'groupId', as: 'group' });
+      PAR_Participant.belongsToMany(models.PAR_Group, {
+        through: 'PAR_GroupMember',
+        foreignKey: 'participantId',
+        otherKey: 'groupId',
+      });
+
+      PAR_Participant.belongsTo(models.PAR_Contingent, { foreignKey: 'contingentId', as: 'contingent' });
       PAR_Participant.belongsTo(models.QRM_QR, { foreignKey: 'qrId', as: 'qr' });
       PAR_Participant.belongsTo(models.REF_ParticipantType, { foreignKey: 'typeId', as: 'participantType' });
       PAR_Participant.belongsTo(models.REF_IdentityType, { foreignKey: 'identityTypeId', as: 'identityType' });
+
+      PAR_Participant.hasMany(models.PAR_GroupMember, { foreignKey: 'participantId' });
+      PAR_Participant.hasMany(models.PAR_ParticipantTracking, { foreignKey: 'participantId' });
     }
   }
   PAR_Participant.init({
-    groupId: DataTypes.INTEGER,
+    contingentId: DataTypes.INTEGER,
     qrId: DataTypes.INTEGER,
     typeId: DataTypes.INTEGER,
     identityTypeId: DataTypes.INTEGER,

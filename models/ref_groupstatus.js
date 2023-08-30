@@ -12,7 +12,7 @@ module.exports = (sequelize, DataTypes) => {
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
-      REF_GroupStatus.hasMany(models.PAR_ContingentGroup, { foreignKey: 'statusId', as: 'groups' });
+      REF_GroupStatus.hasMany(models.PAR_Group, { foreignKey: 'statusId', as: 'groups' });
     }
   }
   REF_GroupStatus.init({

@@ -20,7 +20,7 @@ module.exports = {
     }));
     await queryInterface.bulkInsert('PAR_Contingents', identityTypes);
 
-    //* PAR_ContingentGroups
+    //* PAR_Groups
     const par_contingentgroups = JSON.parse(
       fs.readFileSync('./seeders/data/par_contingentgroups.json'),
     );
@@ -33,7 +33,7 @@ module.exports = {
       createdAt: new Date(),
       updatedAt: new Date(),
     }));
-    await queryInterface.bulkInsert('PAR_ContingentGroups', contingentGroups);
+    await queryInterface.bulkInsert('PAR_Groups', contingentGroups);
   },
 
   async down(queryInterface, Sequelize) {
@@ -41,7 +41,7 @@ module.exports = {
       truncate: true,
       restartIdentity: true,
     });
-    await queryInterface.bulkDelete('PAR_ContingentGroups', null, {
+    await queryInterface.bulkDelete('PAR_Groups', null, {
       truncate: true,
       restartIdentity: true,
     });

@@ -12,15 +12,10 @@ module.exports = (sequelize, DataTypes) => {
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
-      PAR_Contingent.belongsToMany(models.ENV_Event, {
-        through: 'PAR_ContingentGroup',
-        foreignKey: 'contingentId',
-        otherKey: 'eventId',
-      });
-
       PAR_Contingent.belongsTo(models.REF_Region, { foreignKey: 'regionId', as: 'region' });
 
-      PAR_Contingent.hasMany(models.PAR_ContingentGroup, { foreignKey: 'contingentId' });
+      PAR_Contingent.hasMany(models.PAR_Group, { foreignKey: 'contingentId' });
+      PAR_Contingent.hasMany(models.PAR_Participant, { foreignKey: 'groupId', as: 'participants' });
     }
   }
   PAR_Contingent.init({
