@@ -14,13 +14,9 @@ module.exports = {
       },
       eventId: {
         type: Sequelize.INTEGER,
-        allowNull: false,
-        primaryKey: true,
       },
       contingentId: {
         type: Sequelize.INTEGER,
-        allowNull: false,
-        primaryKey: true,
       },
       statusId: {
         type: Sequelize.INTEGER,

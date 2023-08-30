@@ -28,13 +28,9 @@ module.exports = (sequelize, DataTypes) => {
   PAR_Group.init({
     eventId: {
       type: DataTypes.INTEGER,
-      allowNull: false,
-      primaryKey: true,
     },
     contingentId: {
       type: DataTypes.INTEGER,
-      allowNull: false,
-      primaryKey: true,
     },
     statusId: DataTypes.INTEGER,
     name: DataTypes.STRING,
