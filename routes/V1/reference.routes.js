@@ -285,6 +285,8 @@ router.get(
         feature.create_region,
         feature.update_region,
         feature.delete_region,
+        feature.create_contingent,
+        feature.update_contingent,
       ]),
     );
   },
