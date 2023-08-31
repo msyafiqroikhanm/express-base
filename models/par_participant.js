@@ -39,6 +39,7 @@ module.exports = (sequelize, DataTypes) => {
     phoneNbr: DataTypes.STRING,
     email: DataTypes.STRING,
     address: DataTypes.TEXT,
+    file: DataTypes.STRING,
   }, {
     sequelize,
     modelName: 'PAR_Participant',

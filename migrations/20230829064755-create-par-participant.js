@@ -47,6 +47,9 @@ module.exports = {
         address: {
           type: Sequelize.TEXT,
         },
+        file: {
+          type: Sequelize.STRING,
+        },
         deletedAt: {
           type: Sequelize.DATE,
         },
