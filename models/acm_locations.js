@@ -3,7 +3,7 @@
 const { Model } = require('sequelize');
 
 module.exports = (sequelize, DataTypes) => {
-  class ACM_Locations extends Model {
+  class ACM_Location extends Model {
     /**
      * Helper method for defining associations.
      * This method is not a part of Sequelize lifecycle.
@@ -12,35 +12,35 @@ module.exports = (sequelize, DataTypes) => {
     static associate(models) {
       // define association here
       // * Self Reference
-      ACM_Locations.belongsTo(models.ACM_Locations, {
+      ACM_Location.belongsTo(models.ACM_Location, {
         foreignKey: 'parentLocationId',
         as: 'parentLocation',
       });
-      ACM_Locations.hasMany(models.ACM_Locations, {
+      ACM_Location.hasMany(models.ACM_Location, {
         foreignKey: 'parentLocationId',
         as: 'childLocation',
       });
 
       //* PIC
-      ACM_Locations.belongsTo(models.USR_User, {
+      ACM_Location.belongsTo(models.USR_User, {
         foreignKey: 'picId',
         as: 'PIC',
       });
 
       //* PIC IT
-      ACM_Locations.belongsTo(models.USR_User, {
+      ACM_Location.belongsTo(models.USR_User, {
         foreignKey: 'picItId',
         as: 'PIC_IT',
       });
 
       //* Location Type
-      ACM_Locations.belongsTo(models.REF_LocationType, {
+      ACM_Location.belongsTo(models.REF_LocationType, {
         foreignKey: 'typeId',
         as: 'LocationType',
       });
     }
   }
-  ACM_Locations.init(
+  ACM_Location.init(
     {
       parentLocationId: DataTypes.INTEGER,
       picId: DataTypes.INTEGER,
@@ -55,8 +55,8 @@ module.exports = (sequelize, DataTypes) => {
     },
     {
       sequelize,
-      modelName: 'ACM_Locations',
+      modelName: 'ACM_Location',
     },
   );
-  return ACM_Locations;
+  return ACM_Location;
 };

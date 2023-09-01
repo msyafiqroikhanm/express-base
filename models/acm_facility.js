@@ -11,7 +11,7 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
-      ACM_Facility.belongsTo(models.Location, {
+      ACM_Facility.belongsTo(models.ACM_Location, {
         foreignKey: 'locationId',
         as: 'Location',
       });

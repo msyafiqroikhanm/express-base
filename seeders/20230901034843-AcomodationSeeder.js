@@ -39,6 +39,22 @@ module.exports = {
       updatedAt: new Date(),
     }));
     await queryInterface.bulkInsert('ACM_Facilities', facilities);
+
+    //* ACM_Rooms
+    const acm_rooms = JSON.parse(
+      fs.readFileSync('./seeders/data/acm_rooms.json'),
+    );
+    const rooms = acm_rooms.map((element) => ({
+      locationId: element.locationId,
+      typeId: element.typeId,
+      statusId: element.statusId,
+      name: element.name,
+      floor: element.floor,
+      capacity: element.capacity,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    }));
+    await queryInterface.bulkInsert('ACM_Rooms', rooms);
   },
 
   async down(queryInterface, Sequelize) {
@@ -47,6 +63,10 @@ module.exports = {
       restartIdentity: true,
     });
     await queryInterface.bulkDelete('ACM_Facilities', null, {
+      truncate: true,
+      restartIdentity: true,
+    });
+    await queryInterface.bulkDelete('ACM_Rooms', null, {
       truncate: true,
       restartIdentity: true,
     });
