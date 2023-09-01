@@ -39,3 +39,4 @@ sequelize model:generate --name PAR_ParticipantTracking --attributes participant
 sequelize model:generate --name PAR_GroupMember --attributes groupId:integer, participantId:integer
 sequelize model:generate --name ACM_Locations --attributes parentLocationId:integer,picId:integer,picItId:integer,typeId:integer,name:string,description:text,address:string,phoneNbr:string,latitude:string,longtitude:string
 sequelize model:generate --name REF_RoomType --attributes name:string
+sequelize model:generate --name ACM_Facility --attributes locationId:integer,name:string,quantity:integer
