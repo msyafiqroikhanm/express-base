@@ -19,6 +19,12 @@ module.exports = (sequelize, DataTypes) => {
         as: 'groups',
       });
 
+      PAR_Participant.belongsToMany(models.CSM_Broadcast, {
+        through: 'CSM_BroadcastParticipant',
+        foreignKey: 'participantId',
+        otherKey: 'broadcastId',
+      });
+
       PAR_Participant.belongsTo(models.PAR_Contingent, { foreignKey: 'contingentId', as: 'contingent' });
       PAR_Participant.belongsTo(models.QRM_QR, { foreignKey: 'qrId', as: 'qr' });
       PAR_Participant.belongsTo(models.REF_ParticipantType, { foreignKey: 'typeId', as: 'participantType' });
@@ -26,6 +32,7 @@ module.exports = (sequelize, DataTypes) => {
 
       PAR_Participant.hasMany(models.PAR_GroupMember, { foreignKey: 'participantId' });
       PAR_Participant.hasMany(models.PAR_ParticipantTracking, { foreignKey: 'participantId', as: 'history' });
+      PAR_Participant.hasMany(models.CSM_BroadcastParticipant, { foreignKey: 'participantId' });
     }
   }
   PAR_Participant.init({

@@ -5,24 +5,23 @@ const {
 } = require('sequelize');
 
 module.exports = (sequelize, DataTypes) => {
-  class REF_FeedbackType extends Model {
+  class CSM_ChatbotResponse extends Model {
     /**
      * Helper method for defining associations.
      * This method is not a part of Sequelize lifecycle.
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
-      REF_FeedbackType.hasMany(models.CSM_CustomerFeedback, { foreignKey: 'typeId', as: 'feedbacks' });
+      CSM_ChatbotResponse.belongsTo(models.REF_ChatBotResponseType, { foreignKey: 'responseTypeId', as: 'type' });
     }
   }
-  REF_FeedbackType.init({
-    name: {
-      type: DataTypes.STRING,
-      allowNull: false,
-    },
+  CSM_ChatbotResponse.init({
+    responseTypeId: DataTypes.INTEGER,
+    message: DataTypes.TEXT,
+    isActive: DataTypes.BOOLEAN,
   }, {
     sequelize,
-    modelName: 'REF_FeedbackType',
+    modelName: 'CSM_ChatbotResponse',
   });
-  return REF_FeedbackType;
+  return CSM_ChatbotResponse;
 };
