@@ -22,10 +22,13 @@ module.exports = (sequelize, DataTypes) => {
       });
 
       //* PIC
-      ACM_Locations.belongsTo(models.User, { foreignKey: 'picId', as: 'PIC' });
+      ACM_Locations.belongsTo(models.USR_User, {
+        foreignKey: 'picId',
+        as: 'PIC',
+      });
 
       //* PIC IT
-      ACM_Locations.belongsTo(models.User, {
+      ACM_Locations.belongsTo(models.USR_User, {
         foreignKey: 'picItId',
         as: 'PIC_IT',
       });
