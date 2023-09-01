@@ -94,7 +94,40 @@ module.exports = {
       createdAt: new Date(),
       updatedAt: new Date(),
     }));
-    await queryInterface.bulkInsert('ref_locationtypes', locationTypes);
+    await queryInterface.bulkInsert('REF_locationTypes', locationTypes);
+
+    //* REF_RoomTypes
+    const ref_roomtypes = JSON.parse(
+      fs.readFileSync('./seeders/data/ref_roomtypes.json'),
+    );
+    const roomTypes = ref_roomtypes.map((element) => ({
+      name: element.name,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    }));
+    await queryInterface.bulkInsert('REF_RoomTypes', roomTypes);
+
+    //* REF_RoomStatuses
+    const ref_roomstatuses = JSON.parse(
+      fs.readFileSync('./seeders/data/ref_roomstatuses.json'),
+    );
+    const roomStatuses = ref_roomstatuses.map((element) => ({
+      name: element.name,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    }));
+    await queryInterface.bulkInsert('REF_RoomStatuses', roomStatuses);
+
+    //* REF_LodgerStatuses
+    const ref_lodgerstatuses = JSON.parse(
+      fs.readFileSync('./seeders/data/ref_lodgerstatuses.json'),
+    );
+    const lodgerStatuses = ref_lodgerstatuses.map((element) => ({
+      name: element.name,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    }));
+    await queryInterface.bulkInsert('REF_LodgerStatuses', lodgerStatuses);
   },
 
   async down(queryInterface, Sequelize) {
@@ -123,6 +156,22 @@ module.exports = {
       restartIdentity: true,
     });
     await queryInterface.bulkDelete('REF_IdentityTypes', null, {
+      truncate: true,
+      restartIdentity: true,
+    });
+    await queryInterface.bulkDelete('REF_LocationTypes', null, {
+      truncate: true,
+      restartIdentity: true,
+    });
+    await queryInterface.bulkDelete('REF_RoomTypes', null, {
+      truncate: true,
+      restartIdentity: true,
+    });
+    await queryInterface.bulkDelete('REF_RoomStatuses', null, {
+      truncate: true,
+      restartIdentity: true,
+    });
+    await queryInterface.bulkDelete('REF_LodgerStatuses', null, {
       truncate: true,
       restartIdentity: true,
     });
