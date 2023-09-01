@@ -14,6 +14,7 @@ module.exports = (sequelize, DataTypes) => {
     static associate(models) {
       CSM_BroadcastTemplate.belongsTo(models.REF_TemplateCategory, { foreignKey: 'categoryId', as: 'category' });
       CSM_BroadcastTemplate.belongsTo(models.REF_MetaTemplateCategory, { foreignKey: 'metaCategoryId', as: 'metaCategory' });
+      CSM_BroadcastTemplate.belongsTo(models.REF_TemplateHeaderType, { foreignKey: 'headerTypeId', as: 'headerType' });
 
       CSM_BroadcastTemplate.hasMany(models.CSM_Broadcast, { foreignKey: 'templateId', as: 'broadcasts' });
     }
@@ -21,14 +22,11 @@ module.exports = (sequelize, DataTypes) => {
   CSM_BroadcastTemplate.init({
     categoryId: DataTypes.INTEGER,
     metaCategoryId: DataTypes.INTEGER,
+    headerTypeId: DataTypes.INTEGER,
     name: DataTypes.STRING,
     message: DataTypes.TEXT,
     messageVariableNumber: DataTypes.INTEGER,
     messageVariableExample: DataTypes.JSON,
-    headerType: {
-      type: DataTypes.ENUM,
-      values: ['Text', 'Image', 'Document', 'Video'],
-    },
     headerText: DataTypes.STRING,
     isHeaderVariable: DataTypes.BOOLEAN,
     headerVariableExample: DataTypes.STRING,

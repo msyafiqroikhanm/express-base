@@ -18,6 +18,9 @@ module.exports = {
       metaCategoryId: {
         type: Sequelize.INTEGER,
       },
+      headerTypeId: {
+        type: Sequelize.STRING,
+      },
       name: {
         type: Sequelize.STRING,
       },
@@ -29,10 +32,6 @@ module.exports = {
       },
       messageVariableExample: {
         type: Sequelize.JSON,
-      },
-      headerType: {
-        type: Sequelize.ENUM,
-        values: ['Text', 'Image', 'Document', 'Video'],
       },
       headerText: {
         type: Sequelize.STRING,
