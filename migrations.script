@@ -37,3 +37,4 @@ sequelize model:generate --name PAR_ContingentGroup --attributes eventId:integer
 sequelize model:generate --name PAR_Participant --attributes groupId:integer, qrId:integer, typeId:integer, identityTypeId:integer, name:string, gender:boolean, birthDate:dateonly, identityNo:string, phoneNbr:string, email:string, address:text
 sequelize model:generate --name PAR_ParticipantTracking --attributes participantId:integer, latitude:string, longtitude:string, accuracy:string, time:date
 sequelize model:generate --name PAR_GroupMember --attributes groupId:integer, participantId:integer
+sequelize model:generate --name ACM_Locations --attributes parentLocationId:integer,picId:integer,picItId:integer,typeId:integer,name:string,description:text,address:string,phoneNbr:string,latitude:string,longtitude:string

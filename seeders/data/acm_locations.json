@@ -1,0 +1,38 @@
+[
+    {
+        "parentLocationId":null,
+        "picId":1,
+        "picItId":1,
+        "typeId":1,
+        "name":"Gelora Bung Karno (GBK)",
+        "description":"GBK merupakan salah satu landmark penting di Jakarta. Kompleks olahraga ini telah menjadi saksi sejarah berbagai peristiwa penting di Indonesia, dan terus menjadi tempat penting bagi warga Jakarta untuk berolahraga, bersantai, dan berkumpul bersama.",
+        "address":"Jalan Gerbang Pemuda No. 3, Senayan, Kecamatan Tanah Abang, Kota Jakarta Pusat, Daerah Khusus Ibukota Jakarta 10270",
+        "phoneNbr":"+62 21 - 5734070",
+        "latitude":"-6.218335",
+        "longtitude":"-106.802216"
+    },
+    {
+        "parentLocationId":null,
+        "picId":1,
+        "picItId":1,
+        "typeId":1,
+        "name":"Jakarta International Expo (JIEXPO)",
+        "description":"JIExpo Kemayoran adalah sebuah pusat konvensi dan eksibisi yang terletak di Jakarta, Indonesia. Pusat konvensi dan eksibisi ini dibuka pada tahun 1992 dengan diprakarsai oleh grup Central Cipta Murdaya.",
+        "address":"Jl. H. Benyamin Suaeb, Kemayoran, Jakarta, Indonesia",
+        "phoneNbr":"+62 21 26645 000",
+        "latitude":"-6.14638716",
+        "longtitude":"106.84573046"
+    },
+    {
+        "parentLocationId":2,
+        "picId":1,
+        "picItId":1,
+        "typeId":1,
+        "name":"Hall 9 - JIEXPO",
+        "description":"JIExpo Kemayoran adalah sebuah pusat konvensi dan eksibisi yang terletak di Jakarta, Indonesia. Pusat konvensi dan eksibisi ini dibuka pada tahun 1992 dengan diprakarsai oleh grup Central Cipta Murdaya.",
+        "address":"Jl. H. Benyamin Suaeb, Kemayoran, Jakarta, Indonesia",
+        "phoneNbr":"+62 21 26645 000",
+        "latitude":"-6.14638716",
+        "longtitude":"106.84573046"
+    }
+]

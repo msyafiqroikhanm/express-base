@@ -94,7 +94,7 @@ module.exports = {
       createdAt: new Date(),
       updatedAt: new Date(),
     }));
-    await queryInterface.bulkInsert('ref_locationtypes', locationTypes);
+    await queryInterface.bulkInsert('REF_locationTypes', locationTypes);
   },
 
   async down(queryInterface, Sequelize) {
@@ -123,6 +123,10 @@ module.exports = {
       restartIdentity: true,
     });
     await queryInterface.bulkDelete('REF_IdentityTypes', null, {
+      truncate: true,
+      restartIdentity: true,
+    });
+    await queryInterface.bulkDelete('REF_LocationTypes', null, {
       truncate: true,
       restartIdentity: true,
     });
