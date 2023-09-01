@@ -1,0 +1,37 @@
+[
+    {
+        "locationId": 12,
+        "name": "Lobby Lounge",
+        "quantity": 1
+    },
+    {
+        "locationId": 12,
+        "name": "Restoran",
+        "quantity": 1
+    },
+    {
+        "locationId": 12,
+        "name": "Kolam Renang",
+        "quantity": 1
+    },
+    {
+        "locationId": 12,
+        "name": "Pusat Kebugaran",
+        "quantity": 1
+    },
+    {
+        "locationId": 12,
+        "name": "Ruang Rapat",
+        "quantity": 2
+    },
+    {
+        "locationId": 12,
+        "name": "Wi-Fi Gratis",
+        "quantity": 1
+    },
+    {
+        "locationId": 12,
+        "name": "Tempat Parkir Gratis",
+        "quantity": 1
+    }
+]
