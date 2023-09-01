@@ -87,6 +87,10 @@
     },
     {
         "moduleId":3,
+        "name":"Track Participant"
+    },
+    {
+        "moduleId":3,
         "name":"View Contingent"
     },
     {

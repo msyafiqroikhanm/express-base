@@ -12,6 +12,7 @@ const userRoutes = require('./user.routes');
 const eventRoutes = require('./event.routes');
 const contingentRoutes = require('./continget.routes');
 const groupRoutes = require('./group.routes');
+const participantRoutes = require('./participant.routes');
 
 router.use('/auth', authRoutes);
 router.use('/config', configRoutes);
@@ -25,5 +26,6 @@ router.use('/users', userRoutes);
 router.use('/events', eventRoutes);
 router.use('/contingents', contingentRoutes);
 router.use('/groups', groupRoutes);
+router.use('/participants', participantRoutes);
 
 module.exports = router;
