@@ -84,6 +84,17 @@ module.exports = {
       updatedAt: new Date(),
     }));
     await queryInterface.bulkInsert('REF_IdentityTypes', identityTypes);
+
+    //* REF_LocationTypes
+    const ref_locationtypes = JSON.parse(
+      fs.readFileSync('./seeders/data/ref_locationtypes.json'),
+    );
+    const locationTypes = ref_locationtypes.map((element) => ({
+      name: element.name,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    }));
+    await queryInterface.bulkInsert('ref_locationtypes', locationTypes);
   },
 
   async down(queryInterface, Sequelize) {
