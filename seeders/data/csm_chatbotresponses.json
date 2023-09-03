@@ -1,0 +1,12 @@
+[
+  {
+    "responseTypeId":1,
+    "message":"Welcome to Conference Management System Chat Bot {{username}}, please select information below you wish to know more about!",
+    "isActive":true
+  },
+  {
+    "responseTypeId":1,
+    "message":"Good day what can we help you with?",
+    "isActive":false
+  }
+]

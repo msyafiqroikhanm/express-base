@@ -1,0 +1,30 @@
+[
+  {
+    "parentFAQId":null,
+    "typeId":1,
+    "isMain":true,
+    "title":"Event Information",
+    "message":null
+  },
+  {
+    "parentFAQId":null,
+    "typeId":2,
+    "isMain":true,
+    "title":"Lodging",
+    "message":null
+  },
+  {
+    "parentFAQId":1,
+    "typeId":1,
+    "isMain":false,
+    "title":"Description",
+    "message":"Conference Management System (CMS) is a software application that helps organizers plan, manage, and execute conferences and events. It can be used to automate many of the tasks involved in organizing a conference"
+  },
+  {
+    "parentFAQId":2,
+    "typeId":2,
+    "isMain":false,
+    "title":"List Of Hotel",
+    "message":"1. Hotel A\n2. Hotel B\n3. Hotel C"
+  }
+]
