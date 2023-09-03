@@ -128,6 +128,94 @@ module.exports = {
       updatedAt: new Date(),
     }));
     await queryInterface.bulkInsert('REF_LodgerStatuses', lodgerStatuses);
+
+    //* REF_ChatBotResponseTypes
+    const ref_chatbotresponsetypes = JSON.parse(
+      fs.readFileSync('./seeders/data/ref_chatbotresponsetypes.json'),
+    );
+    const responsetypes = ref_chatbotresponsetypes.map((element) => ({
+      name: element.name,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    }));
+    await queryInterface.bulkInsert('REF_ChatBotResponseTypes', responsetypes);
+
+    //* REF_FeedbackTypes
+    const ref_feedbacktypes = JSON.parse(
+      fs.readFileSync('./seeders/data/ref_feedbacktypes.json'),
+    );
+    const feedbacktypes = ref_feedbacktypes.map((element) => ({
+      name: element.name,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    }));
+    await queryInterface.bulkInsert('REF_FeedbackTypes', feedbacktypes);
+
+    //* REF_FeedbackTargets
+    const ref_feedbacktargets = JSON.parse(
+      fs.readFileSync('./seeders/data/ref_feedbacktargets.json'),
+    );
+    const feedbacktargets = ref_feedbacktargets.map((element) => ({
+      name: element.name,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    }));
+    await queryInterface.bulkInsert('REF_FeedbackTargets', feedbacktargets);
+
+    //* REF_FeedbackStatuses
+    const ref_feedbackstatuses = JSON.parse(
+      fs.readFileSync('./seeders/data/ref_feedbackstatuses.json'),
+    );
+    const feedbackStatuses = ref_feedbackstatuses.map((element) => ({
+      name: element.name,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    }));
+    await queryInterface.bulkInsert('REF_FeedbackStatuses', feedbackStatuses);
+
+    //* REF_TemplateCategories
+    const ref_templatecategories = JSON.parse(
+      fs.readFileSync('./seeders/data/ref_templatecategories.json'),
+    );
+    const templatecategories = ref_templatecategories.map((element) => ({
+      name: element.name,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    }));
+    await queryInterface.bulkInsert('REF_TemplateCategories', templatecategories);
+
+    //* REF_MetaTemplateCategories
+    const ref_metatemplatecategories = JSON.parse(
+      fs.readFileSync('./seeders/data/ref_metatemplatecategories.json'),
+    );
+    const metatemplatecategories = ref_metatemplatecategories.map((element) => ({
+      name: element.name,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    }));
+    await queryInterface.bulkInsert('REF_MetaTemplateCategories', metatemplatecategories);
+
+    //* REF_TemplateHeaderTypes
+    const ref_templateheadertype = JSON.parse(
+      fs.readFileSync('./seeders/data/ref_templateheadertype.json'),
+    );
+    const templateheadertype = ref_templateheadertype.map((element) => ({
+      name: element.name,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    }));
+    await queryInterface.bulkInsert('REF_TemplateHeaderTypes', templateheadertype);
+
+    //* REF_InformationCenterTargetTypes
+    const ref_informationcentertargettypes = JSON.parse(
+      fs.readFileSync('./seeders/data/ref_informationcentertargettypes.json'),
+    );
+    const informationcentertargettypes = ref_informationcentertargettypes.map((element) => ({
+      name: element.name,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    }));
+    await queryInterface.bulkInsert('REF_InformationCenterTargetTypes', informationcentertargettypes);
   },
 
   async down(queryInterface, Sequelize) {
@@ -172,6 +260,42 @@ module.exports = {
       restartIdentity: true,
     });
     await queryInterface.bulkDelete('REF_LodgerStatuses', null, {
+      truncate: true,
+      restartIdentity: true,
+    });
+    await queryInterface.bulkDelete('REF_ChatBotResponseTypes', null, {
+      truncate: true,
+      restartIdentity: true,
+    });
+    await queryInterface.bulkDelete('REF_FeedbackTypes', null, {
+      truncate: true,
+      restartIdentity: true,
+    });
+    await queryInterface.bulkDelete('REF_FeedbackTargets', null, {
+      truncate: true,
+      restartIdentity: true,
+    });
+    await queryInterface.bulkDelete('REF_FeedbackStatuses', null, {
+      truncate: true,
+      restartIdentity: true,
+    });
+    await queryInterface.bulkDelete('REF_FAQTypes', null, {
+      truncate: true,
+      restartIdentity: true,
+    });
+    await queryInterface.bulkDelete('REF_TemplateCategories', null, {
+      truncate: true,
+      restartIdentity: true,
+    });
+    await queryInterface.bulkDelete('REF_MetaTemplateCategories', null, {
+      truncate: true,
+      restartIdentity: true,
+    });
+    await queryInterface.bulkDelete('REF_TemplateHeaderTypes', null, {
+      truncate: true,
+      restartIdentity: true,
+    });
+    await queryInterface.bulkDelete('REF_InformationCenterTargetTypes', null, {
       truncate: true,
       restartIdentity: true,
     });
