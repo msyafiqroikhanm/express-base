@@ -33,6 +33,7 @@ module.exports = (sequelize, DataTypes) => {
       name: DataTypes.STRING,
       floor: DataTypes.STRING,
       capacity: DataTypes.INTEGER,
+      occupied: DataTypes.INTEGER,
     },
     {
       sequelize,
