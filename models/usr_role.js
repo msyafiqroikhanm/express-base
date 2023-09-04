@@ -18,17 +18,10 @@ module.exports = (sequelize, DataTypes) => {
         otherKey: 'featureId',
       });
 
-      USR_Role.belongsToMany(models.CSM_Broadcast, {
-        through: 'CSM_BroadcastCommittee',
-        foreignKey: 'roleId',
-        otherKey: 'broadcastId',
-      });
-
       USR_Role.belongsTo(models.QRM_QRTemplate, { foreignKey: 'templateId', as: 'template' });
 
       USR_Role.hasMany(models.USR_RoleFeature, { foreignKey: 'roleId' });
       USR_Role.hasMany(models.USR_User, { foreignKey: 'roleId' });
-      USR_Role.hasMany(models.CSM_BroadcastCommittee, { foreignKey: 'roleId' });
     }
   }
   USR_Role.init({
