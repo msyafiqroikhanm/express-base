@@ -45,8 +45,9 @@ sequelize model:generate --name CSM_BroadcastCommittee --attributes roleId:integ
 sequelize model:generate --name CSM_BroadcastTemplate --attributes categoryId:integer, metaCategoryId:integer, name:string, message:text, messageVariableNumber:integer, messageVariableExample:json, headerType:enum, headerText:string, isHeaderVariable:boolean, headerVariableExample:string, headerFile:string, footer:string, button:json, metaStatus:string
 sequelize model:generate --name CSM_Broadcast --attributes templateId:integer, name:string, status:string, sentAt:date, messageParameters:json, buttonParameters:json, headerFile:string, headerText:string, description:text
 sequelize model:generate --name CSM_InformationCenter --attributes title:string, description:text
-sequelize model:generate --name ACM_Locations --attributes parentLocationId:integer,picId:integer,picItId:integer,typeId:integer,name:string,description:text,address:string,phoneNbr:string,latitude:string,longtitude:string
+sequelize model:generate --name ACM_Location --attributes parentLocationId:integer,picId:integer,picItId:integer,typeId:integer,name:string,description:text,address:string,phoneNbr:string,latitude:string,longtitude:string
 sequelize model:generate --name REF_RoomType --attributes name:string
 sequelize model:generate --name ACM_Facility --attributes locationId:integer,name:string,quantity:integer
 sequelize model:generate --name ACM_Room --attributes locationId:integer,typeId:integer,statusId:integer,name:string,floor:string,capacity:integer
 sequelize model:generate --name REF_TemplateHeaderType --attributes name:string
+sequelize model:generate --name ACM_ParticipantLodger --attributes participantId:integer,statusId:integer,roomId:integer,reservationIn:dateonly,reservationOut:dateonly,checkIn:date,checkout:date
