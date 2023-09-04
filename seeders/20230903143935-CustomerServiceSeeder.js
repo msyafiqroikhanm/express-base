@@ -75,6 +75,31 @@ module.exports = {
       updatedAt: new Date(),
     }));
     await queryInterface.bulkInsert('CSM_InformationCenterTargets', informationcentertargets);
+
+    //* CSM_BroadcastTemplates
+    const csm_broadcasttemplates = JSON.parse(
+      fs.readFileSync('./seeders/data/csm_broadcasttemplates.json'),
+    );
+    const broadcasttemplates = csm_broadcasttemplates.map((element) => ({
+      categoryId: element.categoryId,
+      metaCategoryId: element.metaCategoryId,
+      headerTypeId: element.headerTypeId,
+      name: element.name,
+      language: element.language,
+      message: element.message,
+      messageVariableNumber: element.messageVariableNumber,
+      messageVariableExample: JSON.stringify(element.messageVariableExample),
+      headerText: element.headerText,
+      haveHeaderVariable: element.haveHeaderVariable,
+      headerVariableExample: JSON.stringify(element.headerVariableExample),
+      headerFile: element.headerFile,
+      footer: element.footer,
+      button: JSON.stringify(element.button),
+      metaStatus: element.metaStatus,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    }));
+    await queryInterface.bulkInsert('CSM_BroadcastTemplates', broadcasttemplates);
   },
 
   async down(queryInterface, Sequelize) {
@@ -95,6 +120,10 @@ module.exports = {
       restartIdentity: true,
     });
     await queryInterface.bulkDelete('CSM_InformationCenterTargets', null, {
+      truncate: true,
+      restartIdentity: true,
+    });
+    await queryInterface.bulkDelete('CSM_BroadcastTemplates', null, {
       truncate: true,
       restartIdentity: true,
     });
