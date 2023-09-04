@@ -94,7 +94,7 @@ module.exports = {
       createdAt: new Date(),
       updatedAt: new Date(),
     }));
-    await queryInterface.bulkInsert('REF_locationTypes', locationTypes);
+    await queryInterface.bulkInsert('REF_LocationTypes', locationTypes);
 
     //* REF_RoomTypes
     const ref_roomtypes = JSON.parse(
@@ -182,18 +182,26 @@ module.exports = {
       createdAt: new Date(),
       updatedAt: new Date(),
     }));
-    await queryInterface.bulkInsert('REF_TemplateCategories', templatecategories);
+    await queryInterface.bulkInsert(
+      'REF_TemplateCategories',
+      templatecategories,
+    );
 
     //* REF_MetaTemplateCategories
     const ref_metatemplatecategories = JSON.parse(
       fs.readFileSync('./seeders/data/ref_metatemplatecategories.json'),
     );
-    const metatemplatecategories = ref_metatemplatecategories.map((element) => ({
-      name: element.name,
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    }));
-    await queryInterface.bulkInsert('REF_MetaTemplateCategories', metatemplatecategories);
+    const metatemplatecategories = ref_metatemplatecategories.map(
+      (element) => ({
+        name: element.name,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      }),
+    );
+    await queryInterface.bulkInsert(
+      'REF_MetaTemplateCategories',
+      metatemplatecategories,
+    );
 
     //* REF_TemplateHeaderTypes
     const ref_templateheadertype = JSON.parse(
@@ -204,18 +212,26 @@ module.exports = {
       createdAt: new Date(),
       updatedAt: new Date(),
     }));
-    await queryInterface.bulkInsert('REF_TemplateHeaderTypes', templateheadertype);
+    await queryInterface.bulkInsert(
+      'REF_TemplateHeaderTypes',
+      templateheadertype,
+    );
 
     //* REF_InformationCenterTargetTypes
     const ref_informationcentertargettypes = JSON.parse(
       fs.readFileSync('./seeders/data/ref_informationcentertargettypes.json'),
     );
-    const informationcentertargettypes = ref_informationcentertargettypes.map((element) => ({
-      name: element.name,
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    }));
-    await queryInterface.bulkInsert('REF_InformationCenterTargetTypes', informationcentertargettypes);
+    const informationcentertargettypes = ref_informationcentertargettypes.map(
+      (element) => ({
+        name: element.name,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      }),
+    );
+    await queryInterface.bulkInsert(
+      'REF_InformationCenterTargetTypes',
+      informationcentertargettypes,
+    );
   },
 
   async down(queryInterface, Sequelize) {
