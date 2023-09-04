@@ -39,7 +39,7 @@ module.exports = {
 
     await queryInterface.bulkInsert('PAR_Participants', [
       {
-        name: 'Gifari',
+        name: 'Super Admin',
         gender: 'Male',
         birthDate: '1999-01-01',
         identityNo: '31719032849',

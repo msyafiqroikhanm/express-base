@@ -1,13 +1,11 @@
 /* eslint-disable no-param-reassign */
-const fs = require('fs/promises');
-const { relative } = require('path');
 const bcrypt = require('bcryptjs');
 const { Op } = require('sequelize');
 const {
-  USR_User, USR_Role, QRM_QR, QRM_QRTemplate,
+  USR_User, USR_Role, QRM_QR, QRM_QRTemplate, PAR_Participant, USR_Feature,
+  REF_IdentityType, PAR_Contingent, REF_ParticipantType, USR_Module,
 } = require('../models');
 const { createQR, updateQR } = require('./qr.service');
-const deleteFile = require('../helpers/deleteFile.helper');
 
 const selectAllUsers = async () => {
   const users = await USR_User.findAll({
@@ -21,12 +19,28 @@ const selectAllUsers = async () => {
         model: QRM_QR,
         as: 'Qr',
       },
+      {
+        model: PAR_Participant,
+        as: 'participant',
+        attributes: ['name', 'identityNo', 'gender', 'birthDate', 'phoneNbr', 'address', 'file'],
+        include: [
+          { model: PAR_Contingent, as: 'contingent', attributes: ['name'] },
+          { model: REF_ParticipantType, as: 'participantType', attributes: ['name'] },
+          { model: REF_IdentityType, as: 'identityType', attributes: ['name'] },
+        ],
+      },
     ],
   });
 
   users.forEach((user) => {
     user.dataValues.qrCode = user.Qr.dataValues.code;
     user.dataValues.role = user.Role.dataValues.name;
+    if (user.participant) {
+      user.participant.dataValues.contingent = user.participant.contingent.dataValues.name;
+      user.participant.dataValues.participantType = user.participant.participantType.dataValues
+        .name;
+      user.participant.dataValues.identityType = user.participant.identityType.dataValues.name;
+    }
     delete user.dataValues.Qr;
     delete user.dataValues.Role;
   });
@@ -46,6 +60,16 @@ const selectDetailUser = async (id) => {
         model: QRM_QR,
         as: 'Qr',
       },
+      {
+        model: PAR_Participant,
+        as: 'participant',
+        attributes: ['name', 'identityNo', 'gender', 'birthDate', 'phoneNbr', 'address', 'file'],
+        include: [
+          { model: PAR_Contingent, as: 'contingent', attributes: ['name'] },
+          { model: REF_ParticipantType, as: 'participantType', attributes: ['name'] },
+          { model: REF_IdentityType, as: 'identityType', attributes: ['name'] },
+        ],
+      },
     ],
   });
   if (!userInstance) {
@@ -55,43 +79,55 @@ const selectDetailUser = async (id) => {
 
   userInstance.dataValues.qrCode = userInstance.Qr.dataValues.code;
   userInstance.dataValues.role = userInstance.Role.dataValues.name;
+
+  if (userInstance.participant) {
+    userInstance.participant.dataValues.contingent = userInstance.participant.contingent
+      .dataValues.name;
+    userInstance.participant.dataValues.participantType = userInstance.participant.participantType
+      .dataValues.name;
+    userInstance.participant.dataValues.identityType = userInstance.participant.identityType
+      .dataValues.name;
+  }
   delete userInstance.dataValues.Qr;
   delete userInstance.dataValues.Role;
 
   return { success: true, message: 'Successfully Getting User', content: userInstance };
 };
 
-const validateUserInputs = async (form, file) => {
+const validateUserInputs = async (form, id) => {
   const roleInstance = await USR_Role.findByPk(form.roleId);
   if (!roleInstance) {
     return { isValid: false, code: 404, message: 'Role Data Not Found' };
   }
 
-  if (!file) {
-    return { isValid: false, code: 400, message: 'User Image File Not Found' };
+  const participantInstance = await PAR_Participant.findByPk(form.participantId, {
+    include: { model: USR_User, as: 'user' },
+  });
+  if (!participantInstance) {
+    return { isValid: false, code: 404, message: 'Participant Data Not Found' };
   }
 
-  if (!['png', 'jpeg', 'jpg'].includes(file.originalname.split('.')[1])) {
-    const error = { isValid: false, code: 400, message: 'Upload only supports file types [png and jpeg]' };
-    return error;
-  }
-
-  const imageBuffer = await fs.readFile(file.path);
-  const maxSizeInByte = 2000000;
-  if (imageBuffer.length > maxSizeInByte) {
-    return { isValid: false, code: 400, message: 'The file size exceeds the maximum size limit of 2 Megabyte' };
+  if (!id) {
+    // check if participant already have user account for create user
+    if (participantInstance.user) {
+      return { isValid: false, code: 400, message: 'User Account Already Exists for Participant' };
+    }
+  } else if (participantInstance.user && id) {
+    // when updating user check if participant belongs to user before update (old data)
+    console.log(participantInstance.user.id);
+    if (participantInstance.user.id !== Number(id)) {
+      return { isValid: false, code: 400, message: 'User Account Already Exists for Participant' };
+    }
   }
 
   return {
     isValid: true,
     form: {
       roleId: roleInstance.id,
-      name: form.name,
+      participantId: participantInstance.id,
       username: form.username,
       password: form.password,
       email: form.email,
-      phoneNbr: form.phoneNbr,
-      file: `public/images/users/${file.filename}`,
     },
   };
 };
@@ -101,13 +137,11 @@ const createUser = async (form) => {
   const qr = await createQR({ templateId: roleInstance.templateId }, { rawFile: `public/images/qrs/qrs-${Date.now()}.png`, combineFile: `public/images/qrCombines/combines-${Date.now()}.png` });
   const userInstance = await USR_User.create({
     qrId: qr.content.id,
+    participantId: form.participantId,
     roleId: form.roleId,
-    name: form.name,
     username: form.username,
     password: form.password,
     email: form.email,
-    phoneNbr: form.phoneNbr,
-    file: form.file,
   });
 
   delete userInstance.dataValues.password;
@@ -145,15 +179,9 @@ const updateUser = async (id, form) => {
     );
   }
 
-  // delete old file
-  await deleteFile(relative(__dirname, userInstance.file));
-
-  userInstance.qrId = form.qrId;
   userInstance.roleId = form.roleId;
-  userInstance.name = form.name;
+  userInstance.participantId = form.participantId;
   userInstance.email = form.email;
-  userInstance.phoneNbr = form.phoneNbr;
-  userInstance.file = form.file;
   await userInstance.save();
 
   return { success: true, message: 'User Successfully Updated', content: userInstance };
@@ -169,7 +197,7 @@ const deleteUser = async (id) => {
 
   const { name } = userInstance.dataValues;
 
-  // delete the qr type after passsing the check
+  // delete the user after passsing the check
   await userInstance.destroy();
 
   return {
@@ -218,9 +246,72 @@ const updateUserPassword = async (form) => {
 
 const selectUser = async (query) => {
   const userInstance = await USR_User.findOne({
-    include: { model: USR_Role, attributes: ['name'], as: 'Role' },
+    include: [
+      {
+        model: USR_Role,
+        attributes: ['name'],
+        as: 'Role',
+        include: {
+          model: USR_Feature,
+          attributes: { exclude: ['createdAt', 'updatedAt'] },
+          through: {
+            attributes: [],
+          },
+          include: {
+            model: USR_Module,
+            attributes: ['id', 'name'],
+          },
+        },
+      },
+      {
+        model: PAR_Participant,
+        as: 'participant',
+        attributes: ['name'],
+      },
+    ],
     [Op.or]: query,
   });
+
+  // get parsed feature and module in user
+  const parsedFeatures = [];
+  userInstance.Role.USR_Features.forEach((feature) => {
+    parsedFeatures.push({
+      id: feature.dataValues.id,
+      name: feature.dataValues.name,
+      moduleId: feature.USR_Module.dataValues.id,
+      modulesName: feature.USR_Module.dataValues.name,
+    });
+  });
+
+  // getting array that group by module
+  const groupedArray = parsedFeatures.reduce((result, item) => {
+    const existingModule = result.find((module) => module.id === item.moduleId);
+
+    if (existingModule) {
+      existingModule.features.push({
+        id: item.id,
+        name: item.name,
+      });
+    } else {
+      result.push({
+        id: item.moduleId,
+        name: item.modulesName,
+        features: [
+          {
+            id: item.id,
+            name: item.name,
+          },
+        ],
+      });
+    }
+
+    return result;
+  }, []);
+
+  // parsing userInstance
+  userInstance.Role.dataValues.modules = groupedArray;
+  userInstance.Role.modules = groupedArray;
+  delete userInstance.Role.dataValues.USR_Features;
   return userInstance;
 };
 
