@@ -87,6 +87,10 @@
     },
     {
         "moduleId":3,
+        "name":"Track Participant"
+    },
+    {
+        "moduleId":3,
         "name":"View Contingent"
     },
     {
@@ -103,19 +107,19 @@
     },
     {
         "moduleId":3,
-        "name":"View Contingent Group"
+        "name":"View Group"
     },
     {
         "moduleId":3,
-        "name":"Create Contingent Group"
+        "name":"Create Group"
     },
     {
         "moduleId":3,
-        "name":"Update Contingent Group"
+        "name":"Update Group"
     },
     {
         "moduleId":3,
-        "name":"Delete Contingent Group"
+        "name":"Delete Group"
     },
 
     {

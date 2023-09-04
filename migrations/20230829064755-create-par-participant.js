@@ -30,7 +30,8 @@ module.exports = {
           type: Sequelize.STRING,
         },
         gender: {
-          type: Sequelize.BOOLEAN,
+          type: Sequelize.ENUM,
+          values: ['Female', 'Male'],
         },
         birthDate: {
           type: Sequelize.DATEONLY,
@@ -46,6 +47,9 @@ module.exports = {
         },
         address: {
           type: Sequelize.TEXT,
+        },
+        file: {
+          type: Sequelize.STRING,
         },
         deletedAt: {
           type: Sequelize.DATE,

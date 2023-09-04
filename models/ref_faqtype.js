@@ -12,7 +12,7 @@ module.exports = (sequelize, DataTypes) => {
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
-      // define association here
+      REF_FAQType.hasMany(models.CSM_FAQ, { foreignKey: 'typeId', as: 'FAQs' });
     }
   }
   REF_FAQType.init({

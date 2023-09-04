@@ -140,6 +140,8 @@ const combineStorage = multer.diskStorage({
   },
 });
 
+const memoryStorage = multer.memoryStorage();
+
 const uploadImage = multer({
   storage: imageStorage,
   limits: { fileSize: 100000000 },
@@ -160,10 +162,13 @@ const uploadCombine = multer({
   limits: { fileSize: 500000000 },
 });
 
+const uploadWithMemory = multer({ memoryStorage });
+
 module.exports = {
   storage,
   uploadImage,
   uploadDocument,
   uploadVideo,
   uploadCombine,
+  uploadWithMemory,
 };

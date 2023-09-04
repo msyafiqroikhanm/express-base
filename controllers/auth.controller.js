@@ -8,7 +8,7 @@ class AuthController {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
       const user = await selectUser({
-        email: req.body.user, username: req.body.user,
+        email: req.body.email, username: req.body.user,
       });
 
       if (!user) {
@@ -27,10 +27,12 @@ class AuthController {
 
       await updateUserLogin({ id: user.id }, { lastLogin: new Date() });
       const message = 'Berhasil Login';
+      console.log(JSON.stringify(user, null, 2));
       return ResponseFormatter.success(res, 200, 'OK', message, {
-        name: user.name,
+        name: user.participant.name,
         role: user.Role.name,
         access_token: `Bearer ${access_token}`,
+        modules: user.Role.modules,
       });
     } catch (error) {
       next(error);

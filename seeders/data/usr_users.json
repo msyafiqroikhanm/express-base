@@ -2,8 +2,8 @@
     {
         "qrId":1,
         "roleId":1,
+        "participantId":1,
         "username":"admin",
-        "email": "admin@jxboard.id",
-        "name": "Admin Utama"
+        "email": "admin@jxboard.id"
     }
 ]

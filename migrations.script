@@ -37,3 +37,17 @@ sequelize model:generate --name PAR_ContingentGroup --attributes eventId:integer
 sequelize model:generate --name PAR_Participant --attributes groupId:integer, qrId:integer, typeId:integer, identityTypeId:integer, name:string, gender:boolean, birthDate:dateonly, identityNo:string, phoneNbr:string, email:string, address:text
 sequelize model:generate --name PAR_ParticipantTracking --attributes participantId:integer, latitude:string, longtitude:string, accuracy:string, time:date
 sequelize model:generate --name PAR_GroupMember --attributes groupId:integer, participantId:integer
+sequelize model:generate --name REF_InformationCenterTargetType --attributes name:string
+sequelize model:generate --name CSM_ChatbotResponse --attributes responseTypeId:integer, message:text, isActive:boolean
+sequelize model:generate --name CSM_CustomerFeedback --attributes typeId:integer, targetId:integer, statusId:integer, customerName:string, longtitude:string, latitude:string, message:text
+sequelize model:generate --name CSM_BroadcastParticipant --attributes participantId:integer, broadcastId:integer, status:string
+sequelize model:generate --name CSM_BroadcastCommittee --attributes roleId:integer, broadcastId:integer, status:string
+sequelize model:generate --name CSM_BroadcastTemplate --attributes categoryId:integer, metaCategoryId:integer, name:string, message:text, messageVariableNumber:integer, messageVariableExample:json, headerType:enum, headerText:string, isHeaderVariable:boolean, headerVariableExample:string, headerFile:string, footer:string, button:json, metaStatus:string
+sequelize model:generate --name CSM_Broadcast --attributes templateId:integer, name:string, status:string, sentAt:date, messageParameters:json, buttonParameters:json, headerFile:string, headerText:string, description:text
+sequelize model:generate --name CSM_InformationCenter --attributes title:string, description:text
+sequelize model:generate --name ACM_Location --attributes parentLocationId:integer,picId:integer,picItId:integer,typeId:integer,name:string,description:text,address:string,phoneNbr:string,latitude:string,longtitude:string
+sequelize model:generate --name REF_RoomType --attributes name:string
+sequelize model:generate --name ACM_Facility --attributes locationId:integer,name:string,quantity:integer
+sequelize model:generate --name ACM_Room --attributes locationId:integer,typeId:integer,statusId:integer,name:string,floor:string,capacity:integer
+sequelize model:generate --name REF_TemplateHeaderType --attributes name:string
+sequelize model:generate --name ACM_ParticipantLodger --attributes participantId:integer,statusId:integer,roomId:integer,reservationIn:dateonly,reservationOut:dateonly,checkIn:date,checkout:date

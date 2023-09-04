@@ -17,6 +17,8 @@ router.get(
         feature.create_event,
         feature.update_event,
         feature.delete_event,
+        feature.create_group,
+        feature.update_group,
       ]),
     );
   },

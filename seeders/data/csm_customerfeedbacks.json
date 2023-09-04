@@ -1,0 +1,11 @@
+[
+  {
+    "typeId":1,
+    "targetId":5,
+    "statusId":1,
+    "customerName":"Anonym",
+    "message":"The vehicle is not comfortable enough",
+    "longtitude":"1.21434",
+    "latitude":"31.21412"
+  }
+]

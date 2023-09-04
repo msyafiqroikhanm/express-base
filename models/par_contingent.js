@@ -14,8 +14,8 @@ module.exports = (sequelize, DataTypes) => {
     static associate(models) {
       PAR_Contingent.belongsTo(models.REF_Region, { foreignKey: 'regionId', as: 'region' });
 
-      PAR_Contingent.hasMany(models.PAR_Group, { foreignKey: 'contingentId' });
-      PAR_Contingent.hasMany(models.PAR_Participant, { foreignKey: 'groupId', as: 'participants' });
+      PAR_Contingent.hasMany(models.PAR_Group, { foreignKey: 'contingentId', as: 'groups' });
+      PAR_Contingent.hasMany(models.PAR_Participant, { foreignKey: 'contingentId', as: 'participants' });
     }
   }
   PAR_Contingent.init({

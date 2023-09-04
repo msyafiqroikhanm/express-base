@@ -1,5 +1,3 @@
-const { relative } = require('path');
-const deleteFile = require('../helpers/deleteFile.helper');
 const ResponseFormatter = require('../helpers/responseFormatter.helper');
 const {
   selectAllUsers, createUser, validateUserInputs, updateUser,
@@ -38,19 +36,11 @@ class User {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
 
-      const inputs = await validateUserInputs(req.body, req.file);
+      const inputs = await validateUserInputs(req.body);
       if (!inputs.isValid && inputs.code === 404) {
-        // Delete uploaded file when error happens
-        if (req.file) {
-          await deleteFile(relative(__dirname, req.file.path));
-        }
         return ResponseFormatter.error404(res, 'Data Not Found', inputs.message);
       }
       if (!inputs.isValid && inputs.code === 400) {
-        // Delete uploaded file when error happens
-        if (req.file) {
-          await deleteFile(relative(__dirname, req.file.path));
-        }
         return ResponseFormatter.error400(res, 'Bad Request', inputs.message);
       }
 
@@ -58,10 +48,6 @@ class User {
 
       return ResponseFormatter.success201(res, data.message, data.content);
     } catch (error) {
-      // Delete uploaded file when error happens
-      if (req.file) {
-        await deleteFile(relative(__dirname, req.file.path));
-      }
       next(error);
     }
   }
@@ -70,19 +56,11 @@ class User {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
 
-      const inputs = await validateUserInputs(req.body, req.file);
+      const inputs = await validateUserInputs(req.body, req.params.id);
       if (!inputs.isValid && inputs.code === 404) {
-        // Delete uploaded file when error happens
-        if (req.file) {
-          await deleteFile(relative(__dirname, req.file.path));
-        }
         return ResponseFormatter.error404(res, 'Data Not Found', inputs.message);
       }
       if (!inputs.isValid && inputs.code === 400) {
-        // Delete uploaded file when error happens
-        if (req.file) {
-          await deleteFile(relative(__dirname, req.file.path));
-        }
         return ResponseFormatter.error400(res, 'Bad Request', inputs.message);
       }
 
@@ -93,10 +71,6 @@ class User {
 
       return ResponseFormatter.success200(res, data.message, data.content);
     } catch (error) {
-      // Delete uploaded file when error happens
-      if (req.file) {
-        await deleteFile(relative(__dirname, req.file.path));
-      }
       next(error);
     }
   }

@@ -66,9 +66,9 @@ module.exports = {
     const users = usr_users.map((element) => ({
       qrId: element.qrId,
       roleId: element.roleId,
+      participantId: element.participantId,
       username: element.username,
       email: element.email,
-      name: element.name,
       password: bcryptjs.hashSync(`${element.username}.123`, salt),
       createdAt: new Date(),
       updatedAt: new Date(),

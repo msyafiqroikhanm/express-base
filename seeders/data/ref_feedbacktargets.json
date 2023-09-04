@@ -1,0 +1,9 @@
+[
+  {"name":"Hotel"},
+  {"name":"Venue"},
+  {"name":"Event"},
+  {"name":"Food"},
+  {"name":"Vehicle"},
+  {"name":"Committee"},
+  {"name":"Person In Charge / Coordinator"}
+]

@@ -21,8 +21,8 @@ module.exports = {
         roleId: {
           type: Sequelize.INTEGER,
         },
-        name: {
-          type: Sequelize.STRING,
+        participantId: {
+          type: Sequelize.INTEGER,
         },
         username: {
           type: Sequelize.STRING,
@@ -31,12 +31,6 @@ module.exports = {
           type: Sequelize.STRING,
         },
         email: {
-          type: Sequelize.STRING,
-        },
-        phoneNbr: {
-          type: Sequelize.STRING,
-        },
-        file: {
           type: Sequelize.STRING,
         },
         lastLogin: {

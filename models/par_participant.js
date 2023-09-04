@@ -16,6 +16,13 @@ module.exports = (sequelize, DataTypes) => {
         through: 'PAR_GroupMember',
         foreignKey: 'participantId',
         otherKey: 'groupId',
+        as: 'groups',
+      });
+
+      PAR_Participant.belongsToMany(models.CSM_Broadcast, {
+        through: 'CSM_BroadcastParticipant',
+        foreignKey: 'participantId',
+        otherKey: 'broadcastId',
       });
 
       PAR_Participant.belongsTo(models.PAR_Contingent, { foreignKey: 'contingentId', as: 'contingent' });
@@ -24,7 +31,10 @@ module.exports = (sequelize, DataTypes) => {
       PAR_Participant.belongsTo(models.REF_IdentityType, { foreignKey: 'identityTypeId', as: 'identityType' });
 
       PAR_Participant.hasMany(models.PAR_GroupMember, { foreignKey: 'participantId' });
-      PAR_Participant.hasMany(models.PAR_ParticipantTracking, { foreignKey: 'participantId' });
+      PAR_Participant.hasMany(models.PAR_ParticipantTracking, { foreignKey: 'participantId', as: 'history' });
+      PAR_Participant.hasMany(models.CSM_BroadcastParticipant, { foreignKey: 'participantId' });
+
+      PAR_Participant.hasOne(models.USR_User, { foreignKey: 'participantId', as: 'user' });
     }
   }
   PAR_Participant.init({
@@ -33,12 +43,16 @@ module.exports = (sequelize, DataTypes) => {
     typeId: DataTypes.INTEGER,
     identityTypeId: DataTypes.INTEGER,
     name: DataTypes.STRING,
-    gender: DataTypes.BOOLEAN,
+    gender: {
+      type: DataTypes.ENUM,
+      values: ['Female', 'Male'],
+    },
     birthDate: DataTypes.DATEONLY,
     identityNo: DataTypes.STRING,
     phoneNbr: DataTypes.STRING,
     email: DataTypes.STRING,
     address: DataTypes.TEXT,
+    file: DataTypes.STRING,
   }, {
     sequelize,
     modelName: 'PAR_Participant',

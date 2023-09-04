@@ -12,7 +12,7 @@ module.exports = (sequelize, DataTypes) => {
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
-      // define association here
+      REF_FeedbackType.hasMany(models.CSM_CustomerFeedback, { foreignKey: 'typeId', as: 'feedbacks' });
     }
   }
   REF_FeedbackType.init({

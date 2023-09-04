@@ -285,6 +285,8 @@ router.get(
         feature.create_region,
         feature.update_region,
         feature.delete_region,
+        feature.create_contingent,
+        feature.update_contingent,
       ]),
     );
   },
@@ -373,6 +375,8 @@ router.get(
         feature.create_group_status,
         feature.update_group_status,
         feature.delete_group_status,
+        feature.create_group,
+        feature.update_group,
       ]),
     );
   },

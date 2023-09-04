@@ -15,6 +15,7 @@ module.exports = (sequelize, DataTypes) => {
     static associate(models) {
       USR_User.belongsTo(models.USR_Role, { foreignKey: 'roleId', as: 'Role' });
       USR_User.belongsTo(models.QRM_QR, { foreignKey: 'qrId', as: 'Qr' });
+      USR_User.belongsTo(models.PAR_Participant, { foreignKey: 'participantId', as: 'participant' });
 
       USR_User.hasMany(models.ENV_Event, { foreignKey: 'picId', as: 'pic' });
     }
@@ -29,12 +30,10 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.INTEGER,
         allowNull: false,
       },
-      name: DataTypes.STRING,
+      participantId: DataTypes.INTEGER,
       username: DataTypes.STRING,
       password: DataTypes.STRING,
       email: DataTypes.STRING,
-      phoneNbr: DataTypes.STRING,
-      file: DataTypes.STRING,
       lastLogin: DataTypes.DATE,
       deletedAt: DataTypes.DATE,
     },

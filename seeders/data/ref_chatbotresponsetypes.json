@@ -1,0 +1,7 @@
+[
+  { "name":"Welcome"},
+  { "name":"Finish"},
+  { "name":"Restart"},
+  { "name":"Rating"},
+  { "name":"Invalid"}
+]

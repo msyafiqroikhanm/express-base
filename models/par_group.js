@@ -18,8 +18,8 @@ module.exports = (sequelize, DataTypes) => {
         otherKey: 'participantId',
       });
 
-      PAR_Group.belongsTo(models.ENV_Event, { foreignKey: 'eventId' });
-      PAR_Group.belongsTo(models.PAR_Contingent, { foreignKey: 'contingetId' });
+      PAR_Group.belongsTo(models.ENV_Event, { foreignKey: 'eventId', as: 'event' });
+      PAR_Group.belongsTo(models.PAR_Contingent, { foreignKey: 'contingentId', as: 'contingent' });
       PAR_Group.belongsTo(models.REF_GroupStatus, { foreignKey: 'statusId', as: 'status' });
 
       PAR_Group.hasMany(models.PAR_GroupMember, { foreignKey: 'groupId' });
@@ -28,13 +28,9 @@ module.exports = (sequelize, DataTypes) => {
   PAR_Group.init({
     eventId: {
       type: DataTypes.INTEGER,
-      allowNull: false,
-      primaryKey: true,
     },
     contingentId: {
       type: DataTypes.INTEGER,
-      allowNull: false,
-      primaryKey: true,
     },
     statusId: DataTypes.INTEGER,
     name: DataTypes.STRING,
