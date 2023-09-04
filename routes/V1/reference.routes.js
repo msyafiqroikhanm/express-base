@@ -2,7 +2,14 @@ const router = require('express').Router();
 const { check } = require('express-validator');
 const features = require('../../helpers/features.helper');
 const {
-  SysConfigCategory, QrType, EventCategory, Region, GroupStatus, ParticipantType, IdentityType,
+  SysConfigCategory,
+  QrType,
+  EventCategory,
+  Region,
+  GroupStatus,
+  ParticipantType,
+  IdentityType,
+  LocationType,
 } = require('../../controllers/reference.controller');
 const ValidateMiddleware = require('../../middlewares/validate.middleware');
 const Authentication = require('../../middlewares/auth.middleware');
@@ -37,9 +44,7 @@ router.post(
       ]),
     );
   },
-  [
-    check('name', 'Name attribute can\'t be empty').notEmpty(),
-  ],
+  [check('name', "Name attribute can't be empty").notEmpty()],
   ValidateMiddleware.result,
   SysConfigCategory.create,
 );
@@ -56,9 +61,7 @@ router.put(
       ]),
     );
   },
-  [
-    check('name', 'Name attribute can\'t be empty').notEmpty(),
-  ],
+  [check('name', "Name attribute can't be empty").notEmpty()],
   ValidateMiddleware.result,
   SysConfigCategory.update,
 );
@@ -120,14 +123,12 @@ router.post(
       req,
       res,
       next,
-      await features().then((feature) => [
-        feature.create_qr_type,
-      ]),
+      await features().then((feature) => [feature.create_qr_type]),
     );
   },
   [
-    check('name', 'Name attribute can\'t be empty').notEmpty(),
-    check('label', 'Label attribute can\'t be empty').notEmpty(),
+    check('name', "Name attribute can't be empty").notEmpty(),
+    check('label', "Label attribute can't be empty").notEmpty(),
   ],
   ValidateMiddleware.result,
   QrType.create,
@@ -140,14 +141,12 @@ router.put(
       req,
       res,
       next,
-      await features().then((feature) => [
-        feature.update_qr_type,
-      ]),
+      await features().then((feature) => [feature.update_qr_type]),
     );
   },
   [
-    check('name', 'Name attribute can\'t be empty').notEmpty(),
-    check('label', 'Label attribute can\'t be empty').notEmpty(),
+    check('name', "Name attribute can't be empty").notEmpty(),
+    check('label', "Label attribute can't be empty").notEmpty(),
   ],
   ValidateMiddleware.result,
   QrType.update,
@@ -160,9 +159,7 @@ router.delete(
       req,
       res,
       next,
-      await features().then((feature) => [
-        feature.delete_qr_type,
-      ]),
+      await features().then((feature) => [feature.delete_qr_type]),
     );
   },
   QrType.delete,
@@ -210,14 +207,10 @@ router.post(
       req,
       res,
       next,
-      await features().then((feature) => [
-        feature.create_event_category,
-      ]),
+      await features().then((feature) => [feature.create_event_category]),
     );
   },
-  [
-    check('name', 'Name attribute can\'t be empty').notEmpty(),
-  ],
+  [check('name', "Name attribute can't be empty").notEmpty()],
   ValidateMiddleware.result,
   EventCategory.create,
 );
@@ -246,14 +239,10 @@ router.put(
       req,
       res,
       next,
-      await features().then((feature) => [
-        feature.update_event_category,
-      ]),
+      await features().then((feature) => [feature.update_event_category]),
     );
   },
-  [
-    check('name', 'Name attribute can\'t be empty').notEmpty(),
-  ],
+  [check('name', "Name attribute can't be empty").notEmpty()],
   ValidateMiddleware.result,
   EventCategory.update,
 );
@@ -265,9 +254,7 @@ router.delete(
       req,
       res,
       next,
-      await features().then((feature) => [
-        feature.delete_event_category,
-      ]),
+      await features().then((feature) => [feature.delete_event_category]),
     );
   },
   EventCategory.delete,
@@ -317,14 +304,10 @@ router.post(
       req,
       res,
       next,
-      await features().then((feature) => [
-        feature.create_region,
-      ]),
+      await features().then((feature) => [feature.create_region]),
     );
   },
-  [
-    check('name', 'Name attribute can\'t be empty').notEmpty(),
-  ],
+  [check('name', "Name attribute can't be empty").notEmpty()],
   ValidateMiddleware.result,
   Region.create,
 );
@@ -336,14 +319,10 @@ router.put(
       req,
       res,
       next,
-      await features().then((feature) => [
-        feature.update_region,
-      ]),
+      await features().then((feature) => [feature.update_region]),
     );
   },
-  [
-    check('name', 'Name attribute can\'t be empty').notEmpty(),
-  ],
+  [check('name', "Name attribute can't be empty").notEmpty()],
   ValidateMiddleware.result,
   Region.update,
 );
@@ -355,9 +334,7 @@ router.delete(
       req,
       res,
       next,
-      await features().then((feature) => [
-        feature.delete_region,
-      ]),
+      await features().then((feature) => [feature.delete_region]),
     );
   },
   Region.delete,
@@ -407,14 +384,10 @@ router.post(
       req,
       res,
       next,
-      await features().then((feature) => [
-        feature.create_group_status,
-      ]),
+      await features().then((feature) => [feature.create_group_status]),
     );
   },
-  [
-    check('name', 'Name attribute can\'t be empty').notEmpty(),
-  ],
+  [check('name', "Name attribute can't be empty").notEmpty()],
   ValidateMiddleware.result,
   GroupStatus.create,
 );
@@ -426,14 +399,10 @@ router.put(
       req,
       res,
       next,
-      await features().then((feature) => [
-        feature.update_group_status,
-      ]),
+      await features().then((feature) => [feature.update_group_status]),
     );
   },
-  [
-    check('name', 'Name attribute can\'t be empty').notEmpty(),
-  ],
+  [check('name', "Name attribute can't be empty").notEmpty()],
   ValidateMiddleware.result,
   GroupStatus.update,
 );
@@ -445,9 +414,7 @@ router.delete(
       req,
       res,
       next,
-      await features().then((feature) => [
-        feature.delete_group_status,
-      ]),
+      await features().then((feature) => [feature.delete_group_status]),
     );
   },
   GroupStatus.delete,
@@ -495,14 +462,10 @@ router.post(
       req,
       res,
       next,
-      await features().then((feature) => [
-        feature.create_participant_type,
-      ]),
+      await features().then((feature) => [feature.create_participant_type]),
     );
   },
-  [
-    check('name', 'Name attribute can\'t be empty').notEmpty(),
-  ],
+  [check('name', "Name attribute can't be empty").notEmpty()],
   ValidateMiddleware.result,
   ParticipantType.create,
 );
@@ -514,14 +477,10 @@ router.put(
       req,
       res,
       next,
-      await features().then((feature) => [
-        feature.update_participant_type,
-      ]),
+      await features().then((feature) => [feature.update_participant_type]),
     );
   },
-  [
-    check('name', 'Name attribute can\'t be empty').notEmpty(),
-  ],
+  [check('name', "Name attribute can't be empty").notEmpty()],
   ValidateMiddleware.result,
   ParticipantType.update,
 );
@@ -533,9 +492,7 @@ router.delete(
       req,
       res,
       next,
-      await features().then((feature) => [
-        feature.delete_participant_type,
-      ]),
+      await features().then((feature) => [feature.delete_participant_type]),
     );
   },
   ParticipantType.delete,
@@ -583,14 +540,10 @@ router.post(
       req,
       res,
       next,
-      await features().then((feature) => [
-        feature.create_identity_type,
-      ]),
+      await features().then((feature) => [feature.create_identity_type]),
     );
   },
-  [
-    check('name', 'Name attribute can\'t be empty').notEmpty(),
-  ],
+  [check('name', "Name attribute can't be empty").notEmpty()],
   ValidateMiddleware.result,
   IdentityType.create,
 );
@@ -602,14 +555,10 @@ router.put(
       req,
       res,
       next,
-      await features().then((feature) => [
-        feature.update_identity_type,
-      ]),
+      await features().then((feature) => [feature.update_identity_type]),
     );
   },
-  [
-    check('name', 'Name attribute can\'t be empty').notEmpty(),
-  ],
+  [check('name', "Name attribute can't be empty").notEmpty()],
   ValidateMiddleware.result,
   IdentityType.update,
 );
@@ -621,12 +570,94 @@ router.delete(
       req,
       res,
       next,
-      await features().then((feature) => [
-        feature.delete_identity_type,
-      ]),
+      await features().then((feature) => [feature.delete_identity_type]),
     );
   },
   IdentityType.delete,
+);
+
+//* Location Types
+router.post(
+  '/location-types',
+  async (req, res, next) => {
+    Authentication.authenticate(
+      req,
+      res,
+      next,
+      await features().then((feature) => [feature.create_location_type]),
+    );
+  },
+  [check('name', "Name attribute can't be empty").notEmpty()],
+  ValidateMiddleware.result,
+  LocationType.create,
+);
+router.get(
+  '/location-types',
+  async (req, res, next) => {
+    Authentication.authenticate(
+      req,
+      res,
+      next,
+      await features().then((feature) => [
+        feature.view_location_type,
+        feature.create_location_type,
+        feature.update_location_type,
+        feature.delete_location_type,
+      ]),
+    );
+  },
+  LocationType.getAll,
+);
+
+router.get(
+  '/location-types/:id',
+  async (req, res, next) => {
+    Authentication.authenticate(
+      req,
+      res,
+      next,
+      await features().then((feature) => [
+        feature.view_location_type,
+        feature.create_location_type,
+        feature.update_location_type,
+        feature.delete_location_type,
+      ]),
+    );
+  },
+  LocationType.getDetail,
+);
+
+router.put(
+  '/location-types/:id',
+  async (req, res, next) => {
+    Authentication.authenticate(
+      req,
+      res,
+      next,
+      await features().then((feature) => [
+        feature.view_location_type,
+        feature.create_location_type,
+        feature.update_location_type,
+        feature.delete_location_type,
+      ]),
+    );
+  },
+  [check('name', "Name attribute can't be empty").notEmpty()],
+  ValidateMiddleware.result,
+  LocationType.update,
+);
+
+router.delete(
+  '/location-types/:id',
+  async (req, res, next) => {
+    Authentication.authenticate(
+      req,
+      res,
+      next,
+      await features().then((feature) => [feature.delete_location_type]),
+    );
+  },
+  LocationType.delete,
 );
 
 module.exports = router;

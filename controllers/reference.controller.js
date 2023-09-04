@@ -16,6 +16,7 @@ const {
   groupStatus,
   participantType,
   identityType,
+  locationType,
 } = require('../services/reference.service');
 
 class SysConfigCategory {
@@ -203,7 +204,10 @@ class EventCategory {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
 
-      const data = await eventCategory.updateEventCategory(req.params.id, req.body);
+      const data = await eventCategory.updateEventCategory(
+        req.params.id,
+        req.body,
+      );
       if (!data.success && data.code === 404) {
         return ResponseFormatter.error404(res, 'Data Not Found', data.message);
       }
@@ -416,7 +420,10 @@ class ParticipantType {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
 
-      const data = await participantType.updateParticipantType(req.params.id, req.body);
+      const data = await participantType.updateParticipantType(
+        req.params.id,
+        req.body,
+      );
       if (!data.success) {
         return ResponseFormatter.error404(res, 'Data Not Found', data.message);
       }
@@ -487,7 +494,10 @@ class IdentityType {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
 
-      const data = await identityType.updateIdentityType(req.params.id, req.body);
+      const data = await identityType.updateIdentityType(
+        req.params.id,
+        req.body,
+      );
       if (!data.success) {
         return ResponseFormatter.error404(res, 'Data Not Found', data.message);
       }
@@ -514,6 +524,81 @@ class IdentityType {
   }
 }
 
+class LocationType {
+  static async getAll(req, res, next) {
+    try {
+      res.url = `${req.method} ${req.originalUrl}`;
+
+      const data = await locationType.selectAllLocationTypes();
+      console.log(data);
+
+      return ResponseFormatter.success200(res, data.message, data.content);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  static async getDetail(req, res, next) {
+    try {
+      res.url = `${req.method} ${req.originalUrl}`;
+
+      const data = await locationType.selectLocationType(req.params.id);
+      if (!data.success) {
+        return ResponseFormatter.error404(res, 'Data Not Found', data.message);
+      }
+
+      return ResponseFormatter.success200(res, data.message, data.content);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  static async create(req, res, next) {
+    try {
+      res.url = `${req.method} ${req.originalUrl}`;
+
+      const data = await locationType.createLocationType(req.body);
+
+      return ResponseFormatter.success201(res, data.message, data.content);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  static async update(req, res, next) {
+    try {
+      res.url = `${req.method} ${req.originalUrl}`;
+
+      const data = await locationType.updateLocationType(
+        req.params.id,
+        req.body,
+      );
+      if (!data.success) {
+        return ResponseFormatter.error404(res, 'Data Not Found', data.message);
+      }
+
+      return ResponseFormatter.success200(res, data.message, data.content);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  static async delete(req, res, next) {
+    try {
+      res.url = `${req.method} ${req.originalUrl}`;
+
+      const data = await locationType.deleteLocationType(req.params.id);
+      if (!data.success) {
+        return ResponseFormatter.error404(res, 'Data Not Found', data.message);
+      }
+
+      return ResponseFormatter.success200(res, data.message, data.content);
+    } catch (error) {
+      next(error);
+    }
+  }
+}
+
 module.exports = {
   SysConfigCategory,
   QrType,
@@ -522,4 +607,5 @@ module.exports = {
   GroupStatus,
   ParticipantType,
   IdentityType,
+  LocationType,
 };
