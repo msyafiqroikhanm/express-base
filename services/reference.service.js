@@ -7,6 +7,7 @@ const {
   REF_GroupStatus,
   REF_ParticipantType,
   REF_IdentityType,
+  REF_LocationType,
 } = require('../models');
 
 const selectAllConfigCategories = async () => {
@@ -20,15 +21,26 @@ const selectConfiCategory = async (id) => {
   });
 
   if (!data) {
-    const error = { success: false, message: 'System Configuration Category Not Found' };
+    const error = {
+      success: false,
+      message: 'System Configuration Category Not Found',
+    };
     return error;
   }
-  return { success: true, message: 'Successfully Getting System Configuration Category', content: data };
+  return {
+    success: true,
+    message: 'Successfully Getting System Configuration Category',
+    content: data,
+  };
 };
 
 const createSysConfigCategory = async (form) => {
   const data = await REF_ConfigurationCategory.create(form);
-  return { success: true, message: 'System Configuration Category Successfully Created', content: data };
+  return {
+    success: true,
+    message: 'System Configuration Category Successfully Created',
+    content: data,
+  };
 };
 
 const updateSysConfigCategory = async (id, form) => {
@@ -37,7 +49,10 @@ const updateSysConfigCategory = async (id, form) => {
 
   // when category data is not found throw an error
   if (!categoryInstance) {
-    const error = { success: false, message: 'System Configuration Category Data Not Found' };
+    const error = {
+      success: false,
+      message: 'System Configuration Category Data Not Found',
+    };
     return error;
   }
 
@@ -45,14 +60,21 @@ const updateSysConfigCategory = async (id, form) => {
   categoryInstance.name = form.name;
   await categoryInstance.save();
 
-  return { success: true, message: 'System Configuration Category Successfully Updated', content: categoryInstance };
+  return {
+    success: true,
+    message: 'System Configuration Category Successfully Updated',
+    content: categoryInstance,
+  };
 };
 
 const deleteSysConfigCategory = async (id) => {
   // check validity of sys config id
   const configInstance = await REF_ConfigurationCategory.findByPk(id);
   if (!configInstance) {
-    const error = { success: false, message: 'System Configuration Data Not Found' };
+    const error = {
+      success: false,
+      message: 'System Configuration Data Not Found',
+    };
     return error;
   }
 
@@ -80,12 +102,20 @@ const selectQRType = async (id) => {
     return error;
   }
 
-  return { success: true, message: 'Successfully Getting QR Type Data', content: data };
+  return {
+    success: true,
+    message: 'Successfully Getting QR Type Data',
+    content: data,
+  };
 };
 
 const createQRType = async (form) => {
   const qrTypeInstance = await REF_QRType.create(form);
-  return { success: true, message: 'QR Type Successfully Created', content: qrTypeInstance };
+  return {
+    success: true,
+    message: 'QR Type Successfully Created',
+    content: qrTypeInstance,
+  };
 };
 
 const updateQRType = async (id, form) => {
@@ -101,7 +131,11 @@ const updateQRType = async (id, form) => {
   qrTypeInstance.label = form.label;
   await qrTypeInstance.save();
 
-  return { success: true, message: 'QR Type Successfully Updated', content: qrTypeInstance };
+  return {
+    success: true,
+    message: 'QR Type Successfully Updated',
+    content: qrTypeInstance,
+  };
 };
 
 const deleteQRType = async (id) => {
@@ -127,7 +161,9 @@ const deleteQRType = async (id) => {
 const selectAllEventCategories = async () => {
   const data = await REF_EventCategory.findAll();
   return {
-    success: true, message: 'Successfully Getting All Event Category', content: data,
+    success: true,
+    message: 'Successfully Getting All Event Category',
+    content: data,
   };
 };
 
@@ -136,12 +172,16 @@ const selectEventCategory = async (id) => {
   const categoryInstance = await REF_EventCategory.findByPk(id);
   if (!categoryInstance) {
     return {
-      success: false, code: 404, message: 'Event Category Data Not Found',
+      success: false,
+      code: 404,
+      message: 'Event Category Data Not Found',
     };
   }
 
   return {
-    success: true, message: 'Successfully Getting Event Category', content: categoryInstance,
+    success: true,
+    message: 'Successfully Getting Event Category',
+    content: categoryInstance,
   };
 };
 
@@ -149,7 +189,9 @@ const createEventCategory = async (form) => {
   const categoryInstance = await REF_EventCategory.create({ name: form.name });
 
   return {
-    success: true, message: 'Event Category Successfully Created', content: categoryInstance,
+    success: true,
+    message: 'Event Category Successfully Created',
+    content: categoryInstance,
   };
 };
 
@@ -158,14 +200,18 @@ const updateEventCategory = async (id, form) => {
   const categoryInstance = await REF_EventCategory.findByPk(id);
   if (!categoryInstance) {
     return {
-      success: false, code: 404, message: 'Event Category Data Not Found',
+      success: false,
+      code: 404,
+      message: 'Event Category Data Not Found',
     };
   }
 
   categoryInstance.name = form.name;
   await categoryInstance.save();
   return {
-    success: true, message: 'Event Category Successfully Updated', content: categoryInstance,
+    success: true,
+    message: 'Event Category Successfully Updated',
+    content: categoryInstance,
   };
 };
 
@@ -174,7 +220,9 @@ const deleteEventCategory = async (id) => {
   const categoryInstance = await REF_EventCategory.findByPk(id);
   if (!categoryInstance) {
     return {
-      success: false, code: 404, message: 'Event Category Data Not Found',
+      success: false,
+      code: 404,
+      message: 'Event Category Data Not Found',
     };
   }
 
@@ -193,7 +241,9 @@ const selectAllRegions = async () => {
   const regions = await REF_Region.findAll();
 
   return {
-    success: true, message: 'Successfully Getting All Region', content: regions,
+    success: true,
+    message: 'Successfully Getting All Region',
+    content: regions,
   };
 };
 
@@ -202,12 +252,15 @@ const selectRegion = async (id) => {
   const regionInstance = await REF_Region.findByPk(id);
   if (!regionInstance) {
     return {
-      success: false, message: 'Region Data Not Found',
+      success: false,
+      message: 'Region Data Not Found',
     };
   }
 
   return {
-    success: true, message: 'Successfully Getting Region', content: regionInstance,
+    success: true,
+    message: 'Successfully Getting Region',
+    content: regionInstance,
   };
 };
 
@@ -215,7 +268,9 @@ const createRegion = async (form) => {
   const regionInstance = await REF_Region.create({ name: form.name });
 
   return {
-    success: true, message: 'Region Successfully Created', content: regionInstance,
+    success: true,
+    message: 'Region Successfully Created',
+    content: regionInstance,
   };
 };
 
@@ -224,7 +279,8 @@ const updateRegion = async (id, form) => {
   const regionInstance = await REF_Region.findByPk(id);
   if (!regionInstance) {
     return {
-      success: false, message: 'Region Data Not Found',
+      success: false,
+      message: 'Region Data Not Found',
     };
   }
 
@@ -232,7 +288,9 @@ const updateRegion = async (id, form) => {
   await regionInstance.save();
 
   return {
-    success: true, message: 'Region Successfully Created', content: regionInstance,
+    success: true,
+    message: 'Region Successfully Created',
+    content: regionInstance,
   };
 };
 
@@ -241,7 +299,8 @@ const deleteRegion = async (id) => {
   const regionInstance = await REF_Region.findByPk(id);
   if (!regionInstance) {
     return {
-      success: false, message: 'Region Data Not Found',
+      success: false,
+      message: 'Region Data Not Found',
     };
   }
 
@@ -260,7 +319,9 @@ const selectAllGroupStatuses = async () => {
   const statuses = await REF_GroupStatus.findAll();
 
   return {
-    success: true, message: 'Successfully Getting All Group Status', content: statuses,
+    success: true,
+    message: 'Successfully Getting All Group Status',
+    content: statuses,
   };
 };
 
@@ -269,12 +330,15 @@ const selectGroupStatus = async (id) => {
   const statusInstance = await REF_GroupStatus.findByPk(id);
   if (!statusInstance) {
     return {
-      success: false, message: 'Group Status Data Not Found',
+      success: false,
+      message: 'Group Status Data Not Found',
     };
   }
 
   return {
-    success: true, message: 'Successfully Getting Group Status', content: statusInstance,
+    success: true,
+    message: 'Successfully Getting Group Status',
+    content: statusInstance,
   };
 };
 
@@ -282,7 +346,9 @@ const createGroupStatus = async (form) => {
   const statusInstance = await REF_GroupStatus.create({ name: form.name });
 
   return {
-    success: true, message: 'Group Status Successfully Created', content: statusInstance,
+    success: true,
+    message: 'Group Status Successfully Created',
+    content: statusInstance,
   };
 };
 
@@ -291,7 +357,8 @@ const updateGroupStatus = async (id, form) => {
   const statusInstance = await REF_GroupStatus.findByPk(id);
   if (!statusInstance) {
     return {
-      success: false, message: 'Group Status Data Not Found',
+      success: false,
+      message: 'Group Status Data Not Found',
     };
   }
 
@@ -299,7 +366,9 @@ const updateGroupStatus = async (id, form) => {
   await statusInstance.save();
 
   return {
-    success: true, message: 'Group Status Successfully Created', content: statusInstance,
+    success: true,
+    message: 'Group Status Successfully Created',
+    content: statusInstance,
   };
 };
 
@@ -308,7 +377,8 @@ const deleteGroupStatus = async (id) => {
   const statusInstance = await REF_GroupStatus.findByPk(id);
   if (!statusInstance) {
     return {
-      success: false, message: 'Group Status Data Not Found',
+      success: false,
+      message: 'Group Status Data Not Found',
     };
   }
 
@@ -327,7 +397,9 @@ const selectAllParticipantTypes = async () => {
   const types = await REF_ParticipantType.findAll();
 
   return {
-    success: true, message: 'Successfully Getting All Participant Type', content: types,
+    success: true,
+    message: 'Successfully Getting All Participant Type',
+    content: types,
   };
 };
 
@@ -336,12 +408,15 @@ const selectParticipantType = async (id) => {
   const typeInstance = await REF_ParticipantType.findByPk(id);
   if (!typeInstance) {
     return {
-      success: false, message: 'Participant Type Data Not Found',
+      success: false,
+      message: 'Participant Type Data Not Found',
     };
   }
 
   return {
-    success: true, message: 'Successfully Getting Participant Type', content: typeInstance,
+    success: true,
+    message: 'Successfully Getting Participant Type',
+    content: typeInstance,
   };
 };
 
@@ -349,7 +424,9 @@ const createParticipantType = async (form) => {
   const typeInstance = await REF_ParticipantType.create({ name: form.name });
 
   return {
-    success: true, message: 'Participant Type Successfully Created', content: typeInstance,
+    success: true,
+    message: 'Participant Type Successfully Created',
+    content: typeInstance,
   };
 };
 
@@ -358,7 +435,8 @@ const updateParticipantType = async (id, form) => {
   const typeInstance = await REF_ParticipantType.findByPk(id);
   if (!typeInstance) {
     return {
-      success: false, message: 'Participant Type Data Not Found',
+      success: false,
+      message: 'Participant Type Data Not Found',
     };
   }
 
@@ -366,7 +444,9 @@ const updateParticipantType = async (id, form) => {
   await typeInstance.save();
 
   return {
-    success: true, message: 'Participant Type Successfully Created', content: typeInstance,
+    success: true,
+    message: 'Participant Type Successfully Created',
+    content: typeInstance,
   };
 };
 
@@ -375,7 +455,8 @@ const deleteParticipantType = async (id) => {
   const typeInstance = await REF_ParticipantType.findByPk(id);
   if (!typeInstance) {
     return {
-      success: false, message: 'Participant Type Data Not Found',
+      success: false,
+      message: 'Participant Type Data Not Found',
     };
   }
 
@@ -394,7 +475,9 @@ const selectAllIdentityTypes = async () => {
   const types = await REF_IdentityType.findAll();
 
   return {
-    success: true, message: 'Successfully Getting All Identity Type', content: types,
+    success: true,
+    message: 'Successfully Getting All Identity Type',
+    content: types,
   };
 };
 
@@ -403,12 +486,15 @@ const selectIdentityType = async (id) => {
   const typeInstance = await REF_IdentityType.findByPk(id);
   if (!typeInstance) {
     return {
-      success: false, message: 'Identity Type Data Not Found',
+      success: false,
+      message: 'Identity Type Data Not Found',
     };
   }
 
   return {
-    success: true, message: 'Successfully Getting Identity Type', content: typeInstance,
+    success: true,
+    message: 'Successfully Getting Identity Type',
+    content: typeInstance,
   };
 };
 
@@ -416,7 +502,9 @@ const createIdentityType = async (form) => {
   const typeInstance = await REF_IdentityType.create({ name: form.name });
 
   return {
-    success: true, message: 'Identity Type Successfully Created', content: typeInstance,
+    success: true,
+    message: 'Identity Type Successfully Created',
+    content: typeInstance,
   };
 };
 
@@ -425,7 +513,8 @@ const updateIdentityType = async (id, form) => {
   const typeInstance = await REF_IdentityType.findByPk(id);
   if (!typeInstance) {
     return {
-      success: false, message: 'Identity Type Data Not Found',
+      success: false,
+      message: 'Identity Type Data Not Found',
     };
   }
 
@@ -433,7 +522,9 @@ const updateIdentityType = async (id, form) => {
   await typeInstance.save();
 
   return {
-    success: true, message: 'Identity Type Successfully Created', content: typeInstance,
+    success: true,
+    message: 'Identity Type Successfully Updated',
+    content: typeInstance,
   };
 };
 
@@ -442,7 +533,8 @@ const deleteIdentityType = async (id) => {
   const typeInstance = await REF_IdentityType.findByPk(id);
   if (!typeInstance) {
     return {
-      success: false, message: 'Identity Type Data Not Found',
+      success: false,
+      message: 'Identity Type Data Not Found',
     };
   }
 
@@ -454,6 +546,83 @@ const deleteIdentityType = async (id) => {
     success: true,
     message: 'Identity Type Successfully Deleted',
     content: `Identity Type ${name} Successfully Deleted`,
+  };
+};
+
+const selectAllLocationTypes = async () => {
+  const locationTypes = await REF_LocationType.findAll();
+
+  return {
+    success: true,
+    message: 'Successfully Getting All Location Type',
+    content: locationTypes,
+  };
+};
+
+const selectLocationType = async (id) => {
+  const locationType = await REF_LocationType.findByPk(id);
+  if (!locationType) {
+    return {
+      success: false,
+      message: 'Location Type Data Not Found',
+    };
+  }
+
+  return {
+    success: true,
+    message: 'Successfully Gettinh All Location Type',
+    content: locationType,
+  };
+};
+
+const createLocationType = async (form) => {
+  const locationType = await REF_LocationType.create({ name: form.name });
+
+  return {
+    success: true,
+    message: 'Location Type Successfully Created',
+    content: locationType,
+  };
+};
+
+const updateLocationType = async (id, form) => {
+  // check identity type id validity
+  const typeInstance = await REF_LocationType.findByPk(id);
+  if (!typeInstance) {
+    return {
+      success: false,
+      message: 'Location Type Data Not Found',
+    };
+  }
+
+  typeInstance.name = form.name;
+  await typeInstance.save();
+
+  return {
+    success: true,
+    message: 'Location Type Successfully Updated',
+    content: typeInstance,
+  };
+};
+
+const deleteLocationType = async (id) => {
+  // check identity type id validity
+  const typeInstance = await REF_LocationType.findByPk(id);
+  if (!typeInstance) {
+    return {
+      success: false,
+      message: 'Location Type Data Not Found',
+    };
+  }
+
+  const { name } = typeInstance.dataValues;
+
+  await typeInstance.destroy();
+
+  return {
+    success: true,
+    message: 'Location Type Successfully Deleted',
+    content: `Location Type ${name} Successfully Deleted`,
   };
 };
 
@@ -502,5 +671,12 @@ module.exports = {
     createIdentityType,
     updateIdentityType,
     deleteIdentityType,
+  },
+  locationType: {
+    selectAllLocationTypes,
+    selectLocationType,
+    createLocationType,
+    updateLocationType,
+    deleteLocationType,
   },
 };
