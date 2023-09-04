@@ -1,0 +1,13 @@
+[
+  {
+    "templateId": 1,
+    "name": "Registration Confirmation Per Person",
+    "status": "Sent",
+    "sentAt": "2023-09-01 12:02:01",
+    "messageParameters": ["Backend Seminar", "https://developers.facebook.com/"],
+    "buttonParameters": null,
+    "headerFile": "public/documents/broacastTemplates/templates-2141231221.pdf",
+    "headerText": null,
+    "description": "Whatsapp broadcast message that user successfully regist to an event"
+  }
+]
