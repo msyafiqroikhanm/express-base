@@ -19,15 +19,17 @@ class AuthMiddleware {
         req.user = userData;
 
         // check user access
-        const authorized = req.user.Role.USR_Features
-          .some((feature) => requiredFeatures.includes(feature.id));
+        if (requiredFeatures) {
+          const authorized = req.user.Role.USR_Features
+            .some((feature) => requiredFeatures.includes(feature.id));
 
-        if (!authorized) {
-          throw {
-            code: 401,
-            status: 'Unauthorized Request',
-            message: 'You Don\'t Have Access To This Feature',
-          };
+          if (!authorized) {
+            throw {
+              code: 401,
+              status: 'Unauthorized Request',
+              message: 'You Don\'t Have Access To This Feature',
+            };
+          }
         }
         return next();
       })(req, res, next);

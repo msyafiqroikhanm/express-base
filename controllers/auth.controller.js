@@ -27,7 +27,6 @@ class AuthController {
 
       await updateUserLogin({ id: user.id }, { lastLogin: new Date() });
       const message = 'Berhasil Login';
-      console.log(JSON.stringify(user, null, 2));
       return ResponseFormatter.success(res, 200, 'OK', message, {
         name: user.participant.name,
         role: user.Role.name,
