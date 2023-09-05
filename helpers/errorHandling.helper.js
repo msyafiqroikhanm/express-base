@@ -13,7 +13,13 @@ module.exports = async (err, req, res, next) => {
   if (!err.code) {
     return responseFormatter.InternalServerError(res);
   }
-  res
-    .status(err.code)
-    .json({ code: err.code, status: err.status, message: err.message });
+
+  res.status(err.code).json({
+    meta: {
+      success: false,
+      code: err.code,
+      status: err.status,
+      message: err.message,
+    },
+  });
 };
