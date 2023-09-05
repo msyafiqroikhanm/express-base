@@ -27,6 +27,8 @@ const {
   templateHeaderType,
   informationCenterTargetType,
   roomType,
+  roomStatus,
+  lodgerStatus,
 } = require('../services/reference.service');
 
 class SysConfigCategory {
@@ -657,6 +659,148 @@ class RoomType {
       res.url = `${req.method} ${req.originalUrl}`;
 
       const data = await roomType.deleteRoomType(req.params.id);
+      if (!data.success) {
+        return ResponseFormatter.error404(res, 'Data Not Found', data.message);
+      }
+
+      return ResponseFormatter.success200(res, data.message, data.content);
+    } catch (error) {
+      next(error);
+    }
+  }
+}
+
+class RoomStatus {
+  static async getAll(req, res, next) {
+    try {
+      res.url = `${req.method} ${req.originalUrl}`;
+
+      const data = await roomStatus.selectAllRoomStatuses();
+
+      return ResponseFormatter.success200(res, data.message, data.content);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  static async getDetail(req, res, next) {
+    try {
+      res.url = `${req.method} ${req.originalUrl}`;
+
+      const data = await roomStatus.selectRoomStatus(req.params.id);
+      if (!data.success) {
+        return ResponseFormatter.error404(res, 'Data Not Found', data.message);
+      }
+
+      return ResponseFormatter.success200(res, data.message, data.content);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  static async create(req, res, next) {
+    try {
+      res.url = `${req.method} ${req.originalUrl}`;
+
+      const data = await roomStatus.createRoomStatus(req.body);
+
+      return ResponseFormatter.success201(res, data.message, data.content);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  static async update(req, res, next) {
+    try {
+      res.url = `${req.method} ${req.originalUrl}`;
+
+      const data = await roomStatus.updateRoomStatus(req.params.id, req.body);
+      if (!data.success) {
+        return ResponseFormatter.error404(res, 'Data Not Found', data.message);
+      }
+
+      return ResponseFormatter.success200(res, data.message, data.content);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  static async delete(req, res, next) {
+    try {
+      res.url = `${req.method} ${req.originalUrl}`;
+
+      const data = await roomStatus.deleteRoomStatus(req.params.id);
+      if (!data.success) {
+        return ResponseFormatter.error404(res, 'Data Not Found', data.message);
+      }
+
+      return ResponseFormatter.success200(res, data.message, data.content);
+    } catch (error) {
+      next(error);
+    }
+  }
+}
+
+class LodgerStatus {
+  static async getAll(req, res, next) {
+    try {
+      res.url = `${req.method} ${req.originalUrl}`;
+
+      const data = await lodgerStatus.selectAllLodgerStatuses();
+
+      return ResponseFormatter.success200(res, data.message, data.content);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  static async getDetail(req, res, next) {
+    try {
+      res.url = `${req.method} ${req.originalUrl}`;
+
+      const data = await lodgerStatus.selectLodgerStatus(req.params.id);
+      if (!data.success) {
+        return ResponseFormatter.error404(res, 'Data Not Found', data.message);
+      }
+
+      return ResponseFormatter.success200(res, data.message, data.content);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  static async create(req, res, next) {
+    try {
+      res.url = `${req.method} ${req.originalUrl}`;
+
+      const data = await lodgerStatus.createLodgerStatus(req.body);
+
+      return ResponseFormatter.success201(res, data.message, data.content);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  static async update(req, res, next) {
+    try {
+      res.url = `${req.method} ${req.originalUrl}`;
+
+      const data = await lodgerStatus.updateLodgerStatus(req.params.id, req.body);
+      if (!data.success) {
+        return ResponseFormatter.error404(res, 'Data Not Found', data.message);
+      }
+
+      return ResponseFormatter.success200(res, data.message, data.content);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  static async delete(req, res, next) {
+    try {
+      res.url = `${req.method} ${req.originalUrl}`;
+
+      const data = await lodgerStatus.deleteLodgerStatus(req.params.id);
       if (!data.success) {
         return ResponseFormatter.error404(res, 'Data Not Found', data.message);
       }
@@ -1333,4 +1477,6 @@ module.exports = {
   TemplateHeaderType,
   InformationCenterTargetType,
   RoomType,
+  RoomStatus,
+  LodgerStatus,
 };

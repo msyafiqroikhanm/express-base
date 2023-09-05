@@ -18,6 +18,8 @@ const {
   REF_TemplateHeaderType,
   REF_InformationCenterTargetType,
   REF_RoomType,
+  REF_RoomStatus,
+  REF_LodgerStatus,
 } = require('../models');
 
 const selectAllConfigCategories = async () => {
@@ -1418,6 +1420,160 @@ const deleteRoomType = async (id) => {
   };
 };
 
+const selectAllRoomStatuses = async () => {
+  const typeInstance = await REF_RoomStatus.findAll();
+
+  return {
+    success: true,
+    message: 'Successfully Getting All Room Status',
+    content: typeInstance,
+  };
+};
+
+const selectRoomStatus = async (id) => {
+  const locationType = await REF_RoomStatus.findByPk(id);
+  if (!locationType) {
+    return {
+      success: false,
+      message: 'Room Status Data Not Found',
+    };
+  }
+
+  return {
+    success: true,
+    message: 'Successfully Getting Detail Room Status',
+    content: locationType,
+  };
+};
+
+const createRoomStatus = async (form) => {
+  const typeInstance = await REF_RoomStatus.create({ name: form.name });
+
+  return {
+    success: true,
+    message: 'Room Status Successfully Created',
+    content: typeInstance,
+  };
+};
+
+const updateRoomStatus = async (id, form) => {
+  // check identity type id validity
+  const typeInstance = await REF_RoomStatus.findByPk(id);
+  if (!typeInstance) {
+    return {
+      success: false,
+      message: 'Room Status Data Not Found',
+    };
+  }
+
+  typeInstance.name = form.name;
+  await typeInstance.save();
+
+  return {
+    success: true,
+    message: 'Room Status Successfully Updated',
+    content: typeInstance,
+  };
+};
+
+const deleteRoomStatus = async (id) => {
+  // check identity type id validity
+  const typeInstance = await REF_RoomStatus.findByPk(id);
+  if (!typeInstance) {
+    return {
+      success: false,
+      message: 'Room Status Data Not Found',
+    };
+  }
+
+  const { name } = typeInstance.dataValues;
+
+  await typeInstance.destroy();
+
+  return {
+    success: true,
+    message: 'Room Status Successfully Deleted',
+    content: `Room Status ${name} Successfully Deleted`,
+  };
+};
+
+const selectAllLodgerStatuses = async () => {
+  const typeInstance = await REF_LodgerStatus.findAll();
+
+  return {
+    success: true,
+    message: 'Successfully Getting All Lodger Status',
+    content: typeInstance,
+  };
+};
+
+const selectLodgerStatus = async (id) => {
+  const locationType = await REF_LodgerStatus.findByPk(id);
+  if (!locationType) {
+    return {
+      success: false,
+      message: 'Lodger Status Data Not Found',
+    };
+  }
+
+  return {
+    success: true,
+    message: 'Successfully Getting Detail Lodger Status',
+    content: locationType,
+  };
+};
+
+const createLodgerStatus = async (form) => {
+  const typeInstance = await REF_LodgerStatus.create({ name: form.name });
+
+  return {
+    success: true,
+    message: 'Lodger Status Successfully Created',
+    content: typeInstance,
+  };
+};
+
+const updateLodgerStatus = async (id, form) => {
+  // check identity type id validity
+  const typeInstance = await REF_LodgerStatus.findByPk(id);
+  if (!typeInstance) {
+    return {
+      success: false,
+      message: 'Lodger Status Data Not Found',
+    };
+  }
+
+  typeInstance.name = form.name;
+  await typeInstance.save();
+
+  return {
+    success: true,
+    message: 'Lodger Status Successfully Updated',
+    content: typeInstance,
+  };
+};
+
+const deleteLodgerStatus = async (id) => {
+  // check identity type id validity
+  const typeInstance = await REF_LodgerStatus.findByPk(id);
+  if (!typeInstance) {
+    return {
+      success: false,
+      message: 'Lodger Status Data Not Found',
+    };
+  }
+
+  const { name } = typeInstance.dataValues;
+
+  await typeInstance.destroy();
+
+  return {
+    success: true,
+    message: 'Lodger Status Successfully Deleted',
+    content: `Lodger Status ${name} Successfully Deleted`,
+  };
+};
+
 module.exports = {
   selectAllConfigCategories,
   selectConfiCategory,
@@ -1540,5 +1696,19 @@ module.exports = {
     createRoomType,
     updateRoomType,
     deleteRoomType,
+  },
+  roomStatus: {
+    selectAllRoomStatuses,
+    selectRoomStatus,
+    createRoomStatus,
+    updateRoomStatus,
+    deleteRoomStatus,
+  },
+  lodgerStatus: {
+    selectAllLodgerStatuses,
+    selectLodgerStatus,
+    createLodgerStatus,
+    updateLodgerStatus,
+    deleteLodgerStatus,
   },
 };
