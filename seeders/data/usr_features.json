@@ -384,6 +384,10 @@
     },
     {
         "moduleId":8,
+        "name":"Activate Chatbot Response"
+    },
+    {
+        "moduleId":8,
         "name":"View Feedback"
     },
     {
