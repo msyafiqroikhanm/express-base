@@ -18,6 +18,7 @@ const {
   REF_TemplateHeaderType,
   REF_InformationCenterTargetType,
   REF_RoomType,
+  REF_RoomStatus,
 } = require('../models');
 
 const selectAllConfigCategories = async () => {
@@ -1418,6 +1419,83 @@ const deleteRoomType = async (id) => {
   };
 };
 
+const selectAllRoomStatuses = async () => {
+  const typeInstance = await REF_RoomStatus.findAll();
+
+  return {
+    success: true,
+    message: 'Successfully Getting All Room Status',
+    content: typeInstance,
+  };
+};
+
+const selectRoomStatus = async (id) => {
+  const locationType = await REF_RoomStatus.findByPk(id);
+  if (!locationType) {
+    return {
+      success: false,
+      message: 'Room Status Data Not Found',
+    };
+  }
+
+  return {
+    success: true,
+    message: 'Successfully Getting Detail Room Status',
+    content: locationType,
+  };
+};
+
+const createRoomStatus = async (form) => {
+  const typeInstance = await REF_RoomStatus.create({ name: form.name });
+
+  return {
+    success: true,
+    message: 'Room Status Successfully Created',
+    content: typeInstance,
+  };
+};
+
+const updateRoomStatus = async (id, form) => {
+  // check identity type id validity
+  const typeInstance = await REF_RoomStatus.findByPk(id);
+  if (!typeInstance) {
+    return {
+      success: false,
+      message: 'Room Status Data Not Found',
+    };
+  }
+
+  typeInstance.name = form.name;
+  await typeInstance.save();
+
+  return {
+    success: true,
+    message: 'Room Status Successfully Updated',
+    content: typeInstance,
+  };
+};
+
+const deleteRoomStatus = async (id) => {
+  // check identity type id validity
+  const typeInstance = await REF_RoomStatus.findByPk(id);
+  if (!typeInstance) {
+    return {
+      success: false,
+      message: 'Room Status Data Not Found',
+    };
+  }
+
+  const { name } = typeInstance.dataValues;
+
+  await typeInstance.destroy();
+
+  return {
+    success: true,
+    message: 'Room Status Successfully Deleted',
+    content: `Room Status ${name} Successfully Deleted`,
+  };
+};
+
 module.exports = {
   selectAllConfigCategories,
   selectConfiCategory,
@@ -1540,5 +1618,12 @@ module.exports = {
     createRoomType,
     updateRoomType,
     deleteRoomType,
+  },
+  roomStatus: {
+    selectAllRoomStatuses,
+    selectRoomStatus,
+    createRoomStatus,
+    updateRoomStatus,
+    deleteRoomStatus,
   },
 };

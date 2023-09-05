@@ -20,6 +20,7 @@ const {
   TemplateHeaderType,
   InformationCenterTargetType,
   RoomType,
+  RoomStatus,
 } = require('../../controllers/reference.controller');
 const ValidateMiddleware = require('../../middlewares/validate.middleware');
 const Authentication = require('../../middlewares/auth.middleware');
@@ -739,10 +740,91 @@ router.delete(
       req,
       res,
       next,
-      await features().then((feature) => [feature.delete_location_type]),
+      await features().then((feature) => [feature.delete_room_type]),
     );
   },
   RoomType.delete,
+);
+
+//* Room Statuses
+router.post(
+  '/room-statuses',
+  async (req, res, next) => {
+    Authentication.authenticate(
+      req,
+      res,
+      next,
+      await features().then((feature) => [feature.create_room_status]),
+    );
+  },
+  [check('name', "Name attribute can't be empty").notEmpty()],
+  ValidateMiddleware.result,
+  RoomStatus.create,
+);
+router.get(
+  '/room-statuses',
+  async (req, res, next) => {
+    Authentication.authenticate(
+      req,
+      res,
+      next,
+      await features().then((feature) => [
+        feature.view_room_status,
+        feature.create_room_status,
+        feature.update_room_status,
+        feature.delete_room_status,
+      ]),
+    );
+  },
+  RoomStatus.getAll,
+);
+router.get(
+  '/room-statuses/:id',
+  async (req, res, next) => {
+    Authentication.authenticate(
+      req,
+      res,
+      next,
+      await features().then((feature) => [
+        feature.view_room_status,
+        feature.create_room_status,
+        feature.update_room_status,
+        feature.delete_room_status,
+      ]),
+    );
+  },
+  RoomStatus.getDetail,
+);
+router.put(
+  '/room-statuses/:id',
+  async (req, res, next) => {
+    Authentication.authenticate(
+      req,
+      res,
+      next,
+      await features().then((feature) => [
+        feature.view_room_status,
+        feature.create_room_status,
+        feature.update_room_status,
+        feature.delete_room_status,
+      ]),
+    );
+  },
+  [check('name', "Name attribute can't be empty").notEmpty()],
+  ValidateMiddleware.result,
+  RoomStatus.update,
+);
+router.delete(
+  '/room-statuses/:id',
+  async (req, res, next) => {
+    Authentication.authenticate(
+      req,
+      res,
+      next,
+      await features().then((feature) => [feature.delete_room_status]),
+    );
+  },
+  RoomStatus.delete,
 );
 
 //* Chatbot Response Type
