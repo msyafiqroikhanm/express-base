@@ -28,6 +28,7 @@ const {
   informationCenterTargetType,
   roomType,
   roomStatus,
+  lodgerStatus,
 } = require('../services/reference.service');
 
 class SysConfigCategory {
@@ -740,6 +741,77 @@ class RoomStatus {
   }
 }
 
+class LodgerStatus {
+  static async getAll(req, res, next) {
+    try {
+      res.url = `${req.method} ${req.originalUrl}`;
+
+      const data = await lodgerStatus.selectAllLodgerStatuses();
+
+      return ResponseFormatter.success200(res, data.message, data.content);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  static async getDetail(req, res, next) {
+    try {
+      res.url = `${req.method} ${req.originalUrl}`;
+
+      const data = await lodgerStatus.selectLodgerStatus(req.params.id);
+      if (!data.success) {
+        return ResponseFormatter.error404(res, 'Data Not Found', data.message);
+      }
+
+      return ResponseFormatter.success200(res, data.message, data.content);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  static async create(req, res, next) {
+    try {
+      res.url = `${req.method} ${req.originalUrl}`;
+
+      const data = await lodgerStatus.createLodgerStatus(req.body);
+
+      return ResponseFormatter.success201(res, data.message, data.content);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  static async update(req, res, next) {
+    try {
+      res.url = `${req.method} ${req.originalUrl}`;
+
+      const data = await lodgerStatus.updateLodgerStatus(req.params.id, req.body);
+      if (!data.success) {
+        return ResponseFormatter.error404(res, 'Data Not Found', data.message);
+      }
+
+      return ResponseFormatter.success200(res, data.message, data.content);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  static async delete(req, res, next) {
+    try {
+      res.url = `${req.method} ${req.originalUrl}`;
+
+      const data = await lodgerStatus.deleteLodgerStatus(req.params.id);
+      if (!data.success) {
+        return ResponseFormatter.error404(res, 'Data Not Found', data.message);
+      }
+
+      return ResponseFormatter.success200(res, data.message, data.content);
+    } catch (error) {
+      next(error);
+    }
+  }
+}
+
 class ChatbotResponseType {
   static async getAll(req, res, next) {
     try {
@@ -1406,4 +1478,5 @@ module.exports = {
   InformationCenterTargetType,
   RoomType,
   RoomStatus,
+  LodgerStatus,
 };

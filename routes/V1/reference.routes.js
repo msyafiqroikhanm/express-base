@@ -21,6 +21,7 @@ const {
   InformationCenterTargetType,
   RoomType,
   RoomStatus,
+  LodgerStatus,
 } = require('../../controllers/reference.controller');
 const ValidateMiddleware = require('../../middlewares/validate.middleware');
 const Authentication = require('../../middlewares/auth.middleware');
@@ -825,6 +826,87 @@ router.delete(
     );
   },
   RoomStatus.delete,
+);
+
+//* Lodger Statuses
+router.post(
+  '/lodger-statuses',
+  async (req, res, next) => {
+    Authentication.authenticate(
+      req,
+      res,
+      next,
+      await features().then((feature) => [feature.create_lodger_status]),
+    );
+  },
+  [check('name', "Name attribute can't be empty").notEmpty()],
+  ValidateMiddleware.result,
+  LodgerStatus.create,
+);
+router.get(
+  '/lodger-statuses',
+  async (req, res, next) => {
+    Authentication.authenticate(
+      req,
+      res,
+      next,
+      await features().then((feature) => [
+        feature.view_lodger_status,
+        feature.create_lodger_status,
+        feature.update_lodger_status,
+        feature.delete_lodger_status,
+      ]),
+    );
+  },
+  LodgerStatus.getAll,
+);
+router.get(
+  '/lodger-statuses/:id',
+  async (req, res, next) => {
+    Authentication.authenticate(
+      req,
+      res,
+      next,
+      await features().then((feature) => [
+        feature.view_lodger_status,
+        feature.create_lodger_status,
+        feature.update_lodger_status,
+        feature.delete_lodger_status,
+      ]),
+    );
+  },
+  LodgerStatus.getDetail,
+);
+router.put(
+  '/lodger-statuses/:id',
+  async (req, res, next) => {
+    Authentication.authenticate(
+      req,
+      res,
+      next,
+      await features().then((feature) => [
+        feature.view_lodger_status,
+        feature.create_lodger_status,
+        feature.update_lodger_status,
+        feature.delete_lodger_status,
+      ]),
+    );
+  },
+  [check('name', "Name attribute can't be empty").notEmpty()],
+  ValidateMiddleware.result,
+  LodgerStatus.update,
+);
+router.delete(
+  '/lodger-statuses/:id',
+  async (req, res, next) => {
+    Authentication.authenticate(
+      req,
+      res,
+      next,
+      await features().then((feature) => [feature.delete_lodger_status]),
+    );
+  },
+  LodgerStatus.delete,
 );
 
 //* Chatbot Response Type
