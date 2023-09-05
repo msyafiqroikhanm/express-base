@@ -1,4 +1,7 @@
+/* eslint-disable no-unused-vars */
+
 'use strict';
+
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
@@ -7,49 +10,46 @@ module.exports = {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
-        type: Sequelize.INTEGER
+        type: Sequelize.INTEGER,
       },
       parentLocationId: {
-        type: Sequelize.INTEGER
+        type: Sequelize.INTEGER,
       },
       picId: {
-        type: Sequelize.INTEGER
-      },
-      picItId: {
-        type: Sequelize.INTEGER
+        type: Sequelize.INTEGER,
       },
       typeId: {
-        type: Sequelize.INTEGER
+        type: Sequelize.INTEGER,
       },
       name: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
       },
       description: {
-        type: Sequelize.TEXT
+        type: Sequelize.TEXT,
       },
       address: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
       },
       phoneNbr: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
       },
       latitude: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
       },
       longtitude: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
       },
       createdAt: {
         allowNull: false,
-        type: Sequelize.DATE
+        type: Sequelize.DATE,
       },
       updatedAt: {
         allowNull: false,
-        type: Sequelize.DATE
-      }
+        type: Sequelize.DATE,
+      },
     });
   },
   async down(queryInterface, Sequelize) {
     await queryInterface.dropTable('ACM_Locations');
-  }
+  },
 };

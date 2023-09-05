@@ -22,7 +22,7 @@ module.exports = (sequelize, DataTypes) => {
       });
 
       //* PIC
-      ACM_Location.belongsTo(models.USR_User, {
+      ACM_Location.belongsTo(models.USR_PIC, {
         foreignKey: 'picId',
         as: 'PIC',
       });
@@ -44,7 +44,6 @@ module.exports = (sequelize, DataTypes) => {
     {
       parentLocationId: DataTypes.INTEGER,
       picId: DataTypes.INTEGER,
-      picItId: DataTypes.INTEGER,
       typeId: DataTypes.INTEGER,
       name: DataTypes.STRING,
       description: DataTypes.TEXT,

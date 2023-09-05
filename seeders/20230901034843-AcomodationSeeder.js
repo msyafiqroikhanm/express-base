@@ -8,13 +8,10 @@ const fs = require('fs');
 module.exports = {
   async up(queryInterface, Sequelize) {
     //* ACM_Locations
-    const acm_locations = JSON.parse(
-      fs.readFileSync('./seeders/data/acm_locations.json'),
-    );
+    const acm_locations = JSON.parse(fs.readFileSync('./seeders/data/acm_locations.json'));
     const locations = acm_locations.map((element) => ({
       parentLocationId: element.parentLocationId,
       picId: element.picId,
-      picItId: element.picItId,
       typeId: element.typeId,
       name: element.name,
       description: element.description,
@@ -28,9 +25,7 @@ module.exports = {
     await queryInterface.bulkInsert('ACM_Locations', locations);
 
     //* ACM_Facilities
-    const acm_facilities = JSON.parse(
-      fs.readFileSync('./seeders/data/acm_facilities.json'),
-    );
+    const acm_facilities = JSON.parse(fs.readFileSync('./seeders/data/acm_facilities.json'));
     const facilities = acm_facilities.map((element) => ({
       locationId: element.locationId,
       name: element.name,
@@ -41,9 +36,7 @@ module.exports = {
     await queryInterface.bulkInsert('ACM_Facilities', facilities);
 
     //* ACM_Rooms
-    const acm_rooms = JSON.parse(
-      fs.readFileSync('./seeders/data/acm_rooms.json'),
-    );
+    const acm_rooms = JSON.parse(fs.readFileSync('./seeders/data/acm_rooms.json'));
     const rooms = acm_rooms.map((element) => ({
       locationId: element.locationId,
       typeId: element.typeId,
