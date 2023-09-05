@@ -22,6 +22,7 @@ const {
   RoomType,
   RoomStatus,
   LodgerStatus,
+  PICType,
 } = require('../../controllers/reference.controller');
 const ValidateMiddleware = require('../../middlewares/validate.middleware');
 const Authentication = require('../../middlewares/auth.middleware');
@@ -909,6 +910,87 @@ router.delete(
   LodgerStatus.delete,
 );
 
+//* PIC Types
+router.post(
+  '/pic-types',
+  async (req, res, next) => {
+    Authentication.authenticate(
+      req,
+      res,
+      next,
+      await features().then((feature) => [feature.create_pic_type]),
+    );
+  },
+  [check('name', "Name attribute can't be empty").notEmpty()],
+  ValidateMiddleware.result,
+  PICType.create,
+);
+router.get(
+  '/pic-types',
+  async (req, res, next) => {
+    Authentication.authenticate(
+      req,
+      res,
+      next,
+      await features().then((feature) => [
+        feature.view_pic_type,
+        feature.create_pic_type,
+        feature.update_pic_type,
+        feature.delete_pic_type,
+      ]),
+    );
+  },
+  PICType.getAll,
+);
+router.get(
+  '/pic-types/:id',
+  async (req, res, next) => {
+    Authentication.authenticate(
+      req,
+      res,
+      next,
+      await features().then((feature) => [
+        feature.view_pic_type,
+        feature.create_pic_type,
+        feature.update_pic_type,
+        feature.delete_pic_type,
+      ]),
+    );
+  },
+  PICType.getDetail,
+);
+router.put(
+  '/pic-types/:id',
+  async (req, res, next) => {
+    Authentication.authenticate(
+      req,
+      res,
+      next,
+      await features().then((feature) => [
+        feature.view_pic_type,
+        feature.create_pic_type,
+        feature.update_pic_type,
+        feature.delete_pic_type,
+      ]),
+    );
+  },
+  [check('name', "Name attribute can't be empty").notEmpty()],
+  ValidateMiddleware.result,
+  PICType.update,
+);
+router.delete(
+  '/pic-types/:id',
+  async (req, res, next) => {
+    Authentication.authenticate(
+      req,
+      res,
+      next,
+      await features().then((feature) => [feature.delete_pic_type]),
+    );
+  },
+  PICType.delete,
+);
+
 //* Chatbot Response Type
 router.get(
   '/chatbot-response-types',
@@ -1469,7 +1551,6 @@ router.delete(
 );
 
 //* Template Header Type
-
 router.get(
   '/template-header-types',
   async (req, res, next) => {

@@ -936,5 +936,22 @@
     {
         "moduleId":11,
         "name":"Delete System Configuration"
+    },
+
+    {
+        "moduleId":10,
+        "name":"View PIC Type"
+    },
+    {
+        "moduleId":10,
+        "name":"Create PIC Type"
+    },
+    {
+        "moduleId":10,
+        "name":"Update PIC Type"
+    },
+    {
+        "moduleId":10,
+        "name":"Delete PIC Type"
     }
 ]
