@@ -9,9 +9,7 @@ const bcryptjs = require('bcryptjs');
 module.exports = {
   async up(queryInterface) {
     //* USR_Module
-    const usr_modules = JSON.parse(
-      fs.readFileSync('./seeders/data/usr_modules.json')
-    );
+    const usr_modules = JSON.parse(fs.readFileSync('./seeders/data/usr_modules.json'));
     const modules = usr_modules.map((element) => ({
       name: element.name,
       createdAt: new Date(),
@@ -20,9 +18,7 @@ module.exports = {
     await queryInterface.bulkInsert('USR_Modules', modules);
 
     //* USR_Feature
-    const usr_features = JSON.parse(
-      fs.readFileSync('./seeders/data/usr_features.json')
-    );
+    const usr_features = JSON.parse(fs.readFileSync('./seeders/data/usr_features.json'));
     const features = usr_features.map((element) => ({
       moduleId: element.moduleId,
       name: element.name,
@@ -33,9 +29,7 @@ module.exports = {
     await queryInterface.bulkInsert('USR_Features', features);
 
     //* USR_Roles
-    const usr_roles = JSON.parse(
-      fs.readFileSync('./seeders/data/usr_roles.json')
-    );
+    const usr_roles = JSON.parse(fs.readFileSync('./seeders/data/usr_roles.json'));
     const roles = usr_roles.map((element) => ({
       name: element.name,
       templateId: element.templateId,
@@ -46,9 +40,7 @@ module.exports = {
     await queryInterface.bulkInsert('USR_Roles', roles);
 
     //* USR_RoleFeatures
-    const usr_rolefeatures = JSON.parse(
-      fs.readFileSync('./seeders/data/usr_rolefeatures.json')
-    );
+    const usr_rolefeatures = JSON.parse(fs.readFileSync('./seeders/data/usr_rolefeatures.json'));
     const roleFeatures = usr_rolefeatures.map((element) => ({
       roleId: element.roleId,
       featureId: element.featureId,
@@ -59,9 +51,7 @@ module.exports = {
     await queryInterface.bulkInsert('USR_RoleFeatures', roleFeatures);
 
     //* USR_Users
-    const usr_users = JSON.parse(
-      fs.readFileSync('./seeders/data/usr_users.json')
-    );
+    const usr_users = JSON.parse(fs.readFileSync('./seeders/data/usr_users.json'));
     const salt = bcryptjs.genSaltSync(10);
     const users = usr_users.map((element) => ({
       qrId: element.qrId,
@@ -75,6 +65,17 @@ module.exports = {
     }));
     // console.log(users);
     await queryInterface.bulkInsert('USR_Users', users);
+
+    //* USR_PICs
+    const usr_pics = JSON.parse(fs.readFileSync('./seeders/data/usr_pics.json'));
+    const pics = usr_pics.map((element) => ({
+      userId: element.userId,
+      typeId: element.typeId,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    }));
+    // console.log(pics);
+    await queryInterface.bulkInsert('USR_PICs', pics);
   },
 
   async down(queryInterface) {
@@ -95,6 +96,10 @@ module.exports = {
       restartIdentity: true,
     });
     await queryInterface.bulkDelete('USR_Users', null, {
+      truncate: true,
+      restartIdentity: true,
+    });
+    await queryInterface.bulkDelete('USR_PICs', null, {
       truncate: true,
       restartIdentity: true,
     });
