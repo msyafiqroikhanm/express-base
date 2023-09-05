@@ -20,7 +20,14 @@ router.post(
 
 router.get(
   '/check-login',
-  Authentication.authenticate,
+  async (req, res, next) => {
+    Authentication.authenticate(
+      req,
+      res,
+      next,
+      null,
+    );
+  },
   (req, res) => ResponseFormatter.success200(res, 'Token Verified')
 );
 
