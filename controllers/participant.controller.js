@@ -145,7 +145,7 @@ class Participant {
 
       const data = await deleteParticipant(req.params.id);
       if (!data.success && data.code === 404) {
-        return ResponseFormatter.error404(res, data.message, data.content);
+        return ResponseFormatter.error404(res, 'Data Not Found', data.message);
       }
 
       return ResponseFormatter.success200(res, data.message, data.content);

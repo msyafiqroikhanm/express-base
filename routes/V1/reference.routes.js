@@ -10,6 +10,15 @@ const {
   ParticipantType,
   IdentityType,
   LocationType,
+  ChatbotResponseType,
+  FeedbackType,
+  FeedbackTarget,
+  FeedbackStatus,
+  FAQType,
+  TemplateCategory,
+  MetaTemplateCategory,
+  TemplateHeaderType,
+  InformationCenterTargetType,
 } = require('../../controllers/reference.controller');
 const ValidateMiddleware = require('../../middlewares/validate.middleware');
 const Authentication = require('../../middlewares/auth.middleware');
@@ -658,6 +667,780 @@ router.delete(
     );
   },
   LocationType.delete,
+);
+
+//* Chatbot Response Type
+
+router.get(
+  '/chatbot-response-types',
+  async (req, res, next) => {
+    Authentication.authenticate(
+      req,
+      res,
+      next,
+      await features().then((feature) => [
+        feature.view_chatbot_response_type,
+        feature.create_chatbot_response_type,
+        feature.update_chatbot_response_type,
+        feature.delete_chatbot_response_type,
+      ]),
+    );
+  },
+  ChatbotResponseType.getAll,
+);
+
+router.get(
+  '/chatbot-response-types/:id',
+  async (req, res, next) => {
+    Authentication.authenticate(
+      req,
+      res,
+      next,
+      await features().then((feature) => [
+        feature.view_chatbot_response_type,
+        feature.update_chatbot_response_type,
+        feature.delete_chatbot_response_type,
+      ]),
+    );
+  },
+  ChatbotResponseType.getDetail,
+);
+
+router.post(
+  '/chatbot-response-types',
+  async (req, res, next) => {
+    Authentication.authenticate(
+      req,
+      res,
+      next,
+      await features().then((feature) => [
+        feature.create_chatbot_response_type,
+      ]),
+    );
+  },
+  [check('name', "Name attribute can't be empty").notEmpty()],
+  ValidateMiddleware.result,
+  ChatbotResponseType.create,
+);
+
+router.put(
+  '/chatbot-response-types/:id',
+  async (req, res, next) => {
+    Authentication.authenticate(
+      req,
+      res,
+      next,
+      await features().then((feature) => [
+        feature.update_chatbot_response_type,
+      ]),
+    );
+  },
+  [check('name', "Name attribute can't be empty").notEmpty()],
+  ValidateMiddleware.result,
+  ChatbotResponseType.update,
+);
+
+router.delete(
+  '/chatbot-response-types/:id',
+  async (req, res, next) => {
+    Authentication.authenticate(
+      req,
+      res,
+      next,
+      await features().then((feature) => [
+        feature.delete_chatbot_response_type,
+      ]),
+    );
+  },
+  ChatbotResponseType.delete,
+);
+
+//* Feedback Type
+
+router.get(
+  '/feedback-types',
+  async (req, res, next) => {
+    Authentication.authenticate(
+      req,
+      res,
+      next,
+      await features().then((feature) => [
+        feature.view_feedback_type,
+        feature.create_feedback_type,
+        feature.update_feedback_type,
+        feature.delete_feedback_type,
+      ]),
+    );
+  },
+  FeedbackType.getAll,
+);
+
+router.get(
+  '/feedback-types/:id',
+  async (req, res, next) => {
+    Authentication.authenticate(
+      req,
+      res,
+      next,
+      await features().then((feature) => [
+        feature.view_feedback_type,
+        feature.update_feedback_type,
+        feature.delete_feedback_type,
+      ]),
+    );
+  },
+  FeedbackType.getDetail,
+);
+
+router.post(
+  '/feedback-types',
+  async (req, res, next) => {
+    Authentication.authenticate(
+      req,
+      res,
+      next,
+      await features().then((feature) => [
+        feature.create_feedback_type,
+      ]),
+    );
+  },
+  [check('name', "Name attribute can't be empty").notEmpty()],
+  ValidateMiddleware.result,
+  FeedbackType.create,
+);
+
+router.put(
+  '/feedback-types/:id',
+  async (req, res, next) => {
+    Authentication.authenticate(
+      req,
+      res,
+      next,
+      await features().then((feature) => [
+        feature.update_feedback_type,
+      ]),
+    );
+  },
+  [check('name', "Name attribute can't be empty").notEmpty()],
+  ValidateMiddleware.result,
+  FeedbackType.update,
+);
+
+router.delete(
+  '/feedback-types/:id',
+  async (req, res, next) => {
+    Authentication.authenticate(
+      req,
+      res,
+      next,
+      await features().then((feature) => [
+        feature.delete_feedback_type,
+      ]),
+    );
+  },
+  FeedbackType.delete,
+);
+
+//* Feedback Target
+
+router.get(
+  '/feedback-targets',
+  async (req, res, next) => {
+    Authentication.authenticate(
+      req,
+      res,
+      next,
+      await features().then((feature) => [
+        feature.view_feedback_target,
+        feature.create_feedback_target,
+        feature.update_feedback_target,
+        feature.delete_feedback_target,
+      ]),
+    );
+  },
+  FeedbackTarget.getAll,
+);
+
+router.get(
+  '/feedback-targets/:id',
+  async (req, res, next) => {
+    Authentication.authenticate(
+      req,
+      res,
+      next,
+      await features().then((feature) => [
+        feature.view_feedback_target,
+        feature.update_feedback_target,
+        feature.delete_feedback_target,
+      ]),
+    );
+  },
+  FeedbackTarget.getDetail,
+);
+
+router.post(
+  '/feedback-targets',
+  async (req, res, next) => {
+    Authentication.authenticate(
+      req,
+      res,
+      next,
+      await features().then((feature) => [
+        feature.create_feedback_target,
+      ]),
+    );
+  },
+  [check('name', "Name attribute can't be empty").notEmpty()],
+  ValidateMiddleware.result,
+  FeedbackTarget.create,
+);
+
+router.put(
+  '/feedback-targets/:id',
+  async (req, res, next) => {
+    Authentication.authenticate(
+      req,
+      res,
+      next,
+      await features().then((feature) => [
+        feature.update_feedback_target,
+      ]),
+    );
+  },
+  [check('name', "Name attribute can't be empty").notEmpty()],
+  ValidateMiddleware.result,
+  FeedbackTarget.update,
+);
+
+router.delete(
+  '/feedback-targets/:id',
+  async (req, res, next) => {
+    Authentication.authenticate(
+      req,
+      res,
+      next,
+      await features().then((feature) => [
+        feature.delete_feedback_target,
+      ]),
+    );
+  },
+  FeedbackTarget.delete,
+);
+
+//* Feedback Status
+
+router.get(
+  '/feedback-statuses',
+  async (req, res, next) => {
+    Authentication.authenticate(
+      req,
+      res,
+      next,
+      await features().then((feature) => [
+        feature.view_feedback_status,
+        feature.create_feedback_status,
+        feature.update_feedback_status,
+        feature.delete_feedback_status,
+      ]),
+    );
+  },
+  FeedbackStatus.getAll,
+);
+
+router.get(
+  '/feedback-statuses/:id',
+  async (req, res, next) => {
+    Authentication.authenticate(
+      req,
+      res,
+      next,
+      await features().then((feature) => [
+        feature.view_feedback_status,
+        feature.update_feedback_status,
+        feature.delete_feedback_status,
+      ]),
+    );
+  },
+  FeedbackStatus.getDetail,
+);
+
+router.post(
+  '/feedback-statuses',
+  async (req, res, next) => {
+    Authentication.authenticate(
+      req,
+      res,
+      next,
+      await features().then((feature) => [
+        feature.create_feedback_status,
+      ]),
+    );
+  },
+  [check('name', "Name attribute can't be empty").notEmpty()],
+  ValidateMiddleware.result,
+  FeedbackStatus.create,
+);
+
+router.put(
+  '/feedback-statuses/:id',
+  async (req, res, next) => {
+    Authentication.authenticate(
+      req,
+      res,
+      next,
+      await features().then((feature) => [
+        feature.update_feedback_status,
+      ]),
+    );
+  },
+  [check('name', "Name attribute can't be empty").notEmpty()],
+  ValidateMiddleware.result,
+  FeedbackStatus.update,
+);
+
+router.delete(
+  '/feedback-statuses/:id',
+  async (req, res, next) => {
+    Authentication.authenticate(
+      req,
+      res,
+      next,
+      await features().then((feature) => [
+        feature.delete_feedback_status,
+      ]),
+    );
+  },
+  FeedbackStatus.delete,
+);
+
+//* FAQ Type
+
+router.get(
+  '/faq-types',
+  async (req, res, next) => {
+    Authentication.authenticate(
+      req,
+      res,
+      next,
+      await features().then((feature) => [
+        feature.view_faq_type,
+        feature.create_faq_type,
+        feature.update_faq_type,
+        feature.delete_faq_type,
+      ]),
+    );
+  },
+  FAQType.getAll,
+);
+
+router.get(
+  '/faq-types/:id',
+  async (req, res, next) => {
+    Authentication.authenticate(
+      req,
+      res,
+      next,
+      await features().then((feature) => [
+        feature.view_faq_type,
+        feature.update_faq_type,
+        feature.delete_faq_type,
+      ]),
+    );
+  },
+  FAQType.getDetail,
+);
+
+router.post(
+  '/faq-types',
+  async (req, res, next) => {
+    Authentication.authenticate(
+      req,
+      res,
+      next,
+      await features().then((feature) => [
+        feature.create_faq_type,
+      ]),
+    );
+  },
+  [check('name', "Name attribute can't be empty").notEmpty()],
+  ValidateMiddleware.result,
+  FAQType.create,
+);
+
+router.put(
+  '/faq-types/:id',
+  async (req, res, next) => {
+    Authentication.authenticate(
+      req,
+      res,
+      next,
+      await features().then((feature) => [
+        feature.update_faq_type,
+      ]),
+    );
+  },
+  [check('name', "Name attribute can't be empty").notEmpty()],
+  ValidateMiddleware.result,
+  FAQType.update,
+);
+
+router.delete(
+  '/faq-types/:id',
+  async (req, res, next) => {
+    Authentication.authenticate(
+      req,
+      res,
+      next,
+      await features().then((feature) => [
+        feature.delete_faq_type,
+      ]),
+    );
+  },
+  FAQType.delete,
+);
+
+//* Template Category
+
+router.get(
+  '/template-categories',
+  async (req, res, next) => {
+    Authentication.authenticate(
+      req,
+      res,
+      next,
+      await features().then((feature) => [
+        feature.view_template_category,
+        feature.create_template_category,
+        feature.update_template_category,
+        feature.delete_template_category,
+      ]),
+    );
+  },
+  TemplateCategory.getAll,
+);
+
+router.get(
+  '/template-categories/:id',
+  async (req, res, next) => {
+    Authentication.authenticate(
+      req,
+      res,
+      next,
+      await features().then((feature) => [
+        feature.view_template_category,
+        feature.update_template_category,
+        feature.delete_template_category,
+      ]),
+    );
+  },
+  TemplateCategory.getDetail,
+);
+
+router.post(
+  '/template-categories',
+  async (req, res, next) => {
+    Authentication.authenticate(
+      req,
+      res,
+      next,
+      await features().then((feature) => [
+        feature.create_template_category,
+      ]),
+    );
+  },
+  [check('name', "Name attribute can't be empty").notEmpty()],
+  ValidateMiddleware.result,
+  TemplateCategory.create,
+);
+
+router.put(
+  '/template-categories/:id',
+  async (req, res, next) => {
+    Authentication.authenticate(
+      req,
+      res,
+      next,
+      await features().then((feature) => [
+        feature.update_template_category,
+      ]),
+    );
+  },
+  [check('name', "Name attribute can't be empty").notEmpty()],
+  ValidateMiddleware.result,
+  TemplateCategory.update,
+);
+
+router.delete(
+  '/template-categories/:id',
+  async (req, res, next) => {
+    Authentication.authenticate(
+      req,
+      res,
+      next,
+      await features().then((feature) => [
+        feature.delete_template_category,
+      ]),
+    );
+  },
+  TemplateCategory.delete,
+);
+
+//* Meta Template Category
+
+router.get(
+  '/meta-template-categories',
+  async (req, res, next) => {
+    Authentication.authenticate(
+      req,
+      res,
+      next,
+      await features().then((feature) => [
+        feature.view_meta_template_category,
+        feature.create_meta_template_category,
+        feature.update_meta_template_category,
+        feature.delete_meta_template_category,
+      ]),
+    );
+  },
+  MetaTemplateCategory.getAll,
+);
+
+router.get(
+  '/meta-template-categories/:id',
+  async (req, res, next) => {
+    Authentication.authenticate(
+      req,
+      res,
+      next,
+      await features().then((feature) => [
+        feature.view_meta_template_category,
+        feature.update_meta_template_category,
+        feature.delete_meta_template_category,
+      ]),
+    );
+  },
+  MetaTemplateCategory.getDetail,
+);
+
+router.post(
+  '/meta-template-categories',
+  async (req, res, next) => {
+    Authentication.authenticate(
+      req,
+      res,
+      next,
+      await features().then((feature) => [
+        feature.create_meta_template_category,
+      ]),
+    );
+  },
+  [check('name', "Name attribute can't be empty").notEmpty()],
+  ValidateMiddleware.result,
+  MetaTemplateCategory.create,
+);
+
+router.put(
+  '/meta-template-categories/:id',
+  async (req, res, next) => {
+    Authentication.authenticate(
+      req,
+      res,
+      next,
+      await features().then((feature) => [
+        feature.update_meta_template_category,
+      ]),
+    );
+  },
+  [check('name', "Name attribute can't be empty").notEmpty()],
+  ValidateMiddleware.result,
+  MetaTemplateCategory.update,
+);
+
+router.delete(
+  '/meta-template-categories/:id',
+  async (req, res, next) => {
+    Authentication.authenticate(
+      req,
+      res,
+      next,
+      await features().then((feature) => [
+        feature.delete_meta_template_category,
+      ]),
+    );
+  },
+  MetaTemplateCategory.delete,
+);
+
+//* Template Header Type
+
+router.get(
+  '/template-header-types',
+  async (req, res, next) => {
+    Authentication.authenticate(
+      req,
+      res,
+      next,
+      await features().then((feature) => [
+        feature.view_template_header_type,
+        feature.create_template_header_type,
+        feature.update_template_header_type,
+        feature.delete_template_header_type,
+      ]),
+    );
+  },
+  TemplateHeaderType.getAll,
+);
+
+router.get(
+  '/template-header-types/:id',
+  async (req, res, next) => {
+    Authentication.authenticate(
+      req,
+      res,
+      next,
+      await features().then((feature) => [
+        feature.view_template_header_type,
+        feature.update_template_header_type,
+        feature.delete_template_header_type,
+      ]),
+    );
+  },
+  TemplateHeaderType.getDetail,
+);
+
+router.post(
+  '/template-header-types',
+  async (req, res, next) => {
+    Authentication.authenticate(
+      req,
+      res,
+      next,
+      await features().then((feature) => [
+        feature.create_template_header_type,
+      ]),
+    );
+  },
+  [check('name', "Name attribute can't be empty").notEmpty()],
+  ValidateMiddleware.result,
+  TemplateHeaderType.create,
+);
+
+router.put(
+  '/template-header-types/:id',
+  async (req, res, next) => {
+    Authentication.authenticate(
+      req,
+      res,
+      next,
+      await features().then((feature) => [
+        feature.update_template_header_type,
+      ]),
+    );
+  },
+  [check('name', "Name attribute can't be empty").notEmpty()],
+  ValidateMiddleware.result,
+  TemplateHeaderType.update,
+);
+
+router.delete(
+  '/template-header-types/:id',
+  async (req, res, next) => {
+    Authentication.authenticate(
+      req,
+      res,
+      next,
+      await features().then((feature) => [
+        feature.delete_template_header_type,
+      ]),
+    );
+  },
+  TemplateHeaderType.delete,
+);
+
+//* Information Center Target Type
+
+router.get(
+  '/information-center-target-types',
+  async (req, res, next) => {
+    Authentication.authenticate(
+      req,
+      res,
+      next,
+      await features().then((feature) => [
+        feature.view_information_center_target_type,
+        feature.create_information_center_target_type,
+        feature.update_information_center_target_type,
+        feature.delete_information_center_target_type,
+      ]),
+    );
+  },
+  InformationCenterTargetType.getAll,
+);
+
+router.get(
+  '/information-center-target-types/:id',
+  async (req, res, next) => {
+    Authentication.authenticate(
+      req,
+      res,
+      next,
+      await features().then((feature) => [
+        feature.view_information_center_target_type,
+        feature.update_information_center_target_type,
+        feature.delete_information_center_target_type,
+      ]),
+    );
+  },
+  InformationCenterTargetType.getDetail,
+);
+
+router.post(
+  '/information-center-target-types',
+  async (req, res, next) => {
+    Authentication.authenticate(
+      req,
+      res,
+      next,
+      await features().then((feature) => [
+        feature.create_information_center_target_type,
+      ]),
+    );
+  },
+  [check('name', "Name attribute can't be empty").notEmpty()],
+  ValidateMiddleware.result,
+  InformationCenterTargetType.create,
+);
+
+router.put(
+  '/information-center-target-types/:id',
+  async (req, res, next) => {
+    Authentication.authenticate(
+      req,
+      res,
+      next,
+      await features().then((feature) => [
+        feature.update_information_center_target_type,
+      ]),
+    );
+  },
+  [check('name', "Name attribute can't be empty").notEmpty()],
+  ValidateMiddleware.result,
+  InformationCenterTargetType.update,
+);
+
+router.delete(
+  '/information-center-target-types/:id',
+  async (req, res, next) => {
+    Authentication.authenticate(
+      req,
+      res,
+      next,
+      await features().then((feature) => [
+        feature.delete_information_center_target_type,
+      ]),
+    );
+  },
+  InformationCenterTargetType.delete,
 );
 
 module.exports = router;

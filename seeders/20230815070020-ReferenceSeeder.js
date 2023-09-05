@@ -173,6 +173,17 @@ module.exports = {
     }));
     await queryInterface.bulkInsert('REF_FeedbackStatuses', feedbackStatuses);
 
+    //* REF_FAQTypes
+    const ref_faqtypes = JSON.parse(
+      fs.readFileSync('./seeders/data/ref_faqtypes.json'),
+    );
+    const faqtypes = ref_faqtypes.map((element) => ({
+      name: element.name,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    }));
+    await queryInterface.bulkInsert('REF_FAQTypes', faqtypes);
+
     //* REF_TemplateCategories
     const ref_templatecategories = JSON.parse(
       fs.readFileSync('./seeders/data/ref_templatecategories.json'),

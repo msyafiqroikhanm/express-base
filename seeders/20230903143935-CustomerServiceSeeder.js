@@ -75,6 +75,63 @@ module.exports = {
       updatedAt: new Date(),
     }));
     await queryInterface.bulkInsert('CSM_InformationCenterTargets', informationcentertargets);
+
+    //* CSM_BroadcastTemplates
+    const csm_broadcasttemplates = JSON.parse(
+      fs.readFileSync('./seeders/data/csm_broadcasttemplates.json'),
+    );
+    const broadcasttemplates = csm_broadcasttemplates.map((element) => ({
+      categoryId: element.categoryId,
+      metaCategoryId: element.metaCategoryId,
+      headerTypeId: element.headerTypeId,
+      name: element.name,
+      language: element.language,
+      message: element.message,
+      messageVariableNumber: element.messageVariableNumber,
+      messageVariableExample: JSON.stringify(element.messageVariableExample),
+      headerText: element.headerText,
+      haveHeaderVariable: element.haveHeaderVariable,
+      headerVariableExample: JSON.stringify(element.headerVariableExample),
+      headerFile: element.headerFile,
+      footer: element.footer,
+      button: JSON.stringify(element.button),
+      metaStatus: element.metaStatus,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    }));
+    await queryInterface.bulkInsert('CSM_BroadcastTemplates', broadcasttemplates);
+
+    //* CSM_Broadcasts
+    const csm_broadcasts = JSON.parse(
+      fs.readFileSync('./seeders/data/csm_broadcasts.json'),
+    );
+    const broadcasts = csm_broadcasts.map((element) => ({
+      templateId: element.templateId,
+      name: element.name,
+      status: element.status,
+      sentAt: new Date(element.sentAt),
+      messageParameters: JSON.stringify(element.messageParameters),
+      buttonParameters: JSON.stringify(element.buttonParameters),
+      headerFile: element.headerFile,
+      headerText: element.headerText,
+      description: element.description,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    }));
+    await queryInterface.bulkInsert('CSM_Broadcasts', broadcasts);
+
+    //* CSM_BroadcastParticipants
+    const csm_broadastparticipants = JSON.parse(
+      fs.readFileSync('./seeders/data/csm_broadastparticipants.json'),
+    );
+    const broadastparticipants = csm_broadastparticipants.map((element) => ({
+      participantId: element.participantId,
+      broadcastId: element.broadcastId,
+      status: element.status,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    }));
+    await queryInterface.bulkInsert('CSM_BroadcastParticipants', broadastparticipants);
   },
 
   async down(queryInterface, Sequelize) {
@@ -95,6 +152,18 @@ module.exports = {
       restartIdentity: true,
     });
     await queryInterface.bulkDelete('CSM_InformationCenterTargets', null, {
+      truncate: true,
+      restartIdentity: true,
+    });
+    await queryInterface.bulkDelete('CSM_BroadcastTemplates', null, {
+      truncate: true,
+      restartIdentity: true,
+    });
+    await queryInterface.bulkDelete('CSM_Broadcasts', null, {
+      truncate: true,
+      restartIdentity: true,
+    });
+    await queryInterface.bulkDelete('CSM_BroadcastParticipants', null, {
       truncate: true,
       restartIdentity: true,
     });

@@ -18,16 +18,9 @@ module.exports = (sequelize, DataTypes) => {
         otherKey: 'participantId',
       });
 
-      CSM_Broadcast.belongsToMany(models.USR_Role, {
-        through: 'CSM_BroadcastCommittee',
-        foreignKey: 'broadcastId',
-        otherKey: 'roleId',
-      });
-
       CSM_Broadcast.belongsTo(models.CSM_BroadcastTemplate, { foreignKey: 'templateId', as: 'template' });
 
       CSM_Broadcast.hasMany(models.CSM_BroadcastParticipant, { foreignKey: 'broadcastId' });
-      CSM_Broadcast.hasMany(models.CSM_BroadcastCommittee, { foreignKey: 'broadcastId' });
     }
   }
   CSM_Broadcast.init({

@@ -826,19 +826,19 @@
     },
     {
         "moduleId":10,
-        "name":"View FAQ Target"
+        "name":"View FAQ Type"
     },
     {
         "moduleId":10,
-        "name":"Create FAQ Target"
+        "name":"Create FAQ Type"
     },
     {
         "moduleId":10,
-        "name":"Update FAQ Target"
+        "name":"Update FAQ Type"
     },
     {
         "moduleId":10,
-        "name":"Delete FAQ Target"
+        "name":"Delete FAQ Type"
     },
     {
         "moduleId":10,
@@ -871,6 +871,22 @@
     {
         "moduleId":10,
         "name":"Delete Template Category"
+    },
+    {
+        "moduleId":10,
+        "name":"View Template Header Type"
+    },
+    {
+        "moduleId":10,
+        "name":"Create Template Header Type"
+    },
+    {
+        "moduleId":10,
+        "name":"Update Template Header Type"
+    },
+    {
+        "moduleId":10,
+        "name":"Delete Template Header Type"
     },
     {
         "moduleId":10,
