@@ -1,0 +1,46 @@
+[
+  {
+    "categoryId":1,
+    "metaCategoryId":1,
+    "headerTypeId":4,
+    "name":"registration_confirmation_1",
+    "language":"id",
+    "message":"Congratulation your registration for {{1}} is complete, please visit {{2}} for more information",
+    "messageVariableNumber":2,
+    "messageVariableExample":["Python Dev Conference", "https://www.python.org/"],
+    "headerText":null,
+    "haveHeaderVariable":false,
+    "headerVariableExample":null,
+    "headerFile":"public/documents/broacastTemplates/templates-16978236478.pdf",
+    "footer":"Zen Of Pyton",
+    "button":null,
+    "metaStatus":"APPROVED"
+  },
+  {
+    "categoryId":1,
+    "metaCategoryId":1,
+    "headerTypeId":1,
+    "name":"registration_decline_2",
+    "language":"id",
+    "message":"Your registration have been rejected",
+    "messageVariableNumber":0,
+    "messageVariableExample":null,
+    "headerText":"REGISTRATION INFORMATION {{1}}",
+    "haveHeaderVariable":true,
+    "headerVariableExample":"PARTICIPANT",
+    "headerFile":null,
+    "footer":"Zen Of Pyton",
+    "button":[
+      {
+        "type": "URL",
+        "text": "Our Official Website",
+        "url": "https://www.python.org/"
+      },
+      {
+        "type": "QUICK_REPLY",
+        "text": "Unsubscribe to all further information"
+      }
+    ],
+    "metaStatus":"APPROVED"
+  }
+]

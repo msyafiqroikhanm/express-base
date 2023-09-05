@@ -3,8 +3,8 @@ const router = require('express').Router();
 const { check } = require('express-validator');
 const AuthController = require('../../controllers/auth.controller');
 const ValidateMiddleware = require('../../middlewares/validate.middleware');
-// const AuthMiddleware = require('../middlewares/auth.middleware');
-// const ResponseFormatter = require('../helpers/responseFormatter.helper');
+const Authentication = require('../../middlewares/auth.middleware');
+const ResponseFormatter = require('../../helpers/responseFormatter.helper');
 
 router.post(
   '/login',
@@ -18,8 +18,10 @@ router.post(
 
 // router.get('/logout', AuthMiddleware.authenticate, AuthController.logout);
 
-// router.get('/check-login', AuthMiddleware.authenticate, (req, res) =>
-//   ResponseFormatter.success200(res, 'Token Verified')
-// );
+router.get(
+  '/check-login',
+  Authentication.authenticate,
+  (req, res) => ResponseFormatter.success200(res, 'Token Verified')
+);
 
 module.exports = router;

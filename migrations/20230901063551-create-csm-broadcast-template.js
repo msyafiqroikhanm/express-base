@@ -24,6 +24,9 @@ module.exports = {
       name: {
         type: Sequelize.STRING,
       },
+      language: {
+        type: Sequelize.STRING,
+      },
       message: {
         type: Sequelize.TEXT,
       },
@@ -36,7 +39,7 @@ module.exports = {
       headerText: {
         type: Sequelize.STRING,
       },
-      isHeaderVariable: {
+      haveHeaderVariable: {
         type: Sequelize.BOOLEAN,
       },
       headerVariableExample: {
