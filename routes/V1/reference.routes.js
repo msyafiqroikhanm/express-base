@@ -19,6 +19,7 @@ const {
   MetaTemplateCategory,
   TemplateHeaderType,
   InformationCenterTargetType,
+  RoomType,
 } = require('../../controllers/reference.controller');
 const ValidateMiddleware = require('../../middlewares/validate.middleware');
 const Authentication = require('../../middlewares/auth.middleware');
@@ -48,9 +49,7 @@ router.post(
       req,
       res,
       next,
-      await features().then((feature) => [
-        feature.create_configuration_category,
-      ]),
+      await features().then((feature) => [feature.create_configuration_category]),
     );
   },
   [check('name', "Name attribute can't be empty").notEmpty()],
@@ -65,9 +64,7 @@ router.put(
       req,
       res,
       next,
-      await features().then((feature) => [
-        feature.update_configuration_category,
-      ]),
+      await features().then((feature) => [feature.update_configuration_category]),
     );
   },
   [check('name', "Name attribute can't be empty").notEmpty()],
@@ -82,9 +79,7 @@ router.delete(
       req,
       res,
       next,
-      await features().then((feature) => [
-        feature.delete_configuration_category,
-      ]),
+      await features().then((feature) => [feature.delete_configuration_category]),
     );
   },
   SysConfigCategory.delete,
@@ -669,8 +664,88 @@ router.delete(
   LocationType.delete,
 );
 
-//* Chatbot Response Type
+//* Room Types
+router.post(
+  '/room-types',
+  async (req, res, next) => {
+    Authentication.authenticate(
+      req,
+      res,
+      next,
+      await features().then((feature) => [feature.create_room_type]),
+    );
+  },
+  [check('name', "Name attribute can't be empty").notEmpty()],
+  ValidateMiddleware.result,
+  RoomType.create,
+);
+router.get(
+  '/room-types',
+  async (req, res, next) => {
+    Authentication.authenticate(
+      req,
+      res,
+      next,
+      await features().then((feature) => [
+        feature.view_room_type,
+        feature.create_room_type,
+        feature.update_room_type,
+        feature.delete_room_type,
+      ]),
+    );
+  },
+  RoomType.getAll,
+);
+router.get(
+  '/room-types/:id',
+  async (req, res, next) => {
+    Authentication.authenticate(
+      req,
+      res,
+      next,
+      await features().then((feature) => [
+        feature.view_room_type,
+        feature.create_room_type,
+        feature.update_room_type,
+        feature.delete_room_type,
+      ]),
+    );
+  },
+  RoomType.getDetail,
+);
+router.put(
+  '/room-types/:id',
+  async (req, res, next) => {
+    Authentication.authenticate(
+      req,
+      res,
+      next,
+      await features().then((feature) => [
+        feature.view_room_type,
+        feature.create_room_type,
+        feature.update_room_type,
+        feature.delete_room_type,
+      ]),
+    );
+  },
+  [check('name', "Name attribute can't be empty").notEmpty()],
+  ValidateMiddleware.result,
+  RoomType.update,
+);
+router.delete(
+  '/room-types/:id',
+  async (req, res, next) => {
+    Authentication.authenticate(
+      req,
+      res,
+      next,
+      await features().then((feature) => [feature.delete_location_type]),
+    );
+  },
+  RoomType.delete,
+);
 
+//* Chatbot Response Type
 router.get(
   '/chatbot-response-types',
   async (req, res, next) => {
@@ -713,9 +788,7 @@ router.post(
       req,
       res,
       next,
-      await features().then((feature) => [
-        feature.create_chatbot_response_type,
-      ]),
+      await features().then((feature) => [feature.create_chatbot_response_type]),
     );
   },
   [check('name', "Name attribute can't be empty").notEmpty()],
@@ -730,9 +803,7 @@ router.put(
       req,
       res,
       next,
-      await features().then((feature) => [
-        feature.update_chatbot_response_type,
-      ]),
+      await features().then((feature) => [feature.update_chatbot_response_type]),
     );
   },
   [check('name', "Name attribute can't be empty").notEmpty()],
@@ -747,9 +818,7 @@ router.delete(
       req,
       res,
       next,
-      await features().then((feature) => [
-        feature.delete_chatbot_response_type,
-      ]),
+      await features().then((feature) => [feature.delete_chatbot_response_type]),
     );
   },
   ChatbotResponseType.delete,
@@ -799,9 +868,7 @@ router.post(
       req,
       res,
       next,
-      await features().then((feature) => [
-        feature.create_feedback_type,
-      ]),
+      await features().then((feature) => [feature.create_feedback_type]),
     );
   },
   [check('name', "Name attribute can't be empty").notEmpty()],
@@ -816,9 +883,7 @@ router.put(
       req,
       res,
       next,
-      await features().then((feature) => [
-        feature.update_feedback_type,
-      ]),
+      await features().then((feature) => [feature.update_feedback_type]),
     );
   },
   [check('name', "Name attribute can't be empty").notEmpty()],
@@ -833,9 +898,7 @@ router.delete(
       req,
       res,
       next,
-      await features().then((feature) => [
-        feature.delete_feedback_type,
-      ]),
+      await features().then((feature) => [feature.delete_feedback_type]),
     );
   },
   FeedbackType.delete,
@@ -885,9 +948,7 @@ router.post(
       req,
       res,
       next,
-      await features().then((feature) => [
-        feature.create_feedback_target,
-      ]),
+      await features().then((feature) => [feature.create_feedback_target]),
     );
   },
   [check('name', "Name attribute can't be empty").notEmpty()],
@@ -902,9 +963,7 @@ router.put(
       req,
       res,
       next,
-      await features().then((feature) => [
-        feature.update_feedback_target,
-      ]),
+      await features().then((feature) => [feature.update_feedback_target]),
     );
   },
   [check('name', "Name attribute can't be empty").notEmpty()],
@@ -919,9 +978,7 @@ router.delete(
       req,
       res,
       next,
-      await features().then((feature) => [
-        feature.delete_feedback_target,
-      ]),
+      await features().then((feature) => [feature.delete_feedback_target]),
     );
   },
   FeedbackTarget.delete,
@@ -971,9 +1028,7 @@ router.post(
       req,
       res,
       next,
-      await features().then((feature) => [
-        feature.create_feedback_status,
-      ]),
+      await features().then((feature) => [feature.create_feedback_status]),
     );
   },
   [check('name', "Name attribute can't be empty").notEmpty()],
@@ -988,9 +1043,7 @@ router.put(
       req,
       res,
       next,
-      await features().then((feature) => [
-        feature.update_feedback_status,
-      ]),
+      await features().then((feature) => [feature.update_feedback_status]),
     );
   },
   [check('name', "Name attribute can't be empty").notEmpty()],
@@ -1005,9 +1058,7 @@ router.delete(
       req,
       res,
       next,
-      await features().then((feature) => [
-        feature.delete_feedback_status,
-      ]),
+      await features().then((feature) => [feature.delete_feedback_status]),
     );
   },
   FeedbackStatus.delete,
@@ -1057,9 +1108,7 @@ router.post(
       req,
       res,
       next,
-      await features().then((feature) => [
-        feature.create_faq_type,
-      ]),
+      await features().then((feature) => [feature.create_faq_type]),
     );
   },
   [check('name', "Name attribute can't be empty").notEmpty()],
@@ -1074,9 +1123,7 @@ router.put(
       req,
       res,
       next,
-      await features().then((feature) => [
-        feature.update_faq_type,
-      ]),
+      await features().then((feature) => [feature.update_faq_type]),
     );
   },
   [check('name', "Name attribute can't be empty").notEmpty()],
@@ -1091,9 +1138,7 @@ router.delete(
       req,
       res,
       next,
-      await features().then((feature) => [
-        feature.delete_faq_type,
-      ]),
+      await features().then((feature) => [feature.delete_faq_type]),
     );
   },
   FAQType.delete,
@@ -1143,9 +1188,7 @@ router.post(
       req,
       res,
       next,
-      await features().then((feature) => [
-        feature.create_template_category,
-      ]),
+      await features().then((feature) => [feature.create_template_category]),
     );
   },
   [check('name', "Name attribute can't be empty").notEmpty()],
@@ -1160,9 +1203,7 @@ router.put(
       req,
       res,
       next,
-      await features().then((feature) => [
-        feature.update_template_category,
-      ]),
+      await features().then((feature) => [feature.update_template_category]),
     );
   },
   [check('name', "Name attribute can't be empty").notEmpty()],
@@ -1177,9 +1218,7 @@ router.delete(
       req,
       res,
       next,
-      await features().then((feature) => [
-        feature.delete_template_category,
-      ]),
+      await features().then((feature) => [feature.delete_template_category]),
     );
   },
   TemplateCategory.delete,
@@ -1229,9 +1268,7 @@ router.post(
       req,
       res,
       next,
-      await features().then((feature) => [
-        feature.create_meta_template_category,
-      ]),
+      await features().then((feature) => [feature.create_meta_template_category]),
     );
   },
   [check('name', "Name attribute can't be empty").notEmpty()],
@@ -1246,9 +1283,7 @@ router.put(
       req,
       res,
       next,
-      await features().then((feature) => [
-        feature.update_meta_template_category,
-      ]),
+      await features().then((feature) => [feature.update_meta_template_category]),
     );
   },
   [check('name', "Name attribute can't be empty").notEmpty()],
@@ -1263,9 +1298,7 @@ router.delete(
       req,
       res,
       next,
-      await features().then((feature) => [
-        feature.delete_meta_template_category,
-      ]),
+      await features().then((feature) => [feature.delete_meta_template_category]),
     );
   },
   MetaTemplateCategory.delete,
@@ -1315,9 +1348,7 @@ router.post(
       req,
       res,
       next,
-      await features().then((feature) => [
-        feature.create_template_header_type,
-      ]),
+      await features().then((feature) => [feature.create_template_header_type]),
     );
   },
   [check('name', "Name attribute can't be empty").notEmpty()],
@@ -1332,9 +1363,7 @@ router.put(
       req,
       res,
       next,
-      await features().then((feature) => [
-        feature.update_template_header_type,
-      ]),
+      await features().then((feature) => [feature.update_template_header_type]),
     );
   },
   [check('name', "Name attribute can't be empty").notEmpty()],
@@ -1349,9 +1378,7 @@ router.delete(
       req,
       res,
       next,
-      await features().then((feature) => [
-        feature.delete_template_header_type,
-      ]),
+      await features().then((feature) => [feature.delete_template_header_type]),
     );
   },
   TemplateHeaderType.delete,
@@ -1401,9 +1428,7 @@ router.post(
       req,
       res,
       next,
-      await features().then((feature) => [
-        feature.create_information_center_target_type,
-      ]),
+      await features().then((feature) => [feature.create_information_center_target_type]),
     );
   },
   [check('name', "Name attribute can't be empty").notEmpty()],
@@ -1418,9 +1443,7 @@ router.put(
       req,
       res,
       next,
-      await features().then((feature) => [
-        feature.update_information_center_target_type,
-      ]),
+      await features().then((feature) => [feature.update_information_center_target_type]),
     );
   },
   [check('name', "Name attribute can't be empty").notEmpty()],
@@ -1435,9 +1458,7 @@ router.delete(
       req,
       res,
       next,
-      await features().then((feature) => [
-        feature.delete_information_center_target_type,
-      ]),
+      await features().then((feature) => [feature.delete_information_center_target_type]),
     );
   },
   InformationCenterTargetType.delete,

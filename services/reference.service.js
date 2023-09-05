@@ -17,6 +17,7 @@ const {
   REF_MetaTemplateCategory,
   REF_TemplateHeaderType,
   REF_InformationCenterTargetType,
+  REF_RoomType,
 } = require('../models');
 
 const selectAllConfigCategories = async () => {
@@ -651,12 +652,16 @@ const selectChatbotResponsetype = async (id) => {
   const typeInstance = await REF_ChatBotResponseType.findByPk(id);
   if (!typeInstance) {
     return {
-      success: false, code: 404, message: 'Chatbot Response Type Data Not Found',
+      success: false,
+      code: 404,
+      message: 'Chatbot Response Type Data Not Found',
     };
   }
 
   return {
-    success: true, message: 'Successfully Getting Chatbot Response Type', content: typeInstance,
+    success: true,
+    message: 'Successfully Getting Chatbot Response Type',
+    content: typeInstance,
   };
 };
 
@@ -664,7 +669,9 @@ const createChatbotResponseType = async (form) => {
   const typeInstance = await REF_ChatBotResponseType.create({ name: form.name });
 
   return {
-    success: true, message: 'Chatbot Response Type Successfully Created', content: typeInstance,
+    success: true,
+    message: 'Chatbot Response Type Successfully Created',
+    content: typeInstance,
   };
 };
 
@@ -673,7 +680,9 @@ const updateChatbotResponseType = async (form, id) => {
   const typeInstance = await REF_ChatBotResponseType.findByPk(id);
   if (!typeInstance) {
     return {
-      success: false, code: 404, message: 'Chatbot Response Type Data Not Found',
+      success: false,
+      code: 404,
+      message: 'Chatbot Response Type Data Not Found',
     };
   }
 
@@ -692,7 +701,9 @@ const deleteChatbotResponseType = async (id) => {
   const typeInstance = await REF_ChatBotResponseType.findByPk(id);
   if (!typeInstance) {
     return {
-      success: false, code: 404, message: 'Chatbot Response Type Data Not Found',
+      success: false,
+      code: 404,
+      message: 'Chatbot Response Type Data Not Found',
     };
   }
 
@@ -1330,6 +1341,83 @@ const deleteInformationCenterTargetType = async (id) => {
   };
 };
 
+const selectAllRoomTypes = async () => {
+  const typeInstance = await REF_RoomType.findAll();
+
+  return {
+    success: true,
+    message: 'Successfully Getting All Room Type',
+    content: typeInstance,
+  };
+};
+
+const selectRoomType = async (id) => {
+  const locationType = await REF_RoomType.findByPk(id);
+  if (!locationType) {
+    return {
+      success: false,
+      message: 'Room Type Data Not Found',
+    };
+  }
+
+  return {
+    success: true,
+    message: 'Successfully Getting All Room Type',
+    content: locationType,
+  };
+};
+
+const createRoomType = async (form) => {
+  const typeInstance = await REF_RoomType.create({ name: form.name });
+
+  return {
+    success: true,
+    message: 'Room Type Successfully Created',
+    content: typeInstance,
+  };
+};
+
+const updateRoomType = async (id, form) => {
+  // check identity type id validity
+  const typeInstance = await REF_RoomType.findByPk(id);
+  if (!typeInstance) {
+    return {
+      success: false,
+      message: 'Room Type Data Not Found',
+    };
+  }
+
+  typeInstance.name = form.name;
+  await typeInstance.save();
+
+  return {
+    success: true,
+    message: 'Room Type Successfully Updated',
+    content: typeInstance,
+  };
+};
+
+const deleteRoomType = async (id) => {
+  // check identity type id validity
+  const typeInstance = await REF_RoomType.findByPk(id);
+  if (!typeInstance) {
+    return {
+      success: false,
+      message: 'Room Type Data Not Found',
+    };
+  }
+
+  const { name } = typeInstance.dataValues;
+
+  await typeInstance.destroy();
+
+  return {
+    success: true,
+    message: 'Room Type Successfully Deleted',
+    content: `Room Type ${name} Successfully Deleted`,
+  };
+};
+
 module.exports = {
   selectAllConfigCategories,
   selectConfiCategory,
@@ -1445,5 +1533,12 @@ module.exports = {
     createInformationCenterTargetType,
     updateInformationCenterTargetType,
     deleteInformationCenterTargetType,
+  },
+  roomType: {
+    selectAllRoomTypes,
+    selectRoomType,
+    createRoomType,
+    updateRoomType,
+    deleteRoomType,
   },
 };
