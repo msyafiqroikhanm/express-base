@@ -1084,6 +1084,7 @@ router.get(
         feature.create_feedback_type,
         feature.update_feedback_type,
         feature.delete_feedback_type,
+        feature.create_feedback,
       ]),
     );
   },
@@ -1164,6 +1165,7 @@ router.get(
         feature.create_feedback_target,
         feature.update_feedback_target,
         feature.delete_feedback_target,
+        feature.create_feedback,
       ]),
     );
   },
@@ -1244,6 +1246,7 @@ router.get(
         feature.create_feedback_status,
         feature.update_feedback_status,
         feature.delete_feedback_status,
+        feature.create_feedback,
       ]),
     );
   },
