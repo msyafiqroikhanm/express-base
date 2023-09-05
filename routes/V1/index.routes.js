@@ -13,6 +13,7 @@ const eventRoutes = require('./event.routes');
 const contingentRoutes = require('./continget.routes');
 const groupRoutes = require('./group.routes');
 const participantRoutes = require('./participant.routes');
+const chatbotResponseRoutes = require('./chatbotResponse.routes');
 
 router.use('/auth', authRoutes);
 router.use('/config', configRoutes);
@@ -27,5 +28,6 @@ router.use('/events', eventRoutes);
 router.use('/contingents', contingentRoutes);
 router.use('/groups', groupRoutes);
 router.use('/participants', participantRoutes);
+router.use('/chatbot-responses', chatbotResponseRoutes);
 
 module.exports = router;
