@@ -51,3 +51,5 @@ sequelize model:generate --name ACM_Facility --attributes locationId:integer,nam
 sequelize model:generate --name ACM_Room --attributes locationId:integer,typeId:integer,statusId:integer,name:string,floor:string,capacity:integer
 sequelize model:generate --name REF_TemplateHeaderType --attributes name:string
 sequelize model:generate --name ACM_ParticipantLodger --attributes participantId:integer,statusId:integer,roomId:integer,reservationIn:dateonly,reservationOut:dateonly,checkIn:date,checkout:date
+sequelize model:generate --name REF_PICType --attributes name:string
+sequelize model:generate --name USR_PIC --attributes userId:integer,typeId:integer

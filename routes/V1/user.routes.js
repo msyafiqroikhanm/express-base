@@ -1,9 +1,9 @@
 const router = require('express').Router();
 const { check } = require('express-validator');
 const features = require('../../helpers/features.helper');
-const userController = require('../../controllers/user.controller');
 const ValidateMiddleware = require('../../middlewares/validate.middleware');
 const Authentication = require('../../middlewares/auth.middleware');
+const UserController = require('../../controllers/user.controller');
 
 router.get(
   '/',
@@ -21,7 +21,7 @@ router.get(
       ]),
     );
   },
-  userController.getAll,
+  UserController.getAll,
 );
 
 router.get(
@@ -39,7 +39,7 @@ router.get(
       ]),
     );
   },
-  userController.getDetail,
+  UserController.getDetail,
 );
 
 router.post(
@@ -49,20 +49,18 @@ router.post(
       req,
       res,
       next,
-      await features().then((feature) => [
-        feature.create_user,
-      ]),
+      await features().then((feature) => [feature.create_user]),
     );
   },
   [
-    check('roleId', 'RoleId attribute can\'t be empty').notEmpty(),
-    check('participantId', 'Participant Id attribute can\'t be empty').notEmpty(),
-    check('username', 'Username attribute can\'t be empty').notEmpty(),
-    check('password', 'Password attribute can\'t be empty').notEmpty(),
-    check('email', 'Email attribute can\'t be empty').notEmpty(),
+    check('roleId', "RoleId attribute can't be empty").notEmpty(),
+    check('participantId', "Participant Id attribute can't be empty").notEmpty(),
+    check('username', "Username attribute can't be empty").notEmpty(),
+    check('password', "Password attribute can't be empty").notEmpty(),
+    check('email', "Email attribute can't be empty").notEmpty(),
   ],
   ValidateMiddleware.result,
-  userController.create,
+  UserController.create,
 );
 
 router.put(
@@ -72,18 +70,16 @@ router.put(
       req,
       res,
       next,
-      await features().then((feature) => [
-        feature.update_user,
-      ]),
+      await features().then((feature) => [feature.update_user]),
     );
   },
   [
-    check('roleId', 'RoleId attribute can\'t be empty').notEmpty(),
-    check('participantId', 'Participant Id attribute can\'t be empty').notEmpty(),
-    check('email', 'Email attribute can\'t be empty').notEmpty(),
+    check('roleId', "RoleId attribute can't be empty").notEmpty(),
+    check('participantId', "Participant Id attribute can't be empty").notEmpty(),
+    check('email', "Email attribute can't be empty").notEmpty(),
   ],
   ValidateMiddleware.result,
-  userController.update,
+  UserController.update,
 );
 
 router.delete(
@@ -93,12 +89,10 @@ router.delete(
       req,
       res,
       next,
-      await features().then((feature) => [
-        feature.delete_user,
-      ]),
+      await features().then((feature) => [feature.delete_user]),
     );
   },
-  userController.delete,
+  UserController.delete,
 );
 
 router.put(
@@ -108,18 +102,16 @@ router.put(
       req,
       res,
       next,
-      await features().then((feature) => [
-        feature.change_password,
-      ]),
+      await features().then((feature) => [feature.change_password]),
     );
   },
   [
-    check('oldPassword', 'Old Password attribute can\'t be empty').notEmpty(),
-    check('newPassword', 'New Password attribute can\'t be empty').notEmpty(),
-    check('newRePassword', 'New Re-Password attribute can\'t be empty').notEmpty(),
+    check('oldPassword', "Old Password attribute can't be empty").notEmpty(),
+    check('newPassword', "New Password attribute can't be empty").notEmpty(),
+    check('newRePassword', "New Re-Password attribute can't be empty").notEmpty(),
   ],
   ValidateMiddleware.result,
-  userController.changePassword,
+  UserController.changePassword,
 );
 
 module.exports = router;

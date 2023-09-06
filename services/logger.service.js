@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 const winston = require('winston');
 const LokiTransport = require('winston-loki');
 require('dotenv').config();
@@ -17,17 +18,11 @@ const myFormatter = winston.format((info) => {
   return info;
 })();
 
-const errorFilter = winston.format((info, opts) =>
-  info.level === 'error' ? info : false
-);
+const errorFilter = winston.format((info, opts) => (info.level === 'error' ? info : false));
 
-const warnFilter = winston.format((info, opts) =>
-  info.level === 'warn' ? info : false
-);
+const warnFilter = winston.format((info, opts) => (info.level === 'warn' ? info : false));
 
-const infoFilter = winston.format((info, opts) =>
-  info.level === 'info' ? info : false
-);
+const infoFilter = winston.format((info, opts) => (info.level === 'info' ? info : false));
 
 class LoggerService {
   constructor(route) {
@@ -36,28 +31,26 @@ class LoggerService {
 
     const logger = winston.createLogger({
       transports: [
-        new LokiTransport({
-          host: 'http://172.16.0.12:3100',
-          labels: { app: `${process.env.NODE_ENV}-${process.env.APP_NAME}` },
-          format: combine(myFormatter),
-          replaceTimestamp: true,
-          onConnectionError: (err) => console.error(err),
-        }),
+        // new LokiTransport({
+        //   host: 'http://172.16.0.12:3100',
+        //   labels: { app: `${process.env.NODE_ENV}-${process.env.APP_NAME}` },
+        //   format: combine(myFormatter),
+        //   replaceTimestamp: true,
+        //   onConnectionError: (err) => console.error(err),
+        // }),
         new winston.transports.Console({
           format: winston.format.combine(
             winston.format.printf((info) => {
               let message = `${dateFormat()} | ${info.level.toUpperCase()} | ${route} | ${
                 info.message
               } | `;
-              message = info.obj
-                ? `${message}message:${JSON.stringify(info.obj)} | `
-                : message;
+              message = info.obj ? `${message}message:${JSON.stringify(info.obj)} | ` : message;
               message = this.log_data
                 ? `${message}log_data:${JSON.stringify(this.log_data)} | `
                 : message;
               return message;
             }),
-            winston.format.colorize({ all: true })
+            winston.format.colorize({ all: true }),
           ),
         }),
         new winston.transports.File({
@@ -72,14 +65,12 @@ class LoggerService {
               let message = `${dateFormat()} | ${info.level.toUpperCase()} | ${route} | ${
                 info.message
               } | `;
-              message = info.obj
-                ? `${message}message:${JSON.stringify(info.obj)} | `
-                : message;
+              message = info.obj ? `${message}message:${JSON.stringify(info.obj)} | ` : message;
               message = this.log_data
                 ? `${message}log_data:${JSON.stringify(this.log_data)} | `
                 : message;
               return message;
-            })
+            }),
           ),
         }),
         new winston.transports.File({
@@ -91,14 +82,12 @@ class LoggerService {
               let message = `${dateFormat()} | ${info.level.toUpperCase()} | ${route} | ${
                 info.message
               } | `;
-              message = info.obj
-                ? `${message}message:${JSON.stringify(info.obj)} | `
-                : message;
+              message = info.obj ? `${message}message:${JSON.stringify(info.obj)} | ` : message;
               message = this.log_data
                 ? `${message}log_data:${JSON.stringify(this.log_data)} | `
                 : message;
               return message;
-            })
+            }),
           ),
         }),
         new winston.transports.File({
@@ -110,30 +99,24 @@ class LoggerService {
               let message = `${dateFormat()} | ${info.level.toUpperCase()} | ${route} | ${
                 info.message
               } | `;
-              message = info.obj
-                ? `${message}message:${JSON.stringify(info.obj)} | `
-                : message;
+              message = info.obj ? `${message}message:${JSON.stringify(info.obj)} | ` : message;
               message = this.log_data
                 ? `${message}log_data:${JSON.stringify(this.log_data)} | `
                 : message;
               return message;
-            })
+            }),
           ),
         }),
       ],
       format: winston.format.combine(
         winston.format.printf((info) => {
-          let message = `| ${info.level.toUpperCase()} | ${route} | ${
-            info.message
-          } | `;
-          message = info.obj
-            ? `${message}message:${JSON.stringify(info.obj)} | `
-            : message;
+          let message = `| ${info.level.toUpperCase()} | ${route} | ${info.message} | `;
+          message = info.obj ? `${message}message:${JSON.stringify(info.obj)} | ` : message;
           message = this.log_data
             ? `${message}log_data:${JSON.stringify(this.log_data)} | `
             : message;
           return message;
-        })
+        }),
       ),
     });
     this.logger = logger;

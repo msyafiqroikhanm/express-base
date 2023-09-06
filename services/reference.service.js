@@ -16,10 +16,10 @@ const {
   REF_TemplateCategory,
   REF_MetaTemplateCategory,
   REF_TemplateHeaderType,
-  REF_InformationCenterTargetType,
   REF_RoomType,
   REF_RoomStatus,
   REF_LodgerStatus,
+  REF_PICType,
 } = require('../models');
 
 const selectAllConfigCategories = async () => {
@@ -1266,83 +1266,6 @@ const deleteTemplateHeaderType = async (id) => {
   };
 };
 
-const selectAllInformationCenterTargetTypes = async () => {
-  const data = await REF_InformationCenterTargetType.findAll();
-
-  return {
-    success: true,
-    message: 'Successfully Getting All Information Center Target',
-    content: data,
-  };
-};
-
-const selectInformationCenterTargetType = async (id) => {
-  const targetInstance = await REF_InformationCenterTargetType.findByPk(id);
-  if (!targetInstance) {
-    return {
-      succcess: false,
-      code: 404,
-      message: 'Information Center Target Data Not Found',
-    };
-  }
-
-  return {
-    success: true,
-    message: 'Successfully Getting Information Center Target',
-    content: targetInstance,
-  };
-};
-
-const createInformationCenterTargetType = async (form) => {
-  const targetInstance = await REF_InformationCenterTargetType.create({ name: form.name });
-
-  return {
-    success: true,
-    message: 'Information Center Target Successfully Created',
-    content: targetInstance,
-  };
-};
-
-const updateInformationCenterTargetType = async (form, id) => {
-  const targetInstance = await REF_InformationCenterTargetType.findByPk(id);
-  if (!targetInstance) {
-    return {
-      succcess: false,
-      code: 404,
-      message: 'Information Center Target Data Not Found',
-    };
-  }
-
-  targetInstance.name = form.name;
-  await targetInstance.save();
-
-  return {
-    success: true,
-    message: 'Information Center Target Successfully Updated',
-    content: targetInstance,
-  };
-};
-
-const deleteInformationCenterTargetType = async (id) => {
-  const targetInstance = await REF_InformationCenterTargetType.findByPk(id);
-  if (!targetInstance) {
-    return {
-      succcess: false,
-      code: 404,
-      message: 'Information Center Target Data Not Found',
-    };
-  }
-
-  const { name } = targetInstance.dataValues;
-  await targetInstance.destroy();
-
-  return {
-    success: true,
-    message: 'Information Center Target Successfully Deleted',
-    content: `Information Center Target ${name} Successfully Deleted`,
-  };
-};
-
 const selectAllRoomTypes = async () => {
   const typeInstance = await REF_RoomType.findAll();
 
@@ -1574,6 +1497,83 @@ const deleteLodgerStatus = async (id) => {
   };
 };
 
+const selectAllPICTypes = async () => {
+  const typeInstance = await REF_PICType.findAll();
+
+  return {
+    success: true,
+    message: 'Successfully Getting All PIC Type',
+    content: typeInstance,
+  };
+};
+
+const selectPICType = async (id) => {
+  const locationType = await REF_PICType.findByPk(id);
+  if (!locationType) {
+    return {
+      success: false,
+      message: 'PIC Type Data Not Found',
+    };
+  }
+
+  return {
+    success: true,
+    message: 'Successfully Getting Detail PIC Type',
+    content: locationType,
+  };
+};
+
+const createPICType = async (form) => {
+  const typeInstance = await REF_PICType.create({ name: form.name });
+
+  return {
+    success: true,
+    message: 'PIC Type Successfully Created',
+    content: typeInstance,
+  };
+};
+
+const updatePICType = async (id, form) => {
+  // check identity type id validity
+  const typeInstance = await REF_PICType.findByPk(id);
+  if (!typeInstance) {
+    return {
+      success: false,
+      message: 'PIC Type Data Not Found',
+    };
+  }
+
+  typeInstance.name = form.name;
+  await typeInstance.save();
+
+  return {
+    success: true,
+    message: 'PIC Type Successfully Updated',
+    content: typeInstance,
+  };
+};
+
+const deletePICType = async (id) => {
+  // check identity type id validity
+  const typeInstance = await REF_PICType.findByPk(id);
+  if (!typeInstance) {
+    return {
+      success: false,
+      message: 'PIC Type Data Not Found',
+    };
+  }
+
+  const { name } = typeInstance.dataValues;
+
+  await typeInstance.destroy();
+
+  return {
+    success: true,
+    message: 'PIC Type Successfully Deleted',
+    content: `PIC Type ${name} Successfully Deleted`,
+  };
+};
+
 module.exports = {
   selectAllConfigCategories,
   selectConfiCategory,
@@ -1683,13 +1683,6 @@ module.exports = {
     updateTemplateHeaderType,
     deleteTemplateHeaderType,
   },
-  informationCenterTargetType: {
-    selectAllInformationCenterTargetTypes,
-    selectInformationCenterTargetType,
-    createInformationCenterTargetType,
-    updateInformationCenterTargetType,
-    deleteInformationCenterTargetType,
-  },
   roomType: {
     selectAllRoomTypes,
     selectRoomType,
@@ -1710,5 +1703,12 @@ module.exports = {
     createLodgerStatus,
     updateLodgerStatus,
     deleteLodgerStatus,
+  },
+  picType: {
+    selectAllPICTypes,
+    selectPICType,
+    createPICType,
+    updatePICType,
+    deletePICType,
   },
 };

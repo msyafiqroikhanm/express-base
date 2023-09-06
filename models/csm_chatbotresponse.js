@@ -18,7 +18,10 @@ module.exports = (sequelize, DataTypes) => {
   CSM_ChatbotResponse.init({
     responseTypeId: DataTypes.INTEGER,
     message: DataTypes.TEXT,
-    isActive: DataTypes.BOOLEAN,
+    isActive: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: false,
+    },
   }, {
     sequelize,
     modelName: 'CSM_ChatbotResponse',

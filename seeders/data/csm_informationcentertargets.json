@@ -1,3 +1,5 @@
 [
-  { "informationCenterId":1, "targetId":1 }
+  { "informationCenterId":1, "participantTypeId":1 },
+  { "informationCenterId":1, "participantTypeId":2 },
+  { "informationCenterId":1, "participantTypeId":3 }
 ]

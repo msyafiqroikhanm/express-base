@@ -384,6 +384,10 @@
     },
     {
         "moduleId":8,
+        "name":"Activate Chatbot Response"
+    },
+    {
+        "moduleId":8,
         "name":"View Feedback"
     },
     {
@@ -936,5 +940,39 @@
     {
         "moduleId":11,
         "name":"Delete System Configuration"
+    },
+
+    {
+        "moduleId":10,
+        "name":"View PIC Type"
+    },
+    {
+        "moduleId":10,
+        "name":"Create PIC Type"
+    },
+    {
+        "moduleId":10,
+        "name":"Update PIC Type"
+    },
+    {
+        "moduleId":10,
+        "name":"Delete PIC Type"
+    },
+
+    {
+        "moduleId":2,
+        "name":"View PIC"
+    },
+    {
+        "moduleId":2,
+        "name":"Create PIC"
+    },
+    {
+        "moduleId":2,
+        "name":"Update PIC"
+    },
+    {
+        "moduleId":2,
+        "name":"Delete PIC"
     }
 ]

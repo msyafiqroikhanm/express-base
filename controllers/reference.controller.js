@@ -25,10 +25,10 @@ const {
   templateCategory,
   metaTemplateCategory,
   templateHeaderType,
-  informationCenterTargetType,
   roomType,
   roomStatus,
   lodgerStatus,
+  picType,
 } = require('../services/reference.service');
 
 class SysConfigCategory {
@@ -812,6 +812,77 @@ class LodgerStatus {
   }
 }
 
+class PICType {
+  static async getAll(req, res, next) {
+    try {
+      res.url = `${req.method} ${req.originalUrl}`;
+
+      const data = await picType.selectAllPICTypes();
+
+      return ResponseFormatter.success200(res, data.message, data.content);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  static async getDetail(req, res, next) {
+    try {
+      res.url = `${req.method} ${req.originalUrl}`;
+
+      const data = await picType.selectPICType(req.params.id);
+      if (!data.success) {
+        return ResponseFormatter.error404(res, 'Data Not Found', data.message);
+      }
+
+      return ResponseFormatter.success200(res, data.message, data.content);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  static async create(req, res, next) {
+    try {
+      res.url = `${req.method} ${req.originalUrl}`;
+
+      const data = await picType.createPICType(req.body);
+
+      return ResponseFormatter.success201(res, data.message, data.content);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  static async update(req, res, next) {
+    try {
+      res.url = `${req.method} ${req.originalUrl}`;
+
+      const data = await picType.updatePICType(req.params.id, req.body);
+      if (!data.success) {
+        return ResponseFormatter.error404(res, 'Data Not Found', data.message);
+      }
+
+      return ResponseFormatter.success200(res, data.message, data.content);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  static async delete(req, res, next) {
+    try {
+      res.url = `${req.method} ${req.originalUrl}`;
+
+      const data = await picType.deletePICType(req.params.id);
+      if (!data.success) {
+        return ResponseFormatter.error404(res, 'Data Not Found', data.message);
+      }
+
+      return ResponseFormatter.success200(res, data.message, data.content);
+    } catch (error) {
+      next(error);
+    }
+  }
+}
+
 class ChatbotResponseType {
   static async getAll(req, res, next) {
     try {
@@ -1380,84 +1451,6 @@ class TemplateHeaderType {
   }
 }
 
-class InformationCenterTargetType {
-  static async getAll(req, res, next) {
-    try {
-      res.url = `${req.method} ${req.originalUrl}`;
-
-      const data = await informationCenterTargetType.selectAllInformationCenterTargetTypes();
-
-      return ResponseFormatter.success200(res, data.message, data.content);
-    } catch (error) {
-      next(error);
-    }
-  }
-
-  static async getDetail(req, res, next) {
-    try {
-      res.url = `${req.method} ${req.originalUrl}`;
-
-      const data = await informationCenterTargetType.selectInformationCenterTargetType(
-        req.params.id,
-      );
-      if (!data.success && data.code === 404) {
-        return ResponseFormatter.error404(res, 'Data Not Found', data.message);
-      }
-
-      return ResponseFormatter.success200(res, data.message, data.content);
-    } catch (error) {
-      next(error);
-    }
-  }
-
-  static async create(req, res, next) {
-    try {
-      res.url = `${req.method} ${req.originalUrl}`;
-
-      const data = await informationCenterTargetType.createInformationCenterTargetType(req.body);
-
-      return ResponseFormatter.success201(res, data.message, data.content);
-    } catch (error) {
-      next(error);
-    }
-  }
-
-  static async update(req, res, next) {
-    try {
-      res.url = `${req.method} ${req.originalUrl}`;
-
-      const data = await informationCenterTargetType.updateInformationCenterTargetType(
-        req.body,
-        req.params.id,
-      );
-      if (!data.success && data.code === 404) {
-        return ResponseFormatter.error404(res, 'Data Not Found', data.message);
-      }
-
-      return ResponseFormatter.success200(res, data.message, data.content);
-    } catch (error) {
-      next(error);
-    }
-  }
-
-  static async delete(req, res, next) {
-    try {
-      res.url = `${req.method} ${req.originalUrl}`;
-
-      const data = await informationCenterTargetType.deleteInformationCenterTargetType(
-        req.params.id,
-      );
-      if (!data.success && data.code === 404) {
-        return ResponseFormatter.error404(res, 'Data Not Found', data.message);
-      }
-
-      return ResponseFormatter.success200(res, data.message, data.content);
-    } catch (error) {
-      next(error);
-    }
-  }
-}
-
 module.exports = {
   SysConfigCategory,
   QrType,
@@ -1475,8 +1468,8 @@ module.exports = {
   TemplateCategory,
   MetaTemplateCategory,
   TemplateHeaderType,
-  InformationCenterTargetType,
   RoomType,
   RoomStatus,
   LodgerStatus,
+  PICType,
 };

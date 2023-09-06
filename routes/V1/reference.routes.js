@@ -18,10 +18,10 @@ const {
   TemplateCategory,
   MetaTemplateCategory,
   TemplateHeaderType,
-  InformationCenterTargetType,
   RoomType,
   RoomStatus,
   LodgerStatus,
+  PICType,
 } = require('../../controllers/reference.controller');
 const ValidateMiddleware = require('../../middlewares/validate.middleware');
 const Authentication = require('../../middlewares/auth.middleware');
@@ -909,6 +909,95 @@ router.delete(
   LodgerStatus.delete,
 );
 
+//* PIC Types
+router.post(
+  '/pic-types',
+  async (req, res, next) => {
+    Authentication.authenticate(
+      req,
+      res,
+      next,
+      await features().then((feature) => [feature.create_pic_type]),
+    );
+  },
+  [check('name', "Name attribute can't be empty").notEmpty()],
+  ValidateMiddleware.result,
+  PICType.create,
+);
+router.get(
+  '/pic-types',
+  async (req, res, next) => {
+    Authentication.authenticate(
+      req,
+      res,
+      next,
+      await features().then((feature) => [
+        feature.view_pic,
+        feature.create_pic,
+        feature.update_pic,
+        feature.delete_pic,
+        feature.view_pic_type,
+        feature.create_pic_type,
+        feature.update_pic_type,
+        feature.delete_pic_type,
+      ]),
+    );
+  },
+  PICType.getAll,
+);
+router.get(
+  '/pic-types/:id',
+  async (req, res, next) => {
+    Authentication.authenticate(
+      req,
+      res,
+      next,
+      await features().then((feature) => [
+        feature.view_pic,
+        feature.create_pic,
+        feature.update_pic,
+        feature.delete_pic,
+        feature.view_pic_type,
+        feature.create_pic_type,
+        feature.update_pic_type,
+        feature.delete_pic_type,
+      ]),
+    );
+  },
+  PICType.getDetail,
+);
+router.put(
+  '/pic-types/:id',
+  async (req, res, next) => {
+    Authentication.authenticate(
+      req,
+      res,
+      next,
+      await features().then((feature) => [
+        feature.view_pic_type,
+        feature.create_pic_type,
+        feature.update_pic_type,
+        feature.delete_pic_type,
+      ]),
+    );
+  },
+  [check('name', "Name attribute can't be empty").notEmpty()],
+  ValidateMiddleware.result,
+  PICType.update,
+);
+router.delete(
+  '/pic-types/:id',
+  async (req, res, next) => {
+    Authentication.authenticate(
+      req,
+      res,
+      next,
+      await features().then((feature) => [feature.delete_pic_type]),
+    );
+  },
+  PICType.delete,
+);
+
 //* Chatbot Response Type
 router.get(
   '/chatbot-response-types',
@@ -1002,6 +1091,7 @@ router.get(
         feature.create_feedback_type,
         feature.update_feedback_type,
         feature.delete_feedback_type,
+        feature.create_feedback,
       ]),
     );
   },
@@ -1082,6 +1172,7 @@ router.get(
         feature.create_feedback_target,
         feature.update_feedback_target,
         feature.delete_feedback_target,
+        feature.create_feedback,
       ]),
     );
   },
@@ -1162,6 +1253,7 @@ router.get(
         feature.create_feedback_status,
         feature.update_feedback_status,
         feature.delete_feedback_status,
+        feature.create_feedback,
       ]),
     );
   },
@@ -1242,6 +1334,8 @@ router.get(
         feature.create_faq_type,
         feature.update_faq_type,
         feature.delete_faq_type,
+        feature.create_faq,
+        feature.update_faq,
       ]),
     );
   },
@@ -1259,6 +1353,8 @@ router.get(
         feature.view_faq_type,
         feature.update_faq_type,
         feature.delete_faq_type,
+        feature.create_faq,
+        feature.update_faq,
       ]),
     );
   },
@@ -1469,7 +1565,6 @@ router.delete(
 );
 
 //* Template Header Type
-
 router.get(
   '/template-header-types',
   async (req, res, next) => {
@@ -1546,86 +1641,6 @@ router.delete(
     );
   },
   TemplateHeaderType.delete,
-);
-
-//* Information Center Target Type
-
-router.get(
-  '/information-center-target-types',
-  async (req, res, next) => {
-    Authentication.authenticate(
-      req,
-      res,
-      next,
-      await features().then((feature) => [
-        feature.view_information_center_target_type,
-        feature.create_information_center_target_type,
-        feature.update_information_center_target_type,
-        feature.delete_information_center_target_type,
-      ]),
-    );
-  },
-  InformationCenterTargetType.getAll,
-);
-
-router.get(
-  '/information-center-target-types/:id',
-  async (req, res, next) => {
-    Authentication.authenticate(
-      req,
-      res,
-      next,
-      await features().then((feature) => [
-        feature.view_information_center_target_type,
-        feature.update_information_center_target_type,
-        feature.delete_information_center_target_type,
-      ]),
-    );
-  },
-  InformationCenterTargetType.getDetail,
-);
-
-router.post(
-  '/information-center-target-types',
-  async (req, res, next) => {
-    Authentication.authenticate(
-      req,
-      res,
-      next,
-      await features().then((feature) => [feature.create_information_center_target_type]),
-    );
-  },
-  [check('name', "Name attribute can't be empty").notEmpty()],
-  ValidateMiddleware.result,
-  InformationCenterTargetType.create,
-);
-
-router.put(
-  '/information-center-target-types/:id',
-  async (req, res, next) => {
-    Authentication.authenticate(
-      req,
-      res,
-      next,
-      await features().then((feature) => [feature.update_information_center_target_type]),
-    );
-  },
-  [check('name', "Name attribute can't be empty").notEmpty()],
-  ValidateMiddleware.result,
-  InformationCenterTargetType.update,
-);
-
-router.delete(
-  '/information-center-target-types/:id',
-  async (req, res, next) => {
-    Authentication.authenticate(
-      req,
-      res,
-      next,
-      await features().then((feature) => [feature.delete_information_center_target_type]),
-    );
-  },
-  InformationCenterTargetType.delete,
 );
 
 module.exports = router;

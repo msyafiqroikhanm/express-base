@@ -24,6 +24,13 @@
     "parentFAQId":2,
     "typeId":2,
     "isMain":false,
+    "title":"Hotel",
+    "message":null
+  },
+  {
+    "parentFAQId":4,
+    "typeId":2,
+    "isMain":false,
     "title":"List Of Hotel",
     "message":"1. Hotel A\n2. Hotel B\n3. Hotel C"
   }

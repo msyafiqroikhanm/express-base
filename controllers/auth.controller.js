@@ -7,10 +7,13 @@ class AuthController {
   static async login(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+
       const user = await selectUser({
-        email: req.body.email, username: req.body.user,
+        email: req.body.user,
+        username: req.body.user,
       });
 
+      // console.log(JSON.stringify(user, null, 2));
       if (!user) {
         return ResponseFormatter.error401(res, 'Invalid user or password');
       }
