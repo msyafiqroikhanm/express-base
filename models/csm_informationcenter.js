@@ -16,6 +16,7 @@ module.exports = (sequelize, DataTypes) => {
         through: 'CSM_InformationCenterTarget',
         foreignKey: 'informationCenterId',
         otherKey: 'participantTypeId',
+        as: 'participantType',
       });
 
       CSM_InformationCenter.hasMany(models.CSM_InformationCenterTarget, { foreignKey: 'informationCenterId' });
