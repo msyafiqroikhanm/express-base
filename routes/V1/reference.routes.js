@@ -18,7 +18,6 @@ const {
   TemplateCategory,
   MetaTemplateCategory,
   TemplateHeaderType,
-  InformationCenterTargetType,
   RoomType,
   RoomStatus,
   LodgerStatus,
@@ -1335,6 +1334,8 @@ router.get(
         feature.create_faq_type,
         feature.update_faq_type,
         feature.delete_faq_type,
+        feature.create_faq,
+        feature.update_faq,
       ]),
     );
   },
@@ -1352,6 +1353,8 @@ router.get(
         feature.view_faq_type,
         feature.update_faq_type,
         feature.delete_faq_type,
+        feature.create_faq,
+        feature.update_faq,
       ]),
     );
   },
@@ -1638,86 +1641,6 @@ router.delete(
     );
   },
   TemplateHeaderType.delete,
-);
-
-//* Information Center Target Type
-
-router.get(
-  '/information-center-target-types',
-  async (req, res, next) => {
-    Authentication.authenticate(
-      req,
-      res,
-      next,
-      await features().then((feature) => [
-        feature.view_information_center_target_type,
-        feature.create_information_center_target_type,
-        feature.update_information_center_target_type,
-        feature.delete_information_center_target_type,
-      ]),
-    );
-  },
-  InformationCenterTargetType.getAll,
-);
-
-router.get(
-  '/information-center-target-types/:id',
-  async (req, res, next) => {
-    Authentication.authenticate(
-      req,
-      res,
-      next,
-      await features().then((feature) => [
-        feature.view_information_center_target_type,
-        feature.update_information_center_target_type,
-        feature.delete_information_center_target_type,
-      ]),
-    );
-  },
-  InformationCenterTargetType.getDetail,
-);
-
-router.post(
-  '/information-center-target-types',
-  async (req, res, next) => {
-    Authentication.authenticate(
-      req,
-      res,
-      next,
-      await features().then((feature) => [feature.create_information_center_target_type]),
-    );
-  },
-  [check('name', "Name attribute can't be empty").notEmpty()],
-  ValidateMiddleware.result,
-  InformationCenterTargetType.create,
-);
-
-router.put(
-  '/information-center-target-types/:id',
-  async (req, res, next) => {
-    Authentication.authenticate(
-      req,
-      res,
-      next,
-      await features().then((feature) => [feature.update_information_center_target_type]),
-    );
-  },
-  [check('name', "Name attribute can't be empty").notEmpty()],
-  ValidateMiddleware.result,
-  InformationCenterTargetType.update,
-);
-
-router.delete(
-  '/information-center-target-types/:id',
-  async (req, res, next) => {
-    Authentication.authenticate(
-      req,
-      res,
-      next,
-      await features().then((feature) => [feature.delete_information_center_target_type]),
-    );
-  },
-  InformationCenterTargetType.delete,
 );
 
 module.exports = router;

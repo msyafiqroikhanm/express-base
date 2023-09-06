@@ -13,12 +13,12 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       CSM_InformationCenterTarget.belongsTo(models.CSM_InformationCenter, { foreignKey: 'informationCenterId' });
-      CSM_InformationCenterTarget.belongsTo(models.REF_InformationCenterTargetType, { foreignKey: 'targetId' });
+      CSM_InformationCenterTarget.belongsTo(models.REF_ParticipantType, { foreignKey: 'participantTypeId' });
     }
   }
   CSM_InformationCenterTarget.init({
     informationCenterId: DataTypes.INTEGER,
-    targetId: DataTypes.INTEGER,
+    participantTypeId: DataTypes.INTEGER,
   }, {
     sequelize,
     modelName: 'CSM_InformationCenterTarget',

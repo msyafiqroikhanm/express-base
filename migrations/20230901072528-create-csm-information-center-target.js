@@ -17,7 +17,7 @@ module.exports = {
         allowNull: false,
         primaryKey: true,
       },
-      targetId: {
+      participantTypeId: {
         type: Sequelize.INTEGER,
         allowNull: false,
         primaryKey: true,
