@@ -957,5 +957,22 @@
     {
         "moduleId":10,
         "name":"Delete PIC Type"
+    },
+
+    {
+        "moduleId":2,
+        "name":"View PIC"
+    },
+    {
+        "moduleId":2,
+        "name":"Create PIC"
+    },
+    {
+        "moduleId":2,
+        "name":"Update PIC"
+    },
+    {
+        "moduleId":2,
+        "name":"Delete PIC"
     }
 ]
