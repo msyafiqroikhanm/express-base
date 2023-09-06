@@ -70,7 +70,7 @@ module.exports = {
     );
     const informationcentertargets = csm_informationcentertargets.map((element) => ({
       informationCenterId: element.informationCenterId,
-      targetId: element.targetId,
+      participantTypeId: element.participantTypeId,
       createdAt: new Date(),
       updatedAt: new Date(),
     }));

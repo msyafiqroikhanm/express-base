@@ -12,10 +12,10 @@ module.exports = (sequelize, DataTypes) => {
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
-      CSM_InformationCenter.belongsToMany(models.REF_InformationCenterTargetType, {
+      CSM_InformationCenter.belongsToMany(models.REF_ParticipantType, {
         through: 'CSM_InformationCenterTarget',
         foreignKey: 'informationCenterId',
-        otherKey: 'targetId',
+        otherKey: 'participantTypeId',
       });
 
       CSM_InformationCenter.hasMany(models.CSM_InformationCenterTarget, { foreignKey: 'informationCenterId' });

@@ -179,17 +179,6 @@ module.exports = {
     }));
     await queryInterface.bulkInsert('REF_TemplateHeaderTypes', templateheadertype);
 
-    //* REF_InformationCenterTargetTypes
-    const ref_informationcentertargettypes = JSON.parse(
-      fs.readFileSync('./seeders/data/ref_informationcentertargettypes.json'),
-    );
-    const informationcentertargettypes = ref_informationcentertargettypes.map((element) => ({
-      name: element.name,
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    }));
-    await queryInterface.bulkInsert('REF_InformationCenterTargetTypes', informationcentertargettypes);
-
     //* REF_PICTypes
     const ref_pictypes = JSON.parse(fs.readFileSync('./seeders/data/ref_pictypes.json'));
     const pictypes = ref_pictypes.map((element) => ({
@@ -274,10 +263,6 @@ module.exports = {
       restartIdentity: true,
     });
     await queryInterface.bulkDelete('REF_TemplateHeaderTypes', null, {
-      truncate: true,
-      restartIdentity: true,
-    });
-    await queryInterface.bulkDelete('REF_InformationCenterTargetTypes', null, {
       truncate: true,
       restartIdentity: true,
     });
