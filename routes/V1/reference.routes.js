@@ -1327,6 +1327,8 @@ router.get(
         feature.create_faq_type,
         feature.update_faq_type,
         feature.delete_faq_type,
+        feature.create_faq,
+        feature.update_faq,
       ]),
     );
   },
@@ -1344,6 +1346,8 @@ router.get(
         feature.view_faq_type,
         feature.update_faq_type,
         feature.delete_faq_type,
+        feature.create_faq,
+        feature.update_faq,
       ]),
     );
   },
