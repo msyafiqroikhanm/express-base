@@ -933,6 +933,10 @@ router.get(
       res,
       next,
       await features().then((feature) => [
+        feature.view_pic,
+        feature.create_pic,
+        feature.update_pic,
+        feature.delete_pic,
         feature.view_pic_type,
         feature.create_pic_type,
         feature.update_pic_type,
@@ -950,6 +954,10 @@ router.get(
       res,
       next,
       await features().then((feature) => [
+        feature.view_pic,
+        feature.create_pic,
+        feature.update_pic,
+        feature.delete_pic,
         feature.view_pic_type,
         feature.create_pic_type,
         feature.update_pic_type,

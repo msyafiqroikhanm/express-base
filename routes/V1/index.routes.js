@@ -15,6 +15,7 @@ const groupRoutes = require('./group.routes');
 const participantRoutes = require('./participant.routes');
 const chatbotResponseRoutes = require('./chatbotResponse.routes');
 const feedbackRoutest = require('./customerFeedback.routes');
+const picRoutes = require('./pic.routes');
 
 router.use('/auth', authRoutes);
 router.use('/config', configRoutes);
@@ -31,5 +32,6 @@ router.use('/groups', groupRoutes);
 router.use('/participants', participantRoutes);
 router.use('/chatbot-responses', chatbotResponseRoutes);
 router.use('/feedbacks', feedbackRoutest);
+router.use('/person-in-charges', picRoutes);
 
 module.exports = router;
