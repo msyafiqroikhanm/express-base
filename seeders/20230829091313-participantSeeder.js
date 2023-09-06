@@ -10,9 +10,7 @@ const { createParticipantViaImport } = require('../services/participant.service'
 module.exports = {
   async up(queryInterface, Sequelize) {
     //* PAR_Contingents
-    const par_contingets = JSON.parse(
-      fs.readFileSync('./seeders/data/par_contingents.json'),
-    );
+    const par_contingets = JSON.parse(fs.readFileSync('./seeders/data/par_contingents.json'));
 
     const identityTypes = par_contingets.map((element) => ({
       regionId: element.regionId,
@@ -46,6 +44,21 @@ module.exports = {
         phoneNbr: '628763269240',
         email: 'gifari@jxboard.id',
         address: 'condet',
+        identityTypeId: 1,
+        typeId: 2,
+        contingentId: 3,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        deletedAt: null,
+      },
+      {
+        name: 'Admin Hotel A',
+        gender: 'Male',
+        birthDate: '1999-01-01',
+        identityNo: '31719032849',
+        phoneNbr: '628763269240',
+        email: 'achmad@jxboard.id',
+        address: 'cijanntung',
         identityTypeId: 1,
         typeId: 2,
         contingentId: 3,

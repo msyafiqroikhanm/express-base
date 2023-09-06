@@ -5,5 +5,12 @@
         "participantId":1,
         "username":"admin",
         "email": "admin@jxboard.id"
+    },
+    {
+        "qrId":1,
+        "roleId":1,
+        "participantId":1,
+        "username":"adminhotel",
+        "email": "admin@jxboard.id"
     }
 ]
