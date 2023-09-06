@@ -2,8 +2,16 @@
 const bcrypt = require('bcryptjs');
 const { Op } = require('sequelize');
 const {
-  USR_User, USR_Role, QRM_QR, QRM_QRTemplate, PAR_Participant, USR_Feature,
-  REF_IdentityType, PAR_Contingent, REF_ParticipantType, USR_Module,
+  USR_User,
+  USR_Role,
+  QRM_QR,
+  QRM_QRTemplate,
+  PAR_Participant,
+  USR_Feature,
+  REF_IdentityType,
+  PAR_Contingent,
+  REF_ParticipantType,
+  USR_Module,
 } = require('../models');
 const { createQR, updateQR } = require('./qr.service');
 
@@ -37,8 +45,8 @@ const selectAllUsers = async () => {
     user.dataValues.role = user.Role.dataValues.name;
     if (user.participant) {
       user.participant.dataValues.contingent = user.participant.contingent.dataValues.name;
-      user.participant.dataValues.participantType = user.participant.participantType.dataValues
-        .name;
+      user.participant.dataValues.participantType =
+        user.participant.participantType.dataValues.name;
       user.participant.dataValues.identityType = user.participant.identityType.dataValues.name;
     }
     delete user.dataValues.Qr;
@@ -81,12 +89,12 @@ const selectDetailUser = async (id) => {
   userInstance.dataValues.role = userInstance.Role.dataValues.name;
 
   if (userInstance.participant) {
-    userInstance.participant.dataValues.contingent = userInstance.participant.contingent
-      .dataValues.name;
-    userInstance.participant.dataValues.participantType = userInstance.participant.participantType
-      .dataValues.name;
-    userInstance.participant.dataValues.identityType = userInstance.participant.identityType
-      .dataValues.name;
+    userInstance.participant.dataValues.contingent =
+      userInstance.participant.contingent.dataValues.name;
+    userInstance.participant.dataValues.participantType =
+      userInstance.participant.participantType.dataValues.name;
+    userInstance.participant.dataValues.identityType =
+      userInstance.participant.identityType.dataValues.name;
   }
   delete userInstance.dataValues.Qr;
   delete userInstance.dataValues.Role;
@@ -134,7 +142,13 @@ const validateUserInputs = async (form, id) => {
 
 const createUser = async (form) => {
   const roleInstance = await USR_Role.findByPk(form.roleId);
-  const qr = await createQR({ templateId: roleInstance.templateId }, { rawFile: `public/images/qrs/qrs-${Date.now()}.png`, combineFile: `public/images/qrCombines/combines-${Date.now()}.png` });
+  const qr = await createQR(
+    { templateId: roleInstance.templateId },
+    {
+      rawFile: `public/images/qrs/qrs-${Date.now()}.png`,
+      combineFile: `public/images/qrCombines/combines-${Date.now()}.png`,
+    },
+  );
   const userInstance = await USR_User.create({
     qrId: qr.content.id,
     participantId: form.participantId,
@@ -157,7 +171,9 @@ const updateUser = async (id, form) => {
 
   if (!userInstance) {
     return {
-      success: false, code: 404, message: 'User Data Not Found',
+      success: false,
+      code: 404,
+      message: 'User Data Not Found',
     };
   }
 
@@ -269,7 +285,9 @@ const selectUser = async (query) => {
         attributes: ['name'],
       },
     ],
-    [Op.or]: query,
+    where: {
+      [Op.or]: query,
+    },
   });
 
   // get parsed feature and module in user
