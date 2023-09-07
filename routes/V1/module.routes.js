@@ -56,7 +56,27 @@ router.post(
     check('name', 'Name attribute can\'t be empty').notEmpty(),
   ],
   ValidateMiddleware.result,
-  moduleController.create,
+  moduleController.createMain,
+);
+
+router.post(
+  '/sub',
+  async (req, res, next) => {
+    Authentication.authenticate(
+      req,
+      res,
+      next,
+      await features().then((feature) => [
+        feature.create_module,
+      ]),
+    );
+  },
+  [
+    check('parentModuleId', 'Parent Module Id attribute must be integer').isInt(),
+    check('name', 'Name attribute can\'t be empty').notEmpty(),
+  ],
+  ValidateMiddleware.result,
+  moduleController.createSub,
 );
 
 router.put(
@@ -76,6 +96,26 @@ router.put(
   ],
   ValidateMiddleware.result,
   moduleController.update,
+);
+
+router.put(
+  '/sub/:id',
+  async (req, res, next) => {
+    Authentication.authenticate(
+      req,
+      res,
+      next,
+      await features().then((feature) => [
+        feature.update_module,
+      ]),
+    );
+  },
+  [
+    check('parentModuleId', 'Parent Module Id attribute must be integer').isInt(),
+    check('name', 'Name attribute can\'t be empty').notEmpty(),
+  ],
+  ValidateMiddleware.result,
+  moduleController.updateSub,
 );
 
 router.delete(
