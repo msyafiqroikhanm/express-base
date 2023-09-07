@@ -1,4 +1,4 @@
-function parsingUserModules(userInstance) {
+const parsingUserModules = (userInstance) => {
   // get parsed feature and module in user
   const parsedFeatures = [];
   userInstance.Role.USR_Features.forEach((feature) => {
@@ -73,7 +73,7 @@ function parsingUserModules(userInstance) {
   });
 
   return Object.values(outputObject);
-}
+};
 
 module.exports = {
   parsingUserModules,
