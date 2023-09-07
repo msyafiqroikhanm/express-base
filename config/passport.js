@@ -4,7 +4,7 @@ require('dotenv').config();
 const passport = require('passport');
 const passportJWT = require('passport-jwt');
 const {
-  USR_User, USR_Role, USR_Feature, USR_Module,
+  USR_User, USR_Role, USR_Feature, USR_Module, USR_PIC, REF_PICType,
 } = require('../models');
 const { parsingUserModules } = require('../helpers/parsing.helper');
 
@@ -40,6 +40,12 @@ passport.use(new JWTStrategy(opts, async (jwtPayload, done) => {
               },
             },
           },
+          {
+            model: USR_PIC,
+            as: 'PIC',
+            attributes: { exclude: ['createdAt', 'updatedAt'] },
+            include: { model: REF_PICType, attributes: { exclude: ['createdAt', 'updatedAt'] } },
+          },
         ],
       },
     );
@@ -52,6 +58,8 @@ passport.use(new JWTStrategy(opts, async (jwtPayload, done) => {
     userData.Role.dataValues.modules = result;
     userData.Role.modules = result;
     delete userData.Role.dataValues.USR_Features;
+
+    console.log(JSON.stringify(userData, null, 2));
 
     return done(null, userData);
   } catch (err) {

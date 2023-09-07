@@ -11,8 +11,8 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
-      USR_PIC.belongsTo(models.USR_User, { foreignKey: 'userId', as: 'user' });
-      USR_PIC.belongsTo(models.REF_PICType, { foreignKey: 'typeId', as: 'type' });
+      USR_PIC.belongsTo(models.USR_User, { foreignKey: 'userId' });
+      USR_PIC.belongsTo(models.REF_PICType, { foreignKey: 'typeId' });
     }
   }
   USR_PIC.init(
