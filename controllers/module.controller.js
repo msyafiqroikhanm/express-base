@@ -1,6 +1,7 @@
 const ResponseFormatter = require('../helpers/responseFormatter.helper');
 const {
-  selectAllModules, selectModule, createModule, updateModule, deleteModule,
+  selectAllModules, selectModule, createMainModule, createSubModule,
+  updateMainModule, updateSubModule, deleteModule, validateModuleQuery,
 } = require('../services/module.service');
 
 class FeatureModule {
@@ -8,7 +9,9 @@ class FeatureModule {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
 
-      const data = await selectAllModules();
+      const query = await validateModuleQuery(req.query);
+
+      const data = await selectAllModules(query);
       if (!data.success) {
         return ResponseFormatter.InternalServerError(res, data.message);
       }
@@ -34,13 +37,31 @@ class FeatureModule {
     }
   }
 
-  static async create(req, res, next) {
+  static async createMain(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
 
-      const data = await createModule(req.body);
+      const data = await createMainModule(req.body);
       if (!data.success) {
         return ResponseFormatter.InternalServerError(res, data.message);
+      }
+
+      return ResponseFormatter.success201(res, data.message, data.content);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  static async createSub(req, res, next) {
+    try {
+      res.url = `${req.method} ${req.originalUrl}`;
+
+      const data = await createSubModule(req.body);
+      if (!data.success && data.code === 400) {
+        return ResponseFormatter.error400(res, 'Bad Request', data.message);
+      }
+      if (!data.success && data.code === 404) {
+        return ResponseFormatter.error404(res, 'Data Not Found', data.message);
       }
 
       return ResponseFormatter.success201(res, data.message, data.content);
@@ -53,7 +74,31 @@ class FeatureModule {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
 
-      const data = await updateModule(req.params.id, req.body);
+      const data = await updateMainModule(req.params.id, req.body);
+      if (!data.success && data.code === 400) {
+        return ResponseFormatter.error400(res, 'Bad Request', data.message);
+      }
+      if (!data.success && data.code === 404) {
+        return ResponseFormatter.error404(res, 'Data Not Found', data.message);
+      }
+      if (!data.success) {
+        return ResponseFormatter.InternalServerError(res, data.message);
+      }
+
+      return ResponseFormatter.success200(res, data.message, data.content);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  static async updateSub(req, res, next) {
+    try {
+      res.url = `${req.method} ${req.originalUrl}`;
+
+      const data = await updateSubModule(req.params.id, req.body);
+      if (!data.success && data.code === 400) {
+        return ResponseFormatter.error400(res, 'Bad Request', data.message);
+      }
       if (!data.success && data.code === 404) {
         return ResponseFormatter.error404(res, 'Data Not Found', data.message);
       }

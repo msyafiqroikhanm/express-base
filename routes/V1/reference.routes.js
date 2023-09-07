@@ -1425,7 +1425,7 @@ router.get(
 );
 
 router.get(
-  '/template-categories/:id',
+  '/broadcast-template-categories/:id',
   async (req, res, next) => {
     Authentication.authenticate(
       req,
@@ -1442,7 +1442,7 @@ router.get(
 );
 
 router.post(
-  '/template-categories',
+  '/broadcast-template-categories',
   async (req, res, next) => {
     Authentication.authenticate(
       req,
@@ -1457,7 +1457,7 @@ router.post(
 );
 
 router.put(
-  '/template-categories/:id',
+  '/broadcast-template-categories/:id',
   async (req, res, next) => {
     Authentication.authenticate(
       req,
@@ -1472,7 +1472,7 @@ router.put(
 );
 
 router.delete(
-  '/template-categories/:id',
+  '/broadcast-template-categories/:id',
   async (req, res, next) => {
     Authentication.authenticate(
       req,
@@ -1566,7 +1566,7 @@ router.delete(
 
 //* Template Header Type
 router.get(
-  '/template-header-types',
+  '/broadcast-template-header-types',
   async (req, res, next) => {
     Authentication.authenticate(
       req,
@@ -1584,7 +1584,7 @@ router.get(
 );
 
 router.get(
-  '/template-header-types/:id',
+  '/broadcast-template-header-types/:id',
   async (req, res, next) => {
     Authentication.authenticate(
       req,
@@ -1616,7 +1616,7 @@ router.post(
 );
 
 router.put(
-  '/template-header-types/:id',
+  '/broadcast-template-header-types/:id',
   async (req, res, next) => {
     Authentication.authenticate(
       req,
@@ -1631,7 +1631,7 @@ router.put(
 );
 
 router.delete(
-  '/template-header-types/:id',
+  '/broadcast-template-header-types/:id',
   async (req, res, next) => {
     Authentication.authenticate(
       req,

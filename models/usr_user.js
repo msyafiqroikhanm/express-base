@@ -13,11 +13,18 @@ module.exports = (sequelize, DataTypes) => {
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
+      USR_User.belongsToMany(models.REF_PICType, {
+        through: 'USR_PIC',
+        foreignKey: 'userId',
+        otherKey: 'typeId',
+      });
+
       USR_User.belongsTo(models.USR_Role, { foreignKey: 'roleId', as: 'Role' });
       USR_User.belongsTo(models.QRM_QR, { foreignKey: 'qrId', as: 'Qr' });
       USR_User.belongsTo(models.PAR_Participant, { foreignKey: 'participantId', as: 'participant' });
 
       USR_User.hasMany(models.ENV_Event, { foreignKey: 'picId', as: 'pic' });
+      USR_User.hasMany(models.USR_PIC, { foreignKey: 'userId', as: 'PIC' });
     }
   }
   USR_User.init(
