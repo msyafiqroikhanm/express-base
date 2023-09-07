@@ -13,15 +13,15 @@ module.exports = (sequelize, DataTypes) => {
       // define association here
       ACM_Room.belongsTo(models.ACM_Location, {
         foreignKey: 'locationId',
-        as: 'Hotel',
+        as: 'location',
       });
       ACM_Room.belongsTo(models.REF_RoomType, {
         foreignKey: 'typeId',
-        as: 'RoomType',
+        as: 'type',
       });
-      ACM_Room.belongsTo(models.REF_RoomType, {
+      ACM_Room.belongsTo(models.REF_RoomStatus, {
         foreignKey: 'statusId',
-        as: 'RoomStatus',
+        as: 'status',
       });
     }
   }
@@ -34,9 +34,12 @@ module.exports = (sequelize, DataTypes) => {
       floor: DataTypes.STRING,
       capacity: DataTypes.INTEGER,
       occupied: DataTypes.INTEGER,
+      deletedAt: DataTypes.DATE,
     },
     {
       sequelize,
+      paranoid: true,
+      deletedAt: 'deletedAt',
       modelName: 'ACM_Room',
     },
   );

@@ -20,6 +20,7 @@ const feedbackRoutes = require('./customerFeedback.routes');
 const faqRoutes = require('./faq.routes');
 const informationCenterRoutes = require('./informationCenter.routes');
 const locationRoutes = require('./location.routes');
+const roomRoutes = require('./room.routes');
 const webhookRoutes = require('./webhook.routes');
 
 router.use('/auth', authRoutes);
@@ -42,6 +43,7 @@ router.use('/feedbacks', feedbackRoutes);
 router.use('/faqs', faqRoutes);
 router.use('/information-centers', informationCenterRoutes);
 router.use('/locations', locationRoutes);
+router.use('/rooms', roomRoutes);
 router.use('/webhook', webhookRoutes);
 
 module.exports = router;

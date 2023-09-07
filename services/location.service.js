@@ -87,7 +87,7 @@ const updateLocation = async (id, form) => {
   Instance.typeId = form.typeId ? form.typeId : Instance.typeId;
   Instance.name = form.name ? form.name : Instance.name;
   Instance.description = form.description ? form.description : Instance.description;
-  Instance.address = form.address ? form.description : Instance.address;
+  Instance.address = form.address ? form.address : Instance.address;
   Instance.phoneNbr = form.phoneNbr ? form.phoneNbr : Instance.phoneNbr;
   Instance.latitude = form.latitude ? form.latitude : Instance.latitude;
   Instance.longtitude = form.longtitude ? form.longtitude : Instance.longtitude;
