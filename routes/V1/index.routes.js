@@ -19,6 +19,7 @@ const picRoutes = require('./pic.routes');
 const feedbackRoutes = require('./customerFeedback.routes');
 const faqRoutes = require('./faq.routes');
 const informationCenterRoutes = require('./informationCenter.routes');
+const locationRoutes = require('./location.routes');
 const webhookRoutes = require('./webhook.routes');
 
 router.use('/auth', authRoutes);
@@ -40,6 +41,7 @@ router.use('/person-in-charges', picRoutes);
 router.use('/feedbacks', feedbackRoutes);
 router.use('/faqs', faqRoutes);
 router.use('/information-centers', informationCenterRoutes);
+router.use('/locations', locationRoutes);
 router.use('/webhook', webhookRoutes);
 
 module.exports = router;

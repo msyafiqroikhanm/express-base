@@ -24,20 +24,19 @@ module.exports = (sequelize, DataTypes) => {
       //* PIC
       ACM_Location.belongsTo(models.USR_PIC, {
         foreignKey: 'picId',
-        as: 'PIC',
-      });
-
-      //* PIC IT
-      ACM_Location.belongsTo(models.USR_User, {
-        foreignKey: 'picItId',
-        as: 'PIC_IT',
+        as: 'pic',
       });
 
       //* Location Type
       ACM_Location.belongsTo(models.REF_LocationType, {
         foreignKey: 'typeId',
-        as: 'LocationType',
+        as: 'type',
       });
+
+      // ACM_Location.belongsTo(models.USR_PIC, {
+      //   foreignKey: 'picId',
+      //   as: 'pic',
+      // });
     }
   }
   ACM_Location.init(
@@ -51,9 +50,12 @@ module.exports = (sequelize, DataTypes) => {
       phoneNbr: DataTypes.STRING,
       latitude: DataTypes.STRING,
       longtitude: DataTypes.STRING,
+      deletedAt: DataTypes.DATE,
     },
     {
       sequelize,
+      paranoid: true,
+      deletedAt: 'deletedAt',
       modelName: 'ACM_Location',
     },
   );

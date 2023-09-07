@@ -3,9 +3,7 @@ require('dotenv').config();
 
 const passport = require('passport');
 const passportJWT = require('passport-jwt');
-const {
-  USR_User, USR_Role, USR_Feature, USR_Module, USR_PIC, REF_PICType,
-} = require('../models');
+const { USR_User, USR_Role, USR_Feature, USR_Module, USR_PIC, REF_PICType } = require('../models');
 const { parsingUserModules } = require('../helpers/parsing.helper');
 
 const JWTStrategy = passportJWT.Strategy;
@@ -16,11 +14,10 @@ const opts = {
   secretOrKey: process.env.JWT_PRIVATE_KEY,
 };
 
-passport.use(new JWTStrategy(opts, async (jwtPayload, done) => {
-  try {
-    const userData = await USR_User.findByPk(
-      jwtPayload.userId,
-      {
+passport.use(
+  new JWTStrategy(opts, async (jwtPayload, done) => {
+    try {
+      const userData = await USR_User.findByPk(jwtPayload.userId, {
         attributes: { exclude: ['password', 'createdAt', 'updatedAt', 'deletedAt'] },
         include: [
           {
@@ -43,28 +40,26 @@ passport.use(new JWTStrategy(opts, async (jwtPayload, done) => {
           {
             model: USR_PIC,
             as: 'PIC',
-            attributes: { exclude: ['createdAt', 'updatedAt'] },
+            attributes: ['id', 'userId', 'typeId'],
             include: { model: REF_PICType, attributes: { exclude: ['createdAt', 'updatedAt'] } },
           },
         ],
-      },
-    );
-    if (!userData) {
-      return done(null, false, { message: 'User not found!' });
+      });
+      if (!userData) {
+        return done(null, false, { message: 'User not found!' });
+      }
+
+      const result = parsingUserModules(userData);
+      // parsing userData
+      userData.Role.dataValues.modules = result;
+      userData.Role.modules = result;
+      delete userData.Role.dataValues.USR_Features;
+
+      return done(null, userData);
+    } catch (err) {
+      return done(err, false);
     }
-
-    const result = parsingUserModules(userData);
-    // parsing userData
-    userData.Role.dataValues.modules = result;
-    userData.Role.modules = result;
-    delete userData.Role.dataValues.USR_Features;
-
-    console.log(JSON.stringify(userData, null, 2));
-
-    return done(null, userData);
-  } catch (err) {
-    return done(err, false);
-  }
-}));
+  }),
+);
 
 module.exports = passport;
