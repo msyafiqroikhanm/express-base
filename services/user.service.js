@@ -14,6 +14,7 @@ const {
   USR_Module,
 } = require('../models');
 const { createQR, updateQR } = require('./qr.service');
+const { parsingUserModules } = require('../helpers/parsing.helper');
 
 const selectAllUsers = async () => {
   const users = await USR_User.findAll({
@@ -44,10 +45,12 @@ const selectAllUsers = async () => {
     user.dataValues.qrCode = user.Qr.dataValues.code;
     user.dataValues.role = user.Role.dataValues.name;
     if (user.participant) {
-      user.participant.dataValues.contingent = user.participant.contingent.dataValues.name;
-      user.participant.dataValues.participantType =
-        user.participant.participantType.dataValues.name;
-      user.participant.dataValues.identityType = user.participant.identityType.dataValues.name;
+      user.participant.dataValues.contingent = user.participant.contingent
+        .dataValues.name;
+      user.participant.dataValues.participantType = user.participant.participantType
+        .dataValues.name;
+      user.participant.dataValues.identityType = user.participant.identityType
+        .dataValues.name;
     }
     delete user.dataValues.Qr;
     delete user.dataValues.Role;
@@ -89,12 +92,12 @@ const selectDetailUser = async (id) => {
   userInstance.dataValues.role = userInstance.Role.dataValues.name;
 
   if (userInstance.participant) {
-    userInstance.participant.dataValues.contingent =
-      userInstance.participant.contingent.dataValues.name;
-    userInstance.participant.dataValues.participantType =
-      userInstance.participant.participantType.dataValues.name;
-    userInstance.participant.dataValues.identityType =
-      userInstance.participant.identityType.dataValues.name;
+    userInstance.participant.dataValues.contingent = userInstance.participant.contingent
+      .dataValues.name;
+    userInstance.participant.dataValues.participantType = userInstance.participant.participantType
+      .dataValues.name;
+    userInstance.participant.dataValues.identityType = userInstance.participant.identityType
+      .dataValues.name;
   }
   delete userInstance.dataValues.Qr;
   delete userInstance.dataValues.Role;
@@ -276,6 +279,7 @@ const selectUser = async (query) => {
           include: {
             model: USR_Module,
             attributes: ['id', 'name'],
+            include: { model: USR_Module, as: 'parentModule', attributes: ['id', 'name'] },
           },
         },
       },
@@ -290,45 +294,11 @@ const selectUser = async (query) => {
     },
   });
 
-  // get parsed feature and module in user
-  const parsedFeatures = [];
-  userInstance.Role.USR_Features.forEach((feature) => {
-    parsedFeatures.push({
-      id: feature.dataValues.id,
-      name: feature.dataValues.name,
-      moduleId: feature.USR_Module.dataValues.id,
-      modulesName: feature.USR_Module.dataValues.name,
-    });
-  });
-
-  // getting array that group by module
-  const groupedArray = parsedFeatures.reduce((result, item) => {
-    const existingModule = result.find((module) => module.id === item.moduleId);
-
-    if (existingModule) {
-      existingModule.features.push({
-        id: item.id,
-        name: item.name,
-      });
-    } else {
-      result.push({
-        id: item.moduleId,
-        name: item.modulesName,
-        features: [
-          {
-            id: item.id,
-            name: item.name,
-          },
-        ],
-      });
-    }
-
-    return result;
-  }, []);
+  const result = parsingUserModules(userInstance);
 
   // parsing userInstance
-  userInstance.Role.dataValues.modules = groupedArray;
-  userInstance.Role.modules = groupedArray;
+  userInstance.Role.dataValues.modules = result;
+  userInstance.Role.modules = result;
   delete userInstance.Role.dataValues.USR_Features;
   return userInstance;
 };

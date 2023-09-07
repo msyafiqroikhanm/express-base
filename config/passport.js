@@ -6,6 +6,7 @@ const passportJWT = require('passport-jwt');
 const {
   USR_User, USR_Role, USR_Feature, USR_Module,
 } = require('../models');
+const { parsingUserModules } = require('../helpers/parsing.helper');
 
 const JWTStrategy = passportJWT.Strategy;
 const ExtractJWT = passportJWT.ExtractJwt;
@@ -35,6 +36,7 @@ passport.use(new JWTStrategy(opts, async (jwtPayload, done) => {
               include: {
                 model: USR_Module,
                 attributes: ['id', 'name'],
+                include: { model: USR_Module, as: 'parentModule', attributes: ['id', 'name'] },
               },
             },
           },
@@ -45,45 +47,10 @@ passport.use(new JWTStrategy(opts, async (jwtPayload, done) => {
       return done(null, false, { message: 'User not found!' });
     }
 
-    // get parsed feature and module in user
-    const parsedFeatures = [];
-    userData.Role.USR_Features.forEach((feature) => {
-      parsedFeatures.push({
-        id: feature.dataValues.id,
-        name: feature.dataValues.name,
-        moduleId: feature.USR_Module.dataValues.id,
-        modulesName: feature.USR_Module.dataValues.name,
-      });
-    });
-
-    // getting array that group by module
-    const groupedArray = parsedFeatures.reduce((result, item) => {
-      const existingModule = result.find((module) => module.id === item.moduleId);
-
-      if (existingModule) {
-        existingModule.features.push({
-          id: item.id,
-          name: item.name,
-        });
-      } else {
-        result.push({
-          id: item.moduleId,
-          name: item.modulesName,
-          features: [
-            {
-              id: item.id,
-              name: item.name,
-            },
-          ],
-        });
-      }
-
-      return result;
-    }, []);
-
+    const result = parsingUserModules(userData);
     // parsing userData
-    userData.Role.dataValues.modules = groupedArray;
-    userData.Role.modules = groupedArray;
+    userData.Role.dataValues.modules = result;
+    userData.Role.modules = result;
     delete userData.Role.dataValues.USR_Features;
 
     return done(null, userData);
