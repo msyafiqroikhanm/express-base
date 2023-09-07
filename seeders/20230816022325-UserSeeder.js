@@ -11,6 +11,7 @@ module.exports = {
     //* USR_Module
     const usr_modules = JSON.parse(fs.readFileSync('./seeders/data/usr_modules.json'));
     const modules = usr_modules.map((element) => ({
+      parentModuleId: element.parentModuleId,
       name: element.name,
       createdAt: new Date(),
       updatedAt: new Date(),

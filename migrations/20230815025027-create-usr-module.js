@@ -12,6 +12,9 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.INTEGER,
       },
+      parentModuleId: {
+        type: Sequelize.INTEGER,
+      },
       name: {
         type: Sequelize.STRING,
       },

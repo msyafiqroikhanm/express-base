@@ -34,10 +34,10 @@ router.get(
       res,
       next,
       await features().then((feature) => [
-        feature.view_configuration_category,
-        feature.create_configuration_category,
-        feature.update_configuration_category,
-        feature.delete_configuration_category,
+        feature.view_system_configuration_category,
+        feature.create_system_configuration_category,
+        feature.update_system_configuration_category,
+        feature.delete_system_configuration_category,
       ]),
     );
   },
@@ -51,7 +51,7 @@ router.post(
       req,
       res,
       next,
-      await features().then((feature) => [feature.create_configuration_category]),
+      await features().then((feature) => [feature.create_system_configuration_category]),
     );
   },
   [check('name', "Name attribute can't be empty").notEmpty()],
@@ -66,7 +66,7 @@ router.put(
       req,
       res,
       next,
-      await features().then((feature) => [feature.update_configuration_category]),
+      await features().then((feature) => [feature.update_system_configuration_category]),
     );
   },
   [check('name', "Name attribute can't be empty").notEmpty()],
@@ -81,7 +81,7 @@ router.delete(
       req,
       res,
       next,
-      await features().then((feature) => [feature.delete_configuration_category]),
+      await features().then((feature) => [feature.delete_system_configuration_category]),
     );
   },
   SysConfigCategory.delete,
@@ -95,9 +95,9 @@ router.get(
       res,
       next,
       await features().then((feature) => [
-        feature.view_configuration_category,
-        feature.update_configuration_category,
-        feature.delete_configuration_category,
+        feature.view_system_configuration_category,
+        feature.update_system_configuration_category,
+        feature.delete_system_configuration_category,
       ]),
     );
   },
@@ -1404,20 +1404,20 @@ router.delete(
   FAQType.delete,
 );
 
-//* Template Category
+//* Broadcast Template Category
 
 router.get(
-  '/template-categories',
+  '/broadcast-template-categories',
   async (req, res, next) => {
     Authentication.authenticate(
       req,
       res,
       next,
       await features().then((feature) => [
-        feature.view_template_category,
-        feature.create_template_category,
-        feature.update_template_category,
-        feature.delete_template_category,
+        feature.view_broadcast_template_category,
+        feature.create_broadcast_template_category,
+        feature.update_broadcast_template_category,
+        feature.delete_broadcast_template_category,
       ]),
     );
   },
@@ -1432,9 +1432,9 @@ router.get(
       res,
       next,
       await features().then((feature) => [
-        feature.view_template_category,
-        feature.update_template_category,
-        feature.delete_template_category,
+        feature.view_broadcast_template_category,
+        feature.update_broadcast_template_category,
+        feature.delete_broadcast_template_category,
       ]),
     );
   },
@@ -1448,7 +1448,7 @@ router.post(
       req,
       res,
       next,
-      await features().then((feature) => [feature.create_template_category]),
+      await features().then((feature) => [feature.create_broadcast_template_category]),
     );
   },
   [check('name', "Name attribute can't be empty").notEmpty()],
@@ -1463,7 +1463,7 @@ router.put(
       req,
       res,
       next,
-      await features().then((feature) => [feature.update_template_category]),
+      await features().then((feature) => [feature.update_broadcast_template_category]),
     );
   },
   [check('name', "Name attribute can't be empty").notEmpty()],
@@ -1478,7 +1478,7 @@ router.delete(
       req,
       res,
       next,
-      await features().then((feature) => [feature.delete_template_category]),
+      await features().then((feature) => [feature.delete_broadcast_template_category]),
     );
   },
   TemplateCategory.delete,
@@ -1573,10 +1573,10 @@ router.get(
       res,
       next,
       await features().then((feature) => [
-        feature.view_template_header_type,
-        feature.create_template_header_type,
-        feature.update_template_header_type,
-        feature.delete_template_header_type,
+        feature.view_broadcast_template_header_type,
+        feature.create_broadcast_template_header_type,
+        feature.update_broadcast_template_header_type,
+        feature.delete_broadcast_template_header_type,
       ]),
     );
   },
@@ -1591,9 +1591,9 @@ router.get(
       res,
       next,
       await features().then((feature) => [
-        feature.view_template_header_type,
-        feature.update_template_header_type,
-        feature.delete_template_header_type,
+        feature.view_broadcast_template_header_type,
+        feature.update_broadcast_template_header_type,
+        feature.delete_broadcast_template_header_type,
       ]),
     );
   },
@@ -1601,13 +1601,13 @@ router.get(
 );
 
 router.post(
-  '/template-header-types',
+  '/broadcast-template-header-types',
   async (req, res, next) => {
     Authentication.authenticate(
       req,
       res,
       next,
-      await features().then((feature) => [feature.create_template_header_type]),
+      await features().then((feature) => [feature.create_broadcast_template_header_type]),
     );
   },
   [check('name', "Name attribute can't be empty").notEmpty()],
@@ -1622,7 +1622,7 @@ router.put(
       req,
       res,
       next,
-      await features().then((feature) => [feature.update_template_header_type]),
+      await features().then((feature) => [feature.update_broadcast_template_header_type]),
     );
   },
   [check('name', "Name attribute can't be empty").notEmpty()],
@@ -1637,7 +1637,7 @@ router.delete(
       req,
       res,
       next,
-      await features().then((feature) => [feature.delete_template_header_type]),
+      await features().then((feature) => [feature.delete_broadcast_template_header_type]),
     );
   },
   TemplateHeaderType.delete,
