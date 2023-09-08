@@ -65,12 +65,7 @@ router.put(
       req,
       res,
       next,
-      await features().then((feature) => [
-        feature.view_pic,
-        feature.create_pic,
-        feature.update_pic,
-        feature.delete_pic,
-      ]),
+      await features().then((feature) => [feature.update_pic]),
     );
   },
   [
@@ -80,6 +75,7 @@ router.put(
   ValidateMiddleware.result,
   PICController.update,
 );
+
 router.delete(
   '/:id',
   async (req, res, next) => {
