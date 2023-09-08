@@ -38,6 +38,7 @@ module.exports = (sequelize, DataTypes) => {
   }, {
     sequelize,
     modelName: 'CSM_BroadcastTemplate',
+    paranoid: true,
   });
   return CSM_BroadcastTemplate;
 };

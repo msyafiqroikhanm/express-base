@@ -23,6 +23,7 @@ const locationRoutes = require('./location.routes');
 const roomRoutes = require('./room.routes');
 const facilityRoutes = require('./facility.routes');
 const webhookRoutes = require('./webhook.routes');
+const broadcastTemplateRoutes = require('./broadcastTemplate.routes');
 
 router.use('/auth', authRoutes);
 router.use('/config', configRoutes);
@@ -47,5 +48,6 @@ router.use('/locations', locationRoutes);
 router.use('/rooms', roomRoutes);
 router.use('/facilities', facilityRoutes);
 router.use('/webhook', webhookRoutes);
+router.use('/broadcast-templates', broadcastTemplateRoutes);
 
 module.exports = router;

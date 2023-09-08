@@ -1419,6 +1419,8 @@ router.get(
         feature.create_broadcast_template_category,
         feature.update_broadcast_template_category,
         feature.delete_broadcast_template_category,
+        feature.create_broadcast_template,
+        feature.update_broadcast_template,
       ]),
     );
   },
@@ -1436,6 +1438,8 @@ router.get(
         feature.view_broadcast_template_category,
         feature.update_broadcast_template_category,
         feature.delete_broadcast_template_category,
+        feature.create_broadcast_template,
+        feature.update_broadcast_template,
       ]),
     );
   },
@@ -1499,6 +1503,8 @@ router.get(
         feature.create_meta_template_category,
         feature.update_meta_template_category,
         feature.delete_meta_template_category,
+        feature.create_broadcast_template,
+        feature.update_broadcast_template,
       ]),
     );
   },
@@ -1516,6 +1522,8 @@ router.get(
         feature.view_meta_template_category,
         feature.update_meta_template_category,
         feature.delete_meta_template_category,
+        feature.create_broadcast_template,
+        feature.update_broadcast_template,
       ]),
     );
   },
@@ -1578,6 +1586,8 @@ router.get(
         feature.create_broadcast_template_header_type,
         feature.update_broadcast_template_header_type,
         feature.delete_broadcast_template_header_type,
+        feature.create_broadcast_template,
+        feature.update_broadcast_template,
       ]),
     );
   },
@@ -1595,6 +1605,8 @@ router.get(
         feature.view_broadcast_template_header_type,
         feature.update_broadcast_template_header_type,
         feature.delete_broadcast_template_header_type,
+        feature.create_broadcast_template,
+        feature.update_broadcast_template,
       ]),
     );
   },

@@ -5,7 +5,7 @@ const responseFormatter = require('./responseFormatter.helper');
 
 module.exports = async (err, req, res, next) => {
   // Delete uploaded file when error happens
-  if (req.file) {
+  if (req.file && !req.file.buffer) {
     await deleteFile(relative(__dirname, req.file.path));
   }
 

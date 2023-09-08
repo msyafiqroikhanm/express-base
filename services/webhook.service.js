@@ -1,8 +1,8 @@
 const { SYS_Configuration } = require('../models');
+const { metaWebhookTemplateStatusUpdate } = require('./whatsapp.integration.service');
 
 const verifyWebhook = async (query) => {
   const Token = await SYS_Configuration.findOne({ where: { name: 'Whatsapp Verify Token' } });
-  console.log(JSON.stringify(Token, null, 2));
   // Parse params from the webhook verification request
   const mode = query['hub.mode'];
   const token = query['hub.verify_token'];
@@ -23,6 +23,13 @@ const verifyWebhook = async (query) => {
 
 const receiveWebhook = async (form) => {
   if (form.object) {
+    if (form.entry[0].changes[0].field === 'message_template_status_update') {
+      // Check webhook request for template status update
+      return metaWebhookTemplateStatusUpdate(
+        form.entry[0].changes[0].value.message_template_id,
+        form.entry[0].changes[0].value.event || 'PENDING',
+      );
+    }
     return true;
   }
   return false;
