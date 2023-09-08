@@ -29,6 +29,7 @@ const {
   roomStatus,
   lodgerStatus,
   picType,
+  metaLanguage,
 } = require('../services/reference.service');
 
 class SysConfigCategory {
@@ -1451,6 +1452,20 @@ class TemplateHeaderType {
   }
 }
 
+class MetaLanguage {
+  static async getAll(req, res, next) {
+    try {
+      res.url = `${req.method} ${req.originalUrl}`;
+
+      const data = await metaLanguage.selectAllMetaLanguages();
+
+      return ResponseFormatter.success200(res, data.message, data.content);
+    } catch (error) {
+      next(error);
+    }
+  }
+}
+
 module.exports = {
   SysConfigCategory,
   QrType,
@@ -1472,4 +1487,5 @@ module.exports = {
   RoomStatus,
   LodgerStatus,
   PICType,
+  MetaLanguage,
 };

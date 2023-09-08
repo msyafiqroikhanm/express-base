@@ -15,6 +15,7 @@ module.exports = (sequelize, DataTypes) => {
       CSM_BroadcastTemplate.belongsTo(models.REF_TemplateCategory, { foreignKey: 'categoryId', as: 'category' });
       CSM_BroadcastTemplate.belongsTo(models.REF_MetaTemplateCategory, { foreignKey: 'metaCategoryId', as: 'metaCategory' });
       CSM_BroadcastTemplate.belongsTo(models.REF_TemplateHeaderType, { foreignKey: 'headerTypeId', as: 'headerType' });
+      CSM_BroadcastTemplate.belongsTo(models.REF_MetaTemplateLanguage, { foreignKey: 'languageId', as: 'language' });
 
       CSM_BroadcastTemplate.hasMany(models.CSM_Broadcast, { foreignKey: 'templateId', as: 'broadcasts' });
     }
@@ -23,15 +24,14 @@ module.exports = (sequelize, DataTypes) => {
     categoryId: DataTypes.INTEGER,
     metaCategoryId: DataTypes.INTEGER,
     headerTypeId: DataTypes.INTEGER,
+    languageId: DataTypes.INTEGER,
+    metaId: DataTypes.STRING,
     name: DataTypes.STRING,
-    language: DataTypes.STRING,
     message: DataTypes.TEXT,
     messageVariableNumber: DataTypes.INTEGER,
     messageVariableExample: DataTypes.JSON,
     headerText: DataTypes.STRING,
-    haveHeaderVariable: DataTypes.BOOLEAN,
     headerVariableExample: DataTypes.STRING,
-    headerFile: DataTypes.STRING,
     footer: DataTypes.STRING,
     button: DataTypes.JSON,
     metaStatus: DataTypes.STRING,

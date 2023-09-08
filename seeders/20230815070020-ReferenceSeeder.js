@@ -187,6 +187,16 @@ module.exports = {
       updatedAt: new Date(),
     }));
     await queryInterface.bulkInsert('REF_PICTypes', pictypes);
+
+    //* REF_MetaTemplateLanguages
+    const ref_metatemplatelanguages = JSON.parse(fs.readFileSync('./seeders/data/ref_metatemplatelanguages.json'));
+    const metatemplatelanguages = ref_metatemplatelanguages.map((element) => ({
+      name: element.name,
+      value: element.value,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    }));
+    await queryInterface.bulkInsert('REF_MetaTemplateLanguages', metatemplatelanguages);
   },
 
   async down(queryInterface, Sequelize) {
@@ -267,6 +277,10 @@ module.exports = {
       restartIdentity: true,
     });
     await queryInterface.bulkDelete('REF_PICTypes', null, {
+      truncate: true,
+      restartIdentity: true,
+    });
+    await queryInterface.bulkDelete('REF_MetaTemplateLanguages', null, {
       truncate: true,
       restartIdentity: true,
     });

@@ -64,5 +64,6 @@
     {"name":"System Configuration Category", "parentModuleId": 10},
     {"name":"Vehicle Category", "parentModuleId": 10},
     {"name":"Vehicle Schedule Status", "parentModuleId": 10},
-    {"name":"Vehicle Type", "parentModuleId": 10}
+    {"name":"Vehicle Type", "parentModuleId": 10},
+    {"name":"Dashboard", "parentModuleId": null}
 ]

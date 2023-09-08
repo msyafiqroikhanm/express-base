@@ -21,10 +21,13 @@ module.exports = {
       headerTypeId: {
         type: Sequelize.STRING,
       },
-      name: {
+      languageId: {
+        type: Sequelize.INTEGER,
+      },
+      metaId: {
         type: Sequelize.STRING,
       },
-      language: {
+      name: {
         type: Sequelize.STRING,
       },
       message: {
@@ -39,13 +42,7 @@ module.exports = {
       headerText: {
         type: Sequelize.STRING,
       },
-      haveHeaderVariable: {
-        type: Sequelize.BOOLEAN,
-      },
       headerVariableExample: {
-        type: Sequelize.STRING,
-      },
-      headerFile: {
         type: Sequelize.STRING,
       },
       footer: {

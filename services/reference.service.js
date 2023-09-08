@@ -20,6 +20,7 @@ const {
   REF_RoomStatus,
   REF_LodgerStatus,
   REF_PICType,
+  REF_MetaTemplateLanguage,
 } = require('../models');
 
 const selectAllConfigCategories = async () => {
@@ -1574,6 +1575,16 @@ const deletePICType = async (id) => {
   };
 };
 
+const selectAllMetaLanguages = async () => {
+  const data = await REF_MetaTemplateLanguage.findAll();
+
+  return {
+    success: true,
+    message: 'Successfully Getting All Meta Language',
+    content: data,
+  };
+};
+
 module.exports = {
   selectAllConfigCategories,
   selectConfiCategory,
@@ -1710,5 +1721,8 @@ module.exports = {
     createPICType,
     updatePICType,
     deletePICType,
+  },
+  metaLanguage: {
+    selectAllMetaLanguages,
   },
 };

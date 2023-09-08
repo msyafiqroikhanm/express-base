@@ -226,6 +226,7 @@
   { "roleId": 1, "featureId": 225 },
   { "roleId": 1, "featureId": 226 },
   { "roleId": 1, "featureId": 227 },
+  { "roleId": 1, "featureId": 228 },
 
     {"roleId":3,"featureId":31},
     {"roleId":3,"featureId":32},
@@ -246,6 +247,7 @@
     {"roleId":3,"featureId":144},
     {"roleId":3,"featureId":145},
     {"roleId":3,"featureId":146},
-    {"roleId":3,"featureId":147}
+    {"roleId":3,"featureId":147},
+    {"roleId":3,"featureId":228}
 
 ]

@@ -22,6 +22,7 @@ const {
   RoomStatus,
   LodgerStatus,
   PICType,
+  MetaLanguage,
 } = require('../../controllers/reference.controller');
 const ValidateMiddleware = require('../../middlewares/validate.middleware');
 const Authentication = require('../../middlewares/auth.middleware');
@@ -1641,6 +1642,20 @@ router.delete(
     );
   },
   TemplateHeaderType.delete,
+);
+
+// * Meta Language
+router.get(
+  '/meta-languages',
+  async (req, res, next) => {
+    Authentication.authenticate(
+      req,
+      res,
+      next,
+      null,
+    );
+  },
+  MetaLanguage.getAll,
 );
 
 module.exports = router;
