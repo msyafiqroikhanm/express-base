@@ -13,7 +13,7 @@ module.exports = (sequelize, DataTypes) => {
       // define association here
       ACM_Facility.belongsTo(models.ACM_Location, {
         foreignKey: 'locationId',
-        as: 'Location',
+        as: 'location',
       });
     }
   }
@@ -22,9 +22,12 @@ module.exports = (sequelize, DataTypes) => {
       locationId: DataTypes.INTEGER,
       name: DataTypes.STRING,
       quantity: DataTypes.INTEGER,
+      deletedAt: DataTypes.DATE,
     },
     {
       sequelize,
+      paranoid: true,
+      deletedAt: 'deletedAt',
       modelName: 'ACM_Facility',
     },
   );
