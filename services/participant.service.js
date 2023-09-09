@@ -1,3 +1,4 @@
+/* eslint-disable no-param-reassign */
 const fs = require('fs/promises');
 const { Op } = require('sequelize');
 const XLSX = require('xlsx');
@@ -7,8 +8,21 @@ const {
 } = require('../models');
 const { createQR } = require('./qr.service');
 
-const selectAllParticipant = async () => {
+const validateParticipantQuery = async (query) => {
+  const parsedQuery = {};
+
+  if (query.contingent) {
+    const contingentInstance = await PAR_Contingent.findOne({ where: { name: { [Op.like]: `%${query.contingent}%` } } });
+    console.log(JSON.stringify(contingentInstance, null, 2));
+    parsedQuery.contingentId = contingentInstance?.id || null;
+  }
+
+  return parsedQuery;
+};
+
+const selectAllParticipant = async (query) => {
   const participants = await PAR_Participant.findAll({
+    where: query,
     include: [
       {
         model: PAR_Contingent,
@@ -23,6 +37,15 @@ const selectAllParticipant = async () => {
     ],
   });
 
+  // parsed retun data
+  participants.forEach((participant) => {
+    if (participant.contingent) {
+      participant.contingent.dataValues.region = participant.contingent.region.dataValues.name;
+    }
+    participant.dataValues.identityType = participant.identityType.dataValues.name;
+    participant.dataValues.participantType = participant.participantType.dataValues.name;
+  });
+
   return {
     success: true, message: 'Successfully Getting All Participant', content: participants,
   };
@@ -34,12 +57,12 @@ const selectParticipant = async (id) => {
       {
         model: PAR_Contingent,
         as: 'contingent',
-        attributes: ['name'],
-        include: { model: REF_Region, as: 'region', attributes: ['name'] },
+        attributes: ['id', 'name'],
+        include: { model: REF_Region, as: 'region', attributes: ['id', 'name'] },
       },
       { model: QRM_QR, as: 'qr' },
-      { model: REF_IdentityType, attributes: ['name'], as: 'identityType' },
-      { model: REF_ParticipantType, attributes: ['name'], as: 'participantType' },
+      { model: REF_IdentityType, attributes: ['id', 'name'], as: 'identityType' },
+      { model: REF_ParticipantType, attributes: ['id', 'name'], as: 'participantType' },
       { model: PAR_Group, as: 'groups', through: { attributes: [] } },
       { model: PAR_ParticipantTracking, as: 'history' },
     ],
@@ -322,6 +345,7 @@ module.exports = {
   selectAllParticipant,
   selectParticipant,
   validateParticipantInputs,
+  validateParticipantQuery,
   createParticipant,
   updateParticipant,
   deleteParticipant,

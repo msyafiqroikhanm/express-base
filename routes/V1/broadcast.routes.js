@@ -1,7 +1,8 @@
 const router = require('express').Router();
 const { check } = require('express-validator');
 const features = require('../../helpers/features.helper');
-const GroupController = require('../../controllers/group.controller');
+const { uploadCombine } = require('../../services/multerStorage.service');
+const BroadcastController = require('../../controllers/broadcast.controller');
 const ValidateMiddleware = require('../../middlewares/validate.middleware');
 const Authentication = require('../../middlewares/auth.middleware');
 
@@ -13,14 +14,14 @@ router.get(
       res,
       next,
       await features().then((feature) => [
-        feature.view_group,
-        feature.create_group,
-        feature.update_group,
-        feature.delete_group,
+        feature.view_broadcast,
+        feature.create_broadcast,
+        feature.update_broadcast,
+        feature.delete_broadcast,
       ]),
     );
   },
-  GroupController.getAll,
+  BroadcastController.getAll,
 );
 
 router.get(
@@ -31,13 +32,13 @@ router.get(
       res,
       next,
       await features().then((feature) => [
-        feature.view_group,
-        feature.update_group,
-        feature.delete_group,
+        feature.view_broadcast,
+        feature.update_broadcast,
+        feature.delete_broadcast,
       ]),
     );
   },
-  GroupController.getDetail,
+  BroadcastController.getDetail,
 );
 
 router.post(
@@ -48,19 +49,19 @@ router.post(
       res,
       next,
       await features().then((feature) => [
-        feature.create_group,
+        feature.create_broadcast,
       ]),
     );
   },
+  uploadCombine.single('broadcastFile'),
   [
-    check('eventId', 'Event Id attribute can\'t be empty').notEmpty(),
-    check('contingentId', 'Contingent Id attribute can\'t be empty').notEmpty(),
-    check('statusId', 'Status Id attribute can\'t be empty').notEmpty(),
+    check('templateId', 'Template Id attribute can\'t be empty').notEmpty(),
     check('name', 'Name attribute can\'t be empty').notEmpty(),
-    check('participants', 'Participants attribute can\'t be empty').isArray(),
+    check('sentAt', 'Sent At attribute can\'t be empty').notEmpty(),
+    check('receivers', 'Receivers At attribute can\'t be empty').isArray(),
   ],
   ValidateMiddleware.result,
-  GroupController.create,
+  BroadcastController.create,
 );
 
 router.put(
@@ -71,19 +72,19 @@ router.put(
       res,
       next,
       await features().then((feature) => [
-        feature.update_group,
+        feature.update_broadcast,
       ]),
     );
   },
+  uploadCombine.single('broadcastFile'),
   [
-    check('eventId', 'Event Id attribute can\'t be empty').notEmpty(),
-    check('contingentId', 'Contingent Id attribute can\'t be empty').notEmpty(),
-    check('statusId', 'Status Id attribute can\'t be empty').notEmpty(),
+    check('templateId', 'Template Id attribute can\'t be empty').notEmpty(),
     check('name', 'Name attribute can\'t be empty').notEmpty(),
-    check('participants', 'Participants attribute can\'t be empty').isArray(),
+    check('sentAt', 'Sent At attribute can\'t be empty').notEmpty(),
+    check('receivers', 'Receivers At attribute can\'t be empty').isArray(),
   ],
   ValidateMiddleware.result,
-  GroupController.update,
+  BroadcastController.update,
 );
 
 router.delete(
@@ -94,11 +95,11 @@ router.delete(
       res,
       next,
       await features().then((feature) => [
-        feature.delete_group,
+        feature.delete_broadcast,
       ]),
     );
   },
-  GroupController.delete,
+  BroadcastController.delete,
 );
 
 module.exports = router;

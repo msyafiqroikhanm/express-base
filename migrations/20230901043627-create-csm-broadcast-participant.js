@@ -22,6 +22,9 @@ module.exports = {
         allowNull: false,
         primaryKey: true,
       },
+      metaId: {
+        type: Sequelize.STRING,
+      },
       status: {
         type: Sequelize.STRING,
       },

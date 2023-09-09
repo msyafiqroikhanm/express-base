@@ -118,7 +118,15 @@ const combineStorage = multer.diskStorage({
   destination: (req, file, cb) => {
     const fieldname = splitFieldname(file.fieldname);
     target = fieldname.targetName.toLowerCase();
-    folder = fieldname.folderName.toLowerCase();
+
+    const ext = path.extname(file.originalname);
+    if (['.jpeg', '.png', '.jpg'].includes(ext)) {
+      folder = 'image';
+    } else if (['.mp4', '.3gp'].includes(ext)) {
+      folder = 'video';
+    } else if (['.pdf', '.docx', '.xlsx', '.csv'].includes(ext)) {
+      folder = 'document';
+    }
 
     if (target) {
       dirPath = path.join(__dirname, `../public/${folder}s/${target}s`);

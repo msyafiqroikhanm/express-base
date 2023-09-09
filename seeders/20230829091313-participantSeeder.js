@@ -35,58 +35,44 @@ module.exports = {
     }));
     await queryInterface.bulkInsert('PAR_Groups', contingentGroups);
 
-    await queryInterface.bulkInsert('PAR_Participants', [
-      {
-        name: 'Super Admin',
-        gender: 'Male',
-        birthDate: '1999-01-01',
-        identityNo: '31719032849',
-        phoneNbr: '628763269240',
-        email: 'gifari@jxboard.id',
-        address: 'condet',
-        identityTypeId: 1,
-        typeId: 2,
-        contingentId: 3,
-        createdAt: new Date(),
-        updatedAt: new Date(),
-        deletedAt: null,
-      },
-      {
-        name: 'Admin Hotel A',
-        gender: 'Male',
-        birthDate: '1999-01-01',
-        identityNo: '31719032849',
-        phoneNbr: '628763269240',
-        email: 'achmad@jxboard.id',
-        address: 'cijanntung',
-        identityTypeId: 1,
-        typeId: 2,
-        contingentId: 3,
-        createdAt: new Date(),
-        updatedAt: new Date(),
-        deletedAt: null,
-      },
-      {
-        name: 'Said as a guest',
-        gender: 'Male',
-        birthDate: '1999-01-01',
-        identityNo: '31719032849',
-        phoneNbr: '628763269240',
-        email: 'said@jxboard.id',
-        address: 'cijanntung',
-        identityTypeId: 1,
-        typeId: 1,
-        contingentId: 3,
-        createdAt: new Date(),
-        updatedAt: new Date(),
-        deletedAt: null,
-      },
-    ]);
+    // * PAR_Participants
+    const par_participants = JSON.parse(
+      fs.readFileSync('./seeders/data/par_participants.json'),
+    );
+    const participants = par_participants.map((element) => ({
+      name: element.name,
+      gender: element.gender,
+      birthDate: element.birthDate,
+      identityNo: element.identityNo,
+      phoneNbr: element.phoneNbr,
+      email: element.email,
+      address: element.address,
+      identityTypeId: element.identityTypeId,
+      typeId: element.typeId,
+      contingentId: element.contingentId,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      deletedAt: null,
+    }));
+    await queryInterface.bulkInsert('PAR_Participants', participants);
 
     // await createParticipantViaImport({
     //   originalname: 'participant_example.xlsx',
     //   path: path.join(__dirname, '../seeders/data/participant_example.xlsx'),
     // });
+
+    //* PAR_GroupMembers
+    const par_groupmembers = JSON.parse(
+      fs.readFileSync('./seeders/data/par_groupmembers.json'),
+    );
+
+    const groupMembers = par_groupmembers.map((element) => ({
+      groupId: element.groupId,
+      participantId: element.participantId,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    }));
+    await queryInterface.bulkInsert('PAR_GroupMembers', groupMembers);
   },
 
   async down(queryInterface, Sequelize) {
@@ -99,6 +85,10 @@ module.exports = {
       restartIdentity: true,
     });
     await queryInterface.bulkDelete('PAR_Participants', null, {
+      truncate: true,
+      restartIdentity: true,
+    });
+    await queryInterface.bulkDelete('PAR_GroupMembers', null, {
       truncate: true,
       restartIdentity: true,
     });

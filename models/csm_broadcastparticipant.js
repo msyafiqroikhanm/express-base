@@ -19,6 +19,7 @@ module.exports = (sequelize, DataTypes) => {
   CSM_BroadcastParticipant.init({
     participantId: DataTypes.INTEGER,
     broadcastId: DataTypes.INTEGER,
+    metaId: DataTypes.STRING,
     status: DataTypes.STRING,
   }, {
     sequelize,

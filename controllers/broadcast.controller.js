@@ -2,25 +2,17 @@ const { relative } = require('path');
 const deleteFile = require('../helpers/deleteFile.helper');
 const ResponseFormatter = require('../helpers/responseFormatter.helper');
 const {
-  selectAllParticipant, selectParticipant, validateParticipantInputs,
-  createParticipant, updateParticipant, deleteParticipant, trackingParticipant,
-  createParticipantViaImport,
-  validateParticipantQuery,
-} = require('../services/participant.service');
+  selectAllBroadcasts, selectBroadcast, validateBroadcastInputs, createBroadcast, scheduleBroadcast,
+  updateBroadcast,
+  deleteBroadcast,
+} = require('../services/broadcast.service');
 
-class Participant {
+class BroadcastController {
   static async getAll(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
 
-      const query = await validateParticipantQuery(req.query);
-
-      console.log(query);
-
-      const data = await selectAllParticipant(query);
-      if (!data.success) {
-        return ResponseFormatter.error400(res, 'Bad Request', data.message);
-      }
+      const data = await selectAllBroadcasts();
 
       return ResponseFormatter.success200(res, data.message, data.content);
     } catch (error) {
@@ -32,7 +24,7 @@ class Participant {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
 
-      const data = await selectParticipant(req.params.id);
+      const data = await selectBroadcast(req.params.id);
       if (!data.success && data.code === 404) {
         return ResponseFormatter.error404(res, 'Data Not Found', data.message);
       }
@@ -47,14 +39,7 @@ class Participant {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
 
-      const inputs = await validateParticipantInputs(req.body, req.file);
-      if (!inputs.isValid && inputs.code === 404) {
-        // Delete uploaded file when error happens
-        if (req.file) {
-          await deleteFile(relative(__dirname, req.file.path));
-        }
-        return ResponseFormatter.error404(res, 'Data Not Found', inputs.message);
-      }
+      const inputs = await validateBroadcastInputs(req.body, req.file);
       if (!inputs.isValid && inputs.code === 400) {
         // Delete uploaded file when error happens
         if (req.file) {
@@ -62,39 +47,18 @@ class Participant {
         }
         return ResponseFormatter.error400(res, 'Bad Request', inputs.message);
       }
-
-      const data = await createParticipant(inputs.form);
-      if (!data.success) {
-        return ResponseFormatter.error400(res, 'Bad Request', data.content);
-      }
-
-      return ResponseFormatter.success201(res, data.message, data.content);
-    } catch (error) {
-      // Delete uploaded file when error happens
-      if (req.file) {
-        await deleteFile(relative(__dirname, req.file.path));
-      }
-      next(error);
-    }
-  }
-
-  static async createViaImport(req, res, next) {
-    try {
-      res.url = `${req.method} ${req.originalUrl}`;
-
-      const data = await createParticipantViaImport(req.file);
-      if (!data.success && data.code === 400) {
+      if (!inputs.isValid && inputs.code === 404) {
         // Delete uploaded file when error happens
         if (req.file) {
           await deleteFile(relative(__dirname, req.file.path));
         }
-        return ResponseFormatter.error400(res, 'Bad Request', data.message);
+        return ResponseFormatter.error404(res, 'Data Not Found', inputs.message);
       }
 
-      // Delete uploaded file when error happens
-      if (req.file) {
-        await deleteFile(relative(__dirname, req.file.path));
-      }
+      const data = await createBroadcast(inputs.form);
+
+      await scheduleBroadcast(data.content.id);
+
       return ResponseFormatter.success201(res, data.message, data.content);
     } catch (error) {
       // Delete uploaded file when error happens
@@ -109,14 +73,7 @@ class Participant {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
 
-      const inputs = await validateParticipantInputs(req.body, req.file, req.params.id);
-      if (!inputs.isValid && inputs.code === 404) {
-        // Delete uploaded file when error happens
-        if (req.file) {
-          await deleteFile(relative(__dirname, req.file.path));
-        }
-        return ResponseFormatter.error404(res, 'Data Not Found', inputs.message);
-      }
+      const inputs = await validateBroadcastInputs(req.body, req.file);
       if (!inputs.isValid && inputs.code === 400) {
         // Delete uploaded file when error happens
         if (req.file) {
@@ -124,8 +81,22 @@ class Participant {
         }
         return ResponseFormatter.error400(res, 'Bad Request', inputs.message);
       }
+      if (!inputs.isValid && inputs.code === 404) {
+        // Delete uploaded file when error happens
+        if (req.file) {
+          await deleteFile(relative(__dirname, req.file.path));
+        }
+        return ResponseFormatter.error404(res, 'Data Not Found', inputs.message);
+      }
 
-      const data = await updateParticipant(req.params.id, inputs.form);
+      const data = await updateBroadcast(inputs.form, req.params.id);
+      if (!data.success && data.code === 400) {
+        // Delete uploaded file when error happens
+        if (req.file) {
+          await deleteFile(relative(__dirname, req.file.path));
+        }
+        return ResponseFormatter.error400(res, 'Bad Request', data.message);
+      }
       if (!data.success && data.code === 404) {
         // Delete uploaded file when error happens
         if (req.file) {
@@ -133,6 +104,8 @@ class Participant {
         }
         return ResponseFormatter.error404(res, 'Data Not Found', data.message);
       }
+
+      await scheduleBroadcast(data.content.id);
 
       return ResponseFormatter.success200(res, data.message, data.content);
     } catch (error) {
@@ -148,7 +121,10 @@ class Participant {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
 
-      const data = await deleteParticipant(req.params.id);
+      const data = await deleteBroadcast(req.params.id);
+      if (!data.success && data.code === 400) {
+        return ResponseFormatter.error400(res, 'Bad Request', data.message);
+      }
       if (!data.success && data.code === 404) {
         return ResponseFormatter.error404(res, 'Data Not Found', data.message);
       }
@@ -158,21 +134,6 @@ class Participant {
       next(error);
     }
   }
-
-  static async track(req, res, next) {
-    try {
-      res.url = `${req.method} ${req.originalUrl}`;
-
-      const data = await trackingParticipant(req.body);
-      if (!data.success && data.code === 404) {
-        return ResponseFormatter.error404(res, 'Data Not Found', data.message);
-      }
-
-      return ResponseFormatter.success201(res, data.message, data.content);
-    } catch (error) {
-      next(error);
-    }
-  }
 }
 
-module.exports = Participant;
+module.exports = BroadcastController;

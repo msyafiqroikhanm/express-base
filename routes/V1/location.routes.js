@@ -21,9 +21,14 @@ router.get(
         feature.create_room,
         feature.update_room,
         feature.delete_room,
+        feature.view_lodger,
+        feature.create_lodger,
+        feature.update_lodger,
+        feature.delete_lodger,
       ]),
     );
   },
+  Authentication.accomodation,
   LocationController.getAll,
 );
 
@@ -43,9 +48,14 @@ router.get(
         feature.create_room,
         feature.update_room,
         feature.delete_room,
+        feature.view_lodger,
+        feature.create_lodger,
+        feature.update_lodger,
+        feature.delete_lodger,
       ]),
     );
   },
+  Authentication.accomodation,
   LocationController.getDetail,
 );
 
@@ -82,6 +92,7 @@ router.put(
       await features().then((feature) => [feature.update_location]),
     );
   },
+  Authentication.accomodation,
   LocationController.update,
 );
 
@@ -95,6 +106,7 @@ router.delete(
       await features().then((feature) => [feature.delete_location]),
     );
   },
+  Authentication.accomodation,
   LocationController.delete,
 );
 module.exports = router;
