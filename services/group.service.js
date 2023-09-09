@@ -1,4 +1,5 @@
 /* eslint-disable no-param-reassign */
+const { Op } = require('sequelize');
 const {
   PAR_Group, ENV_Event, PAR_Contingent, REF_GroupStatus, PAR_Participant,
 } = require('../models');
@@ -79,6 +80,12 @@ const selectGroup = async (id) => {
   groupInstance.dataValues.contingent = groupInstance.contingent.dataValues.name;
   groupInstance.dataValues.event = groupInstance.event.dataValues.name;
   groupInstance.dataValues.status = groupInstance.status.dataValues.name;
+  groupInstance.dataValues.participants = [];
+  groupInstance.PAR_Participants.forEach((participant) => {
+    groupInstance.dataValues.participants.push(participant.id);
+  });
+  groupInstance.dataValues.participantList = groupInstance.PAR_Participants;
+  delete groupInstance.dataValues.PAR_Participants;
 
   return {
     success: true, message: 'Successfully Getting Group', content: groupInstance,
@@ -113,22 +120,36 @@ const validateGroupInputs = async (form) => {
     };
   }
 
+  // validate Recipiants / receivers
+  const validParcipants = await PAR_Participant.findAll({
+    where: {
+      id: { [Op.in]: form.participants },
+      contingentId,
+    },
+  });
+
   return {
     isValid: true,
     form: {
-      event: eventInstance, contingent: contingentInstance, status: statusInstance, name,
+      event: eventInstance,
+      contingent: contingentInstance,
+      status: statusInstance,
+      name,
+      participants: validParcipants,
     },
   };
 };
 
 const createGroup = async (form) => {
   const {
-    event, contingent, status, name,
+    event, contingent, status, name, participants,
   } = form;
 
   const groupInstance = await PAR_Group.create({
     eventId: event.id, contingentId: contingent.id, statusId: status.id, name,
   });
+
+  await groupInstance.addPAR_Participants(participants);
 
   return {
     success: true, message: 'Group Successfully Created', content: groupInstance,
@@ -137,7 +158,7 @@ const createGroup = async (form) => {
 
 const updateGroup = async (id, form) => {
   const {
-    event, contingent, status, name,
+    event, contingent, status, name, participants,
   } = form;
 
   const groupInstance = await PAR_Group.findByPk(id);
@@ -153,6 +174,8 @@ const updateGroup = async (id, form) => {
   groupInstance.name = name;
   await groupInstance.save();
 
+  await groupInstance.setPAR_Participants(participants);
+
   return {
     success: true, message: 'Group Successfully Updated', content: groupInstance,
   };
@@ -167,6 +190,8 @@ const deleteGroup = async (id) => {
   }
 
   const { name } = groupInstance.dataValues;
+
+  await groupInstance.setPAR_Participants([]);
 
   await groupInstance.destroy();
 

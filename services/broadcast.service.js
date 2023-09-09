@@ -237,14 +237,10 @@ const scheduleBroadcast = async (broadcastId) => {
   // when a broadcast approve / scheduled after sentAt time
   // reassign sentAt as current time
   let date = new Date(broadcastInstance.sentAt);
-  console.log(broadcastInstance.sentAt);
-  console.log(date);
   if (date.getTime() < new Date().getTime()) {
     date = new Date();
     console.log(`Broadcast scheduled in the past ${date}`);
   }
-
-  console.log(date);
 
   cron.scheduleJob(`${broadcastInstance.id}`, date, async () => {
     console.log(`message send at ${new Date()}`);

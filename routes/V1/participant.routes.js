@@ -23,6 +23,8 @@ router.get(
         feature.create_lodger,
         feature.update_lodger,
         feature.delete_lodger,
+        feature.create_group,
+        feature.update_group,
       ]),
     );
   },
@@ -45,6 +47,8 @@ router.get(
         feature.create_lodger,
         feature.update_lodger,
         feature.delete_lodger,
+        feature.create_group,
+        feature.update_group,
       ]),
     );
   },
