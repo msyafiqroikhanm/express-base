@@ -5,6 +5,7 @@ const {
   selectAllParticipant, selectParticipant, validateParticipantInputs,
   createParticipant, updateParticipant, deleteParticipant, trackingParticipant,
   createParticipantViaImport,
+  validateParticipantQuery,
 } = require('../services/participant.service');
 
 class Participant {
@@ -12,7 +13,11 @@ class Participant {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
 
-      const data = await selectAllParticipant();
+      const query = await validateParticipantQuery(req.query);
+
+      console.log(query);
+
+      const data = await selectAllParticipant(query);
       if (!data.success) {
         return ResponseFormatter.error400(res, 'Bad Request', data.message);
       }
