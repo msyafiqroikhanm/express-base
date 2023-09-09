@@ -1,6 +1,10 @@
 /* eslint-disable quote-props */
+/* eslint-disable no-param-reassign */
+
 const axios = require('axios');
-const { SYS_Configuration, CSM_BroadcastTemplate } = require('../models');
+const {
+  SYS_Configuration, CSM_BroadcastTemplate,
+} = require('../models');
 
 const registerWhatsappTemplate = async (metaTemplate) => {
   const WhatsappAccountId = await SYS_Configuration.findOne({ where: { name: 'Whatsapp Account Id' } });
@@ -182,10 +186,128 @@ const metaWebhookTemplateStatusUpdate = async (metaId, status) => {
   return false;
 };
 
+const metaSendMessage = async (data, phoneId, accessToken) => {
+  try {
+    const metaResponse = await axios({
+      method: 'POST', // Required, HTTP method, a string, e.g. POST, GET
+      url:
+        `https://graph.facebook.com/v17.0/${phoneId}/messages`,
+      data,
+      headers: {
+        // eslint-disable-next-line quote-props
+        'Authorization': `Bearer ${accessToken}`,
+        'Content-Type': 'application/json',
+      },
+    });
+
+    return metaResponse;
+  } catch (error) {
+    console.error(error.response.data);
+    throw error.response.data;
+  }
+};
+
+const formatWhatsappMessage = (data, BASE_URL) => {
+  const components = [];
+
+  // format header
+  const headerComponent = {
+    type: 'header',
+    parameters: [{}],
+  };
+  if (data.headerFile) {
+    const type = data?.headerFile.split('.')[1];
+    if (['jpeg', 'png', 'jpg'].includes(type)) {
+      headerComponent.parameters[0] = {
+        type: 'image',
+        image: {
+          link: `${BASE_URL}/${data.headerFile}`,
+        },
+      };
+    } else if (['mp4', '3gp'].includes(type)) {
+      headerComponent.parameters[0] = {
+        type: 'video',
+        video: {
+          link: `${BASE_URL}/${data.headerFile}`,
+        },
+      };
+    } else if (['pdf', 'docx', 'xlsx'].includes(type)) {
+      headerComponent.parameters[0] = {
+        type: 'document',
+        document: {
+          link: `${BASE_URL}/${data.headerFile}`,
+        },
+      };
+    }
+    components.push(headerComponent);
+  } else if (data.headerText) {
+    headerComponent.parameters[0] = {
+      type: 'text',
+      text: data.headerText,
+    };
+    components.push(headerComponent);
+  }
+
+  // format body
+  if (data.messageParameters?.length > 0) {
+    const body = [];
+
+    if (typeof data.messageParameters === 'string') {
+      data.messageParameters = JSON.parse(data.messageParameters);
+    }
+    data.messageParameters.forEach((parameter) => {
+      body.push({
+        type: 'text',
+        text: parameter,
+      });
+    });
+
+    components.push({
+      type: 'body',
+      parameters: body,
+    });
+  }
+
+  // format button
+  if (data.buttonParameters) {
+    if (typeof data.buttonParameters === 'string') {
+      data.buttonParameters = JSON.parse(data.buttonParameters);
+    }
+    data.buttonParameters.forEach((parameter, index) => {
+      if (parameter.type === 'payload') {
+        components.push(
+          {
+            type: 'button',
+            sub_type: 'quick_reply',
+            index,
+            parameters: [
+              parameter,
+            ],
+          },
+        );
+      } else {
+        components.push(
+          {
+            type: 'button',
+            sub_type: 'call_to_action',
+            index,
+            parameters: [
+              parameter,
+            ],
+          },
+        );
+      }
+    });
+  }
+  return components;
+};
+
 module.exports = {
   metaWebhookTemplateStatusUpdate,
   updateMetaWhatsappTemplate,
   deleteMetaWhatsappTemplate,
   registerWhatsappTemplate,
   metaMediaHandler,
+  formatWhatsappMessage,
+  metaSendMessage,
 };

@@ -94,6 +94,7 @@ module.exports = {
       footer: element.footer,
       button: JSON.stringify(element.button),
       metaStatus: element.metaStatus,
+      metaId: element.metaId || null,
       createdAt: new Date(),
       updatedAt: new Date(),
     }));

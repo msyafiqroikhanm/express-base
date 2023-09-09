@@ -16,6 +16,7 @@ module.exports = (sequelize, DataTypes) => {
         through: 'CSM_BroadcastParticipant',
         foreignKey: 'broadcastId',
         otherKey: 'participantId',
+        as: 'receivers',
       });
 
       CSM_Broadcast.belongsTo(models.CSM_BroadcastTemplate, { foreignKey: 'templateId', as: 'template' });

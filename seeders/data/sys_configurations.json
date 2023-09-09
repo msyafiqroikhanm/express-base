@@ -10,6 +10,11 @@
     "value": "../../public/image/application/default_logo.png"
   },
   {
+    "categoryId": 1,
+    "name": "Base URL",
+    "value": "https://c138-112-78-165-92.ngrok-free.app"
+  },
+  {
     "categoryId": 3,
     "name": "Whatsapp Verify Token",
     "value": "RandomString571."
