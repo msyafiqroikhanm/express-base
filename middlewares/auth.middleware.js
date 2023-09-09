@@ -70,10 +70,14 @@ class AuthMiddleware {
 
         const locationLimitation = await ACM_Location.findAll({
           where: { picId: limitation.access.picId },
-          attributes: ['id', 'name'],
+          attributes: ['id'],
+          raw: true,
         });
-        if (locationLimitation.length < 1) {
-          limitation.access.location = locationLimitation;
+
+        const locations = locationLimitation.map((element) => element.id);
+
+        if (locationLimitation.length > 0) {
+          limitation.access.location = locations;
         }
       }
       req.user.limitation = limitation;

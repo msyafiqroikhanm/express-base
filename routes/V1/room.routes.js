@@ -24,6 +24,7 @@ router.get(
       ]),
     );
   },
+  Authentication.accomodation,
   RoomController.getAll,
 );
 
@@ -46,6 +47,7 @@ router.get(
       ]),
     );
   },
+  Authentication.accomodation,
   RoomController.getDetail,
 );
 
@@ -69,6 +71,7 @@ router.post(
     check('occupied', 'occupied attribute must be integer').isInt(),
   ],
   ValidateMiddleware.result,
+  Authentication.accomodation,
   RoomController.create,
 );
 
@@ -82,6 +85,7 @@ router.put(
       await features().then((feature) => [feature.update_room]),
     );
   },
+  Authentication.accomodation,
   RoomController.update,
 );
 
@@ -95,6 +99,7 @@ router.delete(
       await features().then((feature) => [feature.delete_room]),
     );
   },
+  Authentication.accomodation,
   RoomController.delete,
 );
 

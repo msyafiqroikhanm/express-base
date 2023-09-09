@@ -74,10 +74,10 @@ const createRoom = async (form) => {
   };
 };
 
-const updateRoom = async (id, form) => {
+const updateRoom = async (where, form) => {
   // check identity  id validity
   const errorMessages = [];
-  const Instance = await ACM_Room.findByPk(id);
+  const Instance = await ACM_Room.findOne({ where });
   if (!Instance) {
     return {
       success: false,
@@ -127,9 +127,9 @@ const updateRoom = async (id, form) => {
   };
 };
 
-const deleteRoom = async (id) => {
+const deleteRoom = async (where) => {
   // check identity  id validity
-  const Instance = await ACM_Room.findByPk(id);
+  const Instance = await ACM_Room.findOne({ where });
   if (!Instance) {
     return {
       success: false,
@@ -151,10 +151,10 @@ const deleteRoom = async (id) => {
   };
 };
 
-const validateRoomInputs = async (form) => {
+const validateRoomInputs = async (form, where) => {
   const errorMessages = [];
 
-  const locationInstance = await ACM_Location.findByPk(form.locationId);
+  const locationInstance = await ACM_Location.findOne({ where });
   if (!locationInstance) {
     errorMessages.push('Location Data Not Found');
   }
