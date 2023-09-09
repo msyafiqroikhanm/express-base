@@ -17,6 +17,10 @@ router.get(
         feature.create_room,
         feature.update_room,
         feature.delete_room,
+        feature.view_lodger,
+        feature.create_lodger,
+        feature.update_lodger,
+        feature.delete_lodger,
       ]),
     );
   },
@@ -35,6 +39,10 @@ router.get(
         feature.create_room,
         feature.update_room,
         feature.delete_room,
+        feature.view_lodger,
+        feature.create_lodger,
+        feature.update_lodger,
+        feature.delete_lodger,
       ]),
     );
   },

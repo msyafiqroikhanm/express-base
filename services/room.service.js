@@ -182,7 +182,7 @@ const validateRoomInputs = async (form) => {
       name: form.name,
       floor: form.floor,
       capacity: form.capacity,
-      occupied: form.occupied,
+      occupied: 0,
     },
   };
 };

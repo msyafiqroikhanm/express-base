@@ -856,6 +856,10 @@ router.get(
         feature.create_lodger_status,
         feature.update_lodger_status,
         feature.delete_lodger_status,
+        feature.view_lodger,
+        feature.create_lodger,
+        feature.update_lodger,
+        feature.delete_lodger,
       ]),
     );
   },
@@ -873,6 +877,10 @@ router.get(
         feature.create_lodger_status,
         feature.update_lodger_status,
         feature.delete_lodger_status,
+        feature.view_lodger,
+        feature.create_lodger,
+        feature.update_lodger,
+        feature.delete_lodger,
       ]),
     );
   },
@@ -1660,12 +1668,7 @@ router.delete(
 router.get(
   '/meta-languages',
   async (req, res, next) => {
-    Authentication.authenticate(
-      req,
-      res,
-      next,
-      null,
-    );
+    Authentication.authenticate(req, res, next, null);
   },
   MetaLanguage.getAll,
 );

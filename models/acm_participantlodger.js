@@ -13,6 +13,14 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
+      ACM_ParticipantLodger.belongsTo(models.PAR_Participant, {
+        foreignKey: 'participantId',
+        as: 'participant',
+      });
+      ACM_ParticipantLodger.belongsTo(models.REF_LodgerStatus, {
+        foreignKey: 'statusId',
+        as: 'status',
+      });
     }
   }
   ACM_ParticipantLodger.init(

@@ -1,8 +1,6 @@
 'use strict';
 
-const {
-  Model,
-} = require('sequelize');
+const { Model } = require('sequelize');
 
 module.exports = (sequelize, DataTypes) => {
   class PAR_Participant extends Model {
@@ -25,38 +23,53 @@ module.exports = (sequelize, DataTypes) => {
         otherKey: 'broadcastId',
       });
 
-      PAR_Participant.belongsTo(models.PAR_Contingent, { foreignKey: 'contingentId', as: 'contingent' });
+      PAR_Participant.belongsTo(models.PAR_Contingent, {
+        foreignKey: 'contingentId',
+        as: 'contingent',
+      });
       PAR_Participant.belongsTo(models.QRM_QR, { foreignKey: 'qrId', as: 'qr' });
-      PAR_Participant.belongsTo(models.REF_ParticipantType, { foreignKey: 'typeId', as: 'participantType' });
-      PAR_Participant.belongsTo(models.REF_IdentityType, { foreignKey: 'identityTypeId', as: 'identityType' });
+      PAR_Participant.belongsTo(models.REF_ParticipantType, {
+        foreignKey: 'typeId',
+        as: 'participantType',
+      });
+      PAR_Participant.belongsTo(models.REF_IdentityType, {
+        foreignKey: 'identityTypeId',
+        as: 'identityType',
+      });
 
       PAR_Participant.hasMany(models.PAR_GroupMember, { foreignKey: 'participantId' });
-      PAR_Participant.hasMany(models.PAR_ParticipantTracking, { foreignKey: 'participantId', as: 'history' });
+      PAR_Participant.hasMany(models.PAR_ParticipantTracking, {
+        foreignKey: 'participantId',
+        as: 'history',
+      });
       PAR_Participant.hasMany(models.CSM_BroadcastParticipant, { foreignKey: 'participantId' });
 
       PAR_Participant.hasOne(models.USR_User, { foreignKey: 'participantId', as: 'user' });
     }
   }
-  PAR_Participant.init({
-    contingentId: DataTypes.INTEGER,
-    qrId: DataTypes.INTEGER,
-    typeId: DataTypes.INTEGER,
-    identityTypeId: DataTypes.INTEGER,
-    name: DataTypes.STRING,
-    gender: {
-      type: DataTypes.ENUM,
-      values: ['Female', 'Male'],
+  PAR_Participant.init(
+    {
+      contingentId: DataTypes.INTEGER,
+      qrId: DataTypes.INTEGER,
+      typeId: DataTypes.INTEGER,
+      identityTypeId: DataTypes.INTEGER,
+      name: DataTypes.STRING,
+      gender: {
+        type: DataTypes.ENUM,
+        values: ['Female', 'Male'],
+      },
+      birthDate: DataTypes.DATEONLY,
+      identityNo: DataTypes.STRING,
+      phoneNbr: DataTypes.STRING,
+      email: DataTypes.STRING,
+      address: DataTypes.TEXT,
+      file: DataTypes.STRING,
     },
-    birthDate: DataTypes.DATEONLY,
-    identityNo: DataTypes.STRING,
-    phoneNbr: DataTypes.STRING,
-    email: DataTypes.STRING,
-    address: DataTypes.TEXT,
-    file: DataTypes.STRING,
-  }, {
-    sequelize,
-    modelName: 'PAR_Participant',
-    paranoid: true,
-  });
+    {
+      sequelize,
+      modelName: 'PAR_Participant',
+      paranoid: true,
+    },
+  );
   return PAR_Participant;
 };
