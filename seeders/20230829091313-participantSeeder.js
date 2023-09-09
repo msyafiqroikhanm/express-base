@@ -60,6 +60,19 @@ module.exports = {
     //   originalname: 'participant_example.xlsx',
     //   path: path.join(__dirname, '../seeders/data/participant_example.xlsx'),
     // });
+
+    //* PAR_GroupMembers
+    const par_groupmembers = JSON.parse(
+      fs.readFileSync('./seeders/data/par_groupmembers.json'),
+    );
+
+    const groupMembers = par_groupmembers.map((element) => ({
+      groupId: element.groupId,
+      participantId: element.participantId,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    }));
+    await queryInterface.bulkInsert('PAR_GroupMembers', groupMembers);
   },
 
   async down(queryInterface, Sequelize) {
@@ -72,6 +85,10 @@ module.exports = {
       restartIdentity: true,
     });
     await queryInterface.bulkDelete('PAR_Participants', null, {
+      truncate: true,
+      restartIdentity: true,
+    });
+    await queryInterface.bulkDelete('PAR_GroupMembers', null, {
       truncate: true,
       restartIdentity: true,
     });
