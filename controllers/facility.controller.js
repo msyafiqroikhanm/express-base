@@ -1,3 +1,4 @@
+const { Op } = require('sequelize');
 const ResponseFormatter = require('../helpers/responseFormatter.helper');
 const {
   selectAllFacilities,
@@ -13,7 +14,14 @@ class FacilityController {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
 
-      const data = await selectAllFacilities({});
+      console.log(JSON.stringify(req.user.limitation, null, 2));
+      const where = {};
+      if (!req.user.limitation.isAdmin) {
+        where.locationId = {
+          [Op.or]: req.user.limitation.access.location,
+        };
+      }
+      const data = await selectAllFacilities(where);
 
       return ResponseFormatter.success200(res, data.message, data.content);
     } catch (error) {
@@ -25,7 +33,13 @@ class FacilityController {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
 
-      const data = await selectFacility(req.params.id);
+      const where = { id: req.params.id };
+      if (!req.user.limitation.isAdmin) {
+        where.locationId = {
+          [Op.or]: req.user.limitation.access.location,
+        };
+      }
+      const data = await selectFacility(where);
       if (!data.success) {
         return ResponseFormatter.error404(res, 'Data Not Found', data.message);
       }
@@ -39,10 +53,17 @@ class FacilityController {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
 
-      const inputs = await validateFacilityInputs(req.body);
+      const where = { id: req.body.locationId };
+      if (!req.user.limitation.isAdmin) {
+        where.picId = req.user.limitation.access.picId;
+      }
+
+      console.log(JSON.stringify(req.user.limitation, null, 2));
+      const inputs = await validateFacilityInputs(req.body, where);
       if (!inputs.isValid && inputs.code === 404) {
         return ResponseFormatter.error404(res, 'Data Not Found', inputs.message);
       }
+
       const data = await createFacility(inputs.form);
       return ResponseFormatter.success201(res, data.message, data.content);
     } catch (error) {
@@ -54,7 +75,14 @@ class FacilityController {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
 
-      const data = await updateFacility(req.params.id, req.body);
+      const where = { id: req.params.id };
+      if (!req.user.limitation.isAdmin) {
+        where.locationId = {
+          [Op.or]: req.user.limitation.access.location,
+        };
+      }
+
+      const data = await updateFacility(where, req.body);
       if (!data.success) {
         return ResponseFormatter.error404(res, 'Data Not Found', data.message);
       }
@@ -69,7 +97,14 @@ class FacilityController {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
 
-      const data = await deleteFacility(req.params.id);
+      const where = { id: req.params.id };
+      if (!req.user.limitation.isAdmin) {
+        where.locationId = {
+          [Op.or]: req.user.limitation.access.location,
+        };
+      }
+
+      const data = await deleteFacility(where);
       if (!data.success) {
         return ResponseFormatter.error404(res, 'Data Not Found', data.message);
       }
