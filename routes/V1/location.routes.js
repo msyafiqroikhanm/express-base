@@ -24,6 +24,7 @@ router.get(
       ]),
     );
   },
+  Authentication.accomodation,
   LocationController.getAll,
 );
 
@@ -46,6 +47,7 @@ router.get(
       ]),
     );
   },
+  Authentication.accomodation,
   LocationController.getDetail,
 );
 
@@ -82,6 +84,7 @@ router.put(
       await features().then((feature) => [feature.update_location]),
     );
   },
+  Authentication.accomodation,
   LocationController.update,
 );
 
@@ -95,6 +98,7 @@ router.delete(
       await features().then((feature) => [feature.delete_location]),
     );
   },
+  Authentication.accomodation,
   LocationController.delete,
 );
 module.exports = router;

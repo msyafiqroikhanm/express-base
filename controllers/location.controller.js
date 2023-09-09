@@ -1,5 +1,4 @@
 const ResponseFormatter = require('../helpers/responseFormatter.helper');
-const rolesLib = require('../libraries/roles.lib');
 const {
   selectAllLocations,
   selectLocation,
@@ -15,8 +14,8 @@ class LocationController {
       res.url = `${req.method} ${req.originalUrl}`;
 
       const where = {};
-      if (req.user.Role.id !== rolesLib.superAdmin) {
-        where.picId = req.user.PIC.id;
+      if (!req.user.limitation.isAdmin) {
+        where.picId = req.user.limitation.access.picId;
       }
 
       const data = await selectAllLocations(where);
@@ -32,8 +31,8 @@ class LocationController {
       res.url = `${req.method} ${req.originalUrl}`;
 
       const where = { id: req.params.id };
-      if (req.user.Role.id !== rolesLib.superAdmin) {
-        where.picId = req.user.PIC.id;
+      if (!req.user.limitation.isAdmin) {
+        where.picId = req.user.limitation.access.picId;
       }
 
       const data = await selectLocation(where);
@@ -69,7 +68,12 @@ class LocationController {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
 
-      const data = await updateLocation(req.params.id, req.body);
+      const where = { id: req.params.id };
+      if (!req.user.limitation.isAdmin) {
+        where.picId = req.user.limitation.access.picId;
+      }
+
+      const data = await updateLocation(where, req.body);
       if (!data.success) {
         return ResponseFormatter.error404(res, 'Data Not Found', data.message);
       }
@@ -84,7 +88,12 @@ class LocationController {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
 
-      const data = await deleteLocation(req.params.id);
+      const where = { id: req.params.id };
+      if (!req.user.limitation.isAdmin) {
+        where.picId = req.user.limitation.access.picId;
+      }
+
+      const data = await deleteLocation(where);
       if (!data.success) {
         return ResponseFormatter.error404(res, 'Data Not Found', data.message);
       }

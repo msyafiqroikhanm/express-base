@@ -52,10 +52,10 @@ const createLocation = async (form) => {
   };
 };
 
-const updateLocation = async (id, form) => {
+const updateLocation = async (where, form) => {
   // check identity  id validity
   const errorMessages = [];
-  const Instance = await ACM_Location.findByPk(id);
+  const Instance = await ACM_Location.findOne({ where });
   if (!Instance) {
     return {
       success: false,
@@ -100,9 +100,9 @@ const updateLocation = async (id, form) => {
   };
 };
 
-const deleteLocation = async (id) => {
+const deleteLocation = async (where) => {
   // check identity  id validity
-  const Instance = await ACM_Location.findByPk(id);
+  const Instance = await ACM_Location.findOne({ where });
   if (!Instance) {
     return {
       success: false,
@@ -118,7 +118,7 @@ const deleteLocation = async (id) => {
     { locationId: null },
     {
       where: {
-        locationId: id,
+        locationId: where.id,
       },
     },
   );
@@ -128,7 +128,7 @@ const deleteLocation = async (id) => {
     { locationId: null },
     {
       where: {
-        locationId: id,
+        locationId: where.id,
       },
     },
   );
@@ -138,7 +138,7 @@ const deleteLocation = async (id) => {
     { locationId: null },
     {
       where: {
-        locationId: id,
+        locationId: where.id,
       },
     },
   );
