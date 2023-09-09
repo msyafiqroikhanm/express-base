@@ -15,7 +15,7 @@ class ValidateMiddleware {
         });
 
         // Delete uploaded file when error happens
-        if (req.file) {
+        if (req.file && !req.file.buffer) {
           await deleteFile(relative(__dirname, req.file.path));
         }
         return ResponseFormatter.error400(res, 'Data Not Complete', resErrors);

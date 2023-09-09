@@ -22,6 +22,7 @@ const {
   RoomStatus,
   LodgerStatus,
   PICType,
+  MetaLanguage,
 } = require('../../controllers/reference.controller');
 const ValidateMiddleware = require('../../middlewares/validate.middleware');
 const Authentication = require('../../middlewares/auth.middleware');
@@ -855,6 +856,10 @@ router.get(
         feature.create_lodger_status,
         feature.update_lodger_status,
         feature.delete_lodger_status,
+        feature.view_lodger,
+        feature.create_lodger,
+        feature.update_lodger,
+        feature.delete_lodger,
       ]),
     );
   },
@@ -872,6 +877,10 @@ router.get(
         feature.create_lodger_status,
         feature.update_lodger_status,
         feature.delete_lodger_status,
+        feature.view_lodger,
+        feature.create_lodger,
+        feature.update_lodger,
+        feature.delete_lodger,
       ]),
     );
   },
@@ -1418,6 +1427,8 @@ router.get(
         feature.create_broadcast_template_category,
         feature.update_broadcast_template_category,
         feature.delete_broadcast_template_category,
+        feature.create_broadcast_template,
+        feature.update_broadcast_template,
       ]),
     );
   },
@@ -1435,6 +1446,8 @@ router.get(
         feature.view_broadcast_template_category,
         feature.update_broadcast_template_category,
         feature.delete_broadcast_template_category,
+        feature.create_broadcast_template,
+        feature.update_broadcast_template,
       ]),
     );
   },
@@ -1498,6 +1511,8 @@ router.get(
         feature.create_meta_template_category,
         feature.update_meta_template_category,
         feature.delete_meta_template_category,
+        feature.create_broadcast_template,
+        feature.update_broadcast_template,
       ]),
     );
   },
@@ -1515,6 +1530,8 @@ router.get(
         feature.view_meta_template_category,
         feature.update_meta_template_category,
         feature.delete_meta_template_category,
+        feature.create_broadcast_template,
+        feature.update_broadcast_template,
       ]),
     );
   },
@@ -1577,6 +1594,8 @@ router.get(
         feature.create_broadcast_template_header_type,
         feature.update_broadcast_template_header_type,
         feature.delete_broadcast_template_header_type,
+        feature.create_broadcast_template,
+        feature.update_broadcast_template,
       ]),
     );
   },
@@ -1594,6 +1613,8 @@ router.get(
         feature.view_broadcast_template_header_type,
         feature.update_broadcast_template_header_type,
         feature.delete_broadcast_template_header_type,
+        feature.create_broadcast_template,
+        feature.update_broadcast_template,
       ]),
     );
   },
@@ -1641,6 +1662,15 @@ router.delete(
     );
   },
   TemplateHeaderType.delete,
+);
+
+// * Meta Language
+router.get(
+  '/meta-languages',
+  async (req, res, next) => {
+    Authentication.authenticate(req, res, next, null);
+  },
+  MetaLanguage.getAll,
 );
 
 module.exports = router;

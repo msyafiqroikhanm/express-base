@@ -66,6 +66,21 @@ module.exports = {
         updatedAt: new Date(),
         deletedAt: null,
       },
+      {
+        name: 'Said as a guest',
+        gender: 'Male',
+        birthDate: '1999-01-01',
+        identityNo: '31719032849',
+        phoneNbr: '628763269240',
+        email: 'said@jxboard.id',
+        address: 'cijanntung',
+        identityTypeId: 1,
+        typeId: 1,
+        contingentId: 3,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        deletedAt: null,
+      },
     ]);
 
     // await createParticipantViaImport({

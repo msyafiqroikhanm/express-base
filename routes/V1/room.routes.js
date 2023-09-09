@@ -1,9 +1,9 @@
 const router = require('express').Router();
 const { check } = require('express-validator');
-const LocationController = require('../../controllers/location.controller');
 const features = require('../../helpers/features.helper');
-const Authentication = require('../../middlewares/auth.middleware');
 const ValidateMiddleware = require('../../middlewares/validate.middleware');
+const Authentication = require('../../middlewares/auth.middleware');
+const RoomController = require('../../controllers/room.controller');
 
 router.get(
   '/',
@@ -13,18 +13,18 @@ router.get(
       res,
       next,
       await features().then((feature) => [
-        feature.view_location,
-        feature.create_location,
-        feature.update_location,
-        feature.delete_location,
         feature.view_room,
         feature.create_room,
         feature.update_room,
         feature.delete_room,
+        feature.view_lodger,
+        feature.create_lodger,
+        feature.update_lodger,
+        feature.delete_lodger,
       ]),
     );
   },
-  LocationController.getAll,
+  RoomController.getAll,
 );
 
 router.get(
@@ -35,18 +35,18 @@ router.get(
       res,
       next,
       await features().then((feature) => [
-        feature.view_location,
-        feature.create_location,
-        feature.update_location,
-        feature.delete_location,
         feature.view_room,
         feature.create_room,
         feature.update_room,
         feature.delete_room,
+        feature.view_lodger,
+        feature.create_lodger,
+        feature.update_lodger,
+        feature.delete_lodger,
       ]),
     );
   },
-  LocationController.getDetail,
+  RoomController.getDetail,
 );
 
 router.post(
@@ -56,20 +56,20 @@ router.post(
       req,
       res,
       next,
-      await features().then((feature) => [feature.create_location]),
+      await features().then((feature) => [feature.create_room]),
     );
   },
   [
+    check('locationId', 'locationId attribute must be integer').isInt(),
     check('typeId', 'typeId attribute must be integer').isInt(),
+    check('statusId', 'statusId attribute must be integer').isInt(),
     check('name', "name attribute can't be empty").notEmpty(),
-    check('description', "description attribute can't be empty").notEmpty(),
-    check('address', "address attribute can't be empty").notEmpty(),
-    check('phoneNbr', "phoneNbr attribute can't be empty").notEmpty(),
-    check('latitude', "latitude attribute can't be empty").notEmpty(),
-    check('longtitude', "longtitude attribute can't be empty").notEmpty(),
+    check('floor', "floor attribute can't be empty").notEmpty(),
+    check('capacity', 'capacity attribute must be integer').isInt(),
+    check('occupied', 'occupied attribute must be integer').isInt(),
   ],
   ValidateMiddleware.result,
-  LocationController.create,
+  RoomController.create,
 );
 
 router.put(
@@ -79,10 +79,10 @@ router.put(
       req,
       res,
       next,
-      await features().then((feature) => [feature.update_location]),
+      await features().then((feature) => [feature.update_room]),
     );
   },
-  LocationController.update,
+  RoomController.update,
 );
 
 router.delete(
@@ -92,9 +92,10 @@ router.delete(
       req,
       res,
       next,
-      await features().then((feature) => [feature.delete_location]),
+      await features().then((feature) => [feature.delete_room]),
     );
   },
-  LocationController.delete,
+  RoomController.delete,
 );
+
 module.exports = router;

@@ -3,7 +3,7 @@ const { check } = require('express-validator');
 const features = require('../../helpers/features.helper');
 const ValidateMiddleware = require('../../middlewares/validate.middleware');
 const Authentication = require('../../middlewares/auth.middleware');
-const PICController = require('../../controllers/pic.controller');
+const FacilityController = require('../../controllers/facility.controller');
 
 router.post(
   '/',
@@ -12,15 +12,16 @@ router.post(
       req,
       res,
       next,
-      await features().then((feature) => [feature.create_pic]),
+      await features().then((feature) => [feature.create_facility]),
     );
   },
   [
-    check('userId', 'userId attribute must be integer').isInt(),
-    check('typeId', 'typeId attribute must be integer').isInt(),
+    check('locationId', 'locationId attribute must be integer').isInt(),
+    check('name', 'name attribute cant be empty').notEmpty(),
+    check('quantity', 'quantity attribute cant be empty').notEmpty(),
   ],
   ValidateMiddleware.result,
-  PICController.create,
+  FacilityController.create,
 );
 
 router.get(
@@ -31,14 +32,14 @@ router.get(
       res,
       next,
       await features().then((feature) => [
-        feature.view_pic,
-        feature.create_pic,
-        feature.update_pic,
-        feature.delete_pic,
+        feature.view_facility,
+        feature.create_facility,
+        feature.update_facility,
+        feature.delete_facility,
       ]),
     );
   },
-  PICController.getAll,
+  FacilityController.getAll,
 );
 
 router.get(
@@ -49,15 +50,16 @@ router.get(
       res,
       next,
       await features().then((feature) => [
-        feature.view_pic,
-        feature.create_pic,
-        feature.update_pic,
-        feature.delete_pic,
+        feature.view_facility,
+        feature.create_facility,
+        feature.update_facility,
+        feature.delete_facility,
       ]),
     );
   },
-  PICController.getDetail,
+  FacilityController.getDetail,
 );
+
 router.put(
   '/:id',
   async (req, res, next) => {
@@ -65,15 +67,10 @@ router.put(
       req,
       res,
       next,
-      await features().then((feature) => [feature.update_pic]),
+      await features().then((feature) => [feature.update_facility]),
     );
   },
-  [
-    check('userId', 'userId attribute must be integer').isInt(),
-    check('typeId', 'typeId attribute must be integer').isInt(),
-  ],
-  ValidateMiddleware.result,
-  PICController.update,
+  FacilityController.update,
 );
 
 router.delete(
@@ -83,10 +80,10 @@ router.delete(
       req,
       res,
       next,
-      await features().then((feature) => [feature.delete_pic]),
+      await features().then((feature) => [feature.delete_facility]),
     );
   },
-  PICController.delete,
+  FacilityController.delete,
 );
 
 module.exports = router;

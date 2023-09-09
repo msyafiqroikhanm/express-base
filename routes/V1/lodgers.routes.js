@@ -3,7 +3,7 @@ const { check } = require('express-validator');
 const features = require('../../helpers/features.helper');
 const ValidateMiddleware = require('../../middlewares/validate.middleware');
 const Authentication = require('../../middlewares/auth.middleware');
-const PICController = require('../../controllers/pic.controller');
+const LodgerController = require('../../controllers/lodger.controller');
 
 router.post(
   '/',
@@ -12,15 +12,17 @@ router.post(
       req,
       res,
       next,
-      await features().then((feature) => [feature.create_pic]),
+      await features().then((feature) => [feature.create_lodger]),
     );
   },
   [
-    check('userId', 'userId attribute must be integer').isInt(),
-    check('typeId', 'typeId attribute must be integer').isInt(),
+    check('participantId', 'participantId attribute must be integer').isInt(),
+    check('roomId', 'roomId attribute must be integer').isInt(),
+    check('reservationIn', 'reservationIn attribute cant be empty').notEmpty(),
+    check('reservationOut', 'reservationOut attribute cant be empty').notEmpty(),
   ],
   ValidateMiddleware.result,
-  PICController.create,
+  LodgerController.create,
 );
 
 router.get(
@@ -31,14 +33,14 @@ router.get(
       res,
       next,
       await features().then((feature) => [
-        feature.view_pic,
-        feature.create_pic,
-        feature.update_pic,
-        feature.delete_pic,
+        feature.view_lodger,
+        feature.create_lodger,
+        feature.update_lodger,
+        feature.delete_lodger,
       ]),
     );
   },
-  PICController.getAll,
+  LodgerController.getAll,
 );
 
 router.get(
@@ -49,15 +51,16 @@ router.get(
       res,
       next,
       await features().then((feature) => [
-        feature.view_pic,
-        feature.create_pic,
-        feature.update_pic,
-        feature.delete_pic,
+        feature.view_lodger,
+        feature.create_lodger,
+        feature.update_lodger,
+        feature.delete_lodger,
       ]),
     );
   },
-  PICController.getDetail,
+  LodgerController.getDetail,
 );
+
 router.put(
   '/:id',
   async (req, res, next) => {
@@ -65,15 +68,10 @@ router.put(
       req,
       res,
       next,
-      await features().then((feature) => [feature.update_pic]),
+      await features().then((feature) => [feature.update_lodger]),
     );
   },
-  [
-    check('userId', 'userId attribute must be integer').isInt(),
-    check('typeId', 'typeId attribute must be integer').isInt(),
-  ],
-  ValidateMiddleware.result,
-  PICController.update,
+  LodgerController.update,
 );
 
 router.delete(
@@ -83,10 +81,10 @@ router.delete(
       req,
       res,
       next,
-      await features().then((feature) => [feature.delete_pic]),
+      await features().then((feature) => [feature.delete_lodger]),
     );
   },
-  PICController.delete,
+  LodgerController.delete,
 );
 
 module.exports = router;

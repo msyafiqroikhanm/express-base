@@ -44,6 +44,7 @@ module.exports = {
       name: element.name,
       floor: element.floor,
       capacity: element.capacity,
+      occupied: 0,
       createdAt: new Date(),
       updatedAt: new Date(),
     }));

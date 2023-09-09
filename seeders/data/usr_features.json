@@ -922,5 +922,22 @@
     {
         "moduleId":67,
         "name":"View Dashboard"
+    },
+
+    {
+        "moduleId":22,
+        "name":"View Lodger"
+    },
+    {
+        "moduleId":22,
+        "name":"Create Lodger"
+    },
+    {
+        "moduleId":22,
+        "name":"Update Lodger"
+    },
+    {
+        "moduleId":22,
+        "name":"Delete Lodger"
     }
 ]

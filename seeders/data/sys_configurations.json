@@ -13,5 +13,25 @@
     "categoryId": 3,
     "name": "Whatsapp Verify Token",
     "value": "RandomString571."
+  },
+  {
+    "categoryId": 3,
+    "name": "Whatsapp Access Token",
+    "value": "EAARSBuXTDrIBAJZBZA6HG24J4qIyerqjpH1y7kaZATyXcJdqUyRETapZBH7mAZBZBfA7IeqwTIsHdEfvWKCU76gTwBTvKxM95S5IweH2kj23cRl73ak6vfvHBUgLMo0aFksa2SxOtBNteo6coRfP77JZB44fboqnK09z09MjscRODZCNPCZAz1TN7ZCYrLhdWDLimDQ7epHsKuGgZDZD"
+  },
+  {
+    "categoryId": 3,
+    "name": "Whatsapp App Id",
+    "value": "6593990744022303"
+  },
+  {
+    "categoryId": 3,
+    "name": "Whatsapp Account Id",
+    "value": "111604481918682"
+  },
+  {
+    "categoryId": 3,
+    "name": "Whatsapp Phone Id",
+    "value": "112027488542121"
   }
 ]
