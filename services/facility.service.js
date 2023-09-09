@@ -19,8 +19,9 @@ const selectAllFacilities = async (where) => {
   };
 };
 
-const selectFacility = async (id) => {
-  const locationType = await ACM_Facility.findByPk(id, {
+const selectFacility = async (where) => {
+  const locationType = await ACM_Facility.findOne({
+    where,
     include: [
       {
         model: ACM_Location,
@@ -53,9 +54,9 @@ const createFacility = async (form) => {
   };
 };
 
-const updateFacility = async (id, form) => {
+const updateFacility = async (where, form) => {
   // check identity type id validity
-  const facilityInstance = await ACM_Facility.findByPk(id);
+  const facilityInstance = await ACM_Facility.findOne({ where });
   if (!facilityInstance) {
     return {
       success: false,
@@ -87,9 +88,9 @@ const updateFacility = async (id, form) => {
   };
 };
 
-const deleteFacility = async (id) => {
+const deleteFacility = async (where) => {
   // check identity type id validity
-  const facilityInstance = await ACM_Facility.findByPk(id);
+  const facilityInstance = await ACM_Facility.findOne({ where });
   if (!facilityInstance) {
     return {
       success: false,
@@ -106,10 +107,10 @@ const deleteFacility = async (id) => {
   };
 };
 
-const validateFacilityInputs = async (form) => {
+const validateFacilityInputs = async (form, where) => {
   const errorMessages = [];
 
-  const locationInstance = await ACM_Location.findByPk(form.locationId);
+  const locationInstance = await ACM_Location.findOne({ where });
   if (!locationInstance) {
     errorMessages.push('Location Data Not Found');
   }

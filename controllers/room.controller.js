@@ -1,6 +1,5 @@
 const { Op } = require('sequelize');
 const ResponseFormatter = require('../helpers/responseFormatter.helper');
-const rolesLib = require('../libraries/roles.lib');
 const {
   selectAllRooms,
   selectRoom,
@@ -59,6 +58,7 @@ class RoomController {
       if (!req.user.limitation.isAdmin) {
         where.picId = req.user.limitation.access.picId;
       }
+
       const inputs = await validateRoomInputs(req.body, where);
       if (!inputs.isValid && inputs.code === 404) {
         return ResponseFormatter.error404(res, 'Data Not Found', inputs.message);

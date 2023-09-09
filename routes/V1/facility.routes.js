@@ -21,6 +21,7 @@ router.post(
     check('quantity', 'quantity attribute cant be empty').notEmpty(),
   ],
   ValidateMiddleware.result,
+  Authentication.accomodation,
   FacilityController.create,
 );
 
@@ -39,6 +40,7 @@ router.get(
       ]),
     );
   },
+  Authentication.accomodation,
   FacilityController.getAll,
 );
 
@@ -57,6 +59,7 @@ router.get(
       ]),
     );
   },
+  Authentication.accomodation,
   FacilityController.getDetail,
 );
 
@@ -70,6 +73,7 @@ router.put(
       await features().then((feature) => [feature.update_facility]),
     );
   },
+  Authentication.accomodation,
   FacilityController.update,
 );
 
@@ -83,6 +87,7 @@ router.delete(
       await features().then((feature) => [feature.delete_facility]),
     );
   },
+  Authentication.accomodation,
   FacilityController.delete,
 );
 
