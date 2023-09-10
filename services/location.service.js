@@ -1,4 +1,6 @@
-const { ACM_Location, REF_LocationType, ACM_Room, ACM_Facility, ENV_Event } = require('../models');
+const {
+  ACM_Location, REF_LocationType, ACM_Room, ACM_Facility, ENV_Event,
+} = require('../models');
 
 const selectAllLocations = async (where) => {
   const locations = await ACM_Location.findAll({

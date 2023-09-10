@@ -46,7 +46,7 @@ const selectAllUsers = async () => {
     user.dataValues.role = user.Role.dataValues.name;
     if (user.participant) {
       user.participant.dataValues.contingent = user.participant.contingent
-        .dataValues.name;
+        ?.dataValues.name || null;
       user.participant.dataValues.participantType = user.participant.participantType
         .dataValues.name;
       user.participant.dataValues.identityType = user.participant.identityType
@@ -93,7 +93,7 @@ const selectDetailUser = async (id) => {
 
   if (userInstance.participant) {
     userInstance.participant.dataValues.contingent = userInstance.participant.contingent
-      .dataValues.name;
+      ?.dataValues.name || null;
     userInstance.participant.dataValues.participantType = userInstance.participant.participantType
       .dataValues.name;
     userInstance.participant.dataValues.identityType = userInstance.participant.identityType

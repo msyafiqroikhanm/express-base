@@ -20,22 +20,43 @@ const validateParticipantQuery = async (query) => {
   return parsedQuery;
 };
 
-const selectAllParticipant = async (query) => {
-  const participants = await PAR_Participant.findAll({
-    where: query,
-    include: [
-      {
-        model: PAR_Contingent,
-        as: 'contingent',
-        attributes: ['name'],
-        include: { model: REF_Region, as: 'region', attributes: ['name'] },
-      },
-      { model: QRM_QR, as: 'qr' },
-      { model: REF_IdentityType, attributes: ['name'], as: 'identityType' },
-      { model: REF_ParticipantType, attributes: ['name'], as: 'participantType' },
-      { model: PAR_Group, as: 'groups', through: { attributes: [] } },
-    ],
-  });
+const selectAllParticipant = async (query, where) => {
+  let participants;
+
+  if (Object.keys(where).length > 0) {
+    participants = await PAR_Participant.findAll({
+      where: query,
+      include: [
+        {
+          model: PAR_Contingent,
+          where,
+          as: 'contingent',
+          attributes: ['name'],
+          include: { model: REF_Region, as: 'region', attributes: ['name'] },
+        },
+        { model: QRM_QR, as: 'qr' },
+        { model: REF_IdentityType, attributes: ['name'], as: 'identityType' },
+        { model: REF_ParticipantType, attributes: ['name'], as: 'participantType' },
+        { model: PAR_Group, as: 'groups', through: { attributes: [] } },
+      ],
+    });
+  } else {
+    participants = await PAR_Participant.findAll({
+      where: query,
+      include: [
+        {
+          model: PAR_Contingent,
+          as: 'contingent',
+          attributes: ['name'],
+          include: { model: REF_Region, as: 'region', attributes: ['name'] },
+        },
+        { model: QRM_QR, as: 'qr' },
+        { model: REF_IdentityType, attributes: ['name'], as: 'identityType' },
+        { model: REF_ParticipantType, attributes: ['name'], as: 'participantType' },
+        { model: PAR_Group, as: 'groups', through: { attributes: [] } },
+      ],
+    });
+  }
 
   // parsed retun data
   participants.forEach((participant) => {
@@ -51,22 +72,43 @@ const selectAllParticipant = async (query) => {
   };
 };
 
-const selectParticipant = async (id) => {
-  const participantInstance = await PAR_Participant.findByPk(id, {
-    include: [
-      {
-        model: PAR_Contingent,
-        as: 'contingent',
-        attributes: ['id', 'name'],
-        include: { model: REF_Region, as: 'region', attributes: ['id', 'name'] },
-      },
-      { model: QRM_QR, as: 'qr' },
-      { model: REF_IdentityType, attributes: ['id', 'name'], as: 'identityType' },
-      { model: REF_ParticipantType, attributes: ['id', 'name'], as: 'participantType' },
-      { model: PAR_Group, as: 'groups', through: { attributes: [] } },
-      { model: PAR_ParticipantTracking, as: 'history' },
-    ],
-  });
+const selectParticipant = async (id, where) => {
+  let participantInstance;
+
+  if (Object.keys(where).length > 0) {
+    participantInstance = await PAR_Participant.findByPk(id, {
+      include: [
+        {
+          model: PAR_Contingent,
+          where,
+          as: 'contingent',
+          attributes: ['id', 'name'],
+          include: { model: REF_Region, as: 'region', attributes: ['id', 'name'] },
+        },
+        { model: QRM_QR, as: 'qr' },
+        { model: REF_IdentityType, attributes: ['id', 'name'], as: 'identityType' },
+        { model: REF_ParticipantType, attributes: ['id', 'name'], as: 'participantType' },
+        { model: PAR_Group, as: 'groups', through: { attributes: [] } },
+        { model: PAR_ParticipantTracking, as: 'history' },
+      ],
+    });
+  } else {
+    participantInstance = await PAR_Participant.findByPk(id, {
+      include: [
+        {
+          model: PAR_Contingent,
+          as: 'contingent',
+          attributes: ['id', 'name'],
+          include: { model: REF_Region, as: 'region', attributes: ['id', 'name'] },
+        },
+        { model: QRM_QR, as: 'qr' },
+        { model: REF_IdentityType, attributes: ['id', 'name'], as: 'identityType' },
+        { model: REF_ParticipantType, attributes: ['id', 'name'], as: 'participantType' },
+        { model: PAR_Group, as: 'groups', through: { attributes: [] } },
+        { model: PAR_ParticipantTracking, as: 'history' },
+      ],
+    });
+  }
 
   if (!participantInstance) {
     return {
@@ -79,18 +121,27 @@ const selectParticipant = async (id) => {
   };
 };
 
-const validateParticipantInputs = async (form, file, id) => {
+const validateParticipantInputs = async (form, file, id, where) => {
   const {
     contingentId, typeId, identityTypeId, name, gender,
     birthDate, identityNo, phoneNbr, email, address,
   } = form;
 
   // check contingent id validity
-  const contingentInstance = await PAR_Contingent.findByPk(contingentId);
-  if (!contingentInstance) {
-    return {
-      isValid: false, code: 404, message: 'Contingent Data Not Found',
-    };
+  let contingentInstance = null;
+  if (contingentId) {
+    contingentInstance = await PAR_Contingent.findByPk(contingentId);
+    if (!contingentInstance) {
+      return {
+        isValid: false, code: 404, message: 'Contingent Data Not Found',
+      };
+    }
+
+    if (where?.id && (where.id !== Number(contingentId))) {
+      return {
+        isValid: false, code: 401, message: 'Prohibited To Create Participant For Other Contingent',
+      };
+    }
   }
 
   // check participant type id validity
@@ -194,7 +245,7 @@ const createParticipant = async (form) => {
 
   // creating participant
   const participantInstance = await PAR_Participant.create({
-    contingentId: form.contingent.id,
+    contingentId: form.contingent?.id,
     qrId: qrInstance.content.id,
     typeId: form.participantType.id,
     identityTypeId: form.identityType.id,
@@ -213,15 +264,22 @@ const createParticipant = async (form) => {
   };
 };
 
-const updateParticipant = async (id, form) => {
-  const participantInstance = await PAR_Participant.findByPk(id);
+const updateParticipant = async (id, form, where) => {
+  let participantInstance = null;
+  if (Object.keys(where).length > 0) {
+    participantInstance = await PAR_Participant.findByPk(id, {
+      include: { model: PAR_Contingent, as: 'contingent', where },
+    });
+  } else {
+    participantInstance = await PAR_Participant.findByPk(id);
+  }
   if (!participantInstance) {
     return {
       success: false, code: 404, message: 'Participant Data Not Found',
     };
   }
 
-  participantInstance.contingetId = form.contingent.id;
+  participantInstance.contingetId = form.contingent?.id;
   participantInstance.typeId = form.participantType.id;
   participantInstance.identityTypeId = form.identityType.id;
   participantInstance.name = form.name;
@@ -239,9 +297,10 @@ const updateParticipant = async (id, form) => {
   };
 };
 
-const deleteParticipant = async (id) => {
+const deleteParticipant = async (where) => {
   // check participant id validity
-  const participantInstance = await PAR_Participant.findByPk(id);
+
+  const participantInstance = await PAR_Participant.findOne({ where });
   if (!participantInstance) {
     return {
       success: false, code: 404, message: 'Participant Data Not Found',

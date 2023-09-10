@@ -28,6 +28,7 @@ router.get(
       ]),
     );
   },
+  Authentication.participant,
   ParticipantController.getAll,
 );
 
@@ -52,6 +53,7 @@ router.get(
       ]),
     );
   },
+  Authentication.participant,
   ParticipantController.getDetail,
 );
 
@@ -67,7 +69,6 @@ router.post(
   },
   uploadImage.single('participantImage'),
   [
-    check('contingentId', "Contingent Id attribute can't be empty").notEmpty(),
     check('typeId', "Type Id attribute can't be empty").notEmpty(),
     check('identityTypeId', "Identity type Id attribute can't be empty").notEmpty(),
     check('name', "Name attribute can't be empty").notEmpty(),
@@ -79,6 +80,7 @@ router.post(
     check('address', "Address attribute can't be empty").notEmpty(),
   ],
   ValidateMiddleware.result,
+  Authentication.participant,
   ParticipantController.create,
 );
 
@@ -94,6 +96,7 @@ router.post(
   },
   uploadDocument.single('participantDocument'),
   ValidateMiddleware.resultWithMandatoryFile,
+  Authentication.participant,
   ParticipantController.createViaImport,
 );
 
@@ -109,7 +112,6 @@ router.put(
   },
   uploadImage.single('participantImage'),
   [
-    check('contingentId', "Contingent Id attribute can't be empty").notEmpty(),
     check('typeId', "Type Id attribute can't be empty").notEmpty(),
     check('identityTypeId', "Identity type Id attribute can't be empty").notEmpty(),
     check('name', "Name attribute can't be empty").notEmpty(),
@@ -121,6 +123,7 @@ router.put(
     check('address', "Address attribute can't be empty").notEmpty(),
   ],
   ValidateMiddleware.result,
+  Authentication.participant,
   ParticipantController.update,
 );
 
@@ -134,6 +137,7 @@ router.delete(
       await features().then((feature) => [feature.delete_participant]),
     );
   },
+  Authentication.participant,
   ParticipantController.delete,
 );
 
@@ -153,6 +157,7 @@ router.post(
     check('longtitude', "Longtitude attribute can't be empty").notEmpty(),
   ],
   ValidateMiddleware.result,
+  Authentication.participant,
   ParticipantController.track,
 );
 
