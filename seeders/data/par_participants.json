@@ -8,8 +8,7 @@
     "email": "gifari@jxboard.id",
     "address": "condet",
     "identityTypeId": 1,
-    "typeId": 2,
-    "contingentId": 3
+    "typeId": 2
   },
   {
     "name": "Admin Hotel A",
@@ -20,8 +19,7 @@
     "email": "achmad@jxboard.id",
     "address": "cijanntung",
     "identityTypeId": 1,
-    "typeId": 2,
-    "contingentId": 3
+    "typeId": 2
   },
   {
     "name": "Said as a guest",
@@ -33,6 +31,18 @@
     "address": "cijanntung",
     "identityTypeId": 1,
     "typeId": 1,
+    "contingentId": 3
+  },
+  {
+    "name": "Participant Coordinator 3",
+    "gender": "Male",
+    "birthDate": "1999-01-01",
+    "identityNo": "31719032842",
+    "phoneNbr": "6285711167881",
+    "email": "coor3@jxboard.id",
+    "address": "cijanntung",
+    "identityTypeId": 1,
+    "typeId": 4,
     "contingentId": 3
   }
 ]

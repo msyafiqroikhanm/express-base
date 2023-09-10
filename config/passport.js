@@ -3,7 +3,9 @@ require('dotenv').config();
 
 const passport = require('passport');
 const passportJWT = require('passport-jwt');
-const { USR_User, USR_Role, USR_Feature, USR_Module, USR_PIC, REF_PICType } = require('../models');
+const {
+  USR_User, USR_Role, USR_Feature, USR_Module, USR_PIC, REF_PICType, PAR_Participant,
+} = require('../models');
 const { parsingUserModules } = require('../helpers/parsing.helper');
 
 const JWTStrategy = passportJWT.Strategy;
@@ -42,6 +44,11 @@ passport.use(
             as: 'PIC',
             attributes: ['id', 'userId', 'typeId'],
             include: { model: REF_PICType, attributes: { exclude: ['createdAt', 'updatedAt'] } },
+          },
+          {
+            model: PAR_Participant,
+            as: 'participant',
+            attributes: ['contingentId', 'name', 'file'],
           },
         ],
       });

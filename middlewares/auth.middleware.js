@@ -32,9 +32,8 @@ class AuthMiddleware {
 
         // check user access
         if (requiredFeatures) {
-          const authorized = req.user.Role.USR_Features.some((feature) =>
-            requiredFeatures.includes(feature.id),
-          );
+          const authorized = req.user.Role.USR_Features
+            .some((feature) => requiredFeatures.includes(feature.id));
 
           if (!authorized) {
             throw {
@@ -59,7 +58,7 @@ class AuthMiddleware {
           throw {
             code: 401,
             status: 'Unauthorized Request',
-            message: 'Anda tidak memiliki akses ke layanan ini',
+            message: 'You Don\'t Have Access To This Service',
           };
         }
 
@@ -79,6 +78,21 @@ class AuthMiddleware {
         if (locationLimitation.length > 0) {
           limitation.access.location = locations;
         }
+      }
+      req.user.limitation = limitation;
+      next();
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  static async participant(req, res, next) {
+    try {
+      const limitation = { isAdmin: true, access: {} };
+      if (req.user.participant.contingentId || (req.user.Role.id !== rolesLib.superAdmin)) {
+        limitation.isAdmin = false;
+        limitation.access.contingentId = req.user.participant.contingentId;
+        limitation.access.contingent = { id: req.user.participant.contingentId };
       }
       req.user.limitation = limitation;
       next();

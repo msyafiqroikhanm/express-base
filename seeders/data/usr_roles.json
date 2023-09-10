@@ -1,5 +1,6 @@
 [
     {"name":"Super User", "templateId":1 },
     {"name":"PIC", "templateId":1 },
-    {"name":"PIC Hotel", "templateId":1 }
+    {"name":"PIC Hotel", "templateId":1 },
+    {"name":"Participant Coordinator", "templateId":1 }
 ]

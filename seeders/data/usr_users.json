@@ -12,5 +12,12 @@
     "participantId": 2,
     "username": "adminhotel",
     "email": "gifari@jxboard.id"
+  },
+  {
+    "qrId": 1,
+    "roleId": 4,
+    "participantId": 4,
+    "username": "coordinator3",
+    "email": "coor3@jxboard.id"
   }
 ]

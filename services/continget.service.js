@@ -6,8 +6,9 @@ const {
   PAR_Group,
 } = require('../models');
 
-const selectAllContingents = async () => {
+const selectAllContingents = async (where) => {
   const contingents = await PAR_Contingent.findAll({
+    where,
     include: [
       {
         model: REF_Region,
@@ -36,9 +37,16 @@ const selectAllContingents = async () => {
   };
 };
 
-const selectContingent = async (id) => {
+const selectContingent = async (id, where) => {
+  console.log(`${typeof id} vs ${typeof where?.id}`);
   // check contingent id validity
+  if (where?.id && (where?.id !== Number(id))) {
+    return {
+      success: false, code: 404, message: 'Contingent Data Not Found',
+    };
+  }
   const contingentInstance = await PAR_Contingent.findByPk(id, {
+    where,
     include: [
       {
         model: REF_Region,

@@ -22,6 +22,7 @@ router.get(
       ]),
     );
   },
+  Authentication.participant,
   ContingentController.getAll,
 );
 
@@ -39,6 +40,7 @@ router.get(
       ]),
     );
   },
+  Authentication.participant,
   ContingentController.getDetail,
 );
 

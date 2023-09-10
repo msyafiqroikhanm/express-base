@@ -20,6 +20,7 @@ router.get(
       ]),
     );
   },
+  Authentication.participant,
   GroupController.getAll,
 );
 
@@ -37,6 +38,7 @@ router.get(
       ]),
     );
   },
+  Authentication.participant,
   GroupController.getDetail,
 );
 
@@ -60,6 +62,7 @@ router.post(
     check('participants', 'Participants attribute can\'t be empty').isArray(),
   ],
   ValidateMiddleware.result,
+  Authentication.participant,
   GroupController.create,
 );
 
@@ -83,6 +86,7 @@ router.put(
     check('participants', 'Participants attribute can\'t be empty').isArray(),
   ],
   ValidateMiddleware.result,
+  Authentication.participant,
   GroupController.update,
 );
 
@@ -98,6 +102,7 @@ router.delete(
       ]),
     );
   },
+  Authentication.participant,
   GroupController.delete,
 );
 
