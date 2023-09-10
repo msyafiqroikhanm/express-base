@@ -139,7 +139,7 @@ const validateParticipantInputs = async (form, file, id, where) => {
 
     if (where?.id && (where.id !== Number(contingentId))) {
       return {
-        isValid: false, code: 401, message: 'Prohibited To Create Participant For Other Contingent',
+        isValid: false, code: 400, message: 'Prohibited To Create Participant For Other Contingent',
       };
     }
   }

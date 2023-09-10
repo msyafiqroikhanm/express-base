@@ -4,8 +4,9 @@ const {
   PAR_Group, ENV_Event, PAR_Contingent, REF_GroupStatus, PAR_Participant,
 } = require('../models');
 
-const selectAllGroups = async () => {
+const selectAllGroups = async (where) => {
   const groups = await PAR_Group.findAll({
+    where,
     include: [
       {
         model: PAR_Contingent,
@@ -43,12 +44,13 @@ const selectAllGroups = async () => {
   };
 };
 
-const selectGroup = async (id) => {
+const selectGroup = async (id, where) => {
   const groupInstance = await PAR_Group.findByPk(id, {
     include: [
       {
         model: PAR_Contingent,
         as: 'contingent',
+        where,
         attributes: ['name'],
       },
       {
@@ -92,7 +94,7 @@ const selectGroup = async (id) => {
   };
 };
 
-const validateGroupInputs = async (form) => {
+const validateGroupInputs = async (form, limitation = null) => {
   const {
     eventId, contingentId, statusId, name,
   } = form;
@@ -110,6 +112,11 @@ const validateGroupInputs = async (form) => {
   if (!contingentInstance) {
     return {
       isValid: false, code: 404, message: 'Contingent Data Not Found',
+    };
+  }
+  if (limitation?.id && (limitation?.id !== Number(contingentId))) {
+    return {
+      isValid: false, code: 400, message: 'Prohibited To Create Group For Other Contingent',
     };
   }
 
@@ -156,12 +163,19 @@ const createGroup = async (form) => {
   };
 };
 
-const updateGroup = async (id, form) => {
+const updateGroup = async (id, form, where) => {
   const {
     event, contingent, status, name, participants,
   } = form;
 
-  const groupInstance = await PAR_Group.findByPk(id);
+  let groupInstance;
+  if (Object.keys(where).length > 0) {
+    groupInstance = await PAR_Group.findByPk(id, {
+      include: { model: PAR_Contingent, as: 'contingent', where },
+    });
+  } else {
+    groupInstance = await PAR_Group.findByPk(id);
+  }
   if (!groupInstance) {
     return {
       success: false, code: 404, message: 'Group Data Not Found',
@@ -181,8 +195,10 @@ const updateGroup = async (id, form) => {
   };
 };
 
-const deleteGroup = async (id) => {
-  const groupInstance = await PAR_Group.findByPk(id);
+const deleteGroup = async (id, where) => {
+  const groupInstance = await PAR_Group.findByPk(id, {
+    include: { model: PAR_Contingent, as: 'contingent', where },
+  });
   if (!groupInstance) {
     return {
       success: false, code: 404, message: 'Group Data Not Found',
@@ -191,9 +207,9 @@ const deleteGroup = async (id) => {
 
   const { name } = groupInstance.dataValues;
 
-  await groupInstance.setPAR_Participants([]);
+  // await groupInstance.setPAR_Participants([]);
 
-  await groupInstance.destroy();
+  // await groupInstance.destroy();
 
   return {
     success: true,

@@ -8,7 +8,13 @@ class ParticipantGroup {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
 
-      const data = await selectAllGroups();
+      // resrict data that is not an admin
+      const where = {};
+      if (!req.user.limitation.isAdmin) {
+        where.contingentId = req.user.limitation.access.contingentId;
+      }
+
+      const data = await selectAllGroups(where);
       if (!data.success) {
         return ResponseFormatter.error400(res, 'Bad Request', data.message);
       }
@@ -23,7 +29,13 @@ class ParticipantGroup {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
 
-      const data = await selectGroup(req.params.id);
+      // resrict data that is not an admin
+      const where = {};
+      if (!req.user.limitation.isAdmin) {
+        where.id = req.user.limitation.access.contingentId;
+      }
+
+      const data = await selectGroup(req.params.id, where);
       if (!data.success && data.code === 404) {
         return ResponseFormatter.error404(res, 'Data Not Found', data.message);
       }
@@ -38,7 +50,13 @@ class ParticipantGroup {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
 
-      const inputs = await validateGroupInputs(req.body);
+      // resrict data that is not an admin
+      const where = {};
+      if (!req.user.limitation.isAdmin) {
+        where.id = req.user.limitation.access.contingentId;
+      }
+
+      const inputs = await validateGroupInputs(req.body, where);
       if (!inputs.isValid && inputs.code === 400) {
         return ResponseFormatter.error400(res, 'Bad Request', inputs.message);
       }
@@ -61,7 +79,13 @@ class ParticipantGroup {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
 
-      const inputs = await validateGroupInputs(req.body);
+      // resrict data that is not an admin
+      const where = {};
+      if (!req.user.limitation.isAdmin) {
+        where.id = req.user.limitation.access.contingentId;
+      }
+
+      const inputs = await validateGroupInputs(req.body, where);
       if (!inputs.isValid && inputs.code === 400) {
         return ResponseFormatter.error400(res, 'Bad Request', inputs.message);
       }
@@ -69,7 +93,7 @@ class ParticipantGroup {
         return ResponseFormatter.error404(res, 'Data Not Found', inputs.message);
       }
 
-      const data = await updateGroup(req.params.id, inputs.form);
+      const data = await updateGroup(req.params.id, inputs.form, where);
       if (!data.success && data.code === 404) {
         return ResponseFormatter.error404(res, 'Data Not Found', data.message);
       }
@@ -84,7 +108,13 @@ class ParticipantGroup {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
 
-      const data = await deleteGroup(req.params.id);
+      // resrict data that is not an admin
+      const where = {};
+      if (!req.user.limitation.isAdmin) {
+        where.id = req.user.limitation.access.contingentId;
+      }
+
+      const data = await deleteGroup(req.params.id, where);
       if (!data.success && data.code === 404) {
         return ResponseFormatter.error404(res, 'Data Not Found', data.message);
       }
