@@ -54,3 +54,4 @@ sequelize model:generate --name ACM_ParticipantLodger --attributes participantId
 sequelize model:generate --name REF_PICType --attributes name:string
 sequelize model:generate --name USR_PIC --attributes userId:integer,typeId:integer
 sequelize model:generate --name REF_MetaTemplateLanguage --attributes name:string, value:string
+sequelize model:generate --name CSM_Conversation --attributes name:string, phoneNbr:string, timeStamp: date

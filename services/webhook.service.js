@@ -1,4 +1,5 @@
 const { SYS_Configuration } = require('../models');
+const { chatBotMessageEntry } = require('./chatbotMessage.service');
 const { metaWebhookTemplateStatusUpdate } = require('./whatsapp.integration.service');
 
 const verifyWebhook = async (query) => {
@@ -23,6 +24,10 @@ const verifyWebhook = async (query) => {
 
 const receiveWebhook = async (form) => {
   if (form.object) {
+    if (form.entry[0].changes[0].field === 'messages') {
+      await chatBotMessageEntry(form.entry[0].changes[0].value);
+      return true;
+    }
     if (form.entry[0].changes[0].field === 'message_template_status_update') {
       // Check webhook request for template status update
       return metaWebhookTemplateStatusUpdate(
