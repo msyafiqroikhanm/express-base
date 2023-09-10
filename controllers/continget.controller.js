@@ -9,7 +9,13 @@ class Contingent {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
 
-      const data = await selectAllContingents();
+      // resrict data that is not an admin
+      const where = {};
+      if (!req.user.limitation.isAdmin) {
+        where.id = req.user.limitation.access.contingentId;
+      }
+
+      const data = await selectAllContingents(where);
 
       return ResponseFormatter.success200(res, data.message, data.content);
     } catch (error) {
@@ -21,7 +27,13 @@ class Contingent {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
 
-      const data = await selectContingent(req.params.id);
+      // resrict data that is not an admin
+      const where = {};
+      if (!req.user.limitation.isAdmin) {
+        where.id = req.user.limitation.access.contingentId;
+      }
+
+      const data = await selectContingent(req.params.id, where);
       if (!data.success && data.code === 404) {
         return ResponseFormatter.error404(res, 'Data Not Found', data.message);
       }
