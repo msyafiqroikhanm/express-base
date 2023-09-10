@@ -207,9 +207,9 @@ const deleteGroup = async (id, where) => {
 
   const { name } = groupInstance.dataValues;
 
-  // await groupInstance.setPAR_Participants([]);
+  await groupInstance.setPAR_Participants([]);
 
-  // await groupInstance.destroy();
+  await groupInstance.destroy();
 
   return {
     success: true,
