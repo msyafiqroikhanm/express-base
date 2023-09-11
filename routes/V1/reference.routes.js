@@ -27,6 +27,8 @@ const {
 const ValidateMiddleware = require('../../middlewares/validate.middleware');
 const Authentication = require('../../middlewares/auth.middleware');
 
+// * Configuration Category
+
 router.get(
   '/config-categories',
   async (req, res, next) => {
@@ -39,6 +41,8 @@ router.get(
         feature.create_system_configuration_category,
         feature.update_system_configuration_category,
         feature.delete_system_configuration_category,
+        feature.create_system_configuration,
+        feature.update_system_configuration,
       ]),
     );
   },
@@ -99,6 +103,8 @@ router.get(
         feature.view_system_configuration_category,
         feature.update_system_configuration_category,
         feature.delete_system_configuration_category,
+        feature.create_system_configuration,
+        feature.update_system_configuration,
       ]),
     );
   },
