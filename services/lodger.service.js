@@ -27,6 +27,7 @@ const selectAllLodgers = async (where) => {
         attributes: { exclude: ['createdAt', 'updatedAt'] },
       },
     ],
+    raw: true,
   });
 
   return {
