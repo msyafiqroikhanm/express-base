@@ -14,12 +14,23 @@ class RoomController {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
 
-      console.log(JSON.stringify(req.user.limitation, null, 2));
+      // console.log(JSON.stringify(req.user.limitation, null, 2));
       const where = {};
       if (!req.user.limitation.isAdmin) {
         where.locationId = {
           [Op.or]: req.user.limitation.access.location,
         };
+      }
+      if (req.query) {
+        if (req.query.locationId) {
+          where.locationId = req.query.locationId;
+        }
+        if (req.query.typeId) {
+          where.typeId = req.query.typeId;
+        }
+        if (req.query.statusId) {
+          where.statusId = req.query.statusId;
+        }
       }
 
       const data = await selectAllRooms(where);
