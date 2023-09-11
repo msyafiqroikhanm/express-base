@@ -9,6 +9,7 @@ const {
   REF_ParticipantType,
   PAR_Contingent,
   REF_Region,
+  sequelize,
 } = require('../models');
 
 const selectAllLodgers = async (where) => {
@@ -87,10 +88,10 @@ const selectLodger = async (id) => {
 };
 
 const createLodger = async (form) => {
-  const lodgerInstance = await ACM_ParticipantLodger.create(form);
-  const roomInstance = await ACM_Room.findByPk(form.roomId);
-  roomInstance.occupied = +1;
-  await roomInstance.save();
+  const lodgerInstance = await ACM_ParticipantLodger.create(form.lodger);
+  const roomInstance = await ACM_Room.findByPk(form.lodger.roomId);
+
+  await ACM_Room.update(form.room, { where: { id: roomInstance.id } });
 
   return {
     success: true,
@@ -132,6 +133,7 @@ const updateLodger = async (id, form) => {
   }
 
   let roomIsUpdate = false;
+  let newRoom;
   if (form.roomId) {
     if (Number(form.roomId) !== Number(lodgerInstance.roomId)) {
       roomIsUpdate = true;
@@ -144,6 +146,7 @@ const updateLodger = async (id, form) => {
           errorMessages.push('Room is Full');
         }
       }
+      newRoom = roomInstance;
     }
   }
 
@@ -151,13 +154,29 @@ const updateLodger = async (id, form) => {
     return { isValid: false, code: 404, message: errorMessages };
   }
 
+  // const oldRoom = await ACM_Room.findByPk(lodgerHelper.roomId);
+
   console.log(roomIsUpdate);
   if (roomIsUpdate) {
     // * Old Room
-    await ACM_Room.decrement('occupied', { by: 1, where: { id: lodgerInstance.roomId } });
+    await ACM_Room.update(
+      { statusId: 1, occupied: sequelize.literal('occupied - 1') },
+      { where: { id: lodgerInstance.roomId } },
+    );
+    // await ACM_Room.decrement('occupied', { by: 1, where: { id: lodgerInstance.roomId } });
 
     // * New Room
-    await ACM_Room.increment('occupied', { by: 1, where: { id: form.roomId } });
+    const formRoom = {
+      occupied: newRoom.occupied + 1,
+      statusId: newRoom.statusId,
+    };
+
+    if (Number(newRoom.capacity) === Number(newRoom.occupied) + 1) {
+      formRoom.statusId = 2;
+    }
+
+    await ACM_Room.update(formRoom, { where: { id: newRoom.id } });
+    // await ACM_Room.increment('occupied', { by: 1, where: { id: form.roomId } });
   }
 
   lodgerInstance.participantId = form.participantId
@@ -193,7 +212,7 @@ const deleteLodger = async (id) => {
   }
 
   await lodgerInstance.destroy();
-  await ACM_Room.decrement('occupied', { by: 1, where: { id: lodgerInstance.roomId } });
+  await ACM_Room.update({ statusId: 1, occupied: -1 }, { where: { id: lodgerInstance.roomId } });
 
   return {
     success: true,
@@ -231,16 +250,28 @@ const validateLodgerInputs = async (form) => {
     return { isValid: false, code: 404, message: errorMessages };
   }
 
+  const formRoom = {
+    occupied: roomInstance.occupied + 1,
+    statusId: roomInstance.statusId,
+  };
+
+  if (Number(roomInstance.capacity) === Number(roomInstance.occupied) + 1) {
+    formRoom.statusId = 2;
+  }
+
   const lodgerStatusReserved = await lodgerHelper().then((lodger) => [lodger.reserved]);
 
   return {
     isValid: true,
     form: {
-      participantId: form.participantId,
-      statusId: lodgerStatusReserved[0],
-      roomId: form.roomId,
-      reservationIn: form.reservationIn,
-      reservationOut: form.reservationOut,
+      lodger: {
+        participantId: form.participantId,
+        statusId: lodgerStatusReserved[0],
+        roomId: form.roomId,
+        reservationIn: form.reservationIn,
+        reservationOut: form.reservationOut,
+      },
+      room: formRoom,
     },
   };
 };

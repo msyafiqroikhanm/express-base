@@ -1,4 +1,13 @@
-const { ACM_Location, REF_LocationType, ACM_Room, ACM_Facility, ENV_Event } = require('../models');
+const {
+  ACM_Location,
+  REF_LocationType,
+  ACM_Room,
+  ACM_Facility,
+  ENV_Event,
+  USR_PIC,
+  USR_User,
+  PAR_Participant,
+} = require('../models');
 
 const selectAllLocations = async (where) => {
   const locations = await ACM_Location.findAll({
@@ -15,6 +24,26 @@ const selectAllLocations = async (where) => {
       },
     ],
   });
+
+  await Promise.all(
+    locations.map(async (location) => {
+      const pic = await USR_PIC.findByPk(location.picId, {
+        attributes: { exclude: ['createdAt', 'updatedAt'] },
+        include: {
+          model: USR_User,
+          attributes: ['id'],
+          include: {
+            model: PAR_Participant,
+            as: 'participant',
+            attributes: ['name', 'phoneNbr', 'email'],
+          },
+        },
+      });
+
+      // eslint-disable-next-line no-param-reassign
+      location.dataValues.pic = pic.USR_User.participant;
+    }),
+  );
 
   return {
     success: true,
