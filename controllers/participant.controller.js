@@ -6,6 +6,9 @@ const {
   createParticipant, updateParticipant, deleteParticipant, trackingParticipant,
   createParticipantViaImport,
   validateParticipantQuery,
+  validateCommitteeInputs,
+  createComittee,
+  updateCommittee,
 } = require('../services/participant.service');
 
 class Participant {
@@ -204,6 +207,76 @@ class Participant {
       }
 
       return ResponseFormatter.success201(res, data.message, data.content);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  static async createCommittee(req, res, next) {
+    try {
+      res.url = `${req.method} ${req.originalUrl}`;
+
+      const inputs = await validateCommitteeInputs(req.body, req.file, null);
+      if (!inputs.isValid && inputs.code === 404) {
+        // Delete uploaded file when error happens
+        if (req.file) {
+          await deleteFile(relative(__dirname, req.file.path));
+        }
+        return ResponseFormatter.error404(res, 'Data Not Found', inputs.message);
+      }
+      if (!inputs.isValid && inputs.code === 400) {
+        // Delete uploaded file when error happens
+        if (req.file) {
+          await deleteFile(relative(__dirname, req.file.path));
+        }
+        return ResponseFormatter.error400(res, 'Bad Request', inputs.message);
+      }
+
+      const data = await createComittee(inputs.form);
+      if (!data.success) {
+        return ResponseFormatter.error400(res, 'Bad Request', data.content);
+      }
+
+      return ResponseFormatter.success201(res, data.message, data.content);
+    } catch (error) {
+      // Delete uploaded file when error happens
+      if (req.file) {
+        await deleteFile(relative(__dirname, req.file.path));
+      }
+      next(error);
+    }
+  }
+
+  static async updateCommittee(req, res, next) {
+    try {
+      res.url = `${req.method} ${req.originalUrl}`;
+
+      const inputs = await validateCommitteeInputs(req.body, req.file, req.params.id);
+      if (!inputs.isValid && inputs.code === 404) {
+        // Delete uploaded file when error happens
+        if (req.file) {
+          await deleteFile(relative(__dirname, req.file.path));
+        }
+        return ResponseFormatter.error404(res, 'Data Not Found', inputs.message);
+      }
+      if (!inputs.isValid && inputs.code === 400) {
+        // Delete uploaded file when error happens
+        if (req.file) {
+          await deleteFile(relative(__dirname, req.file.path));
+        }
+        return ResponseFormatter.error400(res, 'Bad Request', inputs.message);
+      }
+
+      const data = await updateCommittee(req.params.id, inputs.form);
+      if (!data.success && data.code === 404) {
+        // Delete uploaded file when error happens
+        if (req.file) {
+          await deleteFile(relative(__dirname, req.file.path));
+        }
+        return ResponseFormatter.error404(res, 'Data Not Found', data.message);
+      }
+
+      return ResponseFormatter.success200(res, data.message, data.content);
     } catch (error) {
       next(error);
     }
