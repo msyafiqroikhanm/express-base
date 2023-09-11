@@ -1,15 +1,19 @@
-const {
-  ACM_Location, REF_LocationType, ACM_Room, ACM_Facility, ENV_Event,
-} = require('../models');
+const { ACM_Location, REF_LocationType, ACM_Room, ACM_Facility, ENV_Event } = require('../models');
 
 const selectAllLocations = async (where) => {
   const locations = await ACM_Location.findAll({
     where,
-    include: {
-      model: REF_LocationType,
-      as: 'type',
-      attributes: ['name'],
-    },
+    include: [
+      {
+        model: REF_LocationType,
+        as: 'type',
+        attributes: ['name'],
+      },
+      {
+        model: ACM_Location,
+        as: 'childLocation',
+      },
+    ],
   });
 
   return {
@@ -27,6 +31,10 @@ const selectLocation = async (where) => {
         model: REF_LocationType,
         as: 'type',
         attributes: ['name'],
+      },
+      {
+        model: ACM_Location,
+        as: 'childLocation',
       },
     ],
   });
