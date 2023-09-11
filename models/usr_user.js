@@ -23,7 +23,6 @@ module.exports = (sequelize, DataTypes) => {
       USR_User.belongsTo(models.QRM_QR, { foreignKey: 'qrId', as: 'Qr' });
       USR_User.belongsTo(models.PAR_Participant, { foreignKey: 'participantId', as: 'participant' });
 
-      USR_User.hasMany(models.ENV_Event, { foreignKey: 'picId', as: 'pic' });
       USR_User.hasMany(models.USR_PIC, { foreignKey: 'userId', as: 'PIC' });
     }
   }

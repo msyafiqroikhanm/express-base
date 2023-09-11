@@ -189,6 +189,8 @@ router.get(
   QrType.getDetail,
 );
 
+// * Event Categories
+
 router.get(
   '/event-categories',
   async (req, res, next) => {
@@ -201,6 +203,8 @@ router.get(
         feature.create_event_category,
         feature.update_event_category,
         feature.delete_event_category,
+        feature.create_event,
+        feature.update_event,
       ]),
     );
   },
@@ -233,6 +237,8 @@ router.get(
         feature.view_event_category,
         feature.update_event_category,
         feature.delete_event_category,
+        feature.create_event,
+        feature.update_event,
       ]),
     );
   },

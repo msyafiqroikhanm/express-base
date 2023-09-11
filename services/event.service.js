@@ -1,21 +1,34 @@
 /* eslint-disable no-param-reassign */
 const {
-  ENV_Event, ENV_TimeEvent, REF_EventCategory, USR_User,
+  ENV_Event, ENV_TimeEvent, REF_EventCategory, USR_PIC, ACM_Location, USR_User, PAR_Participant,
 } = require('../models');
 
 const selectAllEvents = async () => {
   const data = await ENV_Event.findAll({
     include: [
-      { model: USR_User, attributes: ['name'], as: 'pic' },
       { model: REF_EventCategory, attributes: ['name'], as: 'category' },
+      { model: ACM_Location, as: 'location', attributes: { exclude: ['id', 'deletedAt', 'createdAt', 'updatedAt'] } },
       { model: ENV_TimeEvent, attributes: ['id', 'start', 'end'], as: 'schedules' },
+      // {
+      //   model: USR_PIC,
+      //   as: 'pic',
+      // },
     ],
   });
 
-  data.forEach((event) => {
-    event.dataValues.pic = event.pic.dataValues.name;
+  await Promise.all(data.map(async (event) => {
     event.dataValues.category = event.category.dataValues.name;
-  });
+    const pic = await USR_PIC.findByPk(event.picId, {
+      attributes: { exclude: ['createdAt', 'updatedAt'] },
+      include: {
+        model: USR_User,
+        attributes: ['id'],
+        include: { model: PAR_Participant, as: 'participant', attributes: ['name', 'phoneNbr', 'email'] },
+      },
+    });
+
+    event.dataValues.pic = pic.USR_User.participant;
+  }));
 
   return {
     success: true, message: 'Succesfully Getting All Events', content: data,
@@ -26,16 +39,25 @@ const selectEvent = async (id) => {
   // check event id validity
   const eventInstance = await ENV_Event.findByPk(id, {
     include: [
-      { model: USR_User, attributes: ['name'], as: 'pic' },
       { model: REF_EventCategory, attributes: ['name'], as: 'category' },
       { model: ENV_TimeEvent, attributes: ['start', 'end'], as: 'schedules' },
+      { model: ACM_Location, as: 'location', attributes: { exclude: ['id', 'deletedAt', 'createdAt', 'updatedAt'] } },
     ],
   });
   if (!eventInstance) {
     return { success: false, code: 404, message: 'Event Data Not Found' };
   }
 
-  eventInstance.dataValues.pic = eventInstance.pic.dataValues.name;
+  const pic = await USR_PIC.findByPk(eventInstance.picId, {
+    attributes: { exclude: ['createdAt', 'updatedAt'] },
+    include: {
+      model: USR_User,
+      attributes: ['id'],
+      include: { model: PAR_Participant, as: 'participant', attributes: ['name', 'phoneNbr', 'email'] },
+    },
+  });
+
+  eventInstance.dataValues.pic = pic.USR_User.participant;
   eventInstance.dataValues.category = eventInstance.category.dataValues.name;
 
   return {
@@ -48,8 +70,8 @@ const validateEventInputs = async (form) => {
     picId, categoryId, locationId, name, schedules,
   } = form;
 
-  const userInstance = await USR_User.findByPk(picId);
-  if (!userInstance) {
+  const picInstance = await USR_PIC.findByPk(picId);
+  if (!picInstance) {
     return {
       isValid: false, code: 404, message: 'PIC / User Data Not Found',
     };
@@ -62,7 +84,12 @@ const validateEventInputs = async (form) => {
     };
   }
 
-  // todo check location id validity
+  const locationInstance = await ACM_Location.findByPk(locationId);
+  if (!locationInstance) {
+    return {
+      isValid: false, code: 404, message: 'Location Data Not Found',
+    };
+  }
 
   // check backdate on time
   const parsedTimes = [];
