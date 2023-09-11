@@ -111,6 +111,8 @@ router.get(
   SysConfigCategory.getDetail,
 );
 
+// * QR Type
+
 router.get(
   '/qr-types',
   async (req, res, next) => {
@@ -123,6 +125,8 @@ router.get(
         feature.create_qr_type,
         feature.update_qr_type,
         feature.delete_qr_type,
+        feature.create_qr_template,
+        feature.update_qr_template,
       ]),
     );
   },
@@ -189,6 +193,8 @@ router.get(
         feature.view_qr_type,
         feature.update_qr_type,
         feature.delete_qr_type,
+        feature.create_qr_template,
+        feature.update_qr_template,
       ]),
     );
   },

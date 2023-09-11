@@ -20,6 +20,8 @@ router.get(
         feature.delete_qr_template,
         feature.create_role,
         feature.update_role,
+        feature.create_qr,
+        feature.update_qr,
       ]),
     );
   },
@@ -39,6 +41,8 @@ router.get(
         feature.delete_qr_template,
         feature.create_role,
         feature.update_role,
+        feature.create_qr,
+        feature.update_qr,
       ]),
     );
   },
