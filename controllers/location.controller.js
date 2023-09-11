@@ -17,6 +17,11 @@ class LocationController {
       if (!req.user.limitation.isAdmin) {
         where.picId = req.user.limitation.access.picId;
       }
+      if (req.query) {
+        if (req.query.typeId) {
+          where.typeId = req.query.typeId;
+        }
+      }
 
       const data = await selectAllLocations(where);
 
