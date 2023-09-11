@@ -27,6 +27,8 @@ router.get(
         feature.update_group,
         feature.create_user,
         feature.update_user,
+        feature.create_broadcast,
+        feature.update_broadcast,
       ]),
     );
   },
@@ -52,6 +54,8 @@ router.get(
         feature.delete_lodger,
         feature.create_group,
         feature.update_group,
+        feature.create_broadcast,
+        feature.update_broadcast,
       ]),
     );
   },
