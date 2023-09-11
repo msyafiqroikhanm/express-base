@@ -15,9 +15,13 @@ class Participant {
 
       const query = await validateParticipantQuery(req.query);
 
-      console.log(query);
+      // resrict data that is not an admin
+      const where = {};
+      if (!req.user.limitation.isAdmin) {
+        where.id = req.user.limitation.access.contingentId;
+      }
 
-      const data = await selectAllParticipant(query);
+      const data = await selectAllParticipant(query, where);
       if (!data.success) {
         return ResponseFormatter.error400(res, 'Bad Request', data.message);
       }
@@ -32,7 +36,13 @@ class Participant {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
 
-      const data = await selectParticipant(req.params.id);
+      // resrict data that is not an admin
+      const where = {};
+      if (!req.user.limitation.isAdmin) {
+        where.id = req.user.limitation.access.contingentId;
+      }
+
+      const data = await selectParticipant(req.params.id, where);
       if (!data.success && data.code === 404) {
         return ResponseFormatter.error404(res, 'Data Not Found', data.message);
       }
@@ -47,13 +57,26 @@ class Participant {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
 
-      const inputs = await validateParticipantInputs(req.body, req.file);
+      // resrict data that is not an admin
+      const where = {};
+      if (!req.user.limitation.isAdmin) {
+        where.id = req.user.limitation.access.contingentId;
+      }
+
+      const inputs = await validateParticipantInputs(req.body, req.file, null, where);
       if (!inputs.isValid && inputs.code === 404) {
         // Delete uploaded file when error happens
         if (req.file) {
           await deleteFile(relative(__dirname, req.file.path));
         }
         return ResponseFormatter.error404(res, 'Data Not Found', inputs.message);
+      }
+      if (!inputs.isValid && inputs.code === 401) {
+        // Delete uploaded file when error happens
+        if (req.file) {
+          await deleteFile(relative(__dirname, req.file.path));
+        }
+        return ResponseFormatter.error401(res, 'Unauthorized Request', inputs.message);
       }
       if (!inputs.isValid && inputs.code === 400) {
         // Delete uploaded file when error happens
@@ -109,7 +132,13 @@ class Participant {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
 
-      const inputs = await validateParticipantInputs(req.body, req.file, req.params.id);
+      // resrict data that is not an admin
+      const where = {};
+      if (!req.user.limitation.isAdmin) {
+        where.id = req.user.limitation.access.contingentId;
+      }
+
+      const inputs = await validateParticipantInputs(req.body, req.file, req.params.id, where);
       if (!inputs.isValid && inputs.code === 404) {
         // Delete uploaded file when error happens
         if (req.file) {
@@ -125,7 +154,7 @@ class Participant {
         return ResponseFormatter.error400(res, 'Bad Request', inputs.message);
       }
 
-      const data = await updateParticipant(req.params.id, inputs.form);
+      const data = await updateParticipant(req.params.id, inputs.form, where);
       if (!data.success && data.code === 404) {
         // Delete uploaded file when error happens
         if (req.file) {
@@ -148,7 +177,13 @@ class Participant {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
 
-      const data = await deleteParticipant(req.params.id);
+      // resrict data that is not an admin
+      const where = { id: req.params.id };
+      if (!req.user.limitation.isAdmin) {
+        where.contingentId = req.user.limitation.access.contingentId;
+      }
+
+      const data = await deleteParticipant(where);
       if (!data.success && data.code === 404) {
         return ResponseFormatter.error404(res, 'Data Not Found', data.message);
       }

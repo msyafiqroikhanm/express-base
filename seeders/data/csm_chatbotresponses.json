@@ -8,5 +8,15 @@
     "responseTypeId":1,
     "message":"Good day what can we help you with?",
     "isActive":false
+  },
+  {
+    "responseTypeId":3,
+    "message":"That All, have a nice day Mr/Mrs {{username}}",
+    "isActive":true
+  },
+  {
+    "responseTypeId":5,
+    "message":"Sorry i'can't understand your input, type *_Main Menu_* to go back to main menu",
+    "isActive":true
   }
 ]

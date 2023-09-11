@@ -38,5 +38,15 @@
     "categoryId": 3,
     "name": "Whatsapp Phone Id",
     "value": "112027488542121"
+  },
+  {
+    "categoryId": 3,
+    "name": "Whatsapp Converstation Limit Hours",
+    "value": "2"
+  },
+  {
+    "categoryId": 3,
+    "name": "Whatsapp Menu Keyword",
+    "value": "Main Menu"
   }
 ]
