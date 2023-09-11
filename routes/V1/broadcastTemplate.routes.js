@@ -18,6 +18,8 @@ router.get(
         feature.create_broadcast_template,
         feature.update_broadcast_template,
         feature.delete_broadcast_template,
+        feature.create_broadcast,
+        feature.update_broadcast,
       ]),
     );
   },
@@ -35,6 +37,8 @@ router.get(
         feature.view_broadcast_template,
         feature.update_broadcast_template,
         feature.delete_broadcast_template,
+        feature.create_broadcast,
+        feature.update_broadcast,
       ]),
     );
   },
