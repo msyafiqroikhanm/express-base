@@ -17,6 +17,8 @@ router.get(
         feature.create_role,
         feature.update_role,
         feature.delete_role,
+        feature.create_user,
+        feature.update_user,
       ]),
     );
   },
@@ -34,6 +36,8 @@ router.get(
         feature.view_role,
         feature.update_role,
         feature.delete_role,
+        feature.create_user,
+        feature.update_user,
       ]),
     );
   },
