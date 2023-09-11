@@ -128,20 +128,17 @@ const validateParticipantInputs = async (form, file, id, where) => {
   } = form;
 
   // check contingent id validity
-  let contingentInstance = null;
-  if (contingentId) {
-    contingentInstance = await PAR_Contingent.findByPk(contingentId);
-    if (!contingentInstance) {
-      return {
-        isValid: false, code: 404, message: 'Contingent Data Not Found',
-      };
-    }
+  const contingentInstance = await PAR_Contingent.findByPk(contingentId);
+  if (!contingentInstance) {
+    return {
+      isValid: false, code: 404, message: 'Contingent Data Not Found',
+    };
+  }
 
-    if (where?.id && (where.id !== Number(contingentId))) {
-      return {
-        isValid: false, code: 400, message: 'Prohibited To Create Participant For Other Contingent',
-      };
-    }
+  if (where?.id && (where.id !== Number(contingentId))) {
+    return {
+      isValid: false, code: 400, message: 'Prohibited To Create Participant For Other Contingent',
+    };
   }
 
   // check participant type id validity
@@ -400,6 +397,152 @@ const createParticipantViaImport = async (file) => {
   };
 };
 
+const validateCommitteeInputs = async (form, file, id) => {
+  const {
+    typeId, identityTypeId, name, gender,
+    birthDate, identityNo, phoneNbr, email, address,
+  } = form;
+
+  // check participant type id validity
+  const participantTypeInstance = await REF_ParticipantType.findByPk(typeId);
+  if (!participantTypeInstance) {
+    return {
+      isValid: false, code: 404, message: 'Participant Type Data Not Found',
+    };
+  }
+
+  // check identity type id validity
+  const identityTypeInstance = await REF_IdentityType.findByPk(identityTypeId);
+  if (!identityTypeInstance) {
+    return {
+      isValid: false, code: 404, message: 'Identity Type Data Not Found',
+    };
+  }
+
+  let filePath = null;
+  if (file) {
+    if (!['png', 'jpeg', 'jpg'].includes(file.originalname.split('.')[1])) {
+      const error = { isValid: false, code: 400, message: 'Upload only supports file types [png, jpeg, and jpg]' };
+      return error;
+    }
+
+    const imageBuffer = await fs.readFile(file.path);
+    const maxSizeInByte = 2000000;
+    if (imageBuffer.length > maxSizeInByte) {
+      return { isValid: false, code: 400, message: 'The file size exceeds the maximum size limit of 2 Megabyte' };
+    }
+
+    filePath = `public/images/committees/${file.filename}`;
+  }
+
+  if (id) {
+    // check identity number duplicate
+    const isDuplicateIdentityNo = await PAR_Participant.findOne({
+      where: {
+        id: { [Op.ne]: id },
+        identityNo,
+      },
+    });
+    if (isDuplicateIdentityNo) {
+      return {
+        isValid: false, code: 400, message: `Identity Number ${identityNo} Already Used In System`,
+      };
+    }
+
+    // check phone number duplicate
+    const isDuplicatePhoneNo = await PAR_Participant.findOne({
+      where: {
+        id: { [Op.ne]: id },
+        phoneNbr,
+      },
+    });
+    if (isDuplicatePhoneNo) {
+      return {
+        isValid: false, code: 400, message: `Phone Number ${phoneNbr} Already Used In System`,
+      };
+    }
+  } else {
+    // check identity number duplicate
+    const isDuplicateIdentityNo = await PAR_Participant.findOne({ where: { identityNo } });
+    if (isDuplicateIdentityNo) {
+      return {
+        isValid: false, code: 400, message: `Identity Number ${identityNo} Already Used In System`,
+      };
+    }
+
+    // check phone number duplicate
+    const isDuplicatePhoneNo = await PAR_Participant.findOne({ where: { phoneNbr } });
+    if (isDuplicatePhoneNo) {
+      return {
+        isValid: false, code: 400, message: `Phone Number ${phoneNbr} Already Used In System`,
+      };
+    }
+  }
+
+  return {
+    isValid: true,
+    form: {
+      participantType: participantTypeInstance,
+      identityType: identityTypeInstance,
+      name,
+      gender,
+      birthDate: new Date(birthDate),
+      identityNo,
+      phoneNbr,
+      email,
+      address,
+      file: filePath,
+    },
+  };
+};
+
+const createComittee = async (form) => {
+  // creating participant
+  const participantInstance = await PAR_Participant.create({
+    contingentId: null,
+    qrId: null,
+    typeId: form.participantType.id,
+    identityTypeId: form.identityType.id,
+    name: form.name,
+    gender: form.gender,
+    birthDate: form.birthDate,
+    identityNo: form.identityNo,
+    phoneNbr: form.phoneNbr,
+    email: form.email,
+    address: form.address,
+    file: form.file,
+  });
+
+  return {
+    success: true, message: 'Participant Committe Successfully Created', content: participantInstance,
+  };
+};
+
+const updateCommittee = async (id, form) => {
+  const participantInstance = await PAR_Participant.findOne({ where: { id, contingentId: null } });
+  if (!participantInstance) {
+    return {
+      success: false, code: 404, message: 'Participant Committe Data Not Found',
+    };
+  }
+
+  participantInstance.typeId = form.participantType.id;
+  participantInstance.identityTypeId = form.identityType.id;
+  participantInstance.name = form.name;
+  participantInstance.gender = form.gender;
+  participantInstance.birthDate = form.birthDate;
+  participantInstance.identityNo = form.identityNo.id;
+  participantInstance.phoneNbr = form.phoneNbr.id;
+  participantInstance.email = form.email;
+  participantInstance.address = form.address;
+  participantInstance.file = form.file;
+  await participantInstance.save();
+
+  return {
+    success: true, message: 'Participant Committe Successfully Updated', content: participantInstance,
+  };
+};
+
 module.exports = {
   selectAllParticipant,
   selectParticipant,
@@ -410,4 +553,7 @@ module.exports = {
   deleteParticipant,
   trackingParticipant,
   createParticipantViaImport,
+  validateCommitteeInputs,
+  createComittee,
+  updateCommittee,
 };

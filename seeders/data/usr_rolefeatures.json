@@ -264,5 +264,8 @@
     {"roleId":4,"featureId":27},
     {"roleId":4,"featureId":28},
     {"roleId":4,"featureId":29},
-    {"roleId":4,"featureId":30}
+    {"roleId":4,"featureId":30},
+
+    {"roleId":1,"featureId":233},
+    {"roleId":1,"featureId":234}
 ]

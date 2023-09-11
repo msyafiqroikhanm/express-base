@@ -29,6 +29,7 @@ router.get(
         feature.update_user,
         feature.create_broadcast,
         feature.update_broadcast,
+        feature.create_participant_committe,
       ]),
     );
   },
@@ -56,6 +57,7 @@ router.get(
         feature.update_group,
         feature.create_broadcast,
         feature.update_broadcast,
+        feature.create_participant_committe,
       ]),
     );
   },
@@ -75,14 +77,15 @@ router.post(
   },
   uploadImage.single('participantImage'),
   [
+    check('contingentId', "Contingent Id attribute can't be empty").notEmpty(),
     check('typeId', "Type Id attribute can't be empty").notEmpty(),
     check('identityTypeId', "Identity type Id attribute can't be empty").notEmpty(),
     check('name', "Name attribute can't be empty").notEmpty(),
     check('gender', "Gender attribute can't be empty").notEmpty(),
-    check('birthDate', "Birth Date attribute can't be empty").isDate().notEmpty(),
+    check('birthDate', "Birth Date attribute can't be empty").isDate(),
     check('identityNo', "Identity Number attribute can't be empty").notEmpty(),
-    check('phoneNbr', "Phone Number attribute can't be empty").isMobilePhone('id-ID').notEmpty(),
-    check('email', "Email attribute can't be empty").isEmail().notEmpty(),
+    check('phoneNbr', "Phone Number attribute can't be empty").isMobilePhone('id-ID'),
+    check('email', "Email attribute can't be empty").isEmail(),
     check('address', "Address attribute can't be empty").notEmpty(),
   ],
   ValidateMiddleware.result,
@@ -118,14 +121,15 @@ router.put(
   },
   uploadImage.single('participantImage'),
   [
+    check('contingentId', "Contingent Id attribute can't be empty").notEmpty(),
     check('typeId', "Type Id attribute can't be empty").notEmpty(),
     check('identityTypeId', "Identity type Id attribute can't be empty").notEmpty(),
     check('name', "Name attribute can't be empty").notEmpty(),
     check('gender', "Gender attribute can't be empty").notEmpty(),
-    check('birthDate', "Birth Date attribute can't be empty").isDate().notEmpty(),
+    check('birthDate', "Birth Date attribute can't be empty").isDate(),
     check('identityNo', "Identity Number attribute can't be empty").notEmpty(),
-    check('phoneNbr', "Phone Number attribute can't be empty").isMobilePhone('id-ID').notEmpty(),
-    check('email', "Email attribute can't be empty").isEmail().notEmpty(),
+    check('phoneNbr', "Phone Number attribute can't be empty").isMobilePhone('id-ID'),
+    check('email', "Email attribute can't be empty").isEmail(),
     check('address', "Address attribute can't be empty").notEmpty(),
   ],
   ValidateMiddleware.result,
@@ -168,6 +172,62 @@ router.post(
   ValidateMiddleware.result,
   Authentication.participant,
   ParticipantController.track,
+);
+
+router.post(
+  '/committees',
+  async (req, res, next) => {
+    Authentication.authenticate(
+      req,
+      res,
+      next,
+      await features().then((feature) => [
+        feature.create_participant_committee,
+      ]),
+    );
+  },
+  uploadImage.single('committeeImage'),
+  [
+    check('typeId', "Type Id attribute can't be empty").notEmpty(),
+    check('identityTypeId', "Identity type Id attribute can't be empty").notEmpty(),
+    check('name', "Name attribute can't be empty").notEmpty(),
+    check('gender', "Gender attribute can't be empty").notEmpty(),
+    check('birthDate', "Birth Date attribute can't be empty").isDate(),
+    check('identityNo', "Identity Number attribute can't be empty").notEmpty(),
+    check('phoneNbr', "Phone Number attribute can't be empty").isMobilePhone('id-ID'),
+    check('email', "Email attribute can't be empty").isEmail(),
+    check('address', "Address attribute can't be empty").notEmpty(),
+  ],
+  ValidateMiddleware.result,
+  ParticipantController.createCommittee,
+);
+
+router.put(
+  '/committees/:id',
+  async (req, res, next) => {
+    Authentication.authenticate(
+      req,
+      res,
+      next,
+      await features().then((feature) => [
+        feature.update_participant_committee,
+      ]),
+    );
+  },
+  uploadImage.single('committeeImage'),
+  [
+    check('typeId', "Type Id attribute can't be empty").notEmpty(),
+    check('identityTypeId', "Identity type Id attribute can't be empty").notEmpty(),
+    check('name', "Name attribute can't be empty").notEmpty(),
+    check('gender', "Gender attribute can't be empty").notEmpty(),
+    check('birthDate', "Birth Date attribute can't be empty").isDate(),
+    check('identityNo', "Identity Number attribute can't be empty").notEmpty(),
+    check('phoneNbr', "Phone Number attribute can't be empty").isMobilePhone('id-ID'),
+    check('email', "Email attribute can't be empty").isEmail(),
+    check('address', "Address attribute can't be empty").notEmpty(),
+  ],
+  ValidateMiddleware.result,
+  ParticipantController.updateCommittee,
 );
 
 module.exports = router;
