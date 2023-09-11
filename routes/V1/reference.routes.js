@@ -273,6 +273,8 @@ router.delete(
   EventCategory.delete,
 );
 
+// * Regions
+
 router.get(
   '/regions',
   async (req, res, next) => {
@@ -304,6 +306,8 @@ router.get(
         feature.view_region,
         feature.update_region,
         feature.delete_region,
+        feature.create_contingent,
+        feature.update_contingent,
       ]),
     );
   },
@@ -353,6 +357,8 @@ router.delete(
   Region.delete,
 );
 
+// * Group Status
+
 router.get(
   '/group-statuses',
   async (req, res, next) => {
@@ -384,6 +390,8 @@ router.get(
         feature.view_group_status,
         feature.update_group_status,
         feature.delete_group_status,
+        feature.create_group,
+        feature.update_group,
       ]),
     );
   },
@@ -433,6 +441,8 @@ router.delete(
   GroupStatus.delete,
 );
 
+// * Participant Type
+
 router.get(
   '/participant-types',
   async (req, res, next) => {
@@ -445,6 +455,8 @@ router.get(
         feature.create_participant_type,
         feature.update_participant_type,
         feature.delete_participant_type,
+        feature.create_participant,
+        feature.update_participant,
       ]),
     );
   },
@@ -462,6 +474,8 @@ router.get(
         feature.view_participant_type,
         feature.update_participant_type,
         feature.delete_participant_type,
+        feature.create_participant,
+        feature.update_participant,
       ]),
     );
   },
@@ -511,6 +525,8 @@ router.delete(
   ParticipantType.delete,
 );
 
+// * Participant Identity Type
+
 router.get(
   '/identity-types',
   async (req, res, next) => {
@@ -523,6 +539,8 @@ router.get(
         feature.create_identity_type,
         feature.update_identity_type,
         feature.delete_identity_type,
+        feature.create_participant,
+        feature.update_participant,
       ]),
     );
   },
@@ -540,6 +558,8 @@ router.get(
         feature.view_identity_type,
         feature.update_identity_type,
         feature.delete_identity_type,
+        feature.create_participant,
+        feature.update_participant,
       ]),
     );
   },

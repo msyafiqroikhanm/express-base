@@ -19,6 +19,8 @@ router.get(
         feature.delete_contingent,
         feature.create_group,
         feature.update_group,
+        feature.create_participant,
+        feature.update_participant,
       ]),
     );
   },
@@ -37,6 +39,10 @@ router.get(
         feature.view_contingent,
         feature.update_contingent,
         feature.delete_contingent,
+        feature.create_group,
+        feature.update_group,
+        feature.create_participant,
+        feature.update_participant,
       ]),
     );
   },

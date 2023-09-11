@@ -150,7 +150,10 @@ router.post(
       req,
       res,
       next,
-      await features().then((feature) => [feature.track_participant]),
+      await features().then((feature) => [
+        feature.track_participant,
+        feature.view_participant,
+      ]),
     );
   },
   [
