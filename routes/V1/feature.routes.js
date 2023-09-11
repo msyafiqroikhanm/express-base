@@ -17,6 +17,8 @@ router.get(
         feature.create_feature,
         feature.update_feature,
         feature.delete_feature,
+        feature.create_role,
+        feature.update_role,
       ]),
     );
   },
@@ -34,6 +36,8 @@ router.get(
         feature.view_feature,
         feature.update_feature,
         feature.delete_feature,
+        feature.create_role,
+        feature.update_role,
       ]),
     );
   },
