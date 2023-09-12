@@ -1,16 +1,49 @@
 const {
-  ACM_Location, REF_LocationType, ACM_Room, ACM_Facility, ENV_Event,
+  ACM_Location,
+  REF_LocationType,
+  ACM_Room,
+  ACM_Facility,
+  ENV_Event,
+  USR_PIC,
+  USR_User,
+  PAR_Participant,
 } = require('../models');
 
 const selectAllLocations = async (where) => {
   const locations = await ACM_Location.findAll({
     where,
-    include: {
-      model: REF_LocationType,
-      as: 'type',
-      attributes: ['name'],
-    },
+    include: [
+      {
+        model: REF_LocationType,
+        as: 'type',
+        attributes: ['name'],
+      },
+      {
+        model: ACM_Location,
+        as: 'childLocation',
+      },
+    ],
   });
+
+  await Promise.all(
+    locations.map(async (location) => {
+      const pic = await USR_PIC.findByPk(location.picId, {
+        attributes: { exclude: ['createdAt', 'updatedAt'] },
+        include: {
+          model: USR_User,
+          attributes: ['id'],
+          include: {
+            model: PAR_Participant,
+            as: 'participant',
+            attributes: ['name', 'phoneNbr', 'email'],
+          },
+        },
+      });
+
+      // eslint-disable-next-line no-param-reassign
+      location.dataValues.pic = pic.USR_User.participant;
+    }),
+  );
 
   return {
     success: true,
@@ -27,6 +60,10 @@ const selectLocation = async (where) => {
         model: REF_LocationType,
         as: 'type',
         attributes: ['name'],
+      },
+      {
+        model: ACM_Location,
+        as: 'childLocation',
       },
     ],
   });

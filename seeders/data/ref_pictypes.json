@@ -2,5 +2,6 @@
     {"name":"PIC Location"},
     {"name":"PIC IT"},
     {"name":"PIC Kitchen"},
-    {"name":"PIC Transportation"}
+    {"name":"PIC Transportation"},
+    {"name":"PIC Event"}
 ]

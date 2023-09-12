@@ -25,6 +25,8 @@ router.get(
         feature.create_lodger,
         feature.update_lodger,
         feature.delete_lodger,
+        feature.create_event,
+        feature.update_event,
       ]),
     );
   },
@@ -52,6 +54,8 @@ router.get(
         feature.create_lodger,
         feature.update_lodger,
         feature.delete_lodger,
+        feature.create_event,
+        feature.update_event,
       ]),
     );
   },

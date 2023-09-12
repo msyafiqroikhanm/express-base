@@ -1,3 +1,4 @@
+const { Op } = require('sequelize');
 const ResponseFormatter = require('../helpers/responseFormatter.helper');
 const {
   validateLodgerInputs,
@@ -7,6 +8,7 @@ const {
   updateLodger,
   deleteLodger,
 } = require('../services/lodger.service');
+const { selectAllParticipant } = require('../services/participant.service');
 
 class LodgerController {
   static async getAll(req, res, next) {
@@ -14,6 +16,23 @@ class LodgerController {
       res.url = `${req.method} ${req.originalUrl}`;
 
       const data = await selectAllLodgers({});
+
+      return ResponseFormatter.success200(res, data.message, data.content);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  static async getParticipantsWhoHaveNotReveivedAccomodation(req, res, next) {
+    try {
+      res.url = `${req.method} ${req.originalUrl}`;
+
+      const participantLodgers = await selectAllLodgers({});
+      const participantLodgerIds = await participantLodgers.content.map(
+        (element) => element.participantId,
+      );
+      const query = { id: { [Op.notIn]: participantLodgerIds } };
+      const data = await selectAllParticipant(query, {});
 
       return ResponseFormatter.success200(res, data.message, data.content);
     } catch (error) {

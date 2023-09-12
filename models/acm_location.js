@@ -33,6 +33,9 @@ module.exports = (sequelize, DataTypes) => {
         as: 'type',
       });
 
+      // * Event
+      ACM_Location.hasMany(models.ENV_Event, { foreignKey: 'locationId', as: 'events' });
+
       // ACM_Location.belongsTo(models.USR_PIC, {
       //   foreignKey: 'picId',
       //   as: 'pic',

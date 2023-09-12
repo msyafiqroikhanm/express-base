@@ -939,5 +939,13 @@
     {
         "moduleId":22,
         "name":"Delete Lodger"
+    },
+    {
+        "moduleId":19,
+        "name":"Create Participant Committee"
+    },
+    {
+        "moduleId":19,
+        "name":"Update Participant Committee"
     }
 ]
