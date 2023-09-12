@@ -38,9 +38,7 @@ module.exports = {
     await queryInterface.bulkInsert('CSM_CustomerFeedbacks', customerfeedbacks);
 
     //* CSM_FAQs
-    const csm_faqs = JSON.parse(
-      fs.readFileSync('./seeders/data/csm_faqs.json'),
-    );
+    const csm_faqs = JSON.parse(fs.readFileSync('./seeders/data/csm_faqs.json'));
     const faqs = csm_faqs.map((element) => ({
       parentFAQId: element.parentFAQId,
       typeId: element.typeId,
@@ -101,9 +99,7 @@ module.exports = {
     await queryInterface.bulkInsert('CSM_BroadcastTemplates', broadcasttemplates);
 
     //* CSM_Broadcasts
-    const csm_broadcasts = JSON.parse(
-      fs.readFileSync('./seeders/data/csm_broadcasts.json'),
-    );
+    const csm_broadcasts = JSON.parse(fs.readFileSync('./seeders/data/csm_broadcasts.json'));
     const broadcasts = csm_broadcasts.map((element) => ({
       templateId: element.templateId,
       name: element.name,
