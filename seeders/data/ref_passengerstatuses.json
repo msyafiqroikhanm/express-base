@@ -1,0 +1,6 @@
+[
+  { "name": "Waiting"},
+  { "name": "Enroute"},
+  { "name": "Arrived"},
+  { "name": "No Show"}
+]

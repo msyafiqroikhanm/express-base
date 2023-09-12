@@ -248,6 +248,33 @@ module.exports = {
       updatedAt: new Date(),
     }));
     await queryInterface.bulkInsert('REF_FoodScheduleStatuses', food_schedule_statuses);
+
+    //* REF_PassengerStatuses
+    const ref_passengerstatuses = JSON.parse(fs.readFileSync('./seeders/data/ref_passengerstatuses.json'));
+    const passengerstatus = ref_passengerstatuses.map((element) => ({
+      name: element.name,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    }));
+    await queryInterface.bulkInsert('REF_PassengerStatuses', passengerstatus);
+
+    //* REF_VehicleScheduleStatuses
+    const ref_vehicleschedulestatuses = JSON.parse(fs.readFileSync('./seeders/data/ref_vehicleschedulestatuses.json'));
+    const vehicleschedulestatuses = ref_vehicleschedulestatuses.map((element) => ({
+      name: element.name,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    }));
+    await queryInterface.bulkInsert('REF_VehicleScheduleStatuses', vehicleschedulestatuses);
+
+    //* REF_VehicleTypes
+    const ref_vehicletypes = JSON.parse(fs.readFileSync('./seeders/data/ref_vehicletypes.json'));
+    const vehicletypes = ref_vehicletypes.map((element) => ({
+      name: element.name,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    }));
+    await queryInterface.bulkInsert('REF_VehicleTypes', vehicletypes);
   },
 
   async down(queryInterface, Sequelize) {
@@ -344,6 +371,18 @@ module.exports = {
       restartIdentity: true,
     });
     await queryInterface.bulkDelete('REF_FoodScheduleStatuses', null, {
+      truncate: true,
+      restartIdentity: true,
+    });
+    await queryInterface.bulkDelete('REF_PassengerStatuses', null, {
+      truncate: true,
+      restartIdentity: true,
+    });
+    await queryInterface.bulkDelete('REF_VehicleScheduleStatuses', null, {
+      truncate: true,
+      restartIdentity: true,
+    });
+    await queryInterface.bulkDelete('REF_VehicleTypes', null, {
       truncate: true,
       restartIdentity: true,
     });
