@@ -30,7 +30,7 @@ class AuthController {
 
       await updateUserLogin({ id: user.id }, { lastLogin: new Date() });
       const message = 'Berhasil Login';
-      return ResponseFormatter.success(res, 200, 'OK', message, {
+      return ResponseFormatter.success200(res, message, {
         name: user.participant.name,
         role: user.Role.name,
         access_token: `Bearer ${access_token}`,
