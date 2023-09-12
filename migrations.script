@@ -57,3 +57,9 @@ sequelize model:generate --name REF_MetaTemplateLanguage --attributes name:strin
 sequelize model:generate --name CSM_Conversation --attributes name:string, phoneNbr:string, timeStamp: date
 sequelize model:generate --name REF_MenuType --attributes name:string
 sequelize model:generate --name FNB_Courier --attributes name:string,phoneNbr:string
+sequelize model:generate --name TPT_SchedulePassenger --attributes vehicleScheduleId:integer, participantId:integer, statusId:integer
+sequelize model:generate --name TPT_Driver --attributes name:string, phoneNbr:string, email:string
+sequelize model:generate --name TPT_VehicleSchedule --attributes driverId:integer, vehicleId:integer, pickUpId:integer, destinationId:integer, statusId:integer, name:string, pickUpTime:date, dropOffTime:date
+sequelize model:generate --name TPT_VehicleTracking --attributes vehicleId:integer, latitude:string, longtitude:string, accuracy:string, time:date
+sequelize model:generate --name TPT_Vehicle --attributes vendorId:integer, typeId:integer, qrId:integer, name:string, vehicleNo:string, vehiclePlateNo:string, quantity:integer, availableQuantity:integer, capacity:integer
+sequelize model:generate --name TPT_Vendor --attributes name:string, address:text, phoneNbr:string, email:string

@@ -5,7 +5,7 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable('REF_MenuTypes', {
+    await queryInterface.createTable('TPT_Drivers', {
       id: {
         allowNull: false,
         autoIncrement: true,
@@ -13,6 +13,12 @@ module.exports = {
         type: Sequelize.INTEGER,
       },
       name: {
+        type: Sequelize.STRING,
+      },
+      phoneNbr: {
+        type: Sequelize.STRING,
+      },
+      email: {
         type: Sequelize.STRING,
       },
       createdAt: {
@@ -26,6 +32,6 @@ module.exports = {
     });
   },
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable('REF_MenuTypes');
+    await queryInterface.dropTable('TPT_Drivers');
   },
 };

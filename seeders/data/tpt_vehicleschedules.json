@@ -1,0 +1,12 @@
+[
+  {
+    "driverId":1,
+    "vehicleId":1,
+    "pickUpId":1,
+    "destinationId":2,
+    "statusId":1,
+    "name":"Penjemputan Kelompok A Lomba A",
+    "pickUpTime":"2023-09-02 12:00:00",
+    "dropOffTime":null
+  }
+]

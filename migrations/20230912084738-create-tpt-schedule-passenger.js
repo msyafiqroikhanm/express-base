@@ -5,15 +5,25 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable('REF_MenuTypes', {
+    await queryInterface.createTable('TPT_SchedulePassengers', {
       id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
         type: Sequelize.INTEGER,
       },
-      name: {
-        type: Sequelize.STRING,
+      vehicleScheduleId: {
+        allowNull: false,
+        primaryKey: true,
+        type: Sequelize.INTEGER,
+      },
+      participantId: {
+        allowNull: false,
+        primaryKey: true,
+        type: Sequelize.INTEGER,
+      },
+      statusId: {
+        type: Sequelize.INTEGER,
       },
       createdAt: {
         allowNull: false,
@@ -26,6 +36,6 @@ module.exports = {
     });
   },
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable('REF_MenuTypes');
+    await queryInterface.dropTable('TPT_SchedulePassengers');
   },
 };
