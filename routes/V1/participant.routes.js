@@ -175,6 +175,23 @@ router.post(
 );
 
 router.post(
+  '/committees/import',
+  async (req, res, next) => {
+    Authentication.authenticate(
+      req,
+      res,
+      next,
+      await features().then((feature) => [
+        feature.create_participant_committee,
+      ]),
+    );
+  },
+  uploadDocument.single('participantDocument'),
+  ValidateMiddleware.resultWithMandatoryFile,
+  ParticipantController.createCommitteeViaImport,
+);
+
+router.post(
   '/committees',
   async (req, res, next) => {
     Authentication.authenticate(
