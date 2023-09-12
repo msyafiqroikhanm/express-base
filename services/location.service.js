@@ -7,6 +7,8 @@ const {
   USR_PIC,
   USR_User,
   PAR_Participant,
+  REF_RoomType,
+  REF_RoomStatus,
 } = require('../models');
 
 const selectAllLocations = async (where) => {
@@ -64,6 +66,28 @@ const selectLocation = async (where) => {
       {
         model: ACM_Location,
         as: 'childLocation',
+      },
+      {
+        model: ACM_Facility,
+        as: 'facilities',
+        attributes: { exclude: ['createdAt', 'updatedAt'] },
+      },
+      {
+        model: ACM_Room,
+        as: 'rooms',
+        attributes: { exclude: ['createdAt', 'updatedAt'] },
+        include: [
+          {
+            model: REF_RoomType,
+            as: 'type',
+            attributes: { exclude: ['createdAt', 'updatedAt'] },
+          },
+          {
+            model: REF_RoomStatus,
+            as: 'status',
+            attributes: { exclude: ['createdAt', 'updatedAt'] },
+          },
+        ],
       },
     ],
   });

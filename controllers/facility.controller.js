@@ -14,12 +14,17 @@ class FacilityController {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
 
-      console.log(JSON.stringify(req.user.limitation, null, 2));
+      // console.log(JSON.stringify(req.user.limitation, null, 2));
       const where = {};
       if (!req.user.limitation.isAdmin) {
         where.locationId = {
           [Op.or]: req.user.limitation.access.location,
         };
+      }
+      if (req.query) {
+        if (req.query.locationId) {
+          where.locationId = req.query.locationId;
+        }
       }
       const data = await selectAllFacilities(where);
 

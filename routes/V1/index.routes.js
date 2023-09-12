@@ -26,6 +26,7 @@ const webhookRoutes = require('./webhook.routes');
 const broadcastTemplateRoutes = require('./broadcastTemplate.routes');
 const lodgerRoutes = require('./lodgers.routes');
 const broadcastRoutes = require('./broadcast.routes');
+const profileRoutes = require('./profile.routes');
 
 router.use('/auth', authRoutes);
 router.use('/config', configRoutes);
@@ -53,5 +54,6 @@ router.use('/webhook', webhookRoutes);
 router.use('/broadcast-templates', broadcastTemplateRoutes);
 router.use('/lodgers', lodgerRoutes);
 router.use('/broadcasts', broadcastRoutes);
+router.use('/profile', profileRoutes);
 
 module.exports = router;
