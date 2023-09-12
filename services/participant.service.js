@@ -58,17 +58,25 @@ const selectAllParticipant = async (query, where) => {
     });
   }
 
+  const seperatedParticipant = { committee: [], participant: [] };
+
   // parsed retun data
   participants.forEach((participant) => {
     if (participant.contingent) {
       participant.contingent.dataValues.region = participant.contingent.region.dataValues.name;
     }
-    participant.dataValues.identityType = participant.identityType.dataValues.name;
-    participant.dataValues.participantType = participant.participantType.dataValues.name;
+    participant.dataValues.identityType = participant.identityType?.dataValues.name;
+    participant.dataValues.participantType = participant.participantType?.dataValues.name;
+    // separating bettween normal participant and committee participant
+    if (participant.contingent && participant.participantType) {
+      seperatedParticipant.participant.push(participant);
+    } else {
+      seperatedParticipant.committee.push(participant);
+    }
   });
 
   return {
-    success: true, message: 'Successfully Getting All Participant', content: participants,
+    success: true, message: 'Successfully Getting All Participant', content: seperatedParticipant,
   };
 };
 
@@ -449,17 +457,8 @@ const createParticipantViaImport = async (file) => {
 
 const validateCommitteeInputs = async (form, file, id) => {
   const {
-    typeId, identityTypeId, name, gender,
-    birthDate, identityNo, phoneNbr, email, address,
+    identityTypeId, name, gender, birthDate, identityNo, phoneNbr, email, address,
   } = form;
-
-  // check participant type id validity
-  const participantTypeInstance = await REF_ParticipantType.findByPk(typeId);
-  if (!participantTypeInstance) {
-    return {
-      isValid: false, code: 404, message: 'Participant Type Data Not Found',
-    };
-  }
 
   // check identity type id validity
   const identityTypeInstance = await REF_IdentityType.findByPk(identityTypeId);
@@ -532,7 +531,6 @@ const validateCommitteeInputs = async (form, file, id) => {
   return {
     isValid: true,
     form: {
-      participantType: participantTypeInstance,
       identityType: identityTypeInstance,
       name,
       gender,
@@ -551,7 +549,7 @@ const createComittee = async (form) => {
   const participantInstance = await PAR_Participant.create({
     contingentId: null,
     qrId: null,
-    typeId: form.participantType.id,
+    typeId: null,
     identityTypeId: form.identityType.id,
     name: form.name,
     gender: form.gender,
@@ -576,7 +574,6 @@ const updateCommittee = async (id, form) => {
     };
   }
 
-  participantInstance.typeId = form.participantType.id;
   participantInstance.identityTypeId = form.identityType.id;
   participantInstance.name = form.name;
   participantInstance.gender = form.gender;
@@ -600,7 +597,6 @@ const createCommitteeViaImport = async (file) => {
     };
   }
 
-  const participantTypes = await REF_ParticipantType.findAll();
   const identityTypes = await REF_IdentityType.findAll();
   const existingParticipants = await PAR_Participant.findAll({ attributes: ['identityTypeId', 'identityNo', 'phoneNbr', 'email'] });
 
@@ -615,9 +611,6 @@ const createCommitteeViaImport = async (file) => {
     const identityType = identityTypes.find(
       (identity) => identity.name?.toLowerCase() === element.identityType?.toLowerCase(),
     );
-    const type = participantTypes.find(
-      (participantType) => participantType.name?.toLowerCase() === element.role?.toLowerCase(),
-    );
     return {
       name: element.name,
       gender: element.gender,
@@ -627,7 +620,6 @@ const createCommitteeViaImport = async (file) => {
       email: element.email,
       address: element.address,
       identityTypeId: identityType?.id || null,
-      typeId: type?.id || null,
     };
   });
 
