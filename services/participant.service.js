@@ -58,6 +58,8 @@ const selectAllParticipant = async (query, where) => {
     });
   }
 
+  const seperatedParticipant = { committee: [], participant: [] };
+
   // parsed retun data
   participants.forEach((participant) => {
     if (participant.contingent) {
@@ -65,10 +67,16 @@ const selectAllParticipant = async (query, where) => {
     }
     participant.dataValues.identityType = participant.identityType?.dataValues.name;
     participant.dataValues.participantType = participant.participantType?.dataValues.name;
+    // separating bettween normal participant and committee participant
+    if (participant.contingent && participant.participantType) {
+      seperatedParticipant.participant.push(participant);
+    } else {
+      seperatedParticipant.committee.push(participant);
+    }
   });
 
   return {
-    success: true, message: 'Successfully Getting All Participant', content: participants,
+    success: true, message: 'Successfully Getting All Participant', content: seperatedParticipant,
   };
 };
 
