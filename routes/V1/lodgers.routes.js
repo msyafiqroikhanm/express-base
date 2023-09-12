@@ -44,6 +44,24 @@ router.get(
 );
 
 router.get(
+  '/participants',
+  async (req, res, next) => {
+    Authentication.authenticate(
+      req,
+      res,
+      next,
+      await features().then((feature) => [
+        feature.view_lodger,
+        feature.create_lodger,
+        feature.update_lodger,
+        feature.delete_lodger,
+      ]),
+    );
+  },
+  LodgerController.getParticipantsWhoHaveNotReveivedAccomodation,
+);
+
+router.get(
   '/:id',
   async (req, res, next) => {
     Authentication.authenticate(
