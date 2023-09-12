@@ -8,7 +8,9 @@ const fs = require('fs');
 module.exports = {
   async up(queryInterface, Sequelize) {
     //* REF_configurationCategory
-    const ref_configurationcategories = JSON.parse(fs.readFileSync('./seeders/data/ref_configurationcategories.json'));
+    const ref_configurationcategories = JSON.parse(
+      fs.readFileSync('./seeders/data/ref_configurationcategories.json'),
+    );
     const categories = ref_configurationcategories.map((element) => ({
       name: element.name,
       createdAt: new Date(),
@@ -27,7 +29,9 @@ module.exports = {
     await queryInterface.bulkInsert('REF_QRTypes', qrTypes);
 
     //* REF_EventCategories
-    const ref_eventcategories = JSON.parse(fs.readFileSync('./seeders/data/ref_eventcategories.json'));
+    const ref_eventcategories = JSON.parse(
+      fs.readFileSync('./seeders/data/ref_eventcategories.json'),
+    );
     const eventCategories = ref_eventcategories.map((element) => ({
       name: element.name,
       createdAt: new Date(),
@@ -54,7 +58,9 @@ module.exports = {
     await queryInterface.bulkInsert('REF_GroupStatuses', groupStatuses);
 
     //* REF_ParticipantTypes
-    const ref_participanttypes = JSON.parse(fs.readFileSync('./seeders/data/ref_participanttypes.json'));
+    const ref_participanttypes = JSON.parse(
+      fs.readFileSync('./seeders/data/ref_participanttypes.json'),
+    );
     const participantTypes = ref_participanttypes.map((element) => ({
       name: element.name,
       createdAt: new Date(),
@@ -99,7 +105,9 @@ module.exports = {
     await queryInterface.bulkInsert('REF_RoomStatuses', roomStatuses);
 
     //* REF_LodgerStatuses
-    const ref_lodgerstatuses = JSON.parse(fs.readFileSync('./seeders/data/ref_lodgerstatuses.json'));
+    const ref_lodgerstatuses = JSON.parse(
+      fs.readFileSync('./seeders/data/ref_lodgerstatuses.json'),
+    );
     const lodgerStatuses = ref_lodgerstatuses.map((element) => ({
       name: element.name,
       createdAt: new Date(),
@@ -108,7 +116,9 @@ module.exports = {
     await queryInterface.bulkInsert('REF_LodgerStatuses', lodgerStatuses);
 
     //* REF_ChatBotResponseTypes
-    const ref_chatbotresponsetypes = JSON.parse(fs.readFileSync('./seeders/data/ref_chatbotresponsetypes.json'));
+    const ref_chatbotresponsetypes = JSON.parse(
+      fs.readFileSync('./seeders/data/ref_chatbotresponsetypes.json'),
+    );
     const responsetypes = ref_chatbotresponsetypes.map((element) => ({
       name: element.name,
       createdAt: new Date(),
@@ -126,7 +136,9 @@ module.exports = {
     await queryInterface.bulkInsert('REF_FeedbackTypes', feedbacktypes);
 
     //* REF_FeedbackTargets
-    const ref_feedbacktargets = JSON.parse(fs.readFileSync('./seeders/data/ref_feedbacktargets.json'));
+    const ref_feedbacktargets = JSON.parse(
+      fs.readFileSync('./seeders/data/ref_feedbacktargets.json'),
+    );
     const feedbacktargets = ref_feedbacktargets.map((element) => ({
       name: element.name,
       createdAt: new Date(),
@@ -135,7 +147,9 @@ module.exports = {
     await queryInterface.bulkInsert('REF_FeedbackTargets', feedbacktargets);
 
     //* REF_FeedbackStatuses
-    const ref_feedbackstatuses = JSON.parse(fs.readFileSync('./seeders/data/ref_feedbackstatuses.json'));
+    const ref_feedbackstatuses = JSON.parse(
+      fs.readFileSync('./seeders/data/ref_feedbackstatuses.json'),
+    );
     const feedbackStatuses = ref_feedbackstatuses.map((element) => ({
       name: element.name,
       createdAt: new Date(),
@@ -153,7 +167,9 @@ module.exports = {
     await queryInterface.bulkInsert('REF_FAQTypes', faqtypes);
 
     //* REF_TemplateCategories
-    const ref_templatecategories = JSON.parse(fs.readFileSync('./seeders/data/ref_templatecategories.json'));
+    const ref_templatecategories = JSON.parse(
+      fs.readFileSync('./seeders/data/ref_templatecategories.json'),
+    );
     const templatecategories = ref_templatecategories.map((element) => ({
       name: element.name,
       createdAt: new Date(),
@@ -162,7 +178,9 @@ module.exports = {
     await queryInterface.bulkInsert('REF_TemplateCategories', templatecategories);
 
     //* REF_MetaTemplateCategories
-    const ref_metatemplatecategories = JSON.parse(fs.readFileSync('./seeders/data/ref_metatemplatecategories.json'));
+    const ref_metatemplatecategories = JSON.parse(
+      fs.readFileSync('./seeders/data/ref_metatemplatecategories.json'),
+    );
     const metatemplatecategories = ref_metatemplatecategories.map((element) => ({
       name: element.name,
       createdAt: new Date(),
@@ -171,7 +189,9 @@ module.exports = {
     await queryInterface.bulkInsert('REF_MetaTemplateCategories', metatemplatecategories);
 
     //* REF_TemplateHeaderTypes
-    const ref_templateheadertype = JSON.parse(fs.readFileSync('./seeders/data/ref_templateheadertype.json'));
+    const ref_templateheadertype = JSON.parse(
+      fs.readFileSync('./seeders/data/ref_templateheadertype.json'),
+    );
     const templateheadertype = ref_templateheadertype.map((element) => ({
       name: element.name,
       createdAt: new Date(),
@@ -189,7 +209,9 @@ module.exports = {
     await queryInterface.bulkInsert('REF_PICTypes', pictypes);
 
     //* REF_MetaTemplateLanguages
-    const ref_metatemplatelanguages = JSON.parse(fs.readFileSync('./seeders/data/ref_metatemplatelanguages.json'));
+    const ref_metatemplatelanguages = JSON.parse(
+      fs.readFileSync('./seeders/data/ref_metatemplatelanguages.json'),
+    );
     const metatemplatelanguages = ref_metatemplatelanguages.map((element) => ({
       name: element.name,
       value: element.value,
@@ -197,6 +219,35 @@ module.exports = {
       updatedAt: new Date(),
     }));
     await queryInterface.bulkInsert('REF_MetaTemplateLanguages', metatemplatelanguages);
+
+    //* REF_MenuType
+    const ref_menutypes = JSON.parse(fs.readFileSync('./seeders/data/ref_menutypes.json'));
+    const menu_types = ref_menutypes.map((element) => ({
+      name: element.name,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    }));
+    await queryInterface.bulkInsert('REF_MenuTypes', menu_types);
+
+    //* REF_FoodType
+    const ref_foodtypes = JSON.parse(fs.readFileSync('./seeders/data/ref_foodtypes.json'));
+    const food_types = ref_foodtypes.map((element) => ({
+      name: element.name,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    }));
+    await queryInterface.bulkInsert('REF_FoodTypes', food_types);
+
+    //* REF_FoodScheduleStatus
+    const ref_foodschedulestatuses = JSON.parse(
+      fs.readFileSync('./seeders/data/ref_foodschedulestatuses.json'),
+    );
+    const food_schedule_statuses = ref_foodschedulestatuses.map((element) => ({
+      name: element.name,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    }));
+    await queryInterface.bulkInsert('REF_FoodScheduleStatuses', food_schedule_statuses);
   },
 
   async down(queryInterface, Sequelize) {
@@ -281,6 +332,18 @@ module.exports = {
       restartIdentity: true,
     });
     await queryInterface.bulkDelete('REF_MetaTemplateLanguages', null, {
+      truncate: true,
+      restartIdentity: true,
+    });
+    await queryInterface.bulkDelete('REF_FoodType', null, {
+      truncate: true,
+      restartIdentity: true,
+    });
+    await queryInterface.bulkDelete('REF_MenuType', null, {
+      truncate: true,
+      restartIdentity: true,
+    });
+    await queryInterface.bulkDelete('REF_FoodScheduleStatuses', null, {
       truncate: true,
       restartIdentity: true,
     });
