@@ -9,6 +9,7 @@ const {
   validateCommitteeInputs,
   createComittee,
   updateCommittee,
+  createCommitteeViaImport,
 } = require('../services/participant.service');
 
 class Participant {
@@ -117,7 +118,7 @@ class Participant {
         return ResponseFormatter.error400(res, 'Bad Request', data.message);
       }
 
-      // Delete uploaded file when error happens
+      // Delete uploaded file after success create participant in bulk
       if (req.file) {
         await deleteFile(relative(__dirname, req.file.path));
       }
@@ -278,6 +279,33 @@ class Participant {
 
       return ResponseFormatter.success200(res, data.message, data.content);
     } catch (error) {
+      next(error);
+    }
+  }
+
+  static async createCommitteeViaImport(req, res, next) {
+    try {
+      res.url = `${req.method} ${req.originalUrl}`;
+
+      const data = await createCommitteeViaImport(req.file);
+      if (!data.success && data.code === 400) {
+        // Delete uploaded file when error happens
+        if (req.file) {
+          await deleteFile(relative(__dirname, req.file.path));
+        }
+        return ResponseFormatter.error400(res, 'Bad Request', data.message);
+      }
+
+      // Delete uploaded file after success create committee in bulk
+      if (req.file) {
+        await deleteFile(relative(__dirname, req.file.path));
+      }
+      return ResponseFormatter.success201(res, data.message, data.content);
+    } catch (error) {
+      // Delete uploaded file when error happens
+      if (req.file) {
+        await deleteFile(relative(__dirname, req.file.path));
+      }
       next(error);
     }
   }

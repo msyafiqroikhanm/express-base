@@ -199,6 +199,18 @@ const validateParticipantInputs = async (form, file, id, where) => {
         isValid: false, code: 400, message: `Phone Number ${phoneNbr} Already Used In System`,
       };
     }
+
+    // check email duplicate
+    const isDuplicateEmail = await PAR_Participant.findOne({
+      where: {
+        id: { [Op.ne]: id }, email,
+      },
+    });
+    if (isDuplicateEmail) {
+      return {
+        isValid: false, code: 400, message: `Email ${email} Already Used In System`,
+      };
+    }
   } else {
     // check identity number duplicate
     const isDuplicateIdentityNo = await PAR_Participant.findOne({ where: { identityNo } });
@@ -213,6 +225,14 @@ const validateParticipantInputs = async (form, file, id, where) => {
     if (isDuplicatePhoneNo) {
       return {
         isValid: false, code: 400, message: `Phone Number ${phoneNbr} Already Used In System`,
+      };
+    }
+
+    // check email duplicate
+    const isDuplicateEmail = await PAR_Participant.findOne({ where: { email } });
+    if (isDuplicateEmail) {
+      return {
+        isValid: false, code: 400, message: `Email ${email} Already Used In System`,
       };
     }
   }
@@ -352,6 +372,11 @@ const createParticipantViaImport = async (file) => {
   const participantTypes = await REF_ParticipantType.findAll();
   const identityTypes = await REF_IdentityType.findAll();
   const contignets = await PAR_Contingent.findAll();
+  const existingParticipants = await PAR_Participant.findAll({ attributes: ['identityTypeId', 'identityNo', 'phoneNbr', 'email'] });
+
+  const existPhoneNbr = existingParticipants.map((participant) => participant.phoneNbr);
+  const existEmail = existingParticipants.map((participant) => participant.email);
+  const existIdentity = existingParticipants.map((participant) => participant.identityNo);
 
   const workbook = XLSX.readFile(file.path);
   const sheet = workbook.SheetNames[0];
@@ -380,20 +405,45 @@ const createParticipantViaImport = async (file) => {
     };
   });
 
-  participants.forEach(async (participant) => {
+  const invalidData = [];
+  await Promise.all(participants.map(async (participant, index) => {
+    // check if participant have duplicate data with phoneNbr, email, identityNo
+    if (existEmail.includes(participant.email)) {
+      invalidData.push(`Duplicate email ${participant.email} for participant ${participant.name} at row ${index + 1}`);
+      return;
+    }
+    if (existPhoneNbr.includes(participant.phoneNbr)) {
+      invalidData.push(`Duplicate phone number ${participant.phoneNbr} for participant ${participant.name} at row ${index + 1}`);
+      return;
+    }
+    if (existIdentity.includes(participant.identityNo)) {
+      invalidData.push(`Duplicate identity number ${participant.identityNo} for participant ${participant.name} at row ${index + 1}`);
+      return;
+    }
+
+    // validate participant inputs
     const inputs = await validateParticipantInputs(participant);
     if (!inputs.isValid && inputs.code === 404) {
-      return { success: false, code: 404, message: inputs.message };
+      invalidData.push(`${inputs.message} at row ${index + 1}`);
+      return;
     }
     if (!inputs.isValid && inputs.code === 400) {
-      return { success: false, code: 400, message: inputs.message };
+      invalidData.push(`${inputs.message} at row ${index + 1}`);
+      return;
     }
 
+    // create participant and
+    // register new participant email, phoneNbr, and identityNo To Exist Array
     await createParticipant(inputs.form);
-  });
+    existEmail.push(participant.email);
+    existPhoneNbr.push(participant.phoneNbr);
+    existIdentity.push(participant.identityNo);
+  }));
 
   return {
-    success: true, message: 'Praticipant Successfully Created In Bulk Via Import', content: 'Praticipant Successfully Created In Bulk Via Import',
+    success: true,
+    message: 'Praticipant Successfully Created In Bulk Via Import',
+    content: invalidData,
   };
 };
 
@@ -543,6 +593,86 @@ const updateCommittee = async (id, form) => {
   };
 };
 
+const createCommitteeViaImport = async (file) => {
+  if (!['xlsx'].includes(file.originalname.split('.')[1])) {
+    return {
+      success: false, code: 400, message: 'Upload only supports file types [xlsx]',
+    };
+  }
+
+  const participantTypes = await REF_ParticipantType.findAll();
+  const identityTypes = await REF_IdentityType.findAll();
+  const existingParticipants = await PAR_Participant.findAll({ attributes: ['identityTypeId', 'identityNo', 'phoneNbr', 'email'] });
+
+  const existPhoneNbr = existingParticipants.map((participant) => participant.phoneNbr);
+  const existEmail = existingParticipants.map((participant) => participant.email);
+  const existIdentity = existingParticipants.map((participant) => participant.identityNo);
+
+  const workbook = XLSX.readFile(file.path);
+  const sheet = workbook.SheetNames[0];
+  const data = XLSX.utils.sheet_to_json(workbook.Sheets[sheet]);
+  const participants = data.map((element) => {
+    const identityType = identityTypes.find(
+      (identity) => identity.name?.toLowerCase() === element.identityType?.toLowerCase(),
+    );
+    const type = participantTypes.find(
+      (participantType) => participantType.name?.toLowerCase() === element.role?.toLowerCase(),
+    );
+    return {
+      name: element.name,
+      gender: element.gender,
+      birthDate: element.birthDate,
+      identityNo: element.identityNo,
+      phoneNbr: element.phoneNbr,
+      email: element.email,
+      address: element.address,
+      identityTypeId: identityType?.id || null,
+      typeId: type?.id || null,
+    };
+  });
+
+  const invalidData = [];
+  await Promise.all(participants.map(async (participant, index) => {
+    // check if participant have duplicate data with phoneNbr, email, identityNo
+    if (existEmail.includes(participant.email)) {
+      invalidData.push(`Duplicate email ${participant.email} for committee ${participant.name} at row ${index + 1}`);
+      return;
+    }
+    if (existPhoneNbr.includes(participant.phoneNbr)) {
+      invalidData.push(`Duplicate phone number ${participant.phoneNbr} for committee ${participant.name} at row ${index + 1}`);
+      return;
+    }
+    if (existIdentity.includes(participant.identityNo)) {
+      invalidData.push(`Duplicate identity number ${participant.identityNo} for committee ${participant.name} at row ${index + 1}`);
+      return;
+    }
+
+    // validate participant inputs
+    const inputs = await validateCommitteeInputs(participant);
+    if (!inputs.isValid && inputs.code === 404) {
+      invalidData.push(`${inputs.message} at row ${index + 1}`);
+      return;
+    }
+    if (!inputs.isValid && inputs.code === 400) {
+      invalidData.push(`${inputs.message} at row ${index + 1}`);
+      return;
+    }
+
+    // create committee and
+    // register new committee email, phoneNbr, and identityNo To Exist Array
+    await createComittee(inputs.form);
+    existEmail.push(participant.email);
+    existPhoneNbr.push(participant.phoneNbr);
+    existIdentity.push(participant.identityNo);
+  }));
+
+  return {
+    success: true,
+    message: 'Praticipant Committee Successfully Created In Bulk Via Import',
+    content: invalidData,
+  };
+};
+
 module.exports = {
   selectAllParticipant,
   selectParticipant,
@@ -556,4 +686,5 @@ module.exports = {
   validateCommitteeInputs,
   createComittee,
   updateCommittee,
+  createCommitteeViaImport,
 };
