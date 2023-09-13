@@ -26,6 +26,8 @@ const {
   PassengerStatus,
   MenuType,
   FoodType,
+  VehicleScheduleStatus,
+  VehicleType,
 } = require('../../controllers/reference.controller');
 const ValidateMiddleware = require('../../middlewares/validate.middleware');
 const Authentication = require('../../middlewares/auth.middleware');
@@ -1967,6 +1969,177 @@ router.delete(
     );
   },
   FoodType.delete,
+);
+
+// * Vehicle Schedule Status
+router.get(
+  '/vehicle-schedule-statuses',
+  async (req, res, next) => {
+    Authentication.authenticate(
+      req,
+      res,
+      next,
+      await features().then((feature) => [
+        feature.view_vehicle_schedule_status,
+        feature.create_vehicle_schedule_status,
+        feature.update_vehicle_schedule_status,
+        feature.delete_vehicle_schedule_status,
+      ]),
+    );
+  },
+  VehicleScheduleStatus.getAll,
+);
+
+router.get(
+  '/vehicle-schedule-statuses/:id',
+  async (req, res, next) => {
+    Authentication.authenticate(
+      req,
+      res,
+      next,
+      await features().then((feature) => [
+        feature.view_vehicle_schedule_status,
+        feature.update_vehicle_schedule_status,
+        feature.delete_vehicle_schedule_status,
+      ]),
+    );
+  },
+  VehicleScheduleStatus.getDetail,
+);
+
+router.post(
+  '/vehicle-schedule-statuses',
+  async (req, res, next) => {
+    Authentication.authenticate(
+      req,
+      res,
+      next,
+      await features().then((feature) => [
+        feature.create_vehicle_schedule_status,
+      ]),
+    );
+  },
+  [check('name', "Name attribute can't be empty").notEmpty()],
+  ValidateMiddleware.result,
+  VehicleScheduleStatus.create,
+);
+
+router.put(
+  '/vehicle-schedule-statuses/:id',
+  async (req, res, next) => {
+    Authentication.authenticate(
+      req,
+      res,
+      next,
+      await features().then((feature) => [
+        feature.update_vehicle_schedule_status,
+      ]),
+    );
+  },
+  [check('name', "Name attribute can't be empty").notEmpty()],
+  ValidateMiddleware.result,
+  VehicleScheduleStatus.update,
+);
+
+router.delete(
+  '/vehicle-schedule-statuses/:id',
+  async (req, res, next) => {
+    Authentication.authenticate(
+      req,
+      res,
+      next,
+      await features().then((feature) => [
+        feature.delete_vehicle_schedule_status,
+      ]),
+    );
+  },
+  VehicleScheduleStatus.delete,
+);
+
+// * Vehicle Type
+
+router.get(
+  '/vehicle-types',
+  async (req, res, next) => {
+    Authentication.authenticate(
+      req,
+      res,
+      next,
+      await features().then((feature) => [
+        feature.view_vehicle_type,
+        feature.create_vehicle_type,
+        feature.update_vehicle_type,
+        feature.delete_vehicle_type,
+      ]),
+    );
+  },
+  VehicleType.getAll,
+);
+
+router.get(
+  '/vehicle-types/:id',
+  async (req, res, next) => {
+    Authentication.authenticate(
+      req,
+      res,
+      next,
+      await features().then((feature) => [
+        feature.view_vehicle_type,
+        feature.update_vehicle_type,
+        feature.delete_vehicle_type,
+      ]),
+    );
+  },
+  VehicleType.getDetail,
+);
+
+router.post(
+  '/vehicle-types',
+  async (req, res, next) => {
+    Authentication.authenticate(
+      req,
+      res,
+      next,
+      await features().then((feature) => [
+        feature.create_vehicle_type,
+      ]),
+    );
+  },
+  [check('name', "Name attribute can't be empty").notEmpty()],
+  ValidateMiddleware.result,
+  VehicleType.create,
+);
+
+router.put(
+  '/vehicle-types/:id',
+  async (req, res, next) => {
+    Authentication.authenticate(
+      req,
+      res,
+      next,
+      await features().then((feature) => [
+        feature.update_vehicle_type,
+      ]),
+    );
+  },
+  [check('name', "Name attribute can't be empty").notEmpty()],
+  ValidateMiddleware.result,
+  VehicleType.update,
+);
+
+router.delete(
+  '/vehicle-types/:id',
+  async (req, res, next) => {
+    Authentication.authenticate(
+      req,
+      res,
+      next,
+      await features().then((feature) => [
+        feature.delete_vehicle_type,
+      ]),
+    );
+  },
+  VehicleType.delete,
 );
 
 module.exports = router;
