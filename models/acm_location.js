@@ -42,6 +42,9 @@ module.exports = (sequelize, DataTypes) => {
       // * Facility
       ACM_Location.hasMany(models.ACM_Facility, { foreignKey: 'locationId', as: 'facilities' });
 
+      // * Vehicle Schedule
+      ACM_Location.hasMany(models.TPT_VehicleSchedule, { foreignKey: 'pickUpId', as: 'pickUpDestionation' });
+      ACM_Location.hasMany(models.TPT_VehicleSchedule, { foreignKey: 'destinationId', as: 'scheduleDestionation' });
       // ACM_Location.belongsTo(models.USR_PIC, {
       //   foreignKey: 'picId',
       //   as: 'pic',

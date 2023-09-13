@@ -1,0 +1,20 @@
+[
+  {
+    "vendorId": 1,
+    "typeId": 8,
+    "name": "Example Big Bus",
+    "vehicleNo": "J-9412902",
+    "vehiclePlateNo": "B-9324-DAF",
+    "capacity":45,
+    "isAvailable":false
+  },
+  {
+    "vendorId": 1,
+    "typeId": 6,
+    "name": "Example Mini Bus",
+    "vehicleNo": "J-9412902",
+    "vehiclePlateNo": "B-9324-DAF",
+    "capacity":15,
+    "isAvailable":true
+  }
+]

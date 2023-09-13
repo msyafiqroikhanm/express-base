@@ -21,7 +21,18 @@ const {
   REF_LodgerStatus,
   REF_PICType,
   REF_MetaTemplateLanguage,
+  REF_PassengerStatus,
+  TPT_SchedulePassenger,
+  REF_MenuType,
+  REF_FoodType,
+  REF_FoodScheduleStatus,
+  REF_VehicleScheduleStatus,
+  TPT_VehicleSchedule,
+  REF_VehicleType,
+  TPT_Vehicle,
 } = require('../models');
+
+// * Configuration Category
 
 const selectAllConfigCategories = async () => {
   const data = await REF_ConfigurationCategory.findAll();
@@ -102,6 +113,8 @@ const deleteSysConfigCategory = async (id) => {
   };
 };
 
+// * QR Type
+
 const selectAllQRTypes = async () => {
   const data = await REF_QRType.findAll();
   return data;
@@ -170,6 +183,8 @@ const deleteQRType = async (id) => {
     content: `QR Type ${name} Successfully Deleted`,
   };
 };
+
+// * Event Categories
 
 const selectAllEventCategories = async () => {
   const data = await REF_EventCategory.findAll();
@@ -250,6 +265,8 @@ const deleteEventCategory = async (id) => {
   };
 };
 
+// * Region
+
 const selectAllRegions = async () => {
   const regions = await REF_Region.findAll();
 
@@ -327,6 +344,8 @@ const deleteRegion = async (id) => {
     content: `Region ${name} Successfully Deleted`,
   };
 };
+
+// * Group Status
 
 const selectAllGroupStatuses = async () => {
   const statuses = await REF_GroupStatus.findAll();
@@ -406,6 +425,8 @@ const deleteGroupStatus = async (id) => {
   };
 };
 
+// * Participant Type
+
 const selectAllParticipantTypes = async () => {
   const types = await REF_ParticipantType.findAll();
 
@@ -483,6 +504,8 @@ const deleteParticipantType = async (id) => {
     content: `Participant Type ${name} Successfully Deleted`,
   };
 };
+
+// * Identity Type
 
 const selectAllIdentityTypes = async () => {
   const types = await REF_IdentityType.findAll();
@@ -562,6 +585,8 @@ const deleteIdentityType = async (id) => {
   };
 };
 
+// * Location Type
+
 const selectAllLocationTypes = async () => {
   const locationTypes = await REF_LocationType.findAll();
 
@@ -640,6 +665,7 @@ const deleteLocationType = async (id) => {
 };
 
 //* Chatbot Response Type
+
 const selectAllChatbotResponseTypes = async () => {
   const data = await REF_ChatBotResponseType.findAll();
 
@@ -721,6 +747,8 @@ const deleteChatbotResponseType = async (id) => {
   };
 };
 
+// * Feedback Type
+
 const selectAllFeedbackTypes = async () => {
   const data = await REF_FeedbackType.findAll();
 
@@ -798,6 +826,8 @@ const deleteFeedbackType = async (id) => {
     content: `Feedback Type ${name} Successfully Deleted`,
   };
 };
+
+// * Feedback Type
 
 const selectAllFeedbackTargets = async () => {
   const data = await REF_FeedbackTarget.findAll();
@@ -877,6 +907,8 @@ const deleteFeedbackTarget = async (id) => {
   };
 };
 
+// * Feedback Status
+
 const selectAllFeedbackStatuses = async () => {
   const data = await REF_FeedbackStatus.findAll();
 
@@ -954,6 +986,8 @@ const deleteFeedbackStatus = async (id) => {
     content: `Feedback Status ${name} Successfully Deleted`,
   };
 };
+
+// * FAQ Type
 
 const selectAllFAQTypes = async () => {
   const data = await REF_FAQType.findAll();
@@ -1033,6 +1067,8 @@ const deleteFAQType = async (id) => {
   };
 };
 
+// * Template Category
+
 const selectAllTemplateCategories = async () => {
   const data = await REF_TemplateCategory.findAll();
 
@@ -1110,6 +1146,8 @@ const deleteTemplateCategory = async (id) => {
     content: `Template Category ${name} Successfully Deleted`,
   };
 };
+
+// * META Template Category
 
 const selectAllMetaTemplateCategories = async () => {
   const data = await REF_MetaTemplateCategory.findAll();
@@ -1189,6 +1227,8 @@ const deleteMetaTemplateCategory = async (id) => {
   };
 };
 
+// * Template Header Type
+
 const selectAllTemplateHeaderTypes = async () => {
   const data = await REF_TemplateHeaderType.findAll();
 
@@ -1267,6 +1307,8 @@ const deleteTemplateHeaderType = async (id) => {
   };
 };
 
+// * Room Type
+
 const selectAllRoomTypes = async () => {
   const typeInstance = await REF_RoomType.findAll();
 
@@ -1343,6 +1385,8 @@ const deleteRoomType = async (id) => {
     content: `Room Type ${name} Successfully Deleted`,
   };
 };
+
+// * Room Status
 
 const selectAllRoomStatuses = async () => {
   const typeInstance = await REF_RoomStatus.findAll();
@@ -1421,6 +1465,8 @@ const deleteRoomStatus = async (id) => {
   };
 };
 
+// * Lodger
+
 const selectAllLodgerStatuses = async () => {
   const typeInstance = await REF_LodgerStatus.findAll();
 
@@ -1497,6 +1543,8 @@ const deleteLodgerStatus = async (id) => {
     content: `Lodger Status ${name} Successfully Deleted`,
   };
 };
+
+// * PIC
 
 const selectAllPICTypes = async () => {
   const typeInstance = await REF_PICType.findAll();
@@ -1575,6 +1623,8 @@ const deletePICType = async (id) => {
   };
 };
 
+// * META Language
+
 const selectAllMetaLanguages = async () => {
   const data = await REF_MetaTemplateLanguage.findAll();
 
@@ -1582,6 +1632,489 @@ const selectAllMetaLanguages = async () => {
     success: true,
     message: 'Successfully Getting All Meta Language',
     content: data,
+  };
+};
+
+// * Passenger Status
+const selectAllPassengerStatuses = async () => {
+  const data = await REF_PassengerStatus.findAll();
+
+  return {
+    success: true,
+    message: 'Successfully Getting All Passenger Status',
+    content: data,
+  };
+};
+
+const selectPassengerStatus = async (id) => {
+  const statusInstance = await REF_PassengerStatus.findByPk(id);
+  if (!statusInstance) {
+    return {
+      success: false,
+      code: 404,
+      message: 'Passenger Status Data Not Found',
+    };
+  }
+
+  return {
+    success: true,
+    message: 'Successfully Getting Passenger Status',
+    content: statusInstance,
+  };
+};
+
+const createPassengerStatus = async (form) => {
+  const statusInstance = await REF_PassengerStatus.create({ name: form.name });
+
+  return {
+    success: true,
+    message: 'Passenger Status Successfully Created',
+    content: statusInstance,
+  };
+};
+
+const updatePassengerStatus = async (form, id) => {
+  const statusInstance = await REF_PassengerStatus.findByPk(id);
+  if (!statusInstance) {
+    return {
+      success: false,
+      code: 404,
+      message: 'Passenger Status Data Not Found',
+    };
+  }
+
+  statusInstance.name = form.name;
+  await statusInstance.save();
+
+  return {
+    success: true,
+    message: 'Passenger Status Successfully Updated',
+    content: statusInstance,
+  };
+};
+
+const deletePassengerStatus = async (id) => {
+  const statusInstance = await REF_PassengerStatus.findByPk(id);
+  if (!statusInstance) {
+    return {
+      success: false,
+      code: 404,
+      message: 'Passenger Status Data Not Found',
+    };
+  }
+
+  const { name } = statusInstance.dataValues;
+
+  await statusInstance.destroy();
+
+  await TPT_SchedulePassenger.update(
+    { statusId: null },
+    { where: { statusId: statusInstance.id } },
+  );
+
+  return {
+    success: true,
+    message: 'Passenger Status Successfully Deleted',
+    content: `Passenger Status ${name} Successfully Deleted`,
+  };
+};
+
+// * Menu Type
+const selectAllMenuTypes = async () => {
+  const data = await REF_MenuType.findAll();
+
+  return {
+    success: true,
+    message: 'Successfully Getting All Menu Type',
+    content: data,
+  };
+};
+
+const selectMenuType = async (id) => {
+  const statusInstance = await REF_MenuType.findByPk(id);
+  if (!statusInstance) {
+    return {
+      success: false,
+      code: 404,
+      message: 'Menu Type Data Not Found',
+    };
+  }
+
+  return {
+    success: true,
+    message: 'Successfully Getting Menu Type',
+    content: statusInstance,
+  };
+};
+
+const createMenuType = async (form) => {
+  const statusInstance = await REF_MenuType.create({ name: form.name });
+
+  return {
+    success: true,
+    message: 'Menu Type Successfully Created',
+    content: statusInstance,
+  };
+};
+
+const updateMenuType = async (form, id) => {
+  const statusInstance = await REF_MenuType.findByPk(id);
+  if (!statusInstance) {
+    return {
+      success: false,
+      code: 404,
+      message: 'Menu Type Data Not Found',
+    };
+  }
+
+  statusInstance.name = form.name;
+  await statusInstance.save();
+
+  return {
+    success: true,
+    message: 'Menu Type Successfully Updated',
+    content: statusInstance,
+  };
+};
+
+const deleteMenuType = async (id) => {
+  const statusInstance = await REF_MenuType.findByPk(id);
+  if (!statusInstance) {
+    return {
+      success: false,
+      code: 404,
+      message: 'Menu Type Data Not Found',
+    };
+  }
+
+  const { name } = statusInstance.dataValues;
+
+  await statusInstance.destroy();
+
+  return {
+    success: true,
+    message: 'Menu Type Successfully Deleted',
+    content: `Menu Type ${name} Successfully Deleted`,
+  };
+};
+
+// * Food Type
+const selectAllFoodTypes = async () => {
+  const data = await REF_FoodType.findAll();
+
+  return {
+    success: true,
+    message: 'Successfully Getting All Food Type',
+    content: data,
+  };
+};
+
+const selectFoodType = async (id) => {
+  const statusInstance = await REF_FoodType.findByPk(id);
+  if (!statusInstance) {
+    return {
+      success: false,
+      code: 404,
+      message: 'Food Type Data Not Found',
+    };
+  }
+
+  return {
+    success: true,
+    message: 'Successfully Getting Food Type',
+    content: statusInstance,
+  };
+};
+
+const createFoodType = async (form) => {
+  const statusInstance = await REF_FoodType.create({ name: form.name });
+
+  return {
+    success: true,
+    message: 'Food Type Successfully Created',
+    content: statusInstance,
+  };
+};
+
+const updateFoodType = async (form, id) => {
+  const statusInstance = await REF_FoodType.findByPk(id);
+  if (!statusInstance) {
+    return {
+      success: false,
+      code: 404,
+      message: 'Food Type Data Not Found',
+    };
+  }
+
+  statusInstance.name = form.name;
+  await statusInstance.save();
+
+  return {
+    success: true,
+    message: 'Food Type Successfully Updated',
+    content: statusInstance,
+  };
+};
+
+const deleteFoodType = async (id) => {
+  const statusInstance = await REF_FoodType.findByPk(id);
+  if (!statusInstance) {
+    return {
+      success: false,
+      code: 404,
+      message: 'Food Type Data Not Found',
+    };
+  }
+
+  const { name } = statusInstance.dataValues;
+
+  await statusInstance.destroy();
+
+  return {
+    success: true,
+    message: 'Food Type Successfully Deleted',
+    content: `Food Type ${name} Successfully Deleted`,
+  };
+};
+
+// * Food Schedule Status
+const selectAllFoodScheduleStatuses = async () => {
+  const data = await REF_FoodScheduleStatus.findAll();
+
+  return {
+    success: true,
+    message: 'Successfully Getting All Food Schedule Status',
+    content: data,
+  };
+};
+
+const selectFoodScheduleStatus = async (id) => {
+  const statusInstance = await REF_FoodScheduleStatus.findByPk(id);
+  if (!statusInstance) {
+    return {
+      success: false,
+      code: 404,
+      message: 'Food Schedule Status Data Not Found',
+    };
+  }
+
+  return {
+    success: true,
+    message: 'Successfully Getting Food Schedule Status',
+    content: statusInstance,
+  };
+};
+
+const createFoodScheduleStatus = async (form) => {
+  const statusInstance = await REF_FoodScheduleStatus.create({ name: form.name });
+
+  return {
+    success: true,
+    message: 'Food Schedule Status Successfully Created',
+    content: statusInstance,
+  };
+};
+
+const updateFoodScheduleStatus = async (form, id) => {
+  const statusInstance = await REF_FoodScheduleStatus.findByPk(id);
+  if (!statusInstance) {
+    return {
+      success: false,
+      code: 404,
+      message: 'Food Schedule Status Data Not Found',
+    };
+  }
+
+  statusInstance.name = form.name;
+  await statusInstance.save();
+
+  return {
+    success: true,
+    message: 'Food Schedule Status Successfully Updated',
+    content: statusInstance,
+  };
+};
+
+const deleteFoodScheduleStatus = async (id) => {
+  const statusInstance = await REF_FoodScheduleStatus.findByPk(id);
+  if (!statusInstance) {
+    return {
+      success: false,
+      code: 404,
+      message: 'Food Schedule Status Data Not Found',
+    };
+  }
+
+  const { name } = statusInstance.dataValues;
+
+  await statusInstance.destroy();
+
+  return {
+    success: true,
+    message: 'Food Schedule Status Successfully Deleted',
+    content: `Food Schedule Status ${name} Successfully Deleted`,
+  };
+};
+
+// * Vehicle Schedule Status
+
+const selectAllVehicleScheduleStatuses = async () => {
+  const data = await REF_VehicleScheduleStatus.findAll();
+
+  return {
+    success: true,
+    message: 'Successfully Getting All Vehicle Schedule Status',
+    content: data,
+  };
+};
+
+const selectVehicleScheduleStatus = async (id) => {
+  const statusInstance = await REF_VehicleScheduleStatus.findByPk(id);
+  if (!statusInstance) {
+    return {
+      success: false,
+      code: 404,
+      message: 'Vehicle Schedule Status Data Not Found',
+    };
+  }
+
+  return {
+    success: true,
+    message: 'Successfully Getting Vehicle Schedule Status',
+    content: statusInstance,
+  };
+};
+
+const createVehicleScheduleStatus = async (form) => {
+  const statusInstance = await REF_VehicleScheduleStatus.create({ name: form.name });
+
+  return {
+    success: true,
+    message: 'Vehicle Schedule Status Successfully Created',
+    content: statusInstance,
+  };
+};
+
+const updateVehicleScheduleStatus = async (form, id) => {
+  const statusInstance = await REF_VehicleScheduleStatus.findByPk(id);
+  if (!statusInstance) {
+    return {
+      success: false,
+      code: 404,
+      message: 'Vehicle Schedule Status Data Not Found',
+    };
+  }
+
+  statusInstance.name = form.name;
+  await statusInstance.save();
+
+  return {
+    success: true,
+    message: 'Vehicle Schedule Status Successfully Updated',
+    content: statusInstance,
+  };
+};
+
+const deleteVehicleScheduleStatus = async (id) => {
+  const statusInstance = await REF_VehicleScheduleStatus.findByPk(id);
+  if (!statusInstance) {
+    return {
+      success: false,
+      code: 404,
+      message: 'Vehicle Schedule Status Data Not Found',
+    };
+  }
+  const { name } = statusInstance.dataValues;
+  await statusInstance.destroy();
+
+  await TPT_VehicleSchedule.update({ statusId: null }, { where: { statusId: statusInstance.id } });
+
+  return {
+    success: true,
+    message: 'Vehicle Schedule Status Successfully Deleted',
+    content: `Vehicle Schedule Status ${name} Successfully Deleted`,
+  };
+};
+
+// * Vehicle Type
+
+const selectAllVehicletTypes = async () => {
+  const data = await REF_VehicleType.findAll();
+
+  return {
+    succes: true,
+    message: 'Successfully Getting All Vehicle Type',
+    content: data,
+  };
+};
+
+const selectVehicleType = async (id) => {
+  const typeInstance = await REF_VehicleType.findByPk(id);
+  if (!typeInstance) {
+    return {
+      success: false,
+      code: 404,
+      message: 'Vehicle Type Data Not Found',
+    };
+  }
+
+  return {
+    success: true,
+    message: 'Successfully Getting Vehicle Type',
+    content: typeInstance,
+  };
+};
+
+const createVehicleType = async (form) => {
+  const typeInstance = await REF_VehicleType.create({ name: form.name });
+
+  return {
+    success: true,
+    message: 'Vehicle Type Successfully Created',
+    content: typeInstance,
+  };
+};
+
+const updateVehicleType = async (form, id) => {
+  const typeInstance = await REF_VehicleType.findByPk(id);
+  if (!typeInstance) {
+    return {
+      success: false,
+      code: 404,
+      message: 'Vehicle Type Data Not Found',
+    };
+  }
+
+  typeInstance.name = form.name;
+  await typeInstance.save();
+
+  return {
+    success: true,
+    message: 'Vehicle Type Successfully Updated',
+    content: typeInstance,
+  };
+};
+
+const deleteVehicleType = async (id) => {
+  const typeInstance = await REF_VehicleType.findByPk(id);
+  if (!typeInstance) {
+    return {
+      success: false,
+      code: 404,
+      message: 'Vehicle Type Data Not Found',
+    };
+  }
+
+  const { name } = typeInstance.dataValues;
+
+  await typeInstance.destroy();
+
+  await TPT_Vehicle.update({ typeId: null }, { where: { typeId: typeInstance.id } });
+
+  return {
+    success: true,
+    message: 'Vehicle Type Successfully Deleted',
+    content: `Vehicle Type ${name} Successfully Deleted`,
   };
 };
 
@@ -1724,5 +2257,47 @@ module.exports = {
   },
   metaLanguage: {
     selectAllMetaLanguages,
+  },
+  passengerStatus: {
+    selectAllPassengerStatuses,
+    selectPassengerStatus,
+    createPassengerStatus,
+    updatePassengerStatus,
+    deletePassengerStatus,
+  },
+  menuType: {
+    selectAllMenuTypes,
+    selectMenuType,
+    createMenuType,
+    updateMenuType,
+    deleteMenuType,
+  },
+  foodType: {
+    selectAllFoodTypes,
+    selectFoodType,
+    createFoodType,
+    updateFoodType,
+    deleteFoodType,
+  },
+  vehicleScheduleStatus: {
+    selectAllVehicleScheduleStatuses,
+    selectVehicleScheduleStatus,
+    createVehicleScheduleStatus,
+    updateVehicleScheduleStatus,
+    deleteVehicleScheduleStatus,
+  },
+  vehicleType: {
+    selectAllVehicletTypes,
+    selectVehicleType,
+    createVehicleType,
+    updateVehicleType,
+    deleteVehicleType,
+  },
+  foodScheduleStatus: {
+    selectAllFoodScheduleStatuses,
+    selectFoodScheduleStatus,
+    createFoodScheduleStatus,
+    updateFoodScheduleStatus,
+    deleteFoodScheduleStatus,
   },
 };

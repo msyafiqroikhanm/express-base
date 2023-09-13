@@ -23,6 +23,12 @@ module.exports = (sequelize, DataTypes) => {
         otherKey: 'broadcastId',
       });
 
+      PAR_Participant.belongsToMany(models.TPT_VehicleSchedule, {
+        through: 'TPT_SchedulePassenger',
+        foreignKey: 'participantId',
+        otherKey: 'vehicleScheduleId',
+      });
+
       PAR_Participant.belongsTo(models.PAR_Contingent, {
         foreignKey: 'contingentId',
         as: 'contingent',
@@ -43,6 +49,7 @@ module.exports = (sequelize, DataTypes) => {
         as: 'history',
       });
       PAR_Participant.hasMany(models.CSM_BroadcastParticipant, { foreignKey: 'participantId' });
+      PAR_Participant.hasMany(models.TPT_SchedulePassenger, { foreignKey: 'participantId' });
 
       PAR_Participant.hasOne(models.USR_User, { foreignKey: 'participantId', as: 'user' });
     }

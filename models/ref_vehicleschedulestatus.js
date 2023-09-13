@@ -12,7 +12,7 @@ module.exports = (sequelize, DataTypes) => {
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
-      // define association here
+      REF_VehicleScheduleStatus.hasMany(models.TPT_VehicleSchedule, { foreignKey: 'statusId', as: 'schedules' });
     }
   }
   REF_VehicleScheduleStatus.init({

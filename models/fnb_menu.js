@@ -1,28 +1,28 @@
 'use strict';
-
 const {
-  Model,
+  Model
 } = require('sequelize');
-
 module.exports = (sequelize, DataTypes) => {
-  class REF_PassengerStatus extends Model {
+  class FNB_Menu extends Model {
     /**
      * Helper method for defining associations.
      * This method is not a part of Sequelize lifecycle.
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
-      REF_PassengerStatus.hasMany(models.TPT_SchedulePassenger, { foreignKey: 'statusId', as: 'passengers' });
+      // define association here
     }
   }
-  REF_PassengerStatus.init({
-    name: {
-      type: DataTypes.STRING,
-      allowNull: false,
-    },
+  FNB_Menu.init({
+    parentMenuId: DataTypes.INTEGER,
+    menuTypeId: DataTypes.INTEGER,
+    foodTypeId: DataTypes.INTEGER,
+    name: DataTypes.STRING,
+    quantity: DataTypes.INTEGER,
+    description: DataTypes.TEXT
   }, {
     sequelize,
-    modelName: 'REF_PassengerStatus',
+    modelName: 'FNB_Menu',
   });
-  return REF_PassengerStatus;
+  return FNB_Menu;
 };

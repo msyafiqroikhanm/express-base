@@ -1,0 +1,23 @@
+[
+  {
+    "vehicleId":1,
+    "latitude":"1.4912",
+    "longtitude":"-2.9314",
+    "accuracy":"42",
+    "time":"2023-01-02 12:05"
+  },
+  {
+    "vehicleId":1,
+    "latitude":"1.5010",
+    "longtitude":"-2.9242",
+    "accuracy":"42",
+    "time":"2023-01-02 12:10"
+  },
+  {
+    "vehicleId":2,
+    "latitude":"2.5010",
+    "longtitude":"-3.9242",
+    "accuracy":"42",
+    "time":"2023-01-02 10:10"
+  }
+]

@@ -1,0 +1,17 @@
+[
+  {
+    "vehicleScheduleId":1,
+    "participantId":1,
+    "statusId":2
+  },
+  {
+    "vehicleScheduleId":1,
+    "participantId":2,
+    "statusId":2
+  },
+  {
+    "vehicleScheduleId":1,
+    "participantId":3,
+    "statusId":2
+  }
+]

@@ -1,0 +1,10 @@
+[
+  { "name": "SUV"},
+  { "name": "Mini MPV"},
+  { "name": "Compact MPV"},
+  { "name": "Medium MPV"},
+  { "name": "Mini Van"},
+  { "name": "Mini Bus"},
+  { "name": "Medium Bus"},
+  { "name": "Big Bus"}
+]

@@ -1,0 +1,8 @@
+[
+    {"name":"Belum Diproduksi"},
+    {"name":"Proses Produksi"},
+    {"name":"Proses Penjemputan"},
+    {"name":"Proses Pengiriman"},
+    {"name":"Selesai"},
+    {"name":"Selesai (Dengan Komplen)"}
+]
