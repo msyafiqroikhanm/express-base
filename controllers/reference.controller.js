@@ -32,6 +32,7 @@ const {
   metaLanguage,
   passengerStatus,
   menuType,
+  foodType,
 } = require('../services/reference.service');
 
 class SysConfigCategory {
@@ -1610,6 +1611,77 @@ class MenuType {
   }
 }
 
+class FoodType {
+  static async getAll(req, res, next) {
+    try {
+      res.url = `${req.method} ${req.originalUrl}`;
+
+      const data = await foodType.selectAllFoodTypes();
+
+      return ResponseFormatter.success200(res, data.message, data.content);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  static async getDetail(req, res, next) {
+    try {
+      res.url = `${req.method} ${req.originalUrl}`;
+
+      const data = await foodType.selectFoodType(req.params.id);
+      if (!data.success && data.code === 404) {
+        return ResponseFormatter.error404(res, 'Data Not Found', data.message);
+      }
+
+      return ResponseFormatter.success200(res, data.message, data.content);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  static async create(req, res, next) {
+    try {
+      res.url = `${req.method} ${req.originalUrl}`;
+
+      const data = await foodType.createFoodType(req.body);
+
+      return ResponseFormatter.success201(res, data.message, data.content);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  static async update(req, res, next) {
+    try {
+      res.url = `${req.method} ${req.originalUrl}`;
+
+      const data = await foodType.updateFoodType(req.body, req.params.id);
+      if (!data.success && data.code === 404) {
+        return ResponseFormatter.error404(res, 'Data Not Found', data.message);
+      }
+
+      return ResponseFormatter.success200(res, data.message, data.content);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  static async delete(req, res, next) {
+    try {
+      res.url = `${req.method} ${req.originalUrl}`;
+
+      const data = await foodType.deleteFoodType(req.params.id);
+      if (!data.success && data.code === 404) {
+        return ResponseFormatter.error404(res, 'Data Not Found', data.message);
+      }
+
+      return ResponseFormatter.success200(res, data.message, data.content);
+    } catch (error) {
+      next(error);
+    }
+  }
+}
+
 module.exports = {
   SysConfigCategory,
   QrType,
@@ -1634,4 +1706,5 @@ module.exports = {
   MetaLanguage,
   PassengerStatus,
   MenuType,
+  FoodType,
 };

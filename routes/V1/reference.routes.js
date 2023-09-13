@@ -25,6 +25,7 @@ const {
   MetaLanguage,
   PassengerStatus,
   MenuType,
+  FoodType,
 } = require('../../controllers/reference.controller');
 const ValidateMiddleware = require('../../middlewares/validate.middleware');
 const Authentication = require('../../middlewares/auth.middleware');
@@ -1819,10 +1820,10 @@ router.get(
       res,
       next,
       await features().then((feature) => [
-        feature.view_passenger_status,
-        feature.create_passenger_status,
-        feature.update_passenger_status,
-        feature.delete_passenger_status,
+        feature.view_menu_type,
+        feature.create_menu_type,
+        feature.update_menu_type,
+        feature.delete_menu_type,
       ]),
     );
   },
@@ -1837,9 +1838,9 @@ router.get(
       res,
       next,
       await features().then((feature) => [
-        feature.view_passenger_status,
-        feature.update_passenger_status,
-        feature.delete_passenger_status,
+        feature.view_menu_type,
+        feature.update_menu_type,
+        feature.delete_menu_type,
       ]),
     );
   },
@@ -1853,7 +1854,7 @@ router.post(
       req,
       res,
       next,
-      await features().then((feature) => [feature.create_passenger_status]),
+      await features().then((feature) => [feature.create_menu_type]),
     );
   },
   [check('name', "Name attribute can't be empty").notEmpty()],
@@ -1868,7 +1869,7 @@ router.put(
       req,
       res,
       next,
-      await features().then((feature) => [feature.update_passenger_status]),
+      await features().then((feature) => [feature.update_menu_type]),
     );
   },
   [check('name', "Name attribute can't be empty").notEmpty()],
@@ -1883,10 +1884,89 @@ router.delete(
       req,
       res,
       next,
-      await features().then((feature) => [feature.delete_passenger_status]),
+      await features().then((feature) => [feature.delete_menu_type]),
     );
   },
   MenuType.delete,
+);
+
+// * Food Type
+router.get(
+  '/food-types',
+  async (req, res, next) => {
+    Authentication.authenticate(
+      req,
+      res,
+      next,
+      await features().then((feature) => [
+        feature.view_food_type,
+        feature.create_food_type,
+        feature.update_food_type,
+        feature.delete_food_type,
+      ]),
+    );
+  },
+  FoodType.getAll,
+);
+
+router.get(
+  '/food-types/:id',
+  async (req, res, next) => {
+    Authentication.authenticate(
+      req,
+      res,
+      next,
+      await features().then((feature) => [
+        feature.view_food_type,
+        feature.update_food_type,
+        feature.delete_food_type,
+      ]),
+    );
+  },
+  FoodType.getDetail,
+);
+
+router.post(
+  '/food-types',
+  async (req, res, next) => {
+    Authentication.authenticate(
+      req,
+      res,
+      next,
+      await features().then((feature) => [feature.create_food_type]),
+    );
+  },
+  [check('name', "Name attribute can't be empty").notEmpty()],
+  ValidateMiddleware.result,
+  FoodType.create,
+);
+
+router.put(
+  '/food-types/:id',
+  async (req, res, next) => {
+    Authentication.authenticate(
+      req,
+      res,
+      next,
+      await features().then((feature) => [feature.update_food_type]),
+    );
+  },
+  [check('name', "Name attribute can't be empty").notEmpty()],
+  ValidateMiddleware.result,
+  FoodType.update,
+);
+
+router.delete(
+  '/food-types/:id',
+  async (req, res, next) => {
+    Authentication.authenticate(
+      req,
+      res,
+      next,
+      await features().then((feature) => [feature.delete_food_type]),
+    );
+  },
+  FoodType.delete,
 );
 
 module.exports = router;

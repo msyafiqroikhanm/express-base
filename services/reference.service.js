@@ -1799,6 +1799,90 @@ const deleteMenuType = async (id) => {
   };
 };
 
+// * Food Type
+const selectAllFoodTypes = async () => {
+  const data = await REF_FoodType.findAll();
+
+  return {
+    success: true,
+    message: 'Successfully Getting All Food Type',
+    content: data,
+  };
+};
+
+const selectFoodType = async (id) => {
+  const statusInstance = await REF_FoodType.findByPk(id);
+  if (!statusInstance) {
+    return {
+      success: false,
+      code: 404,
+      message: 'Food Type Data Not Found',
+    };
+  }
+
+  return {
+    success: true,
+    message: 'Successfully Getting Food Type',
+    content: statusInstance,
+  };
+};
+
+const createFoodType = async (form) => {
+  const statusInstance = await REF_FoodType.create({ name: form.name });
+
+  return {
+    success: true,
+    message: 'Food Type Successfully Created',
+    content: statusInstance,
+  };
+};
+
+const updateFoodType = async (form, id) => {
+  const statusInstance = await REF_FoodType.findByPk(id);
+  if (!statusInstance) {
+    return {
+      success: false,
+      code: 404,
+      message: 'Food Type Data Not Found',
+    };
+  }
+
+  statusInstance.name = form.name;
+  await statusInstance.save();
+
+  return {
+    success: true,
+    message: 'Food Type Successfully Updated',
+    content: statusInstance,
+  };
+};
+
+const deleteFoodType = async (id) => {
+  const statusInstance = await REF_FoodType.findByPk(id);
+  if (!statusInstance) {
+    return {
+      success: false,
+      code: 404,
+      message: 'Food Type Data Not Found',
+    };
+  }
+
+  const { name } = statusInstance.dataValues;
+
+  await statusInstance.destroy();
+
+  await TPT_SchedulePassenger.update(
+    { statusId: null },
+    { where: { statusId: statusInstance.id } },
+  );
+
+  return {
+    success: true,
+    message: 'Food Type Successfully Deleted',
+    content: `Food Type ${name} Successfully Deleted`,
+  };
+};
+
 module.exports = {
   selectAllConfigCategories,
   selectConfiCategory,
@@ -1952,5 +2036,12 @@ module.exports = {
     createMenuType,
     updateMenuType,
     deleteMenuType,
+  },
+  foodType: {
+    selectAllFoodTypes,
+    selectFoodType,
+    createFoodType,
+    updateFoodType,
+    deleteFoodType,
   },
 };
