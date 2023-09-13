@@ -26,6 +26,7 @@ const {
   PassengerStatus,
   MenuType,
   FoodType,
+  FoodScheduleStatus,
 } = require('../../controllers/reference.controller');
 const ValidateMiddleware = require('../../middlewares/validate.middleware');
 const Authentication = require('../../middlewares/auth.middleware');
@@ -1967,6 +1968,85 @@ router.delete(
     );
   },
   FoodType.delete,
+);
+
+// * Food Schedule Status
+router.get(
+  '/food-schedule-statuses',
+  async (req, res, next) => {
+    Authentication.authenticate(
+      req,
+      res,
+      next,
+      await features().then((feature) => [
+        feature.view_fnb_schedule_status,
+        feature.create_fnb_schedule_status,
+        feature.update_fnb_schedule_status,
+        feature.delete_fnb_schedule_status,
+      ]),
+    );
+  },
+  FoodScheduleStatus.getAll,
+);
+
+router.get(
+  '/food-schedule-statuses/:id',
+  async (req, res, next) => {
+    Authentication.authenticate(
+      req,
+      res,
+      next,
+      await features().then((feature) => [
+        feature.view_fnb_schedule_status,
+        feature.update_fnb_schedule_status,
+        feature.delete_fnb_schedule_status,
+      ]),
+    );
+  },
+  FoodScheduleStatus.getDetail,
+);
+
+router.post(
+  '/food-schedule-statuses',
+  async (req, res, next) => {
+    Authentication.authenticate(
+      req,
+      res,
+      next,
+      await features().then((feature) => [feature.create_fnb_schedule_status]),
+    );
+  },
+  [check('name', "Name attribute can't be empty").notEmpty()],
+  ValidateMiddleware.result,
+  FoodScheduleStatus.create,
+);
+
+router.put(
+  '/food-schedule-statuses/:id',
+  async (req, res, next) => {
+    Authentication.authenticate(
+      req,
+      res,
+      next,
+      await features().then((feature) => [feature.update_fnb_schedule_status]),
+    );
+  },
+  [check('name', "Name attribute can't be empty").notEmpty()],
+  ValidateMiddleware.result,
+  FoodScheduleStatus.update,
+);
+
+router.delete(
+  '/food-schedule-statuses/:id',
+  async (req, res, next) => {
+    Authentication.authenticate(
+      req,
+      res,
+      next,
+      await features().then((feature) => [feature.delete_fnb_schedule_status]),
+    );
+  },
+  FoodScheduleStatus.delete,
 );
 
 module.exports = router;
