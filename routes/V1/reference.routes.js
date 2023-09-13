@@ -31,7 +31,7 @@ const {
 } = require('../../controllers/reference.controller');
 const ValidateMiddleware = require('../../middlewares/validate.middleware');
 const Authentication = require('../../middlewares/auth.middleware');
-const { FoodScheduleStatus } = require('../../controllers/reference.controller copy');
+const { FoodScheduleStatus } = require('../../controllers/reference.controller');
 
 // * Configuration Category
 
