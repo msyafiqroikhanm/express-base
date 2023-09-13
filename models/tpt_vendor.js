@@ -23,6 +23,7 @@ module.exports = (sequelize, DataTypes) => {
   }, {
     sequelize,
     modelName: 'TPT_Vendor',
+    paranoid: true,
   });
   return TPT_Vendor;
 };

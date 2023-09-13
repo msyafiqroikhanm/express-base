@@ -22,6 +22,7 @@ module.exports = (sequelize, DataTypes) => {
   }, {
     sequelize,
     modelName: 'TPT_Driver',
+    paranoid: true,
   });
   return TPT_Driver;
 };
