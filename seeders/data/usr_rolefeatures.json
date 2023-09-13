@@ -267,5 +267,10 @@
     {"roleId":4,"featureId":30},
 
     {"roleId":1,"featureId":233},
-    {"roleId":1,"featureId":234}
+    {"roleId":1,"featureId":234},
+    
+    {"roleId":5,"featureId":63},
+    {"roleId":5,"featureId":64},
+    {"roleId":5,"featureId":65},
+    {"roleId":5,"featureId":66}
 ]

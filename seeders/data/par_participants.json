@@ -44,5 +44,15 @@
     "identityTypeId": 1,
     "typeId": 4,
     "contingentId": 3
+  },
+  {
+    "name": "Admin Kitchen",
+    "gender": "Male",
+    "birthDate": "1999-01-01",
+    "identityNo": "31719032842",
+    "phoneNbr": "6285711167881",
+    "email": "coor3@jxboard.id",
+    "address": "cijanntung",
+    "identityTypeId": 1
   }
 ]
