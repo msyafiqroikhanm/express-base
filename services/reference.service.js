@@ -21,7 +21,11 @@ const {
   REF_LodgerStatus,
   REF_PICType,
   REF_MetaTemplateLanguage,
+  REF_PassengerStatus,
+  TPT_SchedulePassenger,
 } = require('../models');
+
+// * Configuration Category
 
 const selectAllConfigCategories = async () => {
   const data = await REF_ConfigurationCategory.findAll();
@@ -102,6 +106,8 @@ const deleteSysConfigCategory = async (id) => {
   };
 };
 
+// * QR Type
+
 const selectAllQRTypes = async () => {
   const data = await REF_QRType.findAll();
   return data;
@@ -170,6 +176,8 @@ const deleteQRType = async (id) => {
     content: `QR Type ${name} Successfully Deleted`,
   };
 };
+
+// * Event Categories
 
 const selectAllEventCategories = async () => {
   const data = await REF_EventCategory.findAll();
@@ -250,6 +258,8 @@ const deleteEventCategory = async (id) => {
   };
 };
 
+// * Region
+
 const selectAllRegions = async () => {
   const regions = await REF_Region.findAll();
 
@@ -327,6 +337,8 @@ const deleteRegion = async (id) => {
     content: `Region ${name} Successfully Deleted`,
   };
 };
+
+// * Group Status
 
 const selectAllGroupStatuses = async () => {
   const statuses = await REF_GroupStatus.findAll();
@@ -406,6 +418,8 @@ const deleteGroupStatus = async (id) => {
   };
 };
 
+// * Participant Type
+
 const selectAllParticipantTypes = async () => {
   const types = await REF_ParticipantType.findAll();
 
@@ -483,6 +497,8 @@ const deleteParticipantType = async (id) => {
     content: `Participant Type ${name} Successfully Deleted`,
   };
 };
+
+// * Identity Type
 
 const selectAllIdentityTypes = async () => {
   const types = await REF_IdentityType.findAll();
@@ -562,6 +578,8 @@ const deleteIdentityType = async (id) => {
   };
 };
 
+// * Location Type
+
 const selectAllLocationTypes = async () => {
   const locationTypes = await REF_LocationType.findAll();
 
@@ -640,6 +658,7 @@ const deleteLocationType = async (id) => {
 };
 
 //* Chatbot Response Type
+
 const selectAllChatbotResponseTypes = async () => {
   const data = await REF_ChatBotResponseType.findAll();
 
@@ -721,6 +740,8 @@ const deleteChatbotResponseType = async (id) => {
   };
 };
 
+// * Feedback Type
+
 const selectAllFeedbackTypes = async () => {
   const data = await REF_FeedbackType.findAll();
 
@@ -798,6 +819,8 @@ const deleteFeedbackType = async (id) => {
     content: `Feedback Type ${name} Successfully Deleted`,
   };
 };
+
+// * Feedback Type
 
 const selectAllFeedbackTargets = async () => {
   const data = await REF_FeedbackTarget.findAll();
@@ -877,6 +900,8 @@ const deleteFeedbackTarget = async (id) => {
   };
 };
 
+// * Feedback Status
+
 const selectAllFeedbackStatuses = async () => {
   const data = await REF_FeedbackStatus.findAll();
 
@@ -954,6 +979,8 @@ const deleteFeedbackStatus = async (id) => {
     content: `Feedback Status ${name} Successfully Deleted`,
   };
 };
+
+// * FAQ Type
 
 const selectAllFAQTypes = async () => {
   const data = await REF_FAQType.findAll();
@@ -1033,6 +1060,8 @@ const deleteFAQType = async (id) => {
   };
 };
 
+// * Template Category
+
 const selectAllTemplateCategories = async () => {
   const data = await REF_TemplateCategory.findAll();
 
@@ -1110,6 +1139,8 @@ const deleteTemplateCategory = async (id) => {
     content: `Template Category ${name} Successfully Deleted`,
   };
 };
+
+// * META Template Category
 
 const selectAllMetaTemplateCategories = async () => {
   const data = await REF_MetaTemplateCategory.findAll();
@@ -1189,6 +1220,8 @@ const deleteMetaTemplateCategory = async (id) => {
   };
 };
 
+// * Template Header Type
+
 const selectAllTemplateHeaderTypes = async () => {
   const data = await REF_TemplateHeaderType.findAll();
 
@@ -1267,6 +1300,8 @@ const deleteTemplateHeaderType = async (id) => {
   };
 };
 
+// * Room Type
+
 const selectAllRoomTypes = async () => {
   const typeInstance = await REF_RoomType.findAll();
 
@@ -1343,6 +1378,8 @@ const deleteRoomType = async (id) => {
     content: `Room Type ${name} Successfully Deleted`,
   };
 };
+
+// * Room Status
 
 const selectAllRoomStatuses = async () => {
   const typeInstance = await REF_RoomStatus.findAll();
@@ -1421,6 +1458,8 @@ const deleteRoomStatus = async (id) => {
   };
 };
 
+// * Lodger
+
 const selectAllLodgerStatuses = async () => {
   const typeInstance = await REF_LodgerStatus.findAll();
 
@@ -1497,6 +1536,8 @@ const deleteLodgerStatus = async (id) => {
     content: `Lodger Status ${name} Successfully Deleted`,
   };
 };
+
+// * PIC
 
 const selectAllPICTypes = async () => {
   const typeInstance = await REF_PICType.findAll();
@@ -1575,6 +1616,8 @@ const deletePICType = async (id) => {
   };
 };
 
+// * META Language
+
 const selectAllMetaLanguages = async () => {
   const data = await REF_MetaTemplateLanguage.findAll();
 
@@ -1582,6 +1625,91 @@ const selectAllMetaLanguages = async () => {
     success: true,
     message: 'Successfully Getting All Meta Language',
     content: data,
+  };
+};
+
+// * Passenger Status
+
+const selectAllPassengerStatuses = async () => {
+  const data = await REF_PassengerStatus.findAll();
+
+  return {
+    success: true,
+    message: 'Successfully Getting All Passenger Status',
+    content: data,
+  };
+};
+
+const selectPassengerStatus = async (id) => {
+  const statusInstance = await REF_PassengerStatus.findByPk(id);
+  if (!statusInstance) {
+    return {
+      success: false,
+      code: 404,
+      message: 'Passenger Status Data Not Found',
+    };
+  }
+
+  return {
+    success: true,
+    message: 'Successfully Getting Passenger Status',
+    content: statusInstance,
+  };
+};
+
+const createPassengerStatus = async (form) => {
+  const statusInstance = await REF_PassengerStatus.create({ name: form.name });
+
+  return {
+    success: true,
+    message: 'Passenger Status Successfully Created',
+    content: statusInstance,
+  };
+};
+
+const updatePassengerStatus = async (form, id) => {
+  const statusInstance = await REF_PassengerStatus.findByPk(id);
+  if (!statusInstance) {
+    return {
+      success: false,
+      code: 404,
+      message: 'Passenger Status Data Not Found',
+    };
+  }
+
+  statusInstance.name = form.name;
+  await statusInstance.save();
+
+  return {
+    success: true,
+    message: 'Passenger Status Successfully Updated',
+    content: statusInstance,
+  };
+};
+
+const deletePassengerStatus = async (id) => {
+  const statusInstance = await REF_PassengerStatus.findByPk(id);
+  if (!statusInstance) {
+    return {
+      success: false,
+      code: 404,
+      message: 'Passenger Status Data Not Found',
+    };
+  }
+
+  const { name } = statusInstance.dataValues;
+
+  await statusInstance.destroy();
+
+  await TPT_SchedulePassenger.update(
+    { statusId: null },
+    { where: { statusId: statusInstance.id } },
+  );
+
+  return {
+    success: true,
+    message: 'Passenger Status Successfully Deleted',
+    content: `Passenger Status ${name} Successfully Deleted`,
   };
 };
 
@@ -1724,5 +1852,12 @@ module.exports = {
   },
   metaLanguage: {
     selectAllMetaLanguages,
+  },
+  passengerStatus: {
+    selectAllPassengerStatuses,
+    selectPassengerStatus,
+    createPassengerStatus,
+    updatePassengerStatus,
+    deletePassengerStatus,
   },
 };

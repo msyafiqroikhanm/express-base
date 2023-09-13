@@ -30,6 +30,7 @@ const {
   lodgerStatus,
   picType,
   metaLanguage,
+  passengerStatus,
 } = require('../services/reference.service');
 
 class SysConfigCategory {
@@ -1466,6 +1467,77 @@ class MetaLanguage {
   }
 }
 
+class PassengerStatus {
+  static async getAll(req, res, next) {
+    try {
+      res.url = `${req.method} ${req.originalUrl}`;
+
+      const data = await passengerStatus.selectAllPassengerStatuses();
+
+      return ResponseFormatter.success200(res, data.message, data.content);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  static async getDetail(req, res, next) {
+    try {
+      res.url = `${req.method} ${req.originalUrl}`;
+
+      const data = await passengerStatus.selectPassengerStatus(req.params.id);
+      if (!data.success && data.code === 404) {
+        return ResponseFormatter.error404(res, 'Data Not Found', data.message);
+      }
+
+      return ResponseFormatter.success200(res, data.message, data.content);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  static async create(req, res, next) {
+    try {
+      res.url = `${req.method} ${req.originalUrl}`;
+
+      const data = await passengerStatus.createPassengerStatus(req.body);
+
+      return ResponseFormatter.success201(res, data.message, data.content);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  static async update(req, res, next) {
+    try {
+      res.url = `${req.method} ${req.originalUrl}`;
+
+      const data = await passengerStatus.updatePassengerStatus(req.body, req.params.id);
+      if (!data.success && data.code === 404) {
+        return ResponseFormatter.error404(res, 'Data Not Found', data.message);
+      }
+
+      return ResponseFormatter.success200(res, data.message, data.content);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  static async delete(req, res, next) {
+    try {
+      res.url = `${req.method} ${req.originalUrl}`;
+
+      const data = await passengerStatus.deletePassengerStatus(req.params.id);
+      if (!data.success && data.code === 404) {
+        return ResponseFormatter.error404(res, 'Data Not Found', data.message);
+      }
+
+      return ResponseFormatter.success200(res, data.message, data.content);
+    } catch (error) {
+      next(error);
+    }
+  }
+}
+
 module.exports = {
   SysConfigCategory,
   QrType,
@@ -1488,4 +1560,5 @@ module.exports = {
   LodgerStatus,
   PICType,
   MetaLanguage,
+  PassengerStatus,
 };
