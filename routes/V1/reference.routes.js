@@ -24,6 +24,7 @@ const {
   PICType,
   MetaLanguage,
   PassengerStatus,
+  MenuType,
 } = require('../../controllers/reference.controller');
 const ValidateMiddleware = require('../../middlewares/validate.middleware');
 const Authentication = require('../../middlewares/auth.middleware');
@@ -1773,9 +1774,7 @@ router.post(
       req,
       res,
       next,
-      await features().then((feature) => [
-        feature.create_passenger_status,
-      ]),
+      await features().then((feature) => [feature.create_passenger_status]),
     );
   },
   [check('name', "Name attribute can't be empty").notEmpty()],
@@ -1790,9 +1789,7 @@ router.put(
       req,
       res,
       next,
-      await features().then((feature) => [
-        feature.update_passenger_status,
-      ]),
+      await features().then((feature) => [feature.update_passenger_status]),
     );
   },
   [check('name', "Name attribute can't be empty").notEmpty()],
@@ -1807,12 +1804,89 @@ router.delete(
       req,
       res,
       next,
+      await features().then((feature) => [feature.delete_passenger_status]),
+    );
+  },
+  PassengerStatus.delete,
+);
+
+// * Menu Type
+router.get(
+  '/menu-types',
+  async (req, res, next) => {
+    Authentication.authenticate(
+      req,
+      res,
+      next,
       await features().then((feature) => [
+        feature.view_passenger_status,
+        feature.create_passenger_status,
+        feature.update_passenger_status,
         feature.delete_passenger_status,
       ]),
     );
   },
-  PassengerStatus.delete,
+  MenuType.getAll,
+);
+
+router.get(
+  '/menu-types/:id',
+  async (req, res, next) => {
+    Authentication.authenticate(
+      req,
+      res,
+      next,
+      await features().then((feature) => [
+        feature.view_passenger_status,
+        feature.update_passenger_status,
+        feature.delete_passenger_status,
+      ]),
+    );
+  },
+  MenuType.getDetail,
+);
+
+router.post(
+  '/menu-types',
+  async (req, res, next) => {
+    Authentication.authenticate(
+      req,
+      res,
+      next,
+      await features().then((feature) => [feature.create_passenger_status]),
+    );
+  },
+  [check('name', "Name attribute can't be empty").notEmpty()],
+  ValidateMiddleware.result,
+  MenuType.create,
+);
+
+router.put(
+  '/menu-types/:id',
+  async (req, res, next) => {
+    Authentication.authenticate(
+      req,
+      res,
+      next,
+      await features().then((feature) => [feature.update_passenger_status]),
+    );
+  },
+  [check('name', "Name attribute can't be empty").notEmpty()],
+  ValidateMiddleware.result,
+  MenuType.update,
+);
+
+router.delete(
+  '/menu-types/:id',
+  async (req, res, next) => {
+    Authentication.authenticate(
+      req,
+      res,
+      next,
+      await features().then((feature) => [feature.delete_passenger_status]),
+    );
+  },
+  MenuType.delete,
 );
 
 module.exports = router;

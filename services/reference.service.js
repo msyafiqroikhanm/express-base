@@ -23,6 +23,9 @@ const {
   REF_MetaTemplateLanguage,
   REF_PassengerStatus,
   TPT_SchedulePassenger,
+  REF_MenuType,
+  REF_FoodType,
+  REF_FoodScheduleStatus,
 } = require('../models');
 
 // * Configuration Category
@@ -1629,7 +1632,6 @@ const selectAllMetaLanguages = async () => {
 };
 
 // * Passenger Status
-
 const selectAllPassengerStatuses = async () => {
   const data = await REF_PassengerStatus.findAll();
 
@@ -1710,6 +1712,90 @@ const deletePassengerStatus = async (id) => {
     success: true,
     message: 'Passenger Status Successfully Deleted',
     content: `Passenger Status ${name} Successfully Deleted`,
+  };
+};
+
+// * Menu Type
+const selectAllMenuTypes = async () => {
+  const data = await REF_MenuType.findAll();
+
+  return {
+    success: true,
+    message: 'Successfully Getting All Menu Type',
+    content: data,
+  };
+};
+
+const selectMenuType = async (id) => {
+  const statusInstance = await REF_MenuType.findByPk(id);
+  if (!statusInstance) {
+    return {
+      success: false,
+      code: 404,
+      message: 'Menu Type Data Not Found',
+    };
+  }
+
+  return {
+    success: true,
+    message: 'Successfully Getting Menu Type',
+    content: statusInstance,
+  };
+};
+
+const createMenuType = async (form) => {
+  const statusInstance = await REF_MenuType.create({ name: form.name });
+
+  return {
+    success: true,
+    message: 'Menu Type Successfully Created',
+    content: statusInstance,
+  };
+};
+
+const updateMenuType = async (form, id) => {
+  const statusInstance = await REF_MenuType.findByPk(id);
+  if (!statusInstance) {
+    return {
+      success: false,
+      code: 404,
+      message: 'Menu Type Data Not Found',
+    };
+  }
+
+  statusInstance.name = form.name;
+  await statusInstance.save();
+
+  return {
+    success: true,
+    message: 'Menu Type Successfully Updated',
+    content: statusInstance,
+  };
+};
+
+const deleteMenuType = async (id) => {
+  const statusInstance = await REF_MenuType.findByPk(id);
+  if (!statusInstance) {
+    return {
+      success: false,
+      code: 404,
+      message: 'Menu Type Data Not Found',
+    };
+  }
+
+  const { name } = statusInstance.dataValues;
+
+  await statusInstance.destroy();
+
+  await TPT_SchedulePassenger.update(
+    { statusId: null },
+    { where: { statusId: statusInstance.id } },
+  );
+
+  return {
+    success: true,
+    message: 'Menu Type Successfully Deleted',
+    content: `Menu Type ${name} Successfully Deleted`,
   };
 };
 
@@ -1859,5 +1945,12 @@ module.exports = {
     createPassengerStatus,
     updatePassengerStatus,
     deletePassengerStatus,
+  },
+  menuType: {
+    selectAllMenuTypes,
+    selectMenuType,
+    createMenuType,
+    updateMenuType,
+    deleteMenuType,
   },
 };
