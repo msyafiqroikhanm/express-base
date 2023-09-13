@@ -33,7 +33,8 @@ const {
   passengerStatus,
   menuType,
   foodType,
-  foodScheduleStatus,
+  vehicleScheduleStatus,
+  vehicleType,
 } = require('../services/reference.service');
 
 class SysConfigCategory {
@@ -1683,12 +1684,12 @@ class FoodType {
   }
 }
 
-class FoodScheduleStatus {
+class VehicleScheduleStatus {
   static async getAll(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
 
-      const data = await foodScheduleStatus.selectAllFoodScheduleStatuses();
+      const data = await vehicleScheduleStatus.selectAllVehicleScheduleStatuses();
 
       return ResponseFormatter.success200(res, data.message, data.content);
     } catch (error) {
@@ -1700,7 +1701,7 @@ class FoodScheduleStatus {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
 
-      const data = await foodScheduleStatus.selectFoodScheduleStatus(req.params.id);
+      const data = await vehicleScheduleStatus.selectVehicleScheduleStatus(req.params.id);
       if (!data.success && data.code === 404) {
         return ResponseFormatter.error404(res, 'Data Not Found', data.message);
       }
@@ -1715,7 +1716,7 @@ class FoodScheduleStatus {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
 
-      const data = await foodScheduleStatus.createFoodScheduleStatus(req.body);
+      const data = await vehicleScheduleStatus.createVehicleScheduleStatus(req.body);
 
       return ResponseFormatter.success201(res, data.message, data.content);
     } catch (error) {
@@ -1727,7 +1728,7 @@ class FoodScheduleStatus {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
 
-      const data = await foodScheduleStatus.updateFoodScheduleStatus(req.body, req.params.id);
+      const data = await vehicleScheduleStatus.updateVehicleScheduleStatus(req.body, req.params.id);
       if (!data.success && data.code === 404) {
         return ResponseFormatter.error404(res, 'Data Not Found', data.message);
       }
@@ -1742,7 +1743,78 @@ class FoodScheduleStatus {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
 
-      const data = await foodScheduleStatus.deleteFoodScheduleStatus(req.params.id);
+      const data = await vehicleScheduleStatus.deleteVehicleScheduleStatus(req.params.id);
+      if (!data.success && data.code === 404) {
+        return ResponseFormatter.error404(res, 'Data Not Found', data.message);
+      }
+
+      return ResponseFormatter.success200(res, data.message, data.content);
+    } catch (error) {
+      next(error);
+    }
+  }
+}
+
+class VehicleType {
+  static async getAll(req, res, next) {
+    try {
+      res.url = `${req.method} ${req.originalUrl}`;
+
+      const data = await vehicleType.selectAllVehicletTypes();
+
+      return ResponseFormatter.success200(res, data.message, data.content);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  static async getDetail(req, res, next) {
+    try {
+      res.url = `${req.method} ${req.originalUrl}`;
+
+      const data = await vehicleType.selectVehicleType(req.params.id);
+      if (!data.success && data.code === 404) {
+        return ResponseFormatter.error404(res, 'Data Not Found', data.message);
+      }
+
+      return ResponseFormatter.success200(res, data.message, data.content);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  static async create(req, res, next) {
+    try {
+      res.url = `${req.method} ${req.originalUrl}`;
+
+      const data = await vehicleType.createVehicleType(req.body);
+
+      return ResponseFormatter.success201(res, data.message, data.content);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  static async update(req, res, next) {
+    try {
+      res.url = `${req.method} ${req.originalUrl}`;
+
+      const data = await vehicleType.updateVehicleType(req.body, req.params.id);
+      if (!data.success && data.code === 404) {
+        return ResponseFormatter.error404(res, 'Data Not Found', data.message);
+      }
+
+      return ResponseFormatter.success200(res, data.message, data.content);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  static async delete(req, res, next) {
+    try {
+      res.url = `${req.method} ${req.originalUrl}`;
+
+      const data = await vehicleType.deleteVehicleType(req.params.id);
       if (!data.success && data.code === 404) {
         return ResponseFormatter.error404(res, 'Data Not Found', data.message);
       }
@@ -1779,5 +1851,6 @@ module.exports = {
   PassengerStatus,
   MenuType,
   FoodType,
-  FoodScheduleStatus,
+  VehicleScheduleStatus,
+  VehicleType,
 };

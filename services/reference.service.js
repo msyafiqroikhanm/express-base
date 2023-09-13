@@ -26,6 +26,10 @@ const {
   REF_MenuType,
   REF_FoodType,
   REF_FoodScheduleStatus,
+  REF_VehicleScheduleStatus,
+  TPT_VehicleSchedule,
+  REF_VehicleType,
+  TPT_Vehicle,
 } = require('../models');
 
 // * Configuration Category
@@ -1873,51 +1877,52 @@ const deleteFoodType = async (id) => {
   };
 };
 
-// * Food Schedule Status
-const selectAllFoodScheduleStatuses = async () => {
-  const data = await REF_FoodScheduleStatus.findAll();
+// * Vehicle Schedule Status
+
+const selectAllVehicleScheduleStatuses = async () => {
+  const data = await REF_VehicleScheduleStatus.findAll();
 
   return {
     success: true,
-    message: 'Successfully Getting All Food Schedule Status',
+    message: 'Successfully Getting All Vehicle Schedule Status',
     content: data,
   };
 };
 
-const selectFoodScheduleStatus = async (id) => {
-  const statusInstance = await REF_FoodScheduleStatus.findByPk(id);
+const selectVehicleScheduleStatus = async (id) => {
+  const statusInstance = await REF_VehicleScheduleStatus.findByPk(id);
   if (!statusInstance) {
     return {
       success: false,
       code: 404,
-      message: 'Food Schedule Status Data Not Found',
+      message: 'Vehicle Schedule Status Data Not Found',
     };
   }
 
   return {
     success: true,
-    message: 'Successfully Getting Food Schedule Status',
+    message: 'Successfully Getting Vehicle Schedule Status',
     content: statusInstance,
   };
 };
 
-const createFoodScheduleStatus = async (form) => {
-  const statusInstance = await REF_FoodScheduleStatus.create({ name: form.name });
+const createVehicleScheduleStatus = async (form) => {
+  const statusInstance = await REF_VehicleScheduleStatus.create({ name: form.name });
 
   return {
     success: true,
-    message: 'Food Schedule Status Successfully Created',
+    message: 'Vehicle Schedule Status Successfully Created',
     content: statusInstance,
   };
 };
 
-const updateFoodScheduleStatus = async (form, id) => {
-  const statusInstance = await REF_FoodScheduleStatus.findByPk(id);
+const updateVehicleScheduleStatus = async (form, id) => {
+  const statusInstance = await REF_VehicleScheduleStatus.findByPk(id);
   if (!statusInstance) {
     return {
       success: false,
       code: 404,
-      message: 'Food Schedule Status Data Not Found',
+      message: 'Vehicle Schedule Status Data Not Found',
     };
   }
 
@@ -1926,29 +1931,111 @@ const updateFoodScheduleStatus = async (form, id) => {
 
   return {
     success: true,
-    message: 'Food Schedule Status Successfully Updated',
+    message: 'Vehicle Schedule Status Successfully Updated',
     content: statusInstance,
   };
 };
 
-const deleteFoodScheduleStatus = async (id) => {
-  const statusInstance = await REF_FoodScheduleStatus.findByPk(id);
+const deleteVehicleScheduleStatus = async (id) => {
+  const statusInstance = await REF_VehicleScheduleStatus.findByPk(id);
   if (!statusInstance) {
     return {
       success: false,
       code: 404,
-      message: 'Food Schedule Status Data Not Found',
+      message: 'Vehicle Schedule Status Data Not Found',
     };
   }
-
   const { name } = statusInstance.dataValues;
-
   await statusInstance.destroy();
+
+  await TPT_VehicleSchedule.update({ statusId: null }, { where: { statusId: statusInstance.id } });
 
   return {
     success: true,
-    message: 'Food Schedule Status Successfully Deleted',
-    content: `Food Schedule Status ${name} Successfully Deleted`,
+    message: 'Vehicle Schedule Status Successfully Deleted',
+    content: `Vehicle Schedule Status ${name} Successfully Deleted`,
+  };
+};
+
+// * Vehicle Type
+
+const selectAllVehicletTypes = async () => {
+  const data = await REF_VehicleType.findAll();
+
+  return {
+    succes: true,
+    message: 'Successfully Getting All Vehicle Type',
+    content: data,
+  };
+};
+
+const selectVehicleType = async (id) => {
+  const typeInstance = await REF_VehicleType.findByPk(id);
+  if (!typeInstance) {
+    return {
+      success: false,
+      code: 404,
+      message: 'Vehicle Type Data Not Found',
+    };
+  }
+
+  return {
+    success: true,
+    message: 'Successfully Getting Vehicle Type',
+    content: typeInstance,
+  };
+};
+
+const createVehicleType = async (form) => {
+  const typeInstance = await REF_VehicleType.create({ name: form.name });
+
+  return {
+    success: true,
+    message: 'Vehicle Type Successfully Created',
+    content: typeInstance,
+  };
+};
+
+const updateVehicleType = async (form, id) => {
+  const typeInstance = await REF_VehicleType.findByPk(id);
+  if (!typeInstance) {
+    return {
+      success: false,
+      code: 404,
+      message: 'Vehicle Type Data Not Found',
+    };
+  }
+
+  typeInstance.name = form.name;
+  await typeInstance.save();
+
+  return {
+    success: true,
+    message: 'Vehicle Type Successfully Updated',
+    content: typeInstance,
+  };
+};
+
+const deleteVehicleType = async (id) => {
+  const typeInstance = await REF_VehicleType.findByPk(id);
+  if (!typeInstance) {
+    return {
+      success: false,
+      code: 404,
+      message: 'Vehicle Type Data Not Found',
+    };
+  }
+
+  const { name } = typeInstance.dataValues;
+
+  await typeInstance.destroy();
+
+  await TPT_Vehicle.update({ typeId: null }, { where: { typeId: typeInstance.id } });
+
+  return {
+    success: true,
+    message: 'Vehicle Type Successfully Deleted',
+    content: `Vehicle Type ${name} Successfully Deleted`,
   };
 };
 
@@ -2113,11 +2200,18 @@ module.exports = {
     updateFoodType,
     deleteFoodType,
   },
-  foodScheduleStatus: {
-    selectAllFoodScheduleStatuses,
-    selectFoodScheduleStatus,
-    createFoodScheduleStatus,
-    updateFoodScheduleStatus,
-    deleteFoodScheduleStatus,
+  vehicleScheduleStatus: {
+    selectAllVehicleScheduleStatuses,
+    selectVehicleScheduleStatus,
+    createVehicleScheduleStatus,
+    updateVehicleScheduleStatus,
+    deleteVehicleScheduleStatus,
+  },
+  vehicleType: {
+    selectAllVehicletTypes,
+    selectVehicleType,
+    createVehicleType,
+    updateVehicleType,
+    deleteVehicleType,
   },
 };

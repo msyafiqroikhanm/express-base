@@ -26,7 +26,8 @@ const {
   PassengerStatus,
   MenuType,
   FoodType,
-  FoodScheduleStatus,
+  VehicleScheduleStatus,
+  VehicleType,
 } = require('../../controllers/reference.controller');
 const ValidateMiddleware = require('../../middlewares/validate.middleware');
 const Authentication = require('../../middlewares/auth.middleware');
@@ -1970,83 +1971,163 @@ router.delete(
   FoodType.delete,
 );
 
-// * Food Schedule Status
+// * Vehicle Schedule Status
 router.get(
-  '/food-schedule-statuses',
+  '/vehicle-schedule-statuses',
   async (req, res, next) => {
     Authentication.authenticate(
       req,
       res,
       next,
       await features().then((feature) => [
-        feature.view_fnb_schedule_status,
-        feature.create_fnb_schedule_status,
-        feature.update_fnb_schedule_status,
-        feature.delete_fnb_schedule_status,
+        feature.view_vehicle_schedule_status,
+        feature.create_vehicle_schedule_status,
+        feature.update_vehicle_schedule_status,
+        feature.delete_vehicle_schedule_status,
       ]),
     );
   },
-  FoodScheduleStatus.getAll,
+  VehicleScheduleStatus.getAll,
 );
 
 router.get(
-  '/food-schedule-statuses/:id',
+  '/vehicle-schedule-statuses/:id',
   async (req, res, next) => {
     Authentication.authenticate(
       req,
       res,
       next,
       await features().then((feature) => [
-        feature.view_fnb_schedule_status,
-        feature.update_fnb_schedule_status,
-        feature.delete_fnb_schedule_status,
+        feature.view_vehicle_schedule_status,
+        feature.update_vehicle_schedule_status,
+        feature.delete_vehicle_schedule_status,
       ]),
     );
   },
-  FoodScheduleStatus.getDetail,
+  VehicleScheduleStatus.getDetail,
 );
 
 router.post(
-  '/food-schedule-statuses',
+  '/vehicle-schedule-statuses',
   async (req, res, next) => {
     Authentication.authenticate(
       req,
       res,
       next,
-      await features().then((feature) => [feature.create_fnb_schedule_status]),
+      await features().then((feature) => [feature.create_vehicle_schedule_status]),
     );
   },
   [check('name', "Name attribute can't be empty").notEmpty()],
   ValidateMiddleware.result,
-  FoodScheduleStatus.create,
+  VehicleScheduleStatus.create,
 );
 
 router.put(
-  '/food-schedule-statuses/:id',
+  '/vehicle-schedule-statuses/:id',
   async (req, res, next) => {
     Authentication.authenticate(
       req,
       res,
       next,
-      await features().then((feature) => [feature.update_fnb_schedule_status]),
+      await features().then((feature) => [feature.update_vehicle_schedule_status]),
     );
   },
   [check('name', "Name attribute can't be empty").notEmpty()],
   ValidateMiddleware.result,
-  FoodScheduleStatus.update,
+  VehicleScheduleStatus.update,
 );
 
 router.delete(
-  '/food-schedule-statuses/:id',
+  '/vehicle-schedule-statuses/:id',
   async (req, res, next) => {
     Authentication.authenticate(
       req,
       res,
       next,
-      await features().then((feature) => [feature.delete_fnb_schedule_status]),
+      await features().then((feature) => [feature.delete_vehicle_schedule_status]),
     );
   },
-  FoodScheduleStatus.delete,
+  VehicleScheduleStatus.delete,
+);
+
+// * Vehicle Type
+
+router.get(
+  '/vehicle-types',
+  async (req, res, next) => {
+    Authentication.authenticate(
+      req,
+      res,
+      next,
+      await features().then((feature) => [
+        feature.view_vehicle_type,
+        feature.create_vehicle_type,
+        feature.update_vehicle_type,
+        feature.delete_vehicle_type,
+      ]),
+    );
+  },
+  VehicleType.getAll,
+);
+
+router.get(
+  '/vehicle-types/:id',
+  async (req, res, next) => {
+    Authentication.authenticate(
+      req,
+      res,
+      next,
+      await features().then((feature) => [
+        feature.view_vehicle_type,
+        feature.update_vehicle_type,
+        feature.delete_vehicle_type,
+      ]),
+    );
+  },
+  VehicleType.getDetail,
+);
+
+router.post(
+  '/vehicle-types',
+  async (req, res, next) => {
+    Authentication.authenticate(
+      req,
+      res,
+      next,
+      await features().then((feature) => [feature.create_vehicle_type]),
+    );
+  },
+  [check('name', "Name attribute can't be empty").notEmpty()],
+  ValidateMiddleware.result,
+  VehicleType.create,
+);
+
+router.put(
+  '/vehicle-types/:id',
+  async (req, res, next) => {
+    Authentication.authenticate(
+      req,
+      res,
+      next,
+      await features().then((feature) => [feature.update_vehicle_type]),
+    );
+  },
+  [check('name', "Name attribute can't be empty").notEmpty()],
+  ValidateMiddleware.result,
+  VehicleType.update,
+);
+
+router.delete(
+  '/vehicle-types/:id',
+  async (req, res, next) => {
+    Authentication.authenticate(
+      req,
+      res,
+      next,
+      await features().then((feature) => [feature.delete_vehicle_type]),
+    );
+  },
+  VehicleType.delete,
 );
 
 module.exports = router;
