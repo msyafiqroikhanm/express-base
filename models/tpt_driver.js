@@ -22,6 +22,7 @@ module.exports = (sequelize, DataTypes) => {
     name: DataTypes.STRING,
     phoneNbr: DataTypes.STRING,
     email: DataTypes.STRING,
+    isAvailable: DataTypes.BOOLEAN,
   }, {
     sequelize,
     modelName: 'TPT_Driver',

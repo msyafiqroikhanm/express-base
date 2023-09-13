@@ -32,9 +32,9 @@ module.exports = {
       name: element.name,
       vehicleNo: element.vehicleNo,
       vehiclePlateNo: element.vehiclePlateNo,
-      quantity: element.quantity,
       availableQuantity: element.availableQuantity,
       capacity: element.capacity,
+      isAvailable: element.isAvailable,
       createdAt: new Date(),
       updatedAt: new Date(),
     }));
@@ -64,6 +64,7 @@ module.exports = {
       name: element.name,
       phoneNbr: element.phoneNbr,
       email: element.email,
+      isAvailable: element.isAvailable,
       createdAt: new Date(),
       updatedAt: new Date(),
     }));

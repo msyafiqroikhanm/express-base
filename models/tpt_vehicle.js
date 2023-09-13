@@ -27,9 +27,9 @@ module.exports = (sequelize, DataTypes) => {
     name: DataTypes.STRING,
     vehicleNo: DataTypes.STRING,
     vehiclePlateNo: DataTypes.STRING,
-    quantity: DataTypes.INTEGER,
     availableQuantity: DataTypes.INTEGER,
     capacity: DataTypes.INTEGER,
+    isAvailable: DataTypes.BOOLEAN,
   }, {
     sequelize,
     modelName: 'TPT_Vehicle',

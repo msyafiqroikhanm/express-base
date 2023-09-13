@@ -32,14 +32,14 @@ module.exports = {
         vehiclePlateNo: {
           type: Sequelize.STRING,
         },
-        quantity: {
-          type: Sequelize.INTEGER,
-        },
         availableQuantity: {
           type: Sequelize.INTEGER,
         },
         capacity: {
           type: Sequelize.INTEGER,
+        },
+        isAvailable: {
+          type: Sequelize.BOOLEAN,
         },
         deletedAt: {
           type: Sequelize.DATE,

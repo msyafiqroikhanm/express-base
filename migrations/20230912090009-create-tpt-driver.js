@@ -26,6 +26,9 @@ module.exports = {
         email: {
           type: Sequelize.STRING,
         },
+        isAvailable: {
+          type: Sequelize.BOOLEAN,
+        },
         deletedAt: {
           type: Sequelize.DATE,
         },
