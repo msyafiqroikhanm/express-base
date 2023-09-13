@@ -28,6 +28,7 @@ const lodgerRoutes = require('./lodgers.routes');
 const broadcastRoutes = require('./broadcast.routes');
 const profileRoutes = require('./profile.routes');
 const vendorRoutes = require('./vendor.routes');
+const courierRoutes = require('./courier.routes');
 
 router.use('/auth', authRoutes);
 router.use('/config', configRoutes);
@@ -57,5 +58,6 @@ router.use('/lodgers', lodgerRoutes);
 router.use('/broadcasts', broadcastRoutes);
 router.use('/profile', profileRoutes);
 router.use('/vendors', vendorRoutes);
+router.use('/couriers', courierRoutes);
 
 module.exports = router;
