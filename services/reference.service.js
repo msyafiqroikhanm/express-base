@@ -1877,6 +1877,85 @@ const deleteFoodType = async (id) => {
   };
 };
 
+// * Food Schedule Status
+const selectAllFoodScheduleStatuses = async () => {
+  const data = await REF_FoodScheduleStatus.findAll();
+
+  return {
+    success: true,
+    message: 'Successfully Getting All Food Schedule Status',
+    content: data,
+  };
+};
+
+const selectFoodScheduleStatus = async (id) => {
+  const statusInstance = await REF_FoodScheduleStatus.findByPk(id);
+  if (!statusInstance) {
+    return {
+      success: false,
+      code: 404,
+      message: 'Food Schedule Status Data Not Found',
+    };
+  }
+
+  return {
+    success: true,
+    message: 'Successfully Getting Food Schedule Status',
+    content: statusInstance,
+  };
+};
+
+const createFoodScheduleStatus = async (form) => {
+  const statusInstance = await REF_FoodScheduleStatus.create({ name: form.name });
+
+  return {
+    success: true,
+    message: 'Food Schedule Status Successfully Created',
+    content: statusInstance,
+  };
+};
+
+const updateFoodScheduleStatus = async (form, id) => {
+  const statusInstance = await REF_FoodScheduleStatus.findByPk(id);
+  if (!statusInstance) {
+    return {
+      success: false,
+      code: 404,
+      message: 'Food Schedule Status Data Not Found',
+    };
+  }
+
+  statusInstance.name = form.name;
+  await statusInstance.save();
+
+  return {
+    success: true,
+    message: 'Food Schedule Status Successfully Updated',
+    content: statusInstance,
+  };
+};
+
+const deleteFoodScheduleStatus = async (id) => {
+  const statusInstance = await REF_FoodScheduleStatus.findByPk(id);
+  if (!statusInstance) {
+    return {
+      success: false,
+      code: 404,
+      message: 'Food Schedule Status Data Not Found',
+    };
+  }
+
+  const { name } = statusInstance.dataValues;
+
+  await statusInstance.destroy();
+
+  return {
+    success: true,
+    message: 'Food Schedule Status Successfully Deleted',
+    content: `Food Schedule Status ${name} Successfully Deleted`,
+  };
+};
+
 // * Vehicle Schedule Status
 
 const selectAllVehicleScheduleStatuses = async () => {
@@ -2213,5 +2292,12 @@ module.exports = {
     createVehicleType,
     updateVehicleType,
     deleteVehicleType,
+  },
+  foodScheduleStatus: {
+    selectAllFoodScheduleStatuses,
+    selectFoodScheduleStatus,
+    createFoodScheduleStatus,
+    updateFoodScheduleStatus,
+    deleteFoodScheduleStatus,
   },
 };
