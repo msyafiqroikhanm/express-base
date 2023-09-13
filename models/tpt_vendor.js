@@ -13,6 +13,7 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       TPT_Vendor.hasMany(models.TPT_Vehicle, { foreignKey: 'vendorId', as: 'vehicles' });
+      TPT_Vendor.hasMany(models.TPT_Driver, { foreignKey: 'vendorId', as: 'drivers' });
     }
   }
   TPT_Vendor.init({

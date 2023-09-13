@@ -60,6 +60,7 @@ module.exports = {
       fs.readFileSync('./seeders/data/tpt_drivers.json'),
     );
     const drivers = tpt_drivers.map((element) => ({
+      vendorId: element.vendorId,
       name: element.name,
       phoneNbr: element.phoneNbr,
       email: element.email,
