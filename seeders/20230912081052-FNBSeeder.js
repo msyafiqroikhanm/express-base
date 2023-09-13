@@ -12,6 +12,7 @@ module.exports = {
     const responses = fnb_couriers.map((element) => ({
       name: element.name,
       phoneNbr: element.phoneNbr,
+      isAvailable: true,
       createdAt: new Date(),
       updatedAt: new Date(),
     }));
