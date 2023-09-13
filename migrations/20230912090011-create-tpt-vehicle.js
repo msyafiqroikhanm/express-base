@@ -32,9 +32,6 @@ module.exports = {
         vehiclePlateNo: {
           type: Sequelize.STRING,
         },
-        availableQuantity: {
-          type: Sequelize.INTEGER,
-        },
         capacity: {
           type: Sequelize.INTEGER,
         },

@@ -32,7 +32,6 @@ module.exports = {
       name: element.name,
       vehicleNo: element.vehicleNo,
       vehiclePlateNo: element.vehiclePlateNo,
-      availableQuantity: element.availableQuantity,
       capacity: element.capacity,
       isAvailable: element.isAvailable,
       createdAt: new Date(),
