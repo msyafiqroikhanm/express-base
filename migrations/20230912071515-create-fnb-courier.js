@@ -20,6 +20,9 @@ module.exports = {
         phoneNbr: {
           type: Sequelize.STRING,
         },
+        isAvailable: {
+          type: Sequelize.BOOLEAN,
+        },
         deletedAt: {
           type: Sequelize.DATE,
         },
