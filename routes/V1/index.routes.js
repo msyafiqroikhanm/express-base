@@ -30,6 +30,7 @@ const profileRoutes = require('./profile.routes');
 const vendorRoutes = require('./vendor.routes');
 const courierRoutes = require('./courier.routes');
 const driverRoutes = require('./driver.routes');
+const vehicleRoutes = require('./vehicle.routes');
 
 router.use('/auth', authRoutes);
 router.use('/config', configRoutes);
@@ -61,5 +62,6 @@ router.use('/profile', profileRoutes);
 router.use('/vendors', vendorRoutes);
 router.use('/couriers', courierRoutes);
 router.use('/drivers', driverRoutes);
+router.use('/vehicles', vehicleRoutes);
 
 module.exports = router;
