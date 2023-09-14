@@ -78,7 +78,7 @@ const updatePIC = async (id, form) => {
   if (!picInstance) {
     return {
       success: false,
-      message: 'PIC Data Not Found',
+      message: ['PIC Data Not Found'],
     };
   }
 
@@ -115,7 +115,7 @@ const deletePIC = async (id) => {
   if (!picInstance) {
     return {
       success: false,
-      message: 'PIC Data Not Found',
+      message: ['PIC Data Not Found'],
     };
   }
 

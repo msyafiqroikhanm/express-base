@@ -64,7 +64,7 @@ const selectRole = async (id) => {
     ],
   });
   if (!roleInstance) {
-    const error = { success: false, message: 'Role Not Found' };
+    const error = { success: false, message: ['Role Not Found'] };
     return error;
   }
 
@@ -91,7 +91,7 @@ const validateRoleInputs = async (form) => {
 
   const templateInstance = await QRM_QRTemplate.findByPk(form.templateId);
   if (!templateInstance) {
-    return { isValid: false, code: 404, message: 'Qr Template Data Not Found' };
+    return { isValid: false, code: 404, message: ['Qr Template Data Not Found'] };
   }
 
   return {
@@ -134,7 +134,7 @@ const updateRole = async (id, form) => {
   // validate role id
   const roleInstance = await USR_Role.findByPk(id);
   if (!roleInstance) {
-    const error = { succcess: false, code: 404, message: 'Role Data Not Found' };
+    const error = { succcess: false, code: 404, message: ['Role Data Not Found'] };
     return error;
   }
 
@@ -173,7 +173,7 @@ const deleteRole = async (id) => {
   // validate role id
   const roleInstance = await USR_Role.findByPk(id);
   if (!roleInstance) {
-    const error = { succcess: false, code: 404, message: 'Role Not Found' };
+    const error = { succcess: false, code: 404, message: ['Role Not Found'] };
     return error;
   }
 
