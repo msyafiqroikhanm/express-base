@@ -43,7 +43,7 @@ const selectModule = async (id) => {
     include: { model: USR_Module, as: 'parentModule', attributes: ['name'] },
   });
   if (!moduleInstance) {
-    const error = { success: false, code: 404, message: 'Module Data Not Found' };
+    const error = { success: false, code: 404, message: ['Module Data Not Found'] };
     return error;
   }
 
@@ -57,7 +57,7 @@ const createMainModule = async (form) => {
     const moduleInstance = await USR_Module.create(form);
     return { success: true, message: 'Module Successfully Created', content: moduleInstance };
   } catch (error) {
-    return { success: false, message: error.errors[0].message };
+    return { success: false, message: [error.errors[0].message] };
   }
 };
 
@@ -66,15 +66,15 @@ const createSubModule = async (form) => {
     // check if parent faq is exist and main module
     const mainModule = await USR_Module.findByPk(form.parentModuleId);
     if (!mainModule) {
-      return { success: false, code: 404, message: 'Main / Parent Module Data Not Found' };
+      return { success: false, code: 404, message: ['Main / Parent Module Data Not Found'] };
     }
-    if (mainModule.parentModuleId) {
-      return { success: false, code: 400, message: 'Sub Module Can\t be Set As Parent Module' };
+    if (mainModule?.parentModuleId) {
+      return { success: false, code: 400, message: ['Sub Module Can\t be Set As Parent Module'] };
     }
     const moduleInstance = await USR_Module.create(form);
     return { success: true, message: 'Module Successfully Created', content: moduleInstance };
   } catch (error) {
-    return { success: false, message: error.errors[0].message };
+    return { success: false, message: [error.errors[0].message] };
   }
 };
 
@@ -83,11 +83,11 @@ const updateMainModule = async (id, form) => {
     // validate module id
     const moduleInstance = await USR_Module.findByPk(id);
     if (!moduleInstance) {
-      const error = { success: false, code: 404, message: 'Module Data Not Found' };
+      const error = { success: false, code: 404, message: ['Module Data Not Found'] };
       return error;
     }
     if (moduleInstance.parentModuleId) {
-      return { success: false, code: 400, message: 'Can\'t Update Sub Module Using Main Module Endpoint' };
+      return { success: false, code: 400, message: ['Can\'t Update Sub Module Using Main Module Endpoint'] };
     }
 
     moduleInstance.name = form.name;
@@ -95,29 +95,44 @@ const updateMainModule = async (id, form) => {
 
     return { success: true, message: 'Module Successfully Updated', content: moduleInstance };
   } catch (error) {
-    return { success: false, message: error.errors[0].message };
+    return { success: false, message: [error.errors[0].message] };
   }
 };
 
 const updateSubModule = async (id, form) => {
   try {
+    const invalid400 = [];
+    const invalid404 = [];
+
     // validate module id
     const moduleInstance = await USR_Module.findByPk(id);
     if (!moduleInstance) {
-      const error = { success: false, code: 404, message: 'Module Data Not Found' };
-      return error;
-    }
-    if (!moduleInstance.parentModuleId) {
-      return { success: false, code: 400, message: 'Can\'t Update Main Module Using Sub Module Endpoint' };
+      invalid404.push('Module Data Not Found');
+    } else if (!moduleInstance?.parentModuleId) {
+      invalid400.push('Can\'t Update Main Module Using Sub Module Endpoint');
     }
 
     // check if parent faq is exist and main module
     const mainModule = await USR_Module.findByPk(form.parentModuleId);
     if (!mainModule) {
-      return { success: false, code: 404, message: 'Main / Parent Module Data Not Found' };
+      invalid404.push('Main / Parent Module Data Not Found');
+    } else if (mainModule?.parentModuleId) {
+      invalid400.push('Sub Module Can\t be Set As Parent Module');
     }
-    if (mainModule.parentModuleId) {
-      return { success: false, code: 400, message: 'Sub Module Can\t be Set As Parent Module' };
+
+    if (invalid400.length > 0) {
+      return {
+        isValid: false,
+        code: 400,
+        message: invalid400,
+      };
+    }
+    if (invalid404.length > 0) {
+      return {
+        isValid: false,
+        code: 404,
+        message: invalid404,
+      };
     }
 
     // after pass the check update instance with new data
@@ -127,7 +142,7 @@ const updateSubModule = async (id, form) => {
 
     return { success: true, message: 'Module Successfully Updated', content: moduleInstance };
   } catch (error) {
-    return { success: false, message: error.errors[0].message };
+    return { success: false, message: [error.errors[0].message] };
   }
 };
 
@@ -136,7 +151,7 @@ const deleteModule = async (id) => {
     // validate module id
     const moduleInstance = await USR_Module.findByPk(id);
     if (!moduleInstance) {
-      const error = { success: false, code: 404, message: 'Module Data Not Found' };
+      const error = { success: false, code: 404, message: ['Module Data Not Found'] };
       return error;
     }
 
@@ -173,7 +188,7 @@ const deleteModule = async (id) => {
       content: `Module ${name} Successfully Deleted`,
     };
   } catch (error) {
-    return { success: false, message: error.errors[0].message };
+    return { success: false, message: [error.errors[0].message] };
   }
 };
 

@@ -10,7 +10,7 @@ const selectFeature = async (id) => {
   // validate feature id
   const featureInstance = await USR_Feature.findByPk(id);
   if (!featureInstance) {
-    const error = { success: false, code: 404, message: 'Feature Data Not Found' };
+    const error = { success: false, code: 404, message: ['Feature Data Not Found'] };
     return error;
   }
 
@@ -23,7 +23,7 @@ const createFeature = async (form) => {
 
     return { success: true, message: 'Feature Successfully Created', content: featureInstance };
   } catch (error) {
-    return { success: false, message: error.errors[0].message };
+    return { success: false, message: [error.errors[0].message] };
   }
 };
 
@@ -33,7 +33,7 @@ const validateFeatureInputs = async (form) => {
   // validate module id
   const moduleInstance = await USR_Module.findByPk(moduleId);
   if (!moduleInstance) {
-    return { isValid: false, message: 'Module Data Not Found' };
+    return { isValid: false, message: ['Module Data Not Found'] };
   }
 
   return { isValid: true, form: { moduleId, name } };
@@ -44,7 +44,7 @@ const updateFeature = async (id, form) => {
     // validate feature id
     const featureInstance = await USR_Feature.findByPk(id);
     if (!featureInstance) {
-      return { success: false, code: 404, message: 'Feature Data Not Found' };
+      return { success: false, code: 404, message: ['Feature Data Not Found'] };
     }
 
     // update instance with new data
@@ -54,7 +54,7 @@ const updateFeature = async (id, form) => {
 
     return { success: true, message: 'Feature Successfully Updated', content: featureInstance };
   } catch (error) {
-    return { success: false, message: error.errors[0].message };
+    return { success: false, message: [error.errors[0].message] };
   }
 };
 
@@ -63,7 +63,7 @@ const deleteFeature = async (id) => {
     // validate feature id
     const featureInstance = await USR_Feature.findByPk(id);
     if (!featureInstance) {
-      return { success: false, code: 404, message: 'Feature Data Not Found' };
+      return { success: false, code: 404, message: ['Feature Data Not Found'] };
     }
 
     const { name } = featureInstance.dataValues;
@@ -76,7 +76,7 @@ const deleteFeature = async (id) => {
       content: `Feature ${name} Successfully Deleted`,
     };
   } catch (error) {
-    return { success: false, message: error.errors[0].message };
+    return { success: false, message: [error.errors[0].message] };
   }
 };
 
