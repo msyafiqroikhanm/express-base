@@ -42,7 +42,7 @@ const selectContingent = async (id, where) => {
   // check contingent id validity
   if (where?.id && (where?.id !== Number(id))) {
     return {
-      success: false, code: 404, message: 'Contingent Data Not Found',
+      success: false, code: 404, message: ['Contingent Data Not Found'],
     };
   }
   const contingentInstance = await PAR_Contingent.findByPk(id, {
@@ -67,7 +67,7 @@ const selectContingent = async (id, where) => {
   });
   if (!contingentInstance) {
     return {
-      success: false, code: 404, message: 'Contingent Data Not Found',
+      success: false, code: 404, message: ['Contingent Data Not Found'],
     };
   }
 
@@ -84,7 +84,7 @@ const validateContingentInput = async (form) => {
   const regionInstance = await REF_Region.findByPk(regionId);
   if (!regionInstance) {
     return {
-      isValid: false, code: 404, message: 'Region Data Not Found',
+      isValid: false, code: 404, message: ['Region Data Not Found'],
     };
   }
 
@@ -111,7 +111,7 @@ const updateContingent = async (id, form) => {
   const contingentInstance = await PAR_Contingent.findByPk(id);
   if (!contingentInstance) {
     return {
-      success: false, code: 404, message: 'Contingent Data Not Found',
+      success: false, code: 404, message: ['Contingent Data Not Found'],
     };
   }
 
@@ -129,7 +129,7 @@ const deleteContingent = async (id) => {
   const contingentInstance = await PAR_Contingent.findByPk(id);
   if (!contingentInstance) {
     return {
-      success: false, code: 404, message: 'Region Data Not Found',
+      success: false, code: 404, message: ['Region Data Not Found'],
     };
   }
 
