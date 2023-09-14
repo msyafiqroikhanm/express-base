@@ -77,7 +77,7 @@ const createPIC = async (form) => {
 
 const updatePIC = async (id, form) => {
   // check identity type id validity
-  const picInstance = await USR_PIC.findOne({ where: { id } });
+  const picInstance = await USR_PIC.findOne({ where: { id }, attributes: ['id'] });
   if (!picInstance) {
     return {
       success: false,
@@ -101,9 +101,10 @@ const updatePIC = async (id, form) => {
     return { success: false, code: 404, message: errorMessages };
   }
 
-  picInstance.userId = form.userId;
-  picInstance.typeId = form.typeId;
-  await picInstance.save();
+  await USR_PIC.update(
+    { userId: form.userId, typeId: form.typeId },
+    { where: { id: picInstance.id } },
+  );
 
   return {
     success: true,
