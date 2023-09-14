@@ -88,16 +88,16 @@ const selectDetailUser = async (id) => {
     return error;
   }
 
-  userInstance.dataValues.qrCode = userInstance.Qr.dataValues.code;
-  userInstance.dataValues.role = userInstance.Role.dataValues.name;
+  userInstance.dataValues.qrCode = userInstance.Qr?.dataValues.code;
+  userInstance.dataValues.role = userInstance.Role?.dataValues.name;
 
   if (userInstance.participant) {
     userInstance.participant.dataValues.contingent = userInstance.participant.contingent
       ?.dataValues.name || null;
     userInstance.participant.dataValues.participantType = userInstance.participant.participantType
-      .dataValues.name;
+      ?.dataValues.name;
     userInstance.participant.dataValues.identityType = userInstance.participant.identityType
-      .dataValues.name;
+      ?.dataValues.name;
   }
   delete userInstance.dataValues.Qr;
   delete userInstance.dataValues.Role;
