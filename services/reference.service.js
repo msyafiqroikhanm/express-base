@@ -30,6 +30,8 @@ const {
   TPT_VehicleSchedule,
   REF_VehicleType,
   TPT_Vehicle,
+  REF_CommitteeType,
+  PAR_Participant,
 } = require('../models');
 
 // * Configuration Category
@@ -2118,6 +2120,89 @@ const deleteVehicleType = async (id) => {
   };
 };
 
+const selectAllCommitteeTypes = async () => {
+  const data = await REF_CommitteeType.findAll();
+
+  return {
+    success: true,
+    message: 'Successfully Getting All Committee Type',
+    content: data,
+  };
+};
+
+const selectCommitteeType = async (id) => {
+  const typeInstance = await REF_CommitteeType.findByPk(id);
+  if (!typeInstance) {
+    return {
+      success: false,
+      code: 404,
+      message: ['Committee Type Data Not Found'],
+    };
+  }
+
+  return {
+    success: true,
+    message: 'Successfully Getting Committee Type',
+    content: typeInstance,
+  };
+};
+
+const createCommitteeType = async (form) => {
+  const typeInstance = await REF_CommitteeType.create({ name: form.name });
+
+  return {
+    success: true,
+    message: 'Committe Type Successfully Created',
+    content: typeInstance,
+  };
+};
+
+const updateCommitteeType = async (form, id) => {
+  const typeInstance = await REF_CommitteeType.findByPk(id);
+  if (!typeInstance) {
+    return {
+      success: false,
+      code: 404,
+      message: ['Committee Type Data Not Found'],
+    };
+  }
+
+  typeInstance.name = form.name;
+  await typeInstance.save();
+
+  return {
+    success: true,
+    message: 'Committee Type Successfully Updated',
+    content: typeInstance,
+  };
+};
+
+const deleteCommitteeType = async (id) => {
+  const typeInstance = await REF_CommitteeType.findByPk(id);
+  if (!typeInstance) {
+    return {
+      success: false,
+      code: 404,
+      message: ['Committee Type Data Not Found'],
+    };
+  }
+
+  const { name } = typeInstance.dataValues;
+
+  await typeInstance.destroy();
+
+  await PAR_Participant.update(
+    { committeeTypeId: null },
+    { where: { committeeTypeId: typeInstance.id } },
+  );
+
+  return {
+    success: true,
+    message: 'Committee Type Successfully Deleted',
+    content: `Committee Type ${name} Successfully Deleted`,
+  };
+};
+
 module.exports = {
   selectAllConfigCategories,
   selectConfiCategory,
@@ -2299,5 +2384,12 @@ module.exports = {
     createFoodScheduleStatus,
     updateFoodScheduleStatus,
     deleteFoodScheduleStatus,
+  },
+  committeeType: {
+    selectAllCommitteeTypes,
+    selectCommitteeType,
+    createCommitteeType,
+    updateCommitteeType,
+    deleteCommitteeType,
   },
 };
