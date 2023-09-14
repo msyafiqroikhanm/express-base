@@ -1,7 +1,9 @@
+/* eslint-disable no-unused-vars */
+
 'use strict';
-const {
-  Model
-} = require('sequelize');
+
+const { Model } = require('sequelize');
+
 module.exports = (sequelize, DataTypes) => {
   class FNB_Kitchen extends Model {
     /**
@@ -13,16 +15,21 @@ module.exports = (sequelize, DataTypes) => {
       // define association here
     }
   }
-  FNB_Kitchen.init({
-    picId: DataTypes.INTEGER,
-    name: DataTypes.STRING,
-    phoneNbr: DataTypes.STRING,
-    longtitude: DataTypes.STRING,
-    latitude: DataTypes.STRING,
-    address: DataTypes.TEXT
-  }, {
-    sequelize,
-    modelName: 'FNB_Kitchen',
-  });
+  FNB_Kitchen.init(
+    {
+      picId: DataTypes.INTEGER,
+      name: DataTypes.STRING,
+      phoneNbr: DataTypes.STRING,
+      longtitude: DataTypes.STRING,
+      latitude: DataTypes.STRING,
+      address: DataTypes.TEXT,
+    },
+    {
+      sequelize,
+      paranoid: true,
+      deletedAt: 'deletedAt',
+      modelName: 'FNB_Kitchen',
+    },
+  );
   return FNB_Kitchen;
 };
