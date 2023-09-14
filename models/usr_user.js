@@ -37,7 +37,10 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false,
       },
       participantId: DataTypes.INTEGER,
-      username: DataTypes.STRING,
+      username: {
+        type: DataTypes.STRING,
+        unique: true,
+      },
       password: DataTypes.STRING,
       email: DataTypes.STRING,
       lastLogin: DataTypes.DATE,

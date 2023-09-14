@@ -275,6 +275,15 @@ module.exports = {
       updatedAt: new Date(),
     }));
     await queryInterface.bulkInsert('REF_VehicleTypes', vehicletypes);
+
+    //* REF_CommitteeTypes
+    const ref_committeetypes = JSON.parse(fs.readFileSync('./seeders/data/ref_committeetypes.json'));
+    const committeetypes = ref_committeetypes.map((element) => ({
+      name: element.name,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    }));
+    await queryInterface.bulkInsert('REF_CommitteeTypes', committeetypes);
   },
 
   async down(queryInterface, Sequelize) {
@@ -383,6 +392,10 @@ module.exports = {
       restartIdentity: true,
     });
     await queryInterface.bulkDelete('REF_VehicleTypes', null, {
+      truncate: true,
+      restartIdentity: true,
+    });
+    await queryInterface.bulkDelete('REF_CommitteeTypes', null, {
       truncate: true,
       restartIdentity: true,
     });

@@ -125,10 +125,22 @@ const validateUserInputs = async (form, id) => {
     if (participantInstance?.user) {
       invalid400.push('User Account Already Exists for Participant');
     }
+
+    const duplicateUser = await USR_User.findOne({ where: { username: form.username } });
+    if (duplicateUser) {
+      invalid400.push('Username already taken');
+    }
   } else if (participantInstance?.user && id) {
     // when updating user check if participant belongs to user before update (old data)
     if (participantInstance?.user.id !== Number(id)) {
       invalid400.push('User Account Already Exists for Participant');
+    }
+  } else if (id) {
+    const duplicateUser = await USR_User.findOne({
+      where: { id: { [Op.ne]: id }, username: form.username },
+    });
+    if (duplicateUser) {
+      invalid400.push('Username already taken');
     }
   }
 
