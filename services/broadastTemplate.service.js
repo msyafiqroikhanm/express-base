@@ -7,26 +7,21 @@ const {
 const { metaMediaHandler } = require('./whatsapp.integration.service');
 
 const validateTemplateInputs = async (form, file) => {
+  const invalid400 = [];
+  const invalid404 = [];
+
   // * Template Information Check
   // check if already have more than 350 template
   const templateCount = await CSM_BroadcastTemplate.count({ paranoid: false });
   if (templateCount >= 350) {
-    return {
-      isValid: false,
-      code: 400,
-      message: 'Cannot create more message template, reaching limit of 350 templates',
-    };
+    invalid400.push('Cannot create more message template, reaching limit of 350 templates');
   }
 
   // check name duplication
   if (form.name) {
     const duplicateName = await CSM_BroadcastTemplate.findOne({ where: { name: slug(form.name, '_').toLowerCase() } });
     if (duplicateName) {
-      return {
-        isValid: false,
-        code: 400,
-        message: `Template With Name ${form.name} Already Exist`,
-      };
+      invalid400.push(`Template With Name ${form.name} Already Exist`);
     }
   }
 
@@ -35,21 +30,13 @@ const validateTemplateInputs = async (form, file) => {
   // check broadcast category id
   const categoryInstance = await REF_TemplateCategory.findByPk(form.categoryId);
   if (!categoryInstance) {
-    return {
-      isValid: false,
-      code: 404,
-      message: 'Broadcast Template Category Data Not Found',
-    };
+    invalid404.push('Broadcast Template Category Data Not Found');
   }
 
   // check header type id
   const headerTypeInstance = await REF_TemplateHeaderType.findByPk(form.headerTypeId);
   if (!headerTypeInstance) {
-    return {
-      isValid: false,
-      code: 404,
-      message: 'Broadcast Template Header Type Data Not Found',
-    };
+    invalid404.push('Broadcast Template Header Type Data Not Found');
   }
 
   // check meta category id (only for create / post)
@@ -57,11 +44,7 @@ const validateTemplateInputs = async (form, file) => {
   if (form.metaCategoryId) {
     metaCategoryInstance = await REF_MetaTemplateCategory.findByPk(form.metaCategoryId);
     if (!metaCategoryInstance) {
-      return {
-        isValid: false,
-        code: 404,
-        message: 'Broadcast Template Meta Category Data Not Found',
-      };
+      invalid404.push('Broadcast Template Meta Category Data Not Found');
     }
   }
 
@@ -70,94 +53,54 @@ const validateTemplateInputs = async (form, file) => {
   if (form.languageId) {
     languageInstance = await REF_MetaTemplateLanguage.findByPk(form.languageId);
     if (!languageInstance) {
-      return {
-        isValid: false,
-        code: 404,
-        message: 'Broadcast Template Language Data Not Found',
-      };
+      invalid404.push('Broadcast Template Language Data Not Found');
     }
   }
 
   // * Template Component Validity Check
   // validate message
   if (form.message?.length > 1024) {
-    return {
-      isValid: false,
-      code: 400,
-      message: 'Message data exceeds the maximum character limit of 1024 characters',
-    };
+    invalid400.push('Message data exceeds the maximum character limit of 1024 characters');
   }
 
   if (Number(form.messageVariableExample?.length) !== Number(form.messageVariableNumber)) {
-    return {
-      isValid: false,
-      code: 400,
-      message: 'The Amount Of Message Variable Example Should Be Equal With Message Variable Number',
-    };
+    invalid400.push('The Amount Of Message Variable Example Should Be Equal With Message Variable Number');
   }
 
   // validate footer
   if (form.footer && form.message?.length > 60) {
-    return {
-      isValid: false,
-      code: 400,
-      message: 'Footer data exceeds the maximum character limit of 60 characters',
-    };
+    invalid400.push('Footer data exceeds the maximum character limit of 60 characters');
   }
 
   // validate header
   let fileHandler = null;
-  if (headerTypeInstance.name === 'TEXT') {
+  if (headerTypeInstance?.name === 'TEXT') {
     if (!form.headerText) {
-      return {
-        isValid: false,
-        code: 400,
-        message: 'Template With Header Type Text, Required Header Text',
-      };
+      invalid400.push('Template With Header Type Text, Required Header Text');
     }
     const regex = /\{\{(\d+)\}\}/;
     const hasVariable = regex.test(form.headerText);
     if (hasVariable && !form.headerVariableExample) {
-      return {
-        isValid: false,
-        code: 400,
-        message: 'Template With Header Text With Variable, Required Header Text Example',
-      };
+      invalid400.push('Template With Header Text With Variable, Required Header Text Example');
     }
-  } else if (['IMAGE', 'VIDEO', 'DOCUMENT'].includes(headerTypeInstance.name)) {
+  } else if (['IMAGE', 'VIDEO', 'DOCUMENT'].includes(headerTypeInstance?.name)) {
     // validate file for when header is non text type
     if (!file) {
-      return {
-        isValid: false,
-        code: 400,
-        message: `Header with type ${headerTypeInstance.name} requires a file upload`,
-      };
+      invalid400.push(`Header with type ${headerTypeInstance?.name} requires a file upload`);
     }
 
     const mimeType = file.mimetype;
 
     if (headerTypeInstance.name === 'IMAGE' && !['image/jpeg', 'image/jpg', 'image/png'].includes(mimeType)) {
-      return {
-        isValid: false,
-        code: 400,
-        message: 'Header with type IMAGE requires a JPEG, JPG, or PNG file.',
-      };
+      invalid400.push('Header with type IMAGE requires a JPEG, JPG, or PNG file.');
     }
 
     if (headerTypeInstance.name === 'VIDEO' && mimeType !== 'video/mp4') {
-      return {
-        isValid: false,
-        code: 400,
-        message: 'Header with type VIDEO requires an MP4 file.',
-      };
+      invalid400.push('Header with type VIDEO requires an MP4 file.');
     }
 
     if (headerTypeInstance.name === 'DOCUMENT' && mimeType !== 'application/pdf') {
-      return {
-        isValid: false,
-        code: 400,
-        message: 'Header with type DOCUMENT requires a PDF file.',
-      };
+      invalid400.push('Header with type DOCUMENT requires a PDF file.');
     }
     // create meta media handler
     fileHandler = await metaMediaHandler(file);
@@ -165,10 +108,21 @@ const validateTemplateInputs = async (form, file) => {
 
   // validate button
   if (form.button?.length > 3) {
+    invalid404.push('Button data exceeds the maximum limit of 3 Buttons');
+  }
+
+  if (invalid400.length > 0) {
+    return {
+      isValid: false,
+      code: 400,
+      message: invalid400,
+    };
+  }
+  if (invalid404.length > 0) {
     return {
       isValid: false,
       code: 404,
-      message: 'Button data exceeds the maximum limit of 3 Buttons',
+      message: invalid404,
     };
   }
 
@@ -177,7 +131,7 @@ const validateTemplateInputs = async (form, file) => {
     metaForm: {
       name: slug(form.name || '', '_').toLowerCase(),
       header: {
-        type: headerTypeInstance.name,
+        type: headerTypeInstance?.name,
         text: form.headerText,
         example: ['IMAGE', 'VIDEO', 'DOCUMENT'].includes(headerTypeInstance.name) ? fileHandler : form.headerVariableExample,
       },
@@ -393,7 +347,7 @@ const selectTemplate = async (id) => {
     return {
       success: false,
       code: 404,
-      message: 'Broadcast Template Data Not Found',
+      message: ['Broadcast Template Data Not Found'],
     };
   }
 
@@ -431,6 +385,13 @@ const createBroadcastTemplate = async (form) => {
 
 const updateBroadcastTemplate = async (form, id) => {
   const templateInstance = await CSM_BroadcastTemplate.findByPk(id);
+  if (!templateInstance) {
+    return {
+      success: false,
+      code: 404,
+      message: ['Broadcast Template Data Not Found'],
+    };
+  }
 
   templateInstance.categoryId = form.category.id;
   templateInstance.headerTypeId = form.headerType.id;
@@ -453,6 +414,13 @@ const updateBroadcastTemplate = async (form, id) => {
 
 const deleteBroadcastTemplate = async (id) => {
   const templateInstance = await CSM_BroadcastTemplate.findByPk(id);
+  if (!templateInstance) {
+    return {
+      success: false,
+      code: 404,
+      message: ['Broadcast Template Data Not Found'],
+    };
+  }
 
   const { name } = templateInstance.dataValues;
 

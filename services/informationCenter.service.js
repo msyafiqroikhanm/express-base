@@ -47,7 +47,7 @@ const selectInformationCenter = async (id) => {
     return {
       success: false,
       code: 404,
-      message: 'Information Center Data Not Found',
+      message: ['Information Center Data Not Found'],
     };
   }
 
@@ -113,7 +113,7 @@ const updateInfomationCenter = async (form, id) => {
     return {
       success: false,
       code: 404,
-      message: 'Information Center Data Not Found',
+      message: ['Information Center Data Not Found'],
     };
   }
 
@@ -148,7 +148,7 @@ const deleteInformationCenter = async (id) => {
     return {
       success: false,
       code: 404,
-      message: 'Information Center Data Not Found',
+      message: ['Information Center Data Not Found'],
     };
   }
 

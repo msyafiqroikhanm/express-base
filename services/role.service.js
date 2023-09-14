@@ -11,7 +11,6 @@ const selectAllRoles = async () => {
       {
         model: USR_Feature,
         attributes: ['id', 'name'],
-        include: { model: USR_Module, attributes: ['id', 'name'] },
         through: {
           attributes: [],
         },
@@ -34,7 +33,6 @@ const selectAllRoles = async () => {
       role.dataValues.features.push({
         id: feature.id,
         name: feature.name,
-        module: feature.USR_Module.dataValues.name,
       });
     });
 
@@ -50,8 +48,8 @@ const selectRole = async (id) => {
     include: [
       {
         model: USR_Feature,
-        attributes: ['id', 'name'],
-        include: { model: USR_Module, attributes: ['id', 'name'] },
+        attributes: ['id', 'name', 'moduleId'],
+        include: { model: USR_Module, attributes: ['name'] },
         through: {
           attributes: [],
         },
@@ -69,14 +67,31 @@ const selectRole = async (id) => {
   }
 
   // parse response to rename USR_Features to features and USR_Module to module
-  roleInstance.dataValues.features = [];
-  roleInstance.USR_Features.forEach((feature) => {
-    roleInstance.dataValues.features.push({
-      id: feature.id,
-      name: feature.name,
-      module: feature.dataValues.USR_Module,
-    });
-  });
+  roleInstance.dataValues.featureList = [];
+
+  const groupedData = roleInstance.USR_Features.reduce((result, item) => {
+    const { moduleId } = item;
+
+    roleInstance.dataValues.featureList.push(item.id);
+
+    // Check if there is already an entry for this moduleId
+    if (!result[moduleId]) {
+      result[moduleId] = {
+        moduleId,
+        module: item.USR_Module.dataValues.name,
+        items: [],
+      };
+    }
+
+    delete item.dataValues.USR_Module;
+
+    // Push the item into the corresponding moduleId's items array
+    result[moduleId].items.push(item);
+
+    return result;
+  }, {});
+
+  roleInstance.dataValues.features = Object.values(groupedData);
   delete roleInstance.dataValues.USR_Features;
 
   return { success: true, message: 'Success Getting Role', content: roleInstance };

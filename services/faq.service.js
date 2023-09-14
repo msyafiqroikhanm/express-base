@@ -17,7 +17,7 @@ const selectFAQ = async (id) => {
     return {
       success: false,
       code: 404,
-      message: 'FAQ Data Not Found',
+      message: ['FAQ Data Not Found'],
     };
   }
 
@@ -29,39 +29,26 @@ const selectFAQ = async (id) => {
 };
 
 const validateFAQInputs = async (form) => {
+  const invalid400 = [];
+  const invalid404 = [];
+
   // check faq type id validity
   const typeinstance = await REF_FAQType.findByPk(form.typeId);
   if (!typeinstance) {
-    return {
-      isValid: false,
-      code: 404,
-      message: 'FAQ Type Data Not Found',
-    };
+    invalid404.push('FAQ Type Data Not Found');
   }
 
   let faqInstance = null;
   if (form.parentFAQId) {
     faqInstance = await CSM_FAQ.findByPk(form.parentFAQId);
     if (!faqInstance) {
-      return {
-        isValid: false,
-        code: 404,
-        message: 'Parent FAQ Data Not Found',
-      };
+      invalid404.push('Parent FAQ Data Not Found');
     }
     if (faqInstance.message) {
-      return {
-        isValid: false,
-        code: 400,
-        message: 'Cannot Use Final FAQ as Parent FAQ',
-      };
+      invalid400.push('Cannot Use Final FAQ as Parent FAQ');
     }
     if (faqInstance.typeId !== typeinstance.id) {
-      return {
-        isValid: false,
-        code: 400,
-        message: 'Different Type From Parent Faq',
-      };
+      invalid400.push('Different Type From Parent Faq');
     }
   }
 
@@ -69,33 +56,36 @@ const validateFAQInputs = async (form) => {
   if (!faqInstance) {
     const existMainFAQ = await CSM_FAQ.findOne({
       where: {
-        typeId: typeinstance.id,
+        typeId: typeinstance?.id,
         isMain: true,
       },
     });
 
     if (existMainFAQ) {
-      return {
-        isValid: false,
-        code: 400,
-        message: `FAQ Type ${typeinstance.name} already have main FAQ`,
-      };
+      invalid400.push(`FAQ Type ${typeinstance.name} already have main FAQ`);
     }
   }
 
   if (form.title?.length > 24) {
-    return {
-      isValid: false,
-      code: 400,
-      message: 'Title data exceeds the maximum character limit of 24 characters',
-    };
+    invalid400.push('Title data exceeds the maximum character limit of 24 characters');
   }
 
   if (form.message?.length > 4000) {
+    invalid400.push('Message data exceeds the maximum character limit of 4000 characters');
+  }
+
+  if (invalid400.length > 0) {
     return {
       isValid: false,
       code: 400,
-      message: 'Message data exceeds the maximum character limit of 4000 characters',
+      message: invalid400,
+    };
+  }
+  if (invalid404.length > 0) {
+    return {
+      isValid: false,
+      code: 404,
+      message: invalid404,
     };
   }
 
@@ -142,7 +132,7 @@ const updateFAQ = async (form, id) => {
     return {
       success: false,
       code: 404,
-      message: 'FAQ Data Not Found',
+      message: ['FAQ Data Not Found'],
     };
   }
 
@@ -172,7 +162,7 @@ const deleteFAQ = async (id) => {
     return {
       success: false,
       code: 404,
-      message: 'FAQ Data Not Found',
+      message: ['FAQ Data Not Found'],
     };
   }
 

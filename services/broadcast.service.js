@@ -59,7 +59,7 @@ const selectBroadcast = async (id) => {
     return {
       success: false,
       code: 404,
-      message: 'Broadcast Type Data Not Found',
+      message: ['Broadcast Type Data Not Found'],
     };
   }
 
@@ -67,8 +67,8 @@ const selectBroadcast = async (id) => {
   const receiversList = [];
   broadcastInstance.receivers.forEach((receiver) => {
     receiversList.push(receiver.dataValues.id);
-    receiver.dataValues.region = receiver.contingent.region.dataValues.name;
-    receiver.dataValues.contingent = receiver.contingent.dataValues.name;
+    receiver.dataValues.region = receiver.contingent?.region.dataValues.name;
+    receiver.dataValues.contingent = receiver.contingent?.dataValues.name;
     receiver.dataValues.status = receiver.CSM_BroadcastParticipant.dataValues.status;
 
     delete receiver.dataValues.CSM_BroadcastParticipant;
@@ -83,13 +83,12 @@ const selectBroadcast = async (id) => {
 };
 
 const validateBroadcastInputs = async (form, file) => {
+  const invalid400 = [];
+  const invalid404 = [];
+
   // prevent backdate
   if (new Date().getTime() > new Date(form.sentAt)) {
-    return {
-      isValid: false,
-      code: 400,
-      message: 'Send at date must be after created date',
-    };
+    invalid400.push('Send at date must be after created date');
   }
 
   const templateInstance = await CSM_BroadcastTemplate.findByPk(form.templateId, {
@@ -98,29 +97,17 @@ const validateBroadcastInputs = async (form, file) => {
     ],
   });
   if (!templateInstance) {
-    return {
-      isValid: false,
-      code: 404,
-      message: 'Broadcast Template Data Not Found',
-    };
+    invalid404.push('Broadcast Template Data Not Found');
   }
-  if (templateInstance.metaStatus !== 'APPROVED') {
-    return {
-      isValid: false,
-      code: 400,
-      message: 'Cannot Used Unapproved Message Template To Send Broadcast',
-    };
+  if (templateInstance?.metaStatus !== 'APPROVED') {
+    invalid400.push('Cannot Used Unapproved Message Template To Send Broadcast');
   }
 
   // * Validate Header
   let headerFile = null;
-  if (['IMAGE', 'VIDEO', 'DOCUMENT'].includes(templateInstance.headerType.name)) {
+  if (['IMAGE', 'VIDEO', 'DOCUMENT'].includes(templateInstance?.headerType.name)) {
     if (!file) {
-      return {
-        isValid: false,
-        code: 400,
-        message: `Broadcast Using Template With Header ${templateInstance.headerType.name} Required File`,
-      };
+      invalid400.push(`Broadcast Using Template With Header ${templateInstance?.headerType.name} Required File`);
     }
     if (['jpeg', 'png', 'jpg'].includes(file.originalname.split('.')[1])) {
       headerFile = `public/images/broadcasts/${file.filename}`;
@@ -129,41 +116,25 @@ const validateBroadcastInputs = async (form, file) => {
     } else if (['pdf', 'docx', 'xlsx'].includes(file.originalname.split('.')[1])) {
       headerFile = `public/documents/broadcasts/${file.filename}`;
     }
-  } else if (templateInstance.headerType.name === 'TEXT' && templateInstance.headerVariableExample) {
+  } else if (templateInstance?.headerType.name === 'TEXT' && templateInstance?.headerVariableExample) {
     if (!form.headerText) {
-      return {
-        isValid: false,
-        code: 400,
-        message: 'Broadcast Using Template With Header Type Text And Header Variable, Required Header Text',
-      };
+      invalid400.push('Broadcast Using Template With Header Type Text And Header Variable, Required Header Text');
     }
   }
 
   // * Validate Message
-  if (templateInstance.messageVariableNumber > 1) {
-    if (templateInstance.messageVariableNumber !== form.messageParameters?.length) {
-      return {
-        isValid: false,
-        code: 400,
-        message: `Message Parameters Required ${templateInstance.messageVariableNumber} For Chosen Broadcast Template`,
-      };
+  if (templateInstance?.messageVariableNumber > 1) {
+    if (templateInstance?.messageVariableNumber !== form.messageParameters?.length) {
+      invalid400.push(`Message Parameters Required ${templateInstance?.messageVariableNumber} For Chosen Broadcast Template`);
     }
   } else if (form.messageParameters) {
-    return {
-      isValid: false,
-      code: 400,
-      message: 'Broadcast Template With Static Message Cannot Have Paramters',
-    };
+    invalid400.push('Broadcast Template With Static Message Cannot Have Paramters');
   }
 
   // * Validate Button
-  if (templateInstance.button?.length > 0
-      && form.buttonParameters?.length !== templateInstance.button?.length) {
-    return {
-      isValid: false,
-      code: 400,
-      message: `Button Parameters Required ${templateInstance.button?.length} For Chosen Broadcast Template`,
-    };
+  if (templateInstance?.button?.length > 0
+      && form.buttonParameters?.length !== templateInstance?.button?.length) {
+    invalid400.push(`Button Parameters Required ${templateInstance?.button?.length} For Chosen Broadcast Template`);
   }
 
   // validate Recipiants / receivers
@@ -172,6 +143,21 @@ const validateBroadcastInputs = async (form, file) => {
       id: { [Op.in]: form.receivers },
     },
   });
+
+  if (invalid400.length > 0) {
+    return {
+      isValid: false,
+      code: 400,
+      message: invalid400,
+    };
+  }
+  if (invalid404.length > 0) {
+    return {
+      isValid: false,
+      code: 404,
+      message: invalid404,
+    };
+  }
 
   return {
     isValid: true,
@@ -294,14 +280,14 @@ const updateBroadcast = async (form, id) => {
     return {
       success: false,
       code: 404,
-      message: 'Broadcast Type Data Not Found',
+      message: ['Broadcast Type Data Not Found'],
     };
   }
   if (broadcastInstance.status !== 'Scheduled') {
     return {
       success: false,
       code: 400,
-      message: 'Only Broadcast With Status Scheduled Can Be Editted',
+      message: ['Only Broadcast With Status Scheduled Can Be Editted'],
     };
   }
 
@@ -336,14 +322,14 @@ const deleteBroadcast = async (id) => {
     return {
       success: false,
       code: 404,
-      message: 'Broadcast Type Data Not Found',
+      message: ['Broadcast Type Data Not Found'],
     };
   }
   if (broadcastInstance.status !== 'Scheduled') {
     return {
       success: false,
       code: 400,
-      message: 'Only Broadcast With Status Scheduled Can Be Deleted',
+      message: ['Only Broadcast With Status Scheduled Can Be Deleted'],
     };
   }
 
