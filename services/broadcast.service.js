@@ -67,8 +67,8 @@ const selectBroadcast = async (id) => {
   const receiversList = [];
   broadcastInstance.receivers.forEach((receiver) => {
     receiversList.push(receiver.dataValues.id);
-    receiver.dataValues.region = receiver.contingent.region.dataValues.name;
-    receiver.dataValues.contingent = receiver.contingent.dataValues.name;
+    receiver.dataValues.region = receiver.contingent?.region.dataValues.name;
+    receiver.dataValues.contingent = receiver.contingent?.dataValues.name;
     receiver.dataValues.status = receiver.CSM_BroadcastParticipant.dataValues.status;
 
     delete receiver.dataValues.CSM_BroadcastParticipant;
