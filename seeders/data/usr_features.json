@@ -947,5 +947,21 @@
     {
         "moduleId":19,
         "name":"Update Participant Committee"
+    },
+    {
+        "moduleId":56,
+        "name":"View Committee Type"
+    },
+    {
+        "moduleId":56,
+        "name":"Create Committee Type"
+    },
+    {
+        "moduleId":56,
+        "name":"Update Committee Type"
+    },
+    {
+        "moduleId":56,
+        "name":"Delete Committee Type"
     }
 ]
