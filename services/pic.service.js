@@ -1,7 +1,8 @@
+/* eslint-disable no-param-reassign */
 const { USR_PIC, REF_PICType, USR_User } = require('../models');
 
 const selectAllPICs = async () => {
-  const typeInstance = await USR_PIC.findAll({
+  const pics = await USR_PIC.findAll({
     include: [
       {
         model: USR_User,
@@ -10,21 +11,25 @@ const selectAllPICs = async () => {
       },
       {
         model: REF_PICType,
-        as: 'type',
         attributes: ['name'],
       },
     ],
   });
 
+  pics.forEach((pic) => {
+    pic.dataValues.type = pic.REF_PICType.dataValues.name;
+    delete pic.dataValues.REF_PICType;
+  });
+
   return {
     success: true,
     message: 'Successfully Getting All PIC',
-    content: typeInstance,
+    content: pics,
   };
 };
 
 const selectPIC = async (id) => {
-  const locationType = await USR_PIC.findByPk(id, {
+  const picInstance = await USR_PIC.findByPk(id, {
     include: [
       {
         model: USR_User,
@@ -33,22 +38,24 @@ const selectPIC = async (id) => {
       },
       {
         model: REF_PICType,
-        as: 'type',
         attributes: ['name'],
       },
     ],
   });
-  if (!locationType) {
+  if (!picInstance) {
     return {
       success: false,
-      message: 'PIC Data Not Found',
+      message: ['PIC Data Not Found'],
     };
   }
+
+  picInstance.dataValues.type = picInstance.REF_PICType.dataValues.name;
+  delete picInstance.dataValues.REF_PICType;
 
   return {
     success: true,
     message: 'Successfully Getting Detail PIC',
-    content: locationType,
+    content: picInstance,
   };
 };
 
