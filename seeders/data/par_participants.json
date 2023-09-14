@@ -54,5 +54,15 @@
     "email": "coor3@jxboard.id",
     "address": "cijanntung",
     "identityTypeId": 1
+  },
+  {
+    "name": "Admin FnB",
+    "gender": "Male",
+    "birthDate": "1999-01-01",
+    "identityNo": "31719032842",
+    "phoneNbr": "6285711167881",
+    "email": "adminfnb@jxboard.id",
+    "address": "cijanntung",
+    "identityTypeId": 1
   }
 ]
