@@ -3,6 +3,7 @@ const { USR_PIC, REF_PICType, USR_User } = require('../models');
 
 const selectAllPICs = async () => {
   const pics = await USR_PIC.findAll({
+    attributes: ['id', 'userId', 'typeId'],
     include: [
       {
         model: USR_User,
@@ -30,6 +31,7 @@ const selectAllPICs = async () => {
 
 const selectPIC = async (id) => {
   const picInstance = await USR_PIC.findByPk(id, {
+    attributes: ['id', 'userId', 'typeId'],
     include: [
       {
         model: USR_User,
