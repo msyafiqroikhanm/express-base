@@ -1,9 +1,29 @@
+/* eslint-disable no-param-reassign */
 const { USR_Feature, USR_Module } = require('../models');
 
 const selectAllFeatures = async () => {
-  const features = await USR_Feature.findAll();
+  const features = await USR_Feature.findAll({ include: { model: USR_Module, attributes: ['name'] } });
 
-  return { success: true, message: 'Succesfully Getting All Feature', content: features };
+  const groupedData = features.reduce((result, item) => {
+    const { moduleId } = item;
+
+    // Check if there is already an entry for this moduleId
+    if (!result[moduleId]) {
+      result[moduleId] = {
+        moduleId,
+        module: item.USR_Module.dataValues.name,
+        items: [],
+      };
+    }
+
+    delete item.dataValues.USR_Module;
+
+    // Push the item into the corresponding moduleId's items array
+    result[moduleId].items.push(item);
+
+    return result;
+  }, {});
+  return { success: true, message: 'Succesfully Getting All Feature', content: Object.values(groupedData) };
 };
 
 const selectFeature = async (id) => {
