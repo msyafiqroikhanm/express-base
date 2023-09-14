@@ -47,7 +47,7 @@ const selectConfiCategory = async (id) => {
   if (!data) {
     const error = {
       success: false,
-      message: 'System Configuration Category Not Found',
+      message: ['System Configuration Category Not Found'],
     };
     return error;
   }
@@ -75,7 +75,7 @@ const updateSysConfigCategory = async (id, form) => {
   if (!categoryInstance) {
     const error = {
       success: false,
-      message: 'System Configuration Category Data Not Found',
+      message: ['System Configuration Category Data Not Found'],
     };
     return error;
   }
@@ -97,7 +97,7 @@ const deleteSysConfigCategory = async (id) => {
   if (!configInstance) {
     const error = {
       success: false,
-      message: 'System Configuration Data Not Found',
+      message: ['System Configuration Data Not Found'],
     };
     return error;
   }
@@ -124,7 +124,7 @@ const selectQRType = async (id) => {
   // check validity of qrtype id
   const data = await REF_QRType.findByPk(id);
   if (!data) {
-    const error = { success: false, message: 'QR Type Data Not Found' };
+    const error = { success: false, message: ['QR Type Data Not Found'] };
     return error;
   }
 
@@ -148,7 +148,7 @@ const updateQRType = async (id, form) => {
   // check qr type id validity
   const qrTypeInstance = await REF_QRType.findByPk(id);
   if (!qrTypeInstance) {
-    const error = { success: false, message: 'QR Type Data Not Found' };
+    const error = { success: false, message: ['QR Type Data Not Found'] };
     return error;
   }
 
@@ -168,7 +168,7 @@ const deleteQRType = async (id) => {
   // check qr type validity
   const qrTypeInstance = await REF_QRType.findByPk(id);
   if (!qrTypeInstance) {
-    const error = { success: false, message: 'QR Type Data Not Found' };
+    const error = { success: false, message: ['QR Type Data Not Found'] };
     return error;
   }
 
@@ -202,7 +202,7 @@ const selectEventCategory = async (id) => {
     return {
       success: false,
       code: 404,
-      message: 'Event Category Data Not Found',
+      message: ['Event Category Data Not Found'],
     };
   }
 
@@ -230,7 +230,7 @@ const updateEventCategory = async (id, form) => {
     return {
       success: false,
       code: 404,
-      message: 'Event Category Data Not Found',
+      message: ['Event Category Data Not Found'],
     };
   }
 
@@ -250,7 +250,7 @@ const deleteEventCategory = async (id) => {
     return {
       success: false,
       code: 404,
-      message: 'Event Category Data Not Found',
+      message: ['Event Category Data Not Found'],
     };
   }
 
@@ -283,7 +283,7 @@ const selectRegion = async (id) => {
   if (!regionInstance) {
     return {
       success: false,
-      message: 'Region Data Not Found',
+      message: ['Region Data Not Found'],
     };
   }
 
@@ -310,7 +310,7 @@ const updateRegion = async (id, form) => {
   if (!regionInstance) {
     return {
       success: false,
-      message: 'Region Data Not Found',
+      message: ['Region Data Not Found'],
     };
   }
 
@@ -330,7 +330,7 @@ const deleteRegion = async (id) => {
   if (!regionInstance) {
     return {
       success: false,
-      message: 'Region Data Not Found',
+      message: ['Region Data Not Found'],
     };
   }
 
@@ -363,7 +363,7 @@ const selectGroupStatus = async (id) => {
   if (!statusInstance) {
     return {
       success: false,
-      message: 'Group Status Data Not Found',
+      message: ['Group Status Data Not Found'],
     };
   }
 
@@ -390,7 +390,7 @@ const updateGroupStatus = async (id, form) => {
   if (!statusInstance) {
     return {
       success: false,
-      message: 'Group Status Data Not Found',
+      message: ['Group Status Data Not Found'],
     };
   }
 
@@ -410,7 +410,7 @@ const deleteGroupStatus = async (id) => {
   if (!statusInstance) {
     return {
       success: false,
-      message: 'Group Status Data Not Found',
+      message: ['Group Status Data Not Found'],
     };
   }
 
@@ -443,7 +443,7 @@ const selectParticipantType = async (id) => {
   if (!typeInstance) {
     return {
       success: false,
-      message: 'Participant Type Data Not Found',
+      message: ['Participant Type Data Not Found'],
     };
   }
 
@@ -470,7 +470,7 @@ const updateParticipantType = async (id, form) => {
   if (!typeInstance) {
     return {
       success: false,
-      message: 'Participant Type Data Not Found',
+      message: ['Participant Type Data Not Found'],
     };
   }
 
@@ -490,7 +490,7 @@ const deleteParticipantType = async (id) => {
   if (!typeInstance) {
     return {
       success: false,
-      message: 'Participant Type Data Not Found',
+      message: ['Participant Type Data Not Found'],
     };
   }
 
@@ -523,7 +523,7 @@ const selectIdentityType = async (id) => {
   if (!typeInstance) {
     return {
       success: false,
-      message: 'Identity Type Data Not Found',
+      message: ['Identity Type Data Not Found'],
     };
   }
 
@@ -550,7 +550,7 @@ const updateIdentityType = async (id, form) => {
   if (!typeInstance) {
     return {
       success: false,
-      message: 'Identity Type Data Not Found',
+      message: ['Identity Type Data Not Found'],
     };
   }
 
@@ -570,7 +570,7 @@ const deleteIdentityType = async (id) => {
   if (!typeInstance) {
     return {
       success: false,
-      message: 'Identity Type Data Not Found',
+      message: ['Identity Type Data Not Found'],
     };
   }
 
@@ -602,7 +602,7 @@ const selectLocationType = async (id) => {
   if (!locationType) {
     return {
       success: false,
-      message: 'Location Type Data Not Found',
+      message: ['Location Type Data Not Found'],
     };
   }
 
@@ -629,7 +629,7 @@ const updateLocationType = async (id, form) => {
   if (!typeInstance) {
     return {
       success: false,
-      message: 'Location Type Data Not Found',
+      message: ['Location Type Data Not Found'],
     };
   }
 
@@ -649,7 +649,7 @@ const deleteLocationType = async (id) => {
   if (!typeInstance) {
     return {
       success: false,
-      message: 'Location Type Data Not Found',
+      message: ['Location Type Data Not Found'],
     };
   }
 
@@ -683,7 +683,7 @@ const selectChatbotResponsetype = async (id) => {
     return {
       success: false,
       code: 404,
-      message: 'Chatbot Response Type Data Not Found',
+      message: ['Chatbot Response Type Data Not Found'],
     };
   }
 
@@ -711,7 +711,7 @@ const updateChatbotResponseType = async (form, id) => {
     return {
       success: false,
       code: 404,
-      message: 'Chatbot Response Type Data Not Found',
+      message: ['Chatbot Response Type Data Not Found'],
     };
   }
 
@@ -732,7 +732,7 @@ const deleteChatbotResponseType = async (id) => {
     return {
       success: false,
       code: 404,
-      message: 'Chatbot Response Type Data Not Found',
+      message: ['Chatbot Response Type Data Not Found'],
     };
   }
 
@@ -765,7 +765,7 @@ const selectFeedbackType = async (id) => {
     return {
       success: false,
       code: 404,
-      message: 'Feedback Type Data Not Found',
+      message: ['Feedback Type Data Not Found'],
     };
   }
 
@@ -792,7 +792,7 @@ const updateFeedbackType = async (form, id) => {
     return {
       success: false,
       code: 404,
-      message: 'Feedback Type Data Not Found',
+      message: ['Feedback Type Data Not Found'],
     };
   }
 
@@ -812,7 +812,7 @@ const deleteFeedbackType = async (id) => {
     return {
       success: false,
       code: 404,
-      message: 'Feedback Type Data Not Found',
+      message: ['Feedback Type Data Not Found'],
     };
   }
 
@@ -845,7 +845,7 @@ const selectFeedbackTarget = async (id) => {
     return {
       success: false,
       code: 404,
-      message: 'Feedback Type Data Not Found',
+      message: ['Feedback Type Data Not Found'],
     };
   }
 
@@ -872,7 +872,7 @@ const updateFeedbackTarget = async (form, id) => {
     return {
       success: false,
       code: 404,
-      message: 'Feedback Type Data Not Found',
+      message: ['Feedback Type Data Not Found'],
     };
   }
 
@@ -892,7 +892,7 @@ const deleteFeedbackTarget = async (id) => {
     return {
       success: false,
       code: 404,
-      message: 'Feedback Type Data Not Found',
+      message: ['Feedback Type Data Not Found'],
     };
   }
 
@@ -925,7 +925,7 @@ const selectFeedbackStatus = async (id) => {
     return {
       success: false,
       code: 404,
-      message: 'Feedback Status Data Not Found',
+      message: ['Feedback Status Data Not Found'],
     };
   }
 
@@ -952,7 +952,7 @@ const updateFeedbackStatus = async (form, id) => {
     return {
       success: false,
       code: 404,
-      message: 'Feedback Status Data Not Found',
+      message: ['Feedback Status Data Not Found'],
     };
   }
 
@@ -972,7 +972,7 @@ const deleteFeedbackStatus = async (id) => {
     return {
       success: false,
       code: 404,
-      message: 'Feedback Status Data Not Found',
+      message: ['Feedback Status Data Not Found'],
     };
   }
 
@@ -1005,7 +1005,7 @@ const selectFAQType = async (id) => {
     return {
       success: false,
       code: 404,
-      message: 'FAQ Type Data Not Found',
+      message: ['FAQ Type Data Not Found'],
     };
   }
 
@@ -1032,7 +1032,7 @@ const updateFAQType = async (form, id) => {
     return {
       success: false,
       code: 404,
-      message: 'FAQ Type Data Not Found',
+      message: ['FAQ Type Data Not Found'],
     };
   }
 
@@ -1052,7 +1052,7 @@ const deleteFAQType = async (id) => {
     return {
       success: false,
       code: 404,
-      message: 'FAQ Type Data Not Found',
+      message: ['FAQ Type Data Not Found'],
     };
   }
 
@@ -1085,7 +1085,7 @@ const selectTemplateCategory = async (id) => {
     return {
       success: false,
       code: 404,
-      message: 'Template Category Data Not Found',
+      message: ['Template Category Data Not Found'],
     };
   }
 
@@ -1112,7 +1112,7 @@ const updateTemplateCategory = async (form, id) => {
     return {
       success: false,
       code: 404,
-      message: 'Template Category Data Not Found',
+      message: ['Template Category Data Not Found'],
     };
   }
 
@@ -1132,7 +1132,7 @@ const deleteTemplateCategory = async (id) => {
     return {
       success: false,
       code: 404,
-      message: 'Template Category Data Not Found',
+      message: ['Template Category Data Not Found'],
     };
   }
 
@@ -1165,7 +1165,7 @@ const selectMetaTemplateCategory = async (id) => {
     return {
       success: false,
       code: 404,
-      message: 'Meta Template Category Data Not Found',
+      message: ['Meta Template Category Data Not Found'],
     };
   }
 
@@ -1192,7 +1192,7 @@ const updateMetaTemplateCategory = async (form, id) => {
     return {
       success: false,
       code: 404,
-      message: 'Meta Template Category Data Not Found',
+      message: ['Meta Template Category Data Not Found'],
     };
   }
 
@@ -1212,7 +1212,7 @@ const deleteMetaTemplateCategory = async (id) => {
     return {
       success: false,
       code: 404,
-      message: 'Meta Template Category Data Not Found',
+      message: ['Meta Template Category Data Not Found'],
     };
   }
 
@@ -1245,7 +1245,7 @@ const selectTemplateHeaderType = async (id) => {
     return {
       success: false,
       code: 404,
-      message: 'Template Header Type Data Not Found',
+      message: ['Template Header Type Data Not Found'],
     };
   }
 
@@ -1272,7 +1272,7 @@ const updateTemplateHeaderType = async (form, id) => {
     return {
       success: false,
       code: 404,
-      message: 'Template Header Type Data Not Found',
+      message: ['Template Header Type Data Not Found'],
     };
   }
 
@@ -1292,7 +1292,7 @@ const deleteTemplateHeaderType = async (id) => {
     return {
       success: false,
       code: 404,
-      message: 'Template Header Type Data Not Found',
+      message: ['Template Header Type Data Not Found'],
     };
   }
 
@@ -1324,7 +1324,7 @@ const selectRoomType = async (id) => {
   if (!locationType) {
     return {
       success: false,
-      message: 'Room Type Data Not Found',
+      message: ['Room Type Data Not Found'],
     };
   }
 
@@ -1351,7 +1351,7 @@ const updateRoomType = async (id, form) => {
   if (!typeInstance) {
     return {
       success: false,
-      message: 'Room Type Data Not Found',
+      message: ['Room Type Data Not Found'],
     };
   }
 
@@ -1371,7 +1371,7 @@ const deleteRoomType = async (id) => {
   if (!typeInstance) {
     return {
       success: false,
-      message: 'Room Type Data Not Found',
+      message: ['Room Type Data Not Found'],
     };
   }
 
@@ -1403,7 +1403,7 @@ const selectRoomStatus = async (id) => {
   if (!locationType) {
     return {
       success: false,
-      message: 'Room Status Data Not Found',
+      message: ['Room Status Data Not Found'],
     };
   }
 
@@ -1430,7 +1430,7 @@ const updateRoomStatus = async (id, form) => {
   if (!typeInstance) {
     return {
       success: false,
-      message: 'Room Status Data Not Found',
+      message: ['Room Status Data Not Found'],
     };
   }
 
@@ -1450,7 +1450,7 @@ const deleteRoomStatus = async (id) => {
   if (!typeInstance) {
     return {
       success: false,
-      message: 'Room Status Data Not Found',
+      message: ['Room Status Data Not Found'],
     };
   }
 
@@ -1482,7 +1482,7 @@ const selectLodgerStatus = async (id) => {
   if (!locationType) {
     return {
       success: false,
-      message: 'Lodger Status Data Not Found',
+      message: ['Lodger Status Data Not Found'],
     };
   }
 
@@ -1509,7 +1509,7 @@ const updateLodgerStatus = async (id, form) => {
   if (!typeInstance) {
     return {
       success: false,
-      message: 'Lodger Status Data Not Found',
+      message: ['Lodger Status Data Not Found'],
     };
   }
 
@@ -1529,7 +1529,7 @@ const deleteLodgerStatus = async (id) => {
   if (!typeInstance) {
     return {
       success: false,
-      message: 'Lodger Status Data Not Found',
+      message: ['Lodger Status Data Not Found'],
     };
   }
 
@@ -1561,7 +1561,7 @@ const selectPICType = async (id) => {
   if (!locationType) {
     return {
       success: false,
-      message: 'PIC Type Data Not Found',
+      message: ['PIC Type Data Not Found'],
     };
   }
 
@@ -1588,7 +1588,7 @@ const updatePICType = async (id, form) => {
   if (!typeInstance) {
     return {
       success: false,
-      message: 'PIC Type Data Not Found',
+      message: ['PIC Type Data Not Found'],
     };
   }
 
@@ -1608,7 +1608,7 @@ const deletePICType = async (id) => {
   if (!typeInstance) {
     return {
       success: false,
-      message: 'PIC Type Data Not Found',
+      message: ['PIC Type Data Not Found'],
     };
   }
 
@@ -1652,7 +1652,7 @@ const selectPassengerStatus = async (id) => {
     return {
       success: false,
       code: 404,
-      message: 'Passenger Status Data Not Found',
+      message: ['Passenger Status Data Not Found'],
     };
   }
 
@@ -1679,7 +1679,7 @@ const updatePassengerStatus = async (form, id) => {
     return {
       success: false,
       code: 404,
-      message: 'Passenger Status Data Not Found',
+      message: ['Passenger Status Data Not Found'],
     };
   }
 
@@ -1699,7 +1699,7 @@ const deletePassengerStatus = async (id) => {
     return {
       success: false,
       code: 404,
-      message: 'Passenger Status Data Not Found',
+      message: ['Passenger Status Data Not Found'],
     };
   }
 
@@ -1736,7 +1736,7 @@ const selectMenuType = async (id) => {
     return {
       success: false,
       code: 404,
-      message: 'Menu Type Data Not Found',
+      message: ['Menu Type Data Not Found'],
     };
   }
 
@@ -1763,7 +1763,7 @@ const updateMenuType = async (form, id) => {
     return {
       success: false,
       code: 404,
-      message: 'Menu Type Data Not Found',
+      message: ['Menu Type Data Not Found'],
     };
   }
 
@@ -1783,7 +1783,7 @@ const deleteMenuType = async (id) => {
     return {
       success: false,
       code: 404,
-      message: 'Menu Type Data Not Found',
+      message: ['Menu Type Data Not Found'],
     };
   }
 
@@ -1815,7 +1815,7 @@ const selectFoodType = async (id) => {
     return {
       success: false,
       code: 404,
-      message: 'Food Type Data Not Found',
+      message: ['Food Type Data Not Found'],
     };
   }
 
@@ -1842,7 +1842,7 @@ const updateFoodType = async (form, id) => {
     return {
       success: false,
       code: 404,
-      message: 'Food Type Data Not Found',
+      message: ['Food Type Data Not Found'],
     };
   }
 
@@ -1862,7 +1862,7 @@ const deleteFoodType = async (id) => {
     return {
       success: false,
       code: 404,
-      message: 'Food Type Data Not Found',
+      message: ['Food Type Data Not Found'],
     };
   }
 
@@ -1894,7 +1894,7 @@ const selectFoodScheduleStatus = async (id) => {
     return {
       success: false,
       code: 404,
-      message: 'Food Schedule Status Data Not Found',
+      message: ['Food Schedule Status Data Not Found'],
     };
   }
 
@@ -1921,7 +1921,7 @@ const updateFoodScheduleStatus = async (form, id) => {
     return {
       success: false,
       code: 404,
-      message: 'Food Schedule Status Data Not Found',
+      message: ['Food Schedule Status Data Not Found'],
     };
   }
 
@@ -1941,7 +1941,7 @@ const deleteFoodScheduleStatus = async (id) => {
     return {
       success: false,
       code: 404,
-      message: 'Food Schedule Status Data Not Found',
+      message: ['Food Schedule Status Data Not Found'],
     };
   }
 
@@ -1974,7 +1974,7 @@ const selectVehicleScheduleStatus = async (id) => {
     return {
       success: false,
       code: 404,
-      message: 'Vehicle Schedule Status Data Not Found',
+      message: ['Vehicle Schedule Status Data Not Found'],
     };
   }
 
@@ -2001,7 +2001,7 @@ const updateVehicleScheduleStatus = async (form, id) => {
     return {
       success: false,
       code: 404,
-      message: 'Vehicle Schedule Status Data Not Found',
+      message: ['Vehicle Schedule Status Data Not Found'],
     };
   }
 
@@ -2021,7 +2021,7 @@ const deleteVehicleScheduleStatus = async (id) => {
     return {
       success: false,
       code: 404,
-      message: 'Vehicle Schedule Status Data Not Found',
+      message: ['Vehicle Schedule Status Data Not Found'],
     };
   }
   const { name } = statusInstance.dataValues;
@@ -2054,7 +2054,7 @@ const selectVehicleType = async (id) => {
     return {
       success: false,
       code: 404,
-      message: 'Vehicle Type Data Not Found',
+      message: ['Vehicle Type Data Not Found'],
     };
   }
 
@@ -2081,7 +2081,7 @@ const updateVehicleType = async (form, id) => {
     return {
       success: false,
       code: 404,
-      message: 'Vehicle Type Data Not Found',
+      message: ['Vehicle Type Data Not Found'],
     };
   }
 
@@ -2101,7 +2101,7 @@ const deleteVehicleType = async (id) => {
     return {
       success: false,
       code: 404,
-      message: 'Vehicle Type Data Not Found',
+      message: ['Vehicle Type Data Not Found'],
     };
   }
 

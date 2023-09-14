@@ -30,7 +30,8 @@ const selectAllPICs = async () => {
 };
 
 const selectPIC = async (id) => {
-  const picInstance = await USR_PIC.findByPk(id, {
+  const picInstance = await USR_PIC.findOne({
+    where: { id },
     attributes: ['id', 'userId', 'typeId'],
     include: [
       {
@@ -76,7 +77,7 @@ const createPIC = async (form) => {
 
 const updatePIC = async (id, form) => {
   // check identity type id validity
-  const picInstance = await USR_PIC.findByPk(id);
+  const picInstance = await USR_PIC.findOne({ where: { id } });
   if (!picInstance) {
     return {
       success: false,
@@ -113,7 +114,7 @@ const updatePIC = async (id, form) => {
 
 const deletePIC = async (id) => {
   // check identity type id validity
-  const picInstance = await USR_PIC.findByPk(id);
+  const picInstance = await USR_PIC.findOne({ where: { id } });
   if (!picInstance) {
     return {
       success: false,
