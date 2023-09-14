@@ -1,6 +1,6 @@
 const passport = require('passport');
 const rolesLib = require('../libraries/roles.lib');
-const { ACM_Location } = require('../models');
+const { ACM_Location, FNB_Kitchen } = require('../models');
 const picTypeHelper = require('../helpers/pictype.helper');
 const ResponseFormatter = require('../helpers/responseFormatter.helper');
 
@@ -27,8 +27,8 @@ class AuthMiddleware {
 
         // check user access
         if (requiredFeatures) {
-          const authorized = req.user.Role.USR_Features.some(
-            (feature) => requiredFeatures.includes(feature.id),
+          const authorized = req.user.Role.USR_Features.some((feature) =>
+            requiredFeatures.includes(feature.id),
           );
 
           if (!authorized) {
@@ -67,6 +67,40 @@ class AuthMiddleware {
 
         if (locationLimitation.length > 0) {
           limitation.access.location = locations;
+        }
+      }
+      req.user.limitation = limitation;
+      next();
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  static async fnb(req, res, next) {
+    try {
+      res.url = `${req.method} ${req.originalUrl}`;
+
+      const limitation = { isAdmin: true, access: {} };
+      if (req.user.Role.id !== rolesLib.superAdmin) {
+        if (!req.user.PIC) {
+          return ResponseFormatter.error401(res, "You Don't Have Access To This Service");
+        }
+
+        const picTypes = await picTypeHelper().then((type) => [type.pic_kitchen]);
+        const picKitchen = req.user.PIC.filter((pic) => pic.typeId === picTypes[0]);
+        limitation.isAdmin = false;
+        limitation.access.picId = picKitchen[0].dataValues.id;
+
+        const kitchenLimitation = await FNB_Kitchen.findAll({
+          where: { picId: limitation.access.picId },
+          attributes: ['id'],
+          raw: true,
+        });
+
+        const kitchens = kitchenLimitation.map((element) => element.id);
+
+        if (kitchenLimitation.length > 0) {
+          limitation.access.kitchen = kitchens;
         }
       }
       req.user.limitation = limitation;

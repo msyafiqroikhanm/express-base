@@ -1,10 +1,10 @@
 [
-    {
-        "picId":3,
-        "name": "Example Kitchen",
-        "phoneNbr": "62812312312341",
-        "longtitude": "-6.2341883",
-        "latitude": "106.8479588",
-        "address": "Jl. Sunter Permai Raya No.A1, RT.2/RW.12, Sunter Agung, Paradise, Jkt Utara, Daerah Khusus Ibukota Jakarta 14350"
-    }
+  {
+    "picId": 3,
+    "name": "Example Kitchen",
+    "phoneNbr": "62812312312341",
+    "longtitude": "-6.2341883",
+    "latitude": "106.8479588",
+    "address": "Jl. Sunter Permai Raya No.A1, RT.2/RW.12, Sunter Agung, Paradise, Jkt Utara, Daerah Khusus Ibukota Jakarta 14350"
+  }
 ]
