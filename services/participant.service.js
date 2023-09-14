@@ -63,7 +63,7 @@ const selectAllParticipant = async (query, where) => {
   // parsed retun data
   participants.forEach((participant) => {
     if (participant.contingent) {
-      participant.contingent.dataValues.region = participant.contingent.region.dataValues.name;
+      participant.contingent.dataValues.region = participant.contingent.region?.dataValues.name;
     }
     participant.dataValues.identityType = participant.identityType?.dataValues.name;
     participant.dataValues.participantType = participant.participantType?.dataValues.name;
@@ -120,7 +120,7 @@ const selectParticipant = async (id, where) => {
 
   if (!participantInstance) {
     return {
-      success: false, code: 404, message: 'Participant Data Not Found',
+      success: false, code: 404, message: ['Participant Data Not Found'],
     };
   }
 
@@ -135,47 +135,43 @@ const validateParticipantInputs = async (form, file, id, where) => {
     birthDate, identityNo, phoneNbr, email, address,
   } = form;
 
+  const invalid400 = [];
+  const invalid404 = [];
+
   // check contingent id validity
   const contingentInstance = await PAR_Contingent.findByPk(contingentId);
   if (!contingentInstance) {
-    return {
-      isValid: false, code: 404, message: 'Contingent Data Not Found',
-    };
+    invalid404.push('Contingent Data Not Found');
   }
 
   if (where?.id && (where.id !== Number(contingentId))) {
     return {
-      isValid: false, code: 400, message: 'Prohibited To Create Participant For Other Contingent',
+      isValid: false, code: 400, message: ['Prohibited To Create Participant For Other Contingent'],
     };
   }
 
   // check participant type id validity
   const participantTypeInstance = await REF_ParticipantType.findByPk(typeId);
   if (!participantTypeInstance) {
-    return {
-      isValid: false, code: 404, message: 'Participant Type Data Not Found',
-    };
+    invalid404.push('Participant Type Data Not Found');
   }
 
   // check identity type id validity
   const identityTypeInstance = await REF_IdentityType.findByPk(identityTypeId);
   if (!identityTypeInstance) {
-    return {
-      isValid: false, code: 404, message: 'Identity Type Data Not Found',
-    };
+    invalid404.push('Identity Type Data Not Found');
   }
 
   let filePath = null;
   if (file) {
     if (!['png', 'jpeg', 'jpg'].includes(file.originalname.split('.')[1])) {
-      const error = { isValid: false, code: 400, message: 'Upload only supports file types [png, jpeg, and jpg]' };
-      return error;
+      invalid400.push('Upload only supports file types [png, jpeg, and jpg]');
     }
 
     const imageBuffer = await fs.readFile(file.path);
     const maxSizeInByte = 2000000;
     if (imageBuffer.length > maxSizeInByte) {
-      return { isValid: false, code: 400, message: 'The file size exceeds the maximum size limit of 2 Megabyte' };
+      invalid400.push('The file size exceeds the maximum size limit of 2 Megabyte');
     }
 
     filePath = `public/images/participants/${file.filename}`;
@@ -190,9 +186,7 @@ const validateParticipantInputs = async (form, file, id, where) => {
       },
     });
     if (isDuplicateIdentityNo) {
-      return {
-        isValid: false, code: 400, message: `Identity Number ${identityNo} Already Used In System`,
-      };
+      invalid400.push(`Identity Number ${identityNo} Already Used In System`);
     }
 
     // check phone number duplicate
@@ -203,9 +197,7 @@ const validateParticipantInputs = async (form, file, id, where) => {
       },
     });
     if (isDuplicatePhoneNo) {
-      return {
-        isValid: false, code: 400, message: `Phone Number ${phoneNbr} Already Used In System`,
-      };
+      invalid400.push(`Phone Number ${phoneNbr} Already Used In System`);
     }
 
     // check email duplicate
@@ -215,34 +207,41 @@ const validateParticipantInputs = async (form, file, id, where) => {
       },
     });
     if (isDuplicateEmail) {
-      return {
-        isValid: false, code: 400, message: `Email ${email} Already Used In System`,
-      };
+      invalid400.push(`Email ${email} Already Used In System`);
     }
   } else {
     // check identity number duplicate
     const isDuplicateIdentityNo = await PAR_Participant.findOne({ where: { identityNo } });
     if (isDuplicateIdentityNo) {
-      return {
-        isValid: false, code: 400, message: `Identity Number ${identityNo} Already Used In System`,
-      };
+      invalid400.push(`Identity Number ${identityNo} Already Used In System`);
     }
 
     // check phone number duplicate
     const isDuplicatePhoneNo = await PAR_Participant.findOne({ where: { phoneNbr } });
     if (isDuplicatePhoneNo) {
-      return {
-        isValid: false, code: 400, message: `Phone Number ${phoneNbr} Already Used In System`,
-      };
+      invalid400.push(`Phone Number ${phoneNbr} Already Used In System`);
     }
 
     // check email duplicate
     const isDuplicateEmail = await PAR_Participant.findOne({ where: { email } });
     if (isDuplicateEmail) {
-      return {
-        isValid: false, code: 400, message: `Email ${email} Already Used In System`,
-      };
+      invalid400.push(`Email ${email} Already Used In System`);
     }
+  }
+
+  if (invalid400.length > 0) {
+    return {
+      isValid: false,
+      code: 400,
+      message: invalid400,
+    };
+  }
+  if (invalid404.length > 0) {
+    return {
+      isValid: false,
+      code: 404,
+      message: invalid404,
+    };
   }
 
   return {
@@ -300,18 +299,18 @@ const updateParticipant = async (id, form, where) => {
   }
   if (!participantInstance) {
     return {
-      success: false, code: 404, message: 'Participant Data Not Found',
+      success: false, code: 404, message: ['Participant Data Not Found'],
     };
   }
 
-  participantInstance.contingetId = form.contingent?.id;
-  participantInstance.typeId = form.participantType.id;
-  participantInstance.identityTypeId = form.identityType.id;
+  participantInstance.contingetId = form.contingent?.id || null;
+  participantInstance.typeId = form.participantType?.id || null;
+  participantInstance.identityTypeId = form.identityType?.id || null;
   participantInstance.name = form.name;
   participantInstance.gender = form.gender;
   participantInstance.birthDate = form.birthDate;
-  participantInstance.identityNo = form.identityNo.id;
-  participantInstance.phoneNbr = form.phoneNbr.id;
+  participantInstance.identityNo = form.identityNo;
+  participantInstance.phoneNbr = form.phoneNbr;
   participantInstance.email = form.email;
   participantInstance.address = form.address;
   participantInstance.file = form.file;
@@ -328,7 +327,7 @@ const deleteParticipant = async (where) => {
   const participantInstance = await PAR_Participant.findOne({ where });
   if (!participantInstance) {
     return {
-      success: false, code: 404, message: 'Participant Data Not Found',
+      success: false, code: 404, message: ['Participant Data Not Found'],
     };
   }
 
@@ -353,7 +352,7 @@ const trackingParticipant = async (form) => {
   console.log(JSON.stringify(qrInstance, null, 2));
   if (!qrInstance) {
     return {
-      success: false, code: 404, message: 'QR Data Not Found',
+      success: false, code: 404, message: ['QR Data Not Found'],
     };
   }
 
@@ -373,7 +372,7 @@ const trackingParticipant = async (form) => {
 const createParticipantViaImport = async (file) => {
   if (!['xlsx'].includes(file.originalname.split('.')[1])) {
     return {
-      success: false, code: 400, message: 'Upload only supports file types [xlsx]',
+      success: false, code: 400, message: ['Upload only supports file types [xlsx]'],
     };
   }
 
@@ -460,25 +459,25 @@ const validateCommitteeInputs = async (form, file, id) => {
     identityTypeId, name, gender, birthDate, identityNo, phoneNbr, email, address,
   } = form;
 
+  const invalid400 = [];
+  const invalid404 = [];
+
   // check identity type id validity
   const identityTypeInstance = await REF_IdentityType.findByPk(identityTypeId);
   if (!identityTypeInstance) {
-    return {
-      isValid: false, code: 404, message: 'Identity Type Data Not Found',
-    };
+    invalid404.push('Identity Type Data Not Found');
   }
 
   let filePath = null;
   if (file) {
     if (!['png', 'jpeg', 'jpg'].includes(file.originalname.split('.')[1])) {
-      const error = { isValid: false, code: 400, message: 'Upload only supports file types [png, jpeg, and jpg]' };
-      return error;
+      invalid400.push('Upload only supports file types [png, jpeg, and jpg]');
     }
 
     const imageBuffer = await fs.readFile(file.path);
     const maxSizeInByte = 2000000;
     if (imageBuffer.length > maxSizeInByte) {
-      return { isValid: false, code: 400, message: 'The file size exceeds the maximum size limit of 2 Megabyte' };
+      invalid400.push('The file size exceeds the maximum size limit of 2 Megabyte');
     }
 
     filePath = `public/images/committees/${file.filename}`;
@@ -493,9 +492,7 @@ const validateCommitteeInputs = async (form, file, id) => {
       },
     });
     if (isDuplicateIdentityNo) {
-      return {
-        isValid: false, code: 400, message: `Identity Number ${identityNo} Already Used In System`,
-      };
+      invalid400.push(`Identity Number ${identityNo} Already Used In System`);
     }
 
     // check phone number duplicate
@@ -506,26 +503,35 @@ const validateCommitteeInputs = async (form, file, id) => {
       },
     });
     if (isDuplicatePhoneNo) {
-      return {
-        isValid: false, code: 400, message: `Phone Number ${phoneNbr} Already Used In System`,
-      };
+      invalid400.push(`Phone Number ${phoneNbr} Already Used In System`);
     }
   } else {
     // check identity number duplicate
     const isDuplicateIdentityNo = await PAR_Participant.findOne({ where: { identityNo } });
     if (isDuplicateIdentityNo) {
-      return {
-        isValid: false, code: 400, message: `Identity Number ${identityNo} Already Used In System`,
-      };
+      invalid400.push(`Identity Number ${identityNo} Already Used In System`);
     }
 
     // check phone number duplicate
     const isDuplicatePhoneNo = await PAR_Participant.findOne({ where: { phoneNbr } });
     if (isDuplicatePhoneNo) {
-      return {
-        isValid: false, code: 400, message: `Phone Number ${phoneNbr} Already Used In System`,
-      };
+      invalid400.push(`Phone Number ${phoneNbr} Already Used In System`);
     }
+  }
+
+  if (invalid400.length > 0) {
+    return {
+      isValid: false,
+      code: 400,
+      message: invalid400,
+    };
+  }
+  if (invalid404.length > 0) {
+    return {
+      isValid: false,
+      code: 404,
+      message: invalid404,
+    };
   }
 
   return {
@@ -570,7 +576,7 @@ const updateCommittee = async (id, form) => {
   const participantInstance = await PAR_Participant.findOne({ where: { id, contingentId: null } });
   if (!participantInstance) {
     return {
-      success: false, code: 404, message: 'Participant Committe Data Not Found',
+      success: false, code: 404, message: ['Participant Committe Data Not Found'],
     };
   }
 
@@ -593,7 +599,7 @@ const updateCommittee = async (id, form) => {
 const createCommitteeViaImport = async (file) => {
   if (!['xlsx'].includes(file.originalname.split('.')[1])) {
     return {
-      success: false, code: 400, message: 'Upload only supports file types [xlsx]',
+      success: false, code: 400, message: ['Upload only supports file types [xlsx]'],
     };
   }
 

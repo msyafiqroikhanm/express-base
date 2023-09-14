@@ -34,9 +34,9 @@ const selectAllGroups = async (where) => {
   });
 
   groups.forEach((group) => {
-    group.dataValues.contingent = group.contingent.dataValues.name;
-    group.dataValues.event = group.event.dataValues.name;
-    group.dataValues.status = group.status.dataValues.name;
+    group.dataValues.contingent = group.contingent?.dataValues.name;
+    group.dataValues.event = group.event?.dataValues.name;
+    group.dataValues.status = group.status?.dataValues.name;
   });
 
   return {
@@ -79,14 +79,14 @@ const selectGroup = async (id, where) => {
     };
   }
 
-  groupInstance.dataValues.contingent = groupInstance.contingent.dataValues.name;
-  groupInstance.dataValues.event = groupInstance.event.dataValues.name;
-  groupInstance.dataValues.status = groupInstance.status.dataValues.name;
+  groupInstance.dataValues.contingent = groupInstance.contingent?.dataValues.name;
+  groupInstance.dataValues.event = groupInstance.event?.dataValues.name;
+  groupInstance.dataValues.status = groupInstance.status?.dataValues.name;
   groupInstance.dataValues.participants = [];
   groupInstance.PAR_Participants.forEach((participant) => {
-    groupInstance.dataValues.participants.push(participant.id);
+    groupInstance.dataValues.participants.push(participant?.id);
   });
-  groupInstance.dataValues.participantList = groupInstance.PAR_Participants;
+  groupInstance.dataValues.participantList = groupInstance?.PAR_Participants;
   delete groupInstance.dataValues.PAR_Participants;
 
   return {
@@ -99,32 +99,29 @@ const validateGroupInputs = async (form, limitation = null) => {
     eventId, contingentId, statusId, name,
   } = form;
 
+  const invalid400 = [];
+  const invalid404 = [];
+
   // check eventId validity
   const eventInstance = await ENV_Event.findByPk(eventId);
   if (!eventInstance) {
-    return {
-      isValid: false, code: 404, message: 'Event Data Not Found',
-    };
+    invalid404.push('Event Data Not Found');
   }
 
   // check contingentId validity
   const contingentInstance = await PAR_Contingent.findByPk(contingentId);
   if (!contingentInstance) {
-    return {
-      isValid: false, code: 404, message: 'Contingent Data Not Found',
-    };
+    invalid404.push('Contingent Data Not Found');
   }
   if (limitation?.id && (limitation?.id !== Number(contingentId))) {
     return {
-      isValid: false, code: 400, message: 'Prohibited To Create Group For Other Contingent',
+      isValid: false, code: 400, message: ['Prohibited To Create Group For Other Contingent'],
     };
   }
 
   const statusInstance = await REF_GroupStatus.findByPk(statusId);
   if (!statusInstance) {
-    return {
-      isValid: false, code: 404, message: 'Status Data Not Found',
-    };
+    invalid404.push('Status Data Not Found');
   }
 
   // validate Recipiants / receivers
@@ -134,6 +131,21 @@ const validateGroupInputs = async (form, limitation = null) => {
       contingentId,
     },
   });
+
+  if (invalid400.length > 0) {
+    return {
+      isValid: false,
+      code: 400,
+      message: invalid400,
+    };
+  }
+  if (invalid404.length > 0) {
+    return {
+      isValid: false,
+      code: 404,
+      message: invalid404,
+    };
+  }
 
   return {
     isValid: true,
@@ -178,7 +190,7 @@ const updateGroup = async (id, form, where) => {
   }
   if (!groupInstance) {
     return {
-      success: false, code: 404, message: 'Group Data Not Found',
+      success: false, code: 404, message: ['Group Data Not Found'],
     };
   }
 
@@ -201,7 +213,7 @@ const deleteGroup = async (id, where) => {
   });
   if (!groupInstance) {
     return {
-      success: false, code: 404, message: 'Group Data Not Found',
+      success: false, code: 404, message: ['Group Data Not Found'],
     };
   }
 
