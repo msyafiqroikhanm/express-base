@@ -42,15 +42,15 @@ const selectAllUsers = async () => {
   });
 
   users.forEach((user) => {
-    user.dataValues.qrCode = user.Qr.dataValues.code;
-    user.dataValues.role = user.Role.dataValues.name;
+    user.dataValues.qrCode = user.Qr?.dataValues.code;
+    user.dataValues.role = user.Role?.dataValues.name;
     if (user.participant) {
       user.participant.dataValues.contingent = user.participant.contingent
         ?.dataValues.name || null;
       user.participant.dataValues.participantType = user.participant.participantType
-        .dataValues.name;
+        ?.dataValues.name;
       user.participant.dataValues.identityType = user.participant.identityType
-        .dataValues.name;
+        ?.dataValues.name;
     }
     delete user.dataValues.Qr;
     delete user.dataValues.Role;
