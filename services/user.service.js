@@ -84,7 +84,7 @@ const selectDetailUser = async (id) => {
     ],
   });
   if (!userInstance) {
-    const error = { success: false, message: 'User Data Not Found' };
+    const error = { success: false, message: ['User Data Not Found'] };
     return error;
   }
 
@@ -106,29 +106,45 @@ const selectDetailUser = async (id) => {
 };
 
 const validateUserInputs = async (form, id) => {
+  const invalid404 = [];
+  const invalid400 = [];
   const roleInstance = await USR_Role.findByPk(form.roleId);
   if (!roleInstance) {
-    return { isValid: false, code: 404, message: 'Role Data Not Found' };
+    invalid404.push('Role Data Not Found');
   }
 
   const participantInstance = await PAR_Participant.findByPk(form.participantId, {
     include: { model: USR_User, as: 'user' },
   });
   if (!participantInstance) {
-    return { isValid: false, code: 404, message: 'Participant Data Not Found' };
+    invalid404.push('Participant Data Not Found');
   }
 
   if (!id) {
     // check if participant already have user account for create user
-    if (participantInstance.user) {
-      return { isValid: false, code: 400, message: 'User Account Already Exists for Participant' };
+    if (participantInstance?.user) {
+      invalid400.push('User Account Already Exists for Participant');
     }
-  } else if (participantInstance.user && id) {
+  } else if (participantInstance?.user && id) {
     // when updating user check if participant belongs to user before update (old data)
-    console.log(participantInstance.user.id);
-    if (participantInstance.user.id !== Number(id)) {
-      return { isValid: false, code: 400, message: 'User Account Already Exists for Participant' };
+    if (participantInstance?.user.id !== Number(id)) {
+      invalid400.push('User Account Already Exists for Participant');
     }
+  }
+
+  if (invalid400.length > 0) {
+    return {
+      isValid: false,
+      code: 400,
+      message: invalid400,
+    };
+  }
+  if (invalid404.length > 0) {
+    return {
+      isValid: false,
+      code: 404,
+      message: invalid404,
+    };
   }
 
   return {
@@ -176,7 +192,7 @@ const updateUser = async (id, form) => {
     return {
       success: false,
       code: 404,
-      message: 'User Data Not Found',
+      message: ['User Data Not Found'],
     };
   }
 
@@ -210,7 +226,7 @@ const deleteUser = async (id) => {
   // check user id validity
   const userInstance = await USR_User.findByPk(id);
   if (!userInstance) {
-    const error = { success: false, code: 404, message: 'User Data Not Found' };
+    const error = { success: false, code: 404, message: ['User Data Not Found'] };
     return error;
   }
 
@@ -228,22 +244,39 @@ const deleteUser = async (id) => {
 
 const validatePasswordInputs = async (id, form) => {
   // check validity of user id
+  const invalid404 = [];
+  const invalid400 = [];
   const userInstance = await USR_User.findByPk(id);
   if (!userInstance) {
-    return { isValid: false, code: 404, message: 'User Data Not Found' };
+    invalid404.push('User Data Not Found');
   }
 
   if (form.newPassword !== form.newRePassword) {
-    return { isValid: false, code: 400, message: 'New Password and New Re-Password Do Not Match' };
+    invalid400.push('New Password and New Re-Password Do Not Match');
   }
 
-  const comparePassword = await bcrypt.compare(form.oldPassword, userInstance.password);
+  const comparePassword = await bcrypt.compare(form.oldPassword, userInstance?.password);
   if (!comparePassword) {
-    return { isValid: false, code: 400, message: 'Old password is incorrect' };
+    invalid400.push('Old password is incorrect');
   }
 
   if (form.oldPassword === form.newPassword) {
-    return { isValid: false, code: 400, message: 'New Password Cannot Be Same As Old Password' };
+    invalid400.push('New Password Cannot Be Same As Old Password');
+  }
+
+  if (invalid400.length > 0) {
+    return {
+      isValid: false,
+      code: 400,
+      message: invalid400,
+    };
+  }
+  if (invalid404.length > 0) {
+    return {
+      isValid: false,
+      code: 404,
+      message: invalid404,
+    };
   }
 
   return {
