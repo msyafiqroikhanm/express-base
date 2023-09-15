@@ -135,8 +135,9 @@ class AuthMiddleware {
       // * participant
       if (req.user.participant.contingentId && req.user.Role.id !== rolesLib.superAdmin) {
         limitation.isAdmin = false;
-        limitation.access.contingentId = req.user.participant.contingentId;
-        limitation.access.contingent = { id: req.user.participant.contingentId };
+        limitation.access.contingent = {
+          contingentId: req.user.participant.contingentId, id: req.user.participant.contingentId,
+        };
       }
 
       // * accomodation
