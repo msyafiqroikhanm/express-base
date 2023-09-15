@@ -1,7 +1,8 @@
 /* eslint-disable no-param-reassign */
 const { Op } = require('sequelize');
 const {
-  TPT_Vehicle, TPT_Vendor, REF_VehicleType, QRM_QR, QRM_QRTemplate,
+  TPT_Vehicle, TPT_Vendor, REF_VehicleType, QRM_QR, QRM_QRTemplate, TPT_VehicleSchedule,
+  TPT_Driver, ACM_Location, REF_VehicleScheduleStatus, TPT_VehicleTracking,
 } = require('../models');
 const { createQR } = require('./qr.service');
 
@@ -25,21 +26,31 @@ const validateVehicleInputs = async (form) => {
     vendorId, typeId, vehicleNo, vehiclePlateNo, name, capacity,
   } = form;
 
+  const invalid400 = [];
+  const invalid404 = [];
+
   const vendorInstace = await TPT_Vendor.findByPk(vendorId);
   if (!vendorInstace) {
-    return {
-      isValid: false,
-      code: 404,
-      message: 'Vendor Data Not Found',
-    };
+    invalid404.push('Vendor Data Not Found');
   }
 
   const typeInstance = await REF_VehicleType.findByPk(typeId);
   if (!typeInstance) {
+    invalid404.push('Vehicle Type Data Not Found');
+  }
+
+  if (invalid400.length > 0) {
+    return {
+      isValid: false,
+      code: 400,
+      message: invalid400,
+    };
+  }
+  if (invalid404.length > 0) {
     return {
       isValid: false,
       code: 404,
-      message: 'Vehicle Type Data Not Found',
+      message: invalid404,
     };
   }
 
@@ -90,7 +101,7 @@ const selectVehicle = async (id) => {
     return {
       success: false,
       code: 404,
-      message: 'Vehicle Data Not Found',
+      message: ['Vehicle Data Not Found'],
     };
   }
 
@@ -134,7 +145,7 @@ const updateVehicle = async (form, id) => {
     return {
       success: false,
       code: 404,
-      message: 'Vehicle Data Not Found',
+      message: ['Vehicle Data Not Found'],
     };
   }
 
@@ -159,7 +170,7 @@ const deleteVehicle = async (id) => {
     return {
       success: false,
       code: 404,
-      message: 'Vehicle Data Not Found',
+      message: ['Vehicle Data Not Found'],
     };
   }
 
@@ -174,6 +185,82 @@ const deleteVehicle = async (id) => {
   };
 };
 
+const selectVehicleSchedules = async (vehicleId) => {
+  const vehicleInstance = await TPT_Vehicle.findByPk(vehicleId);
+  if (!vehicleInstance) {
+    return {
+      success: false,
+      code: 404,
+      message: ['Vehicle Data Not Found'],
+    };
+  }
+
+  const schedules = await TPT_VehicleSchedule.findAll({
+    where: { vehicleId },
+    include: [
+      { model: TPT_Driver, attributes: ['name'], as: 'driver' },
+      { model: REF_VehicleScheduleStatus, attributes: ['name'], as: 'status' },
+      { model: ACM_Location, attributes: ['id', 'name', 'address'], as: 'pickUp' },
+      { model: ACM_Location, attributes: ['id', 'name', 'address'], as: 'destination' },
+    ],
+  });
+
+  schedules.forEach((schedule) => {
+    schedule.dataValues.driver = schedule.driver.dataValues.name;
+    schedule.dataValues.status = schedule.status.dataValues.name;
+  });
+
+  return {
+    success: true,
+    message: 'Successfully Getting All Schedules For a Vehicle',
+    content: schedules,
+  };
+};
+
+const selectVehicleTracks = async (vehicleId) => {
+  const vehicleInstance = await TPT_Vehicle.findByPk(vehicleId);
+  if (!vehicleInstance) {
+    return {
+      success: false,
+      code: 404,
+      message: ['Vehicle Data Not Found'],
+    };
+  }
+
+  const tracks = await TPT_VehicleTracking.findAll({ where: { vehicleId } });
+
+  return {
+    success: true,
+    message: 'Successfully Getting All Track For a Vehicle',
+    content: tracks,
+  };
+};
+
+const createTrackingVehicle = async (form, vehicleId) => {
+  const vehicleInstance = await TPT_Vehicle.findByPk(vehicleId);
+  if (!vehicleInstance) {
+    return {
+      success: false,
+      code: 404,
+      message: ['Vehicle Data Not Found'],
+    };
+  }
+
+  const trackInstance = await TPT_VehicleTracking.create({
+    vehicleId,
+    latitude: form.latitude,
+    longtitude: form.longtitude,
+    accuracy: form.accuracy,
+    time: new Date(),
+  });
+
+  return {
+    succes: true,
+    message: 'Vehicle Track Successfully Created',
+    content: trackInstance,
+  };
+};
+
 module.exports = {
   validateVehicleInputs,
   validateVehicleQuery,
@@ -182,4 +269,7 @@ module.exports = {
   createVehicle,
   updateVehicle,
   deleteVehicle,
+  selectVehicleSchedules,
+  selectVehicleTracks,
+  createTrackingVehicle,
 };
