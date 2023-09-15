@@ -135,7 +135,6 @@ const deletePIC = async (id) => {
 const validatePICInputs = async (form) => {
   const errorMessages = [];
   const typeInstance = await REF_PICType.findByPk(form.typeId);
-
   if (!typeInstance) {
     errorMessages.push('PIC Type Not Found');
   }
@@ -145,6 +144,14 @@ const validatePICInputs = async (form) => {
     errorMessages.push('User Data Not Found');
   }
 
+  const picInstance = await USR_PIC.findOne({
+    where: { userId: form.userId, typeId: form.typeId },
+  });
+  if (picInstance) {
+    errorMessages.push('PIC Data already exists');
+  }
+
+  // console.log({ userInstance, picInstance });
   if (errorMessages.length > 0) {
     return { isValid: false, code: 404, message: errorMessages };
   }
