@@ -103,4 +103,56 @@ router.delete(
   VehicleController.delete,
 );
 
+router.get(
+  '/:id/schedules',
+  async (req, res, next) => {
+    Authentication.authenticate(
+      req,
+      res,
+      next,
+      await features().then((feature) => [
+        feature.view_vehicle,
+      ]),
+    );
+  },
+  VehicleController.getSchedule,
+);
+
+router.get(
+  '/:id/track',
+  async (req, res, next) => {
+    Authentication.authenticate(
+      req,
+      res,
+      next,
+      await features().then((feature) => [
+        feature.view_vehicle,
+      ]),
+    );
+  },
+  VehicleController.getTrack,
+);
+
+router.post(
+  '/:id/track',
+  async (req, res, next) => {
+    Authentication.authenticate(
+      req,
+      res,
+      next,
+      await features().then((feature) => [
+        feature.view_vehicle,
+        feature.create_vehicle,
+      ]),
+    );
+  },
+  [
+    check('latitude', "Latitude attribute can't be empty").notEmpty(),
+    check('longtitude', "Longtitude attribute can't be empty").notEmpty(),
+    check('accuracy', "Accuracy attribute can't be empty").notEmpty(),
+  ],
+  ValidateMiddleware.result,
+  VehicleController.track,
+);
+
 module.exports = router;
