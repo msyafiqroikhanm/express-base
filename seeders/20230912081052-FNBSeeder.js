@@ -31,10 +31,32 @@ module.exports = {
       updatedAt: new Date(),
     }));
     await queryInterface.bulkInsert('FNB_Kitchens', kitchens);
+
+    //* FNB_Menus
+    const fnb_menu = JSON.parse(fs.readFileSync('./seeders/data/fnb_menus.json'));
+    const menus = fnb_menu.map((element) => ({
+      parentMenuId: element.parentMenuId,
+      menuTypeId: element.menuTypeId,
+      foodTypeId: element.foodTypeId,
+      name: element.name,
+      quantity: element.quantity,
+      description: element.description,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    }));
+    await queryInterface.bulkInsert('FNB_Menus', menus);
   },
 
   async down(queryInterface, Sequelize) {
     await queryInterface.bulkDelete('FNB_Couriers', null, {
+      truncate: true,
+      restartIdentity: true,
+    });
+    await queryInterface.bulkDelete('FNB_Kitchens', null, {
+      truncate: true,
+      restartIdentity: true,
+    });
+    await queryInterface.bulkDelete('FNB_Menus', null, {
       truncate: true,
       restartIdentity: true,
     });

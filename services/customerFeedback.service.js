@@ -41,7 +41,7 @@ const selectFeedback = async (id) => {
     return {
       success: false,
       code: 404,
-      message: 'Feedback Data Not Found',
+      message: ['Feedback Data Not Found'],
     };
   }
 
@@ -57,33 +57,38 @@ const selectFeedback = async (id) => {
 };
 
 const validateFeedbackInputs = async (form) => {
+  const invalid400 = [];
+  const invalid404 = [];
   // check feedback type
   const typeInstance = await REF_FeedbackType.findByPk(form.typeId);
   if (!typeInstance) {
-    return {
-      isValid: false,
-      code: 404,
-      message: 'Feedback Type Data Not Found',
-    };
+    invalid404.push('Feedback Type Data Not Found');
   }
 
   // check feedback target
   const targetInstance = await REF_FeedbackTarget.findByPk(form.targetId);
   if (!targetInstance) {
-    return {
-      isValid: false,
-      code: 404,
-      message: 'Feedback Target Data Not Found',
-    };
+    invalid404.push('Feedback Target Data Not Found');
   }
 
   // check feedback status
   const statusInstance = await REF_FeedbackStatus.findByPk(form.statusId);
   if (!statusInstance) {
+    invalid404.push('Feedback Status Data Not Found');
+  }
+
+  if (invalid400.length > 0) {
+    return {
+      isValid: false,
+      code: 400,
+      message: invalid400,
+    };
+  }
+  if (invalid404.length > 0) {
     return {
       isValid: false,
       code: 404,
-      message: 'Feedback Status Data Not Found',
+      message: invalid404,
     };
   }
 
@@ -124,26 +129,16 @@ const createFeedback = async (form) => {
 };
 
 const updateFeedback = async (form, id) => {
-  // check feedback status
-  const statusInstance = await REF_FeedbackStatus.findByPk(form.statusId);
-  if (!statusInstance) {
-    return {
-      isValid: false,
-      code: 404,
-      message: 'Feedback Status Data Not Found',
-    };
-  }
-
   const feedbackInstance = await CSM_CustomerFeedback.findByPk(id);
   if (!feedbackInstance) {
     return {
       success: false,
       code: 404,
-      message: 'Feedback Data Not Found',
+      message: ['Feedback Data Not Found'],
     };
   }
 
-  feedbackInstance.statusId = statusInstance.id;
+  feedbackInstance.statusId = form.status?.id;
   await feedbackInstance.save();
 
   return {
@@ -159,7 +154,7 @@ const deleteFeedback = async (id) => {
     return {
       success: false,
       code: 404,
-      message: 'Feedback Data Not Found',
+      message: ['Feedback Data Not Found'],
     };
   }
 

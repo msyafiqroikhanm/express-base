@@ -42,6 +42,7 @@ module.exports = (sequelize, DataTypes) => {
         foreignKey: 'identityTypeId',
         as: 'identityType',
       });
+      PAR_Participant.belongsTo(models.REF_CommitteeType, { foreignKey: 'committeeTypeId', as: 'committeeType' });
 
       PAR_Participant.hasMany(models.PAR_GroupMember, { foreignKey: 'participantId' });
       PAR_Participant.hasMany(models.PAR_ParticipantTracking, {
@@ -59,6 +60,7 @@ module.exports = (sequelize, DataTypes) => {
       contingentId: DataTypes.INTEGER,
       qrId: DataTypes.INTEGER,
       typeId: DataTypes.INTEGER,
+      committeeTypeId: DataTypes.INTEGER,
       identityTypeId: DataTypes.INTEGER,
       name: DataTypes.STRING,
       gender: {

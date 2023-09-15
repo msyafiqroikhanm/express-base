@@ -22,12 +22,13 @@ const selectAllEvents = async () => {
       attributes: { exclude: ['createdAt', 'updatedAt'] },
       include: {
         model: USR_User,
+        as: 'user',
         attributes: ['id'],
         include: { model: PAR_Participant, as: 'participant', attributes: ['name', 'phoneNbr', 'email'] },
       },
     });
 
-    event.dataValues.pic = pic.USR_User.participant;
+    event.dataValues.pic = pic.user.participant;
   }));
 
   return {
@@ -52,12 +53,13 @@ const selectEvent = async (id) => {
     attributes: { exclude: ['createdAt', 'updatedAt'] },
     include: {
       model: USR_User,
+      as: 'user',
       attributes: ['id'],
       include: { model: PAR_Participant, as: 'participant', attributes: ['name', 'phoneNbr', 'email'] },
     },
   });
 
-  eventInstance.dataValues.pic = pic.USR_User.participant;
+  eventInstance.dataValues.pic = pic.user.participant;
   eventInstance.dataValues.category = eventInstance.category.dataValues.name;
 
   return {

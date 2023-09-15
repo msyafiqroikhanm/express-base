@@ -1,0 +1,18 @@
+[
+    {
+        "parentMenuId": null,
+        "menuTypeId": 1,
+        "foodTypeId": 1,
+        "name": "Makan Siang untuk Peserta",
+        "quantity": 5000,
+        "description": "Contoh deskripsi"
+    },
+    {
+        "parentMenuId": 1,
+        "menuTypeId": 1,
+        "foodTypeId": 1,
+        "name": "Rendang untuk Makan siang peserta",
+        "quantity": 5000,
+        "description": "Contoh deskripsi"
+    }
+]

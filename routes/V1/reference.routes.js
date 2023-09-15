@@ -28,6 +28,7 @@ const {
   FoodType,
   VehicleScheduleStatus,
   VehicleType,
+  CommitteeType,
 } = require('../../controllers/reference.controller');
 const ValidateMiddleware = require('../../middlewares/validate.middleware');
 const Authentication = require('../../middlewares/auth.middleware');
@@ -2208,6 +2209,92 @@ router.delete(
     );
   },
   FoodScheduleStatus.delete,
+);
+
+// * Committee Type
+
+router.get(
+  '/committee-types',
+  async (req, res, next) => {
+    Authentication.authenticate(
+      req,
+      res,
+      next,
+      await features().then((feature) => [
+        feature.view_committee_type,
+        feature.create_committee_type,
+        feature.update_committee_type,
+        feature.delete_committee_type,
+      ]),
+    );
+  },
+  CommitteeType.getAll,
+);
+
+router.get(
+  '/committee-types/:id',
+  async (req, res, next) => {
+    Authentication.authenticate(
+      req,
+      res,
+      next,
+      await features().then((feature) => [
+        feature.view_committee_type,
+        feature.update_committee_type,
+        feature.delete_committee_type,
+      ]),
+    );
+  },
+  CommitteeType.getDetail,
+);
+
+router.post(
+  '/committee-types',
+  async (req, res, next) => {
+    Authentication.authenticate(
+      req,
+      res,
+      next,
+      await features().then((feature) => [
+        feature.create_committee_type,
+      ]),
+    );
+  },
+  [check('name', "Name attribute can't be empty").notEmpty()],
+  ValidateMiddleware.result,
+  CommitteeType.create,
+);
+
+router.put(
+  '/committee-types/:id',
+  async (req, res, next) => {
+    Authentication.authenticate(
+      req,
+      res,
+      next,
+      await features().then((feature) => [
+        feature.update_committee_type,
+      ]),
+    );
+  },
+  [check('name', "Name attribute can't be empty").notEmpty()],
+  ValidateMiddleware.result,
+  CommitteeType.update,
+);
+
+router.delete(
+  '/committee-types/:id',
+  async (req, res, next) => {
+    Authentication.authenticate(
+      req,
+      res,
+      next,
+      await features().then((feature) => [
+        feature.delete_committee_type,
+      ]),
+    );
+  },
+  CommitteeType.delete,
 );
 
 module.exports = router;

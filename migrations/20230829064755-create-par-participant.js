@@ -23,6 +23,9 @@ module.exports = {
         typeId: {
           type: Sequelize.INTEGER,
         },
+        committeeTypeId: {
+          type: Sequelize.INTEGER,
+        },
         identityTypeId: {
           type: Sequelize.INTEGER,
         },

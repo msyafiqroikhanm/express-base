@@ -49,7 +49,7 @@ const selectChatbotResponse = async (id) => {
     return {
       success: false,
       code: 404,
-      message: 'Chatbot Response Data Not Found',
+      message: ['Chatbot Response Data Not Found'],
     };
   }
 
@@ -61,23 +61,33 @@ const selectChatbotResponse = async (id) => {
 };
 
 const validateChatbotResponseInputs = async (form) => {
+  const invalid400 = [];
+  const invalid404 = [];
+
   // check chatbot response type id validity
   const typeInstance = await REF_ChatBotResponseType.findByPk(
     form.responseTypeId,
   );
   if (!typeInstance) {
-    return {
-      isValid: false,
-      code: 404,
-      message: 'Chatbot Response Type Data Not Found',
-    };
+    invalid404.push('Chatbot Response Type Data Not Found');
   }
 
   if (form.message?.length > 4000) {
+    invalid400.push('Message data exceeds the maximum size limit of 4000 characters');
+  }
+
+  if (invalid400.length > 0) {
     return {
       isValid: false,
       code: 400,
-      message: 'Message data exceeds the maximum size limit of 4000 characters',
+      message: invalid400,
+    };
+  }
+  if (invalid404.length > 0) {
+    return {
+      isValid: false,
+      code: 404,
+      message: invalid404,
     };
   }
 
@@ -112,7 +122,7 @@ const activateChatbotResponse = async (id) => {
     return {
       success: false,
       code: 404,
-      message: 'Chatbot Response Data Not Found',
+      message: ['Chatbot Response Data Not Found'],
     };
   }
 
@@ -148,7 +158,7 @@ const updateChatbotResponse = async (form, id) => {
     return {
       success: false,
       code: 404,
-      message: 'Chatbot Response Data Not Found',
+      message: ['Chatbot Response Data Not Found'],
     };
   }
 
@@ -170,7 +180,7 @@ const deleteChatbotResponse = async (id) => {
     return {
       success: false,
       code: 404,
-      message: 'Chatbot Response Data Not Found',
+      message: ['Chatbot Response Data Not Found'],
     };
   }
 
