@@ -12,7 +12,7 @@ module.exports = (sequelize, DataTypes) => {
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
-      REF_CommitteeType.hasMany(models.PAR_Participant, { foreignKey: 'committteeTypeId', as: 'committees' });
+      REF_CommitteeType.hasMany(models.PAR_Participant, { foreignKey: 'committeeTypeId', as: 'committees' });
     }
   }
   REF_CommitteeType.init({
