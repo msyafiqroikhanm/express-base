@@ -13,7 +13,6 @@ const validateParticipantQuery = async (query) => {
 
   if (query.contingent) {
     const contingentInstance = await PAR_Contingent.findOne({ where: { name: { [Op.like]: `%${query.contingent}%` } } });
-    console.log(JSON.stringify(contingentInstance, null, 2));
     parsedQuery.contingentId = contingentInstance?.id || null;
   }
 
@@ -354,7 +353,6 @@ const trackingParticipant = async (form) => {
     include: { model: PAR_Participant, as: 'participantQr' },
   });
 
-  console.log(JSON.stringify(qrInstance, null, 2));
   if (!qrInstance) {
     return {
       success: false, code: 404, message: ['QR Data Not Found'],
@@ -434,7 +432,6 @@ const createParticipantViaImport = async (file) => {
     }
 
     // validate participant inputs
-    console.log(JSON.stringify(participant, null, 2));
     const inputs = await validateParticipantInputs(participant);
     if (!inputs.isValid && inputs.code === 404) {
       invalidData.push(`${inputs.message} at row ${index + 1}`);
