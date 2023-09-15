@@ -49,6 +49,7 @@ module.exports = {
       address: element.address,
       identityTypeId: element.identityTypeId,
       typeId: element.typeId,
+      committeeTypeId: element.committeeTypeId,
       contingentId: element.contingentId,
       createdAt: new Date(),
       updatedAt: new Date(),

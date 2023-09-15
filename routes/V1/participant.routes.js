@@ -205,6 +205,7 @@ router.post(
   },
   uploadImage.single('committeeImage'),
   [
+    check('committeeTypeId', "Committee Type Id attribute can't be empty").notEmpty(),
     check('identityTypeId', "Identity type Id attribute can't be empty").notEmpty(),
     check('name', "Name attribute can't be empty").notEmpty(),
     check('gender', "Gender attribute can't be empty").notEmpty(),
@@ -232,6 +233,7 @@ router.put(
   },
   uploadImage.single('committeeImage'),
   [
+    check('committeeTypeId', "Committee Type Id attribute can't be empty").notEmpty(),
     check('identityTypeId', "Identity type Id attribute can't be empty").notEmpty(),
     check('name', "Name attribute can't be empty").notEmpty(),
     check('gender', "Gender attribute can't be empty").notEmpty(),

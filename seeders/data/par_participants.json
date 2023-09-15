@@ -8,7 +8,8 @@
     "email": "gifari@jxboard.id",
     "address": "condet",
     "identityTypeId": 1,
-    "typeId": null
+    "typeId": null,
+    "committeeTypeId": 1
   },
   {
     "name": "Admin Hotel A",
@@ -19,7 +20,8 @@
     "email": "achmad@jxboard.id",
     "address": "cijanntung",
     "identityTypeId": 1,
-    "typeId": 2
+    "typeId": 2,
+    "committeeTypeId": 2
   },
   {
     "name": "Said as a guest",
@@ -53,7 +55,8 @@
     "phoneNbr": "6285711167881",
     "email": "coor3@jxboard.id",
     "address": "cijanntung",
-    "identityTypeId": 1
+    "identityTypeId": 1,
+    "committeeTypeId": 4
   },
   {
     "name": "Admin FnB",
@@ -63,6 +66,7 @@
     "phoneNbr": "6285711167881",
     "email": "adminfnb@jxboard.id",
     "address": "cijanntung",
-    "identityTypeId": 1
+    "identityTypeId": 1,
+    "committeeTypeId": 4
   }
 ]

@@ -3,7 +3,7 @@ const fs = require('fs/promises');
 const { Op } = require('sequelize');
 const XLSX = require('xlsx');
 const {
-  PAR_Participant, REF_IdentityType, REF_ParticipantType, QRM_QR,
+  PAR_Participant, REF_IdentityType, REF_ParticipantType, QRM_QR, REF_CommitteeType,
   PAR_Contingent, REF_Region, PAR_Group, QRM_QRTemplate, PAR_ParticipantTracking,
 } = require('../models');
 const { createQR } = require('./qr.service');
@@ -38,6 +38,7 @@ const selectAllParticipant = async (query, where) => {
         { model: REF_IdentityType, attributes: ['name'], as: 'identityType' },
         { model: REF_ParticipantType, attributes: ['name'], as: 'participantType' },
         { model: PAR_Group, as: 'groups', through: { attributes: [] } },
+        { model: REF_CommitteeType, as: 'committeeType', attributes: ['name'] },
       ],
     });
   } else {
@@ -51,6 +52,7 @@ const selectAllParticipant = async (query, where) => {
           include: { model: REF_Region, as: 'region', attributes: ['name'] },
         },
         { model: QRM_QR, as: 'qr' },
+        { model: REF_CommitteeType, attributes: ['name'], as: 'committeeType' },
         { model: REF_IdentityType, attributes: ['name'], as: 'identityType' },
         { model: REF_ParticipantType, attributes: ['name'], as: 'participantType' },
         { model: PAR_Group, as: 'groups', through: { attributes: [] } },
@@ -67,6 +69,7 @@ const selectAllParticipant = async (query, where) => {
     }
     participant.dataValues.identityType = participant.identityType?.dataValues.name;
     participant.dataValues.participantType = participant.participantType?.dataValues.name;
+    participant.dataValues.committeeType = participant.committeeType?.dataValues.name;
     // separating bettween normal participant and committee participant
     if (participant.contingent && participant.participantType) {
       seperatedParticipant.participant.push(participant);
@@ -94,6 +97,7 @@ const selectParticipant = async (id, where) => {
           include: { model: REF_Region, as: 'region', attributes: ['id', 'name'] },
         },
         { model: QRM_QR, as: 'qr' },
+        { model: REF_CommitteeType, attributes: ['name'], as: 'committeeType' },
         { model: REF_IdentityType, attributes: ['id', 'name'], as: 'identityType' },
         { model: REF_ParticipantType, attributes: ['id', 'name'], as: 'participantType' },
         { model: PAR_Group, as: 'groups', through: { attributes: [] } },
@@ -110,6 +114,7 @@ const selectParticipant = async (id, where) => {
           include: { model: REF_Region, as: 'region', attributes: ['id', 'name'] },
         },
         { model: QRM_QR, as: 'qr' },
+        { model: REF_CommitteeType, attributes: ['id', 'name'], as: 'committeeType' },
         { model: REF_IdentityType, attributes: ['id', 'name'], as: 'identityType' },
         { model: REF_ParticipantType, attributes: ['id', 'name'], as: 'participantType' },
         { model: PAR_Group, as: 'groups', through: { attributes: [] } },
@@ -376,14 +381,14 @@ const createParticipantViaImport = async (file) => {
     };
   }
 
-  const participantTypes = await REF_ParticipantType.findAll();
-  const identityTypes = await REF_IdentityType.findAll();
-  const contignets = await PAR_Contingent.findAll();
+  const participantTypes = await REF_ParticipantType.findAll({ attributes: ['id', 'name'] });
+  const identityTypes = await REF_IdentityType.findAll({ attributes: ['id', 'name'] });
+  const contignets = await PAR_Contingent.findAll({ attributes: ['id', 'name'] });
   const existingParticipants = await PAR_Participant.findAll({ attributes: ['identityTypeId', 'identityNo', 'phoneNbr', 'email'] });
 
   const existPhoneNbr = existingParticipants.map((participant) => participant.phoneNbr);
   const existEmail = existingParticipants.map((participant) => participant.email);
-  const existIdentity = existingParticipants.map((participant) => participant.identityNo);
+  const existIdentity = existingParticipants.map((participant) => `${participant.identityTypeId}-${participant.identityNo}`);
 
   const workbook = XLSX.readFile(file.path);
   const sheet = workbook.SheetNames[0];
@@ -423,12 +428,13 @@ const createParticipantViaImport = async (file) => {
       invalidData.push(`Duplicate phone number ${participant.phoneNbr} for participant ${participant.name} at row ${index + 1}`);
       return;
     }
-    if (existIdentity.includes(participant.identityNo)) {
-      invalidData.push(`Duplicate identity number ${participant.identityNo} for participant ${participant.name} at row ${index + 1}`);
+    if (existIdentity.includes(`${participant.identityTypeId}-${participant.identityNo}`)) {
+      invalidData.push(`Duplicate identity number ${participant.identityNo} with type ${participant.identityTypeId} for committee ${participant.name} at row ${index + 1}`);
       return;
     }
 
     // validate participant inputs
+    console.log(JSON.stringify(participant, null, 2));
     const inputs = await validateParticipantInputs(participant);
     if (!inputs.isValid && inputs.code === 404) {
       invalidData.push(`${inputs.message} at row ${index + 1}`);
@@ -456,11 +462,16 @@ const createParticipantViaImport = async (file) => {
 
 const validateCommitteeInputs = async (form, file, id) => {
   const {
-    identityTypeId, name, gender, birthDate, identityNo, phoneNbr, email, address,
+    committeeTypeId, identityTypeId, name, gender, birthDate, identityNo, phoneNbr, email, address,
   } = form;
 
   const invalid400 = [];
   const invalid404 = [];
+
+  const committeeTypeInstance = await REF_CommitteeType.findByPk(committeeTypeId);
+  if (!committeeTypeInstance) {
+    invalid404.push('Committee Type Data Not Found');
+  }
 
   // check identity type id validity
   const identityTypeInstance = await REF_IdentityType.findByPk(identityTypeId);
@@ -537,6 +548,7 @@ const validateCommitteeInputs = async (form, file, id) => {
   return {
     isValid: true,
     form: {
+      committeeType: committeeTypeInstance,
       identityType: identityTypeInstance,
       name,
       gender,
@@ -556,6 +568,7 @@ const createComittee = async (form) => {
     contingentId: null,
     qrId: null,
     typeId: null,
+    committeeTypeId: form.committeeType.id,
     identityTypeId: form.identityType.id,
     name: form.name,
     gender: form.gender,
@@ -580,6 +593,7 @@ const updateCommittee = async (id, form) => {
     };
   }
 
+  participantInstance.committeeTypeId = form.committeeType.id;
   participantInstance.identityTypeId = form.identityType.id;
   participantInstance.name = form.name;
   participantInstance.gender = form.gender;
@@ -603,12 +617,14 @@ const createCommitteeViaImport = async (file) => {
     };
   }
 
-  const identityTypes = await REF_IdentityType.findAll();
+  const identityTypes = await REF_IdentityType.findAll({ attributes: ['id', 'name'] });
+  const committeeTypes = await REF_CommitteeType.findAll({ attributes: ['id', 'name'] });
+
   const existingParticipants = await PAR_Participant.findAll({ attributes: ['identityTypeId', 'identityNo', 'phoneNbr', 'email'] });
 
   const existPhoneNbr = existingParticipants.map((participant) => participant.phoneNbr);
   const existEmail = existingParticipants.map((participant) => participant.email);
-  const existIdentity = existingParticipants.map((participant) => participant.identityNo);
+  const existIdentity = existingParticipants.map((participant) => `${participant.identityTypeId}-${participant.identityNo}`);
 
   const workbook = XLSX.readFile(file.path);
   const sheet = workbook.SheetNames[0];
@@ -616,6 +632,9 @@ const createCommitteeViaImport = async (file) => {
   const participants = data.map((element) => {
     const identityType = identityTypes.find(
       (identity) => identity.name?.toLowerCase() === element.identityType?.toLowerCase(),
+    );
+    const committeeType = committeeTypes.find(
+      (type) => type.name?.toLowerCase() === element.committeeType?.toLowerCase(),
     );
     return {
       name: element.name,
@@ -626,6 +645,7 @@ const createCommitteeViaImport = async (file) => {
       email: element.email,
       address: element.address,
       identityTypeId: identityType?.id || null,
+      committeeTypeId: committeeType?.id || null,
     };
   });
 
@@ -640,8 +660,8 @@ const createCommitteeViaImport = async (file) => {
       invalidData.push(`Duplicate phone number ${participant.phoneNbr} for committee ${participant.name} at row ${index + 1}`);
       return;
     }
-    if (existIdentity.includes(participant.identityNo)) {
-      invalidData.push(`Duplicate identity number ${participant.identityNo} for committee ${participant.name} at row ${index + 1}`);
+    if (existIdentity.includes(`${participant.identityTypeId}-${participant.identityNo}`)) {
+      invalidData.push(`Duplicate identity number ${participant.identityNo} with type ${participant.identityTypeId} for committee ${participant.name} at row ${index + 1}`);
       return;
     }
 
