@@ -27,8 +27,8 @@ class AuthMiddleware {
 
         // check user access
         if (requiredFeatures) {
-          const authorized = req.user.Role.USR_Features.some((feature) =>
-            requiredFeatures.includes(feature.id),
+          const authorized = req.user.Role.USR_Features.some(
+            (feature) => requiredFeatures.includes(feature.id),
           );
 
           if (!authorized) {
@@ -115,11 +115,40 @@ class AuthMiddleware {
       res.url = `${req.method} ${req.originalUrl}`;
 
       const limitation = { isAdmin: true, access: {} };
-      if (req.user.participant.contingentId || req.user.Role.id !== rolesLib.superAdmin) {
+      if (req.user.participant.contingentId && req.user.Role.id !== rolesLib.superAdmin) {
         limitation.isAdmin = false;
         limitation.access.contingentId = req.user.participant.contingentId;
         limitation.access.contingent = { id: req.user.participant.contingentId };
       }
+      req.user.limitation = limitation;
+      next();
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  static async dashboard(req, res, next) {
+    try {
+      res.url = `${req.method} ${req.originalUrl}`;
+
+      const limitation = { isAdmin: true, access: {} };
+      // * participant
+      if (req.user.participant.contingentId && req.user.Role.id !== rolesLib.superAdmin) {
+        limitation.isAdmin = false;
+        limitation.access.contingentId = req.user.participant.contingentId;
+        limitation.access.contingent = { id: req.user.participant.contingentId };
+      }
+
+      // * accomodation
+
+      // * transportation
+
+      // * fnb
+
+      // * event
+
+      // * customer service
+
       req.user.limitation = limitation;
       next();
     } catch (error) {
