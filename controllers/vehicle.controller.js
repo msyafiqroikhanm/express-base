@@ -1,7 +1,8 @@
 const ResponseFormatter = require('../helpers/responseFormatter.helper');
 const {
   selectAllVehicles, validateVehicleQuery, selectVehicle, validateVehicleInputs,
-  createVehicle, updateVehicle, deleteVehicle,
+  createVehicle, updateVehicle, deleteVehicle, selectVehicleSchedules,
+  selectVehicleTracks, createTrackingVehicle,
 } = require('../services/vehicle.service');
 
 class VehicleController {
@@ -87,6 +88,54 @@ class VehicleController {
       }
 
       return ResponseFormatter.success200(res, data.message, data.content);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  static async getSchedule(req, res, next) {
+    try {
+      res.url = `${req.method} ${req.originalUrl}`;
+
+      const data = await selectVehicleSchedules(req.params.id);
+      if (!data.success && data.code === 404) {
+        return ResponseFormatter.error404(res, 'Data Not Found', data.message);
+      }
+
+      return ResponseFormatter.success200(res, data.message, data.content);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  static async getTrack(req, res, next) {
+    try {
+      res.url = `${req.method} ${req.originalUrl}`;
+
+      const data = await selectVehicleTracks(req.params.id);
+      if (!data.success && data.code === 404) {
+        return ResponseFormatter.error404(res, 'Data Not Found', data.message);
+      }
+
+      return ResponseFormatter.success200(res, data.message, data.content);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  static async track(req, res, next) {
+    try {
+      res.url = `${req.method} ${req.originalUrl}`;
+
+      const data = await createTrackingVehicle(req.body, req.params.id);
+      if (!data.isValid && data.code === 400) {
+        return ResponseFormatter.error400(res, 'Bad Request', data.message);
+      }
+      if (!data.isValid && data.code === 404) {
+        return ResponseFormatter.error404(res, 'Data Not Found', data.message);
+      }
+
+      return ResponseFormatter.success201(res, data.message, data.content);
     } catch (error) {
       next(error);
     }

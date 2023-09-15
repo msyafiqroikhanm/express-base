@@ -273,6 +273,10 @@
   { "roleId": 5, "featureId": 64 },
   { "roleId": 5, "featureId": 65 },
   { "roleId": 5, "featureId": 66 },
+  { "roleId": 5, "featureId": 75 },
+  { "roleId": 5, "featureId": 76 },
+  { "roleId": 5, "featureId": 77 },
+  { "roleId": 5, "featureId": 78 },
 
   { "roleId": 6, "featureId": 59 },
   { "roleId": 6, "featureId": 60 },

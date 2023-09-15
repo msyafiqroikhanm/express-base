@@ -28,7 +28,7 @@ const selectAllEvents = async () => {
       },
     });
 
-    event.dataValues.pic = pic.user.participant;
+    event.dataValues.pic = pic.user?.participant;
   }));
 
   return {
@@ -59,8 +59,8 @@ const selectEvent = async (id) => {
     },
   });
 
-  eventInstance.dataValues.pic = pic.user.participant;
-  eventInstance.dataValues.category = eventInstance.category.dataValues.name;
+  eventInstance.dataValues.pic = pic.user?.participant;
+  eventInstance.dataValues.category = eventInstance.category?.dataValues.name;
 
   return {
     success: true, message: 'Success Getting Event', content: eventInstance,
