@@ -310,7 +310,7 @@ const updateParticipant = async (id, form, where) => {
   }
 
   // delete old file when user want to change it
-  if (form.file) {
+  if (form.file && participantInstance.file) {
     await deleteFile(relative(__dirname, participantInstance.file));
   }
 
@@ -598,7 +598,7 @@ const updateCommittee = async (id, form) => {
   }
 
   // delete old file when user want to change it
-  if (form.file) {
+  if (form.file && participantInstance.file) {
     await deleteFile(relative(__dirname, participantInstance.file));
   }
 
