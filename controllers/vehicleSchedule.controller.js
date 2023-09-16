@@ -1,5 +1,5 @@
 const ResponseFormatter = require('../helpers/responseFormatter.helper');
-const { selectAllVehicleSchedule } = require('../services/vehicleSchedule.service');
+const { selectAllVehicleSchedule, selectVehicleSchedule } = require('../services/vehicleSchedule.service');
 
 class VehicleScheduleController {
   static async getAll(req, res, next) {
@@ -17,6 +17,13 @@ class VehicleScheduleController {
   static async getDetail(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+
+      const data = await selectVehicleSchedule(req.params.id);
+      if (!data.success && data.code === 404) {
+        return ResponseFormatter.error404(res, 'Data Not Found', data.message);
+      }
+
+      return ResponseFormatter.success200(res, data.message, data.content);
     } catch (error) {
       next(error);
     }
