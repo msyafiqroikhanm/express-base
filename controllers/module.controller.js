@@ -42,8 +42,11 @@ class FeatureModule {
       res.url = `${req.method} ${req.originalUrl}`;
 
       const data = await createMainModule(req.body);
-      if (!data.success) {
-        return ResponseFormatter.InternalServerError(res, data.message);
+      if (!data.success && data.code === 400) {
+        return ResponseFormatter.error400(res, 'Bad Request', data.message);
+      }
+      if (!data.success && data.code === 404) {
+        return ResponseFormatter.error404(res, 'Data Not Found', data.message);
       }
 
       return ResponseFormatter.success201(res, data.message, data.content);

@@ -1,5 +1,6 @@
 /* eslint-disable no-param-reassign */
 const fs = require('fs/promises');
+const { relative } = require('path');
 const { Op } = require('sequelize');
 const XLSX = require('xlsx');
 const {
@@ -7,6 +8,7 @@ const {
   PAR_Contingent, REF_Region, PAR_Group, QRM_QRTemplate, PAR_ParticipantTracking,
 } = require('../models');
 const { createQR } = require('./qr.service');
+const deleteFile = require('../helpers/deleteFile.helper');
 
 const validateParticipantQuery = async (query) => {
   const parsedQuery = {};
@@ -307,6 +309,11 @@ const updateParticipant = async (id, form, where) => {
     };
   }
 
+  // delete old file when user want to change it
+  if (form.file) {
+    await deleteFile(relative(__dirname, participantInstance.file));
+  }
+
   participantInstance.contingetId = form.contingent?.id || null;
   participantInstance.typeId = form.participantType?.id || null;
   participantInstance.identityTypeId = form.identityType?.id || null;
@@ -317,7 +324,7 @@ const updateParticipant = async (id, form, where) => {
   participantInstance.phoneNbr = form.phoneNbr;
   participantInstance.email = form.email;
   participantInstance.address = form.address;
-  participantInstance.file = form.file;
+  participantInstance.file = form.file || participantInstance.file;
   await participantInstance.save();
 
   return {
@@ -590,6 +597,11 @@ const updateCommittee = async (id, form) => {
     };
   }
 
+  // delete old file when user want to change it
+  if (form.file) {
+    await deleteFile(relative(__dirname, participantInstance.file));
+  }
+
   participantInstance.committeeTypeId = form.committeeType.id;
   participantInstance.identityTypeId = form.identityType.id;
   participantInstance.name = form.name;
@@ -599,7 +611,7 @@ const updateCommittee = async (id, form) => {
   participantInstance.phoneNbr = form.phoneNbr.id;
   participantInstance.email = form.email;
   participantInstance.address = form.address;
-  participantInstance.file = form.file;
+  participantInstance.file = form.file || participantInstance.file;
   await participantInstance.save();
 
   return {
