@@ -26,7 +26,10 @@ module.exports = (sequelize, DataTypes) => {
   }
   USR_Role.init({
     templateId: DataTypes.INTEGER,
-    name: DataTypes.STRING,
+    name: {
+      type: DataTypes.STRING,
+      unique: true,
+    },
   }, {
     sequelize,
     modelName: 'USR_Role',

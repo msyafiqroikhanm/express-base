@@ -52,7 +52,7 @@ class Role {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
 
-      const inputs = await validateRoleInputs(req.body);
+      const inputs = await validateRoleInputs(req.body, req.params.id);
       if (!inputs.isValid) {
         return ResponseFormatter.error404(res, 'Data Not Found', inputs.message);
       }
