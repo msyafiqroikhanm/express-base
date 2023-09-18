@@ -169,7 +169,6 @@ const updateLodger = async (id, form) => {
   let newRoom;
   if (form.roomId) {
     if (Number(form.roomId) !== Number(lodgerInstance.roomId)) {
-      roomIsUpdate = true;
       const roomInstance = await ACM_Room.findByPk(form.roomId);
       if (!roomInstance) {
         errorMessages.push('Room Data Not Found');
@@ -179,6 +178,7 @@ const updateLodger = async (id, form) => {
           errorMessages.push('Room is Full');
         }
       }
+      roomIsUpdate = true;
       newRoom = roomInstance;
     }
   }

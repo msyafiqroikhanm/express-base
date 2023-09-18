@@ -19,7 +19,7 @@ module.exports = (sequelize, DataTypes) => {
     {
       name: DataTypes.STRING,
       phoneNbr: DataTypes.STRING,
-      isAvaiilable: DataTypes.BOOLEAN,
+      isAvailable: DataTypes.BOOLEAN,
       deletedAt: DataTypes.DATE,
     },
     {
