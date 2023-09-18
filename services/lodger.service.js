@@ -9,11 +9,14 @@ const {
   REF_ParticipantType,
   PAR_Contingent,
   REF_Region,
+  REF_RoomType,
+  REF_RoomStatus,
+  REF_LocationType,
   sequelize,
 } = require('../models');
 
 const selectAllLodgers = async (where) => {
-  const facilityInstance = await ACM_ParticipantLodger.findAll({
+  const lodgerInstance = await ACM_ParticipantLodger.findAll({
     where,
     include: [
       {
@@ -33,13 +36,42 @@ const selectAllLodgers = async (where) => {
   return {
     success: true,
     message: 'Successfully Getting All Facility',
-    content: facilityInstance,
+    content: lodgerInstance,
   };
 };
 
 const selectLodger = async (id) => {
   const lodgerInstance = await ACM_ParticipantLodger.findByPk(id, {
     include: [
+      {
+        model: ACM_Room,
+        as: 'room',
+        attributes: { exclude: ['createdAt', 'updatedAt'] },
+        include: [
+          {
+            model: ACM_Location,
+            as: 'location',
+            attributes: { exclude: ['createdAt', 'updatedAt'] },
+            include: [
+              {
+                model: REF_LocationType,
+                as: 'type',
+                attributes: { exclude: ['createdAt', 'updatedAt'] },
+              },
+            ],
+          },
+          {
+            model: REF_RoomType,
+            as: 'type',
+            attributes: { exclude: ['createdAt', 'updatedAt'] },
+          },
+          {
+            model: REF_RoomStatus,
+            as: 'status',
+            attributes: { exclude: ['createdAt', 'updatedAt'] },
+          },
+        ],
+      },
       {
         model: PAR_Participant,
         as: 'participant',
