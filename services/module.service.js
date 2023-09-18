@@ -54,6 +54,11 @@ const selectModule = async (id) => {
 
 const createMainModule = async (form) => {
   try {
+    // check module name duplicate
+    const duplicateModule = await USR_Module.findOne({ where: { name: form.name } });
+    if (duplicateModule) {
+      return { success: false, code: 400, message: ['Feature Name Already Taken / Exist'] };
+    }
     const moduleInstance = await USR_Module.create(form);
     return { success: true, message: 'Module Successfully Created', content: moduleInstance };
   } catch (error) {
@@ -63,14 +68,39 @@ const createMainModule = async (form) => {
 
 const createSubModule = async (form) => {
   try {
+    const invalid400 = [];
+    const invalid404 = [];
+
+    // check module name duplicate
+    const duplicateModule = await USR_Module.findOne({ where: { name: form.name } });
+    if (duplicateModule) {
+      invalid400.push('Feature Name Already Taken / Exist');
+    }
+
     // check if parent faq is exist and main module
     const mainModule = await USR_Module.findByPk(form.parentModuleId);
     if (!mainModule) {
-      return { success: false, code: 404, message: ['Main / Parent Module Data Not Found'] };
+      invalid404.push('Main / Parent Module Data Not Found');
     }
     if (mainModule?.parentModuleId) {
-      return { success: false, code: 400, message: ['Sub Module Can\t be Set As Parent Module'] };
+      invalid400.push('Sub Module Can\t be Set As Parent Module');
     }
+
+    if (invalid400.length > 0) {
+      return {
+        isValid: false,
+        code: 400,
+        message: invalid400,
+      };
+    }
+    if (invalid404.length > 0) {
+      return {
+        isValid: false,
+        code: 404,
+        message: invalid404,
+      };
+    }
+
     const moduleInstance = await USR_Module.create(form);
     return { success: true, message: 'Module Successfully Created', content: moduleInstance };
   } catch (error) {
@@ -80,14 +110,38 @@ const createSubModule = async (form) => {
 
 const updateMainModule = async (id, form) => {
   try {
+    const invalid400 = [];
+    const invalid404 = [];
+
+    // check module name duplicate
+    const duplicateModule = await USR_Module.findOne({
+      where: { id: { [Op.ne]: id }, name: form.name },
+    });
+    if (duplicateModule) {
+      invalid400.push('Feature Name Already Taken / Exist');
+    }
     // validate module id
     const moduleInstance = await USR_Module.findByPk(id);
     if (!moduleInstance) {
-      const error = { success: false, code: 404, message: ['Module Data Not Found'] };
-      return error;
+      invalid404.push('Module Data Not Found');
     }
-    if (moduleInstance.parentModuleId) {
-      return { success: false, code: 400, message: ['Can\'t Update Sub Module Using Main Module Endpoint'] };
+    if (moduleInstance?.parentModuleId) {
+      invalid400.push('Can\'t Update Sub Module Using Main Module Endpoint');
+    }
+
+    if (invalid400.length > 0) {
+      return {
+        isValid: false,
+        code: 400,
+        message: invalid400,
+      };
+    }
+    if (invalid404.length > 0) {
+      return {
+        isValid: false,
+        code: 404,
+        message: invalid404,
+      };
     }
 
     moduleInstance.name = form.name;
@@ -103,6 +157,14 @@ const updateSubModule = async (id, form) => {
   try {
     const invalid400 = [];
     const invalid404 = [];
+
+    // check module name duplicate
+    const duplicateModule = await USR_Module.findOne({
+      where: { id: { [Op.ne]: id }, name: form.name },
+    });
+    if (duplicateModule) {
+      invalid400.push('Feature Name Already Taken / Exist');
+    }
 
     // validate module id
     const moduleInstance = await USR_Module.findByPk(id);

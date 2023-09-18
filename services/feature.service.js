@@ -1,4 +1,5 @@
 /* eslint-disable no-param-reassign */
+const { Op } = require('sequelize');
 const { USR_Feature, USR_Module } = require('../models');
 
 const selectAllFeatures = async () => {
@@ -47,13 +48,40 @@ const createFeature = async (form) => {
   }
 };
 
-const validateFeatureInputs = async (form) => {
+const validateFeatureInputs = async (form, id) => {
   const { moduleId, name } = form;
+
+  const invalid400 = [];
+  const invalid404 = [];
+
+  // check module name duplicate
+  const duplicateModule = await USR_Feature.findOne({
+    where: id ? { id: { [Op.ne]: id }, name: form.name } : { name },
+  });
+  console.log(JSON.stringify(duplicateModule, null, 2));
+  if (duplicateModule) {
+    invalid400.push('Feature Name Already Taken / Exist');
+  }
 
   // validate module id
   const moduleInstance = await USR_Module.findByPk(moduleId);
   if (!moduleInstance) {
-    return { isValid: false, message: ['Module Data Not Found'] };
+    invalid404.push('Module Data Not Found');
+  }
+
+  if (invalid400.length > 0) {
+    return {
+      isValid: false,
+      code: 400,
+      message: invalid400,
+    };
+  }
+  if (invalid404.length > 0) {
+    return {
+      isValid: false,
+      code: 404,
+      message: invalid404,
+    };
   }
 
   return { isValid: true, form: { moduleId, name } };

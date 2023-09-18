@@ -18,7 +18,8 @@ const selectAllEvents = async () => {
 
   await Promise.all(data.map(async (event) => {
     event.dataValues.category = event.category.dataValues.name;
-    const pic = await USR_PIC.findByPk(event.picId, {
+    const pic = await USR_PIC.findOne({
+      where: { id: event.picId },
       attributes: { exclude: ['createdAt', 'updatedAt'] },
       include: {
         model: USR_User,
@@ -28,7 +29,7 @@ const selectAllEvents = async () => {
       },
     });
 
-    event.dataValues.pic = pic.user.participant;
+    event.dataValues.pic = pic?.user?.participant || null;
   }));
 
   return {
@@ -59,8 +60,8 @@ const selectEvent = async (id) => {
     },
   });
 
-  eventInstance.dataValues.pic = pic.user.participant;
-  eventInstance.dataValues.category = eventInstance.category.dataValues.name;
+  eventInstance.dataValues.pic = pic.user?.participant;
+  eventInstance.dataValues.category = eventInstance.category?.dataValues.name;
 
   return {
     success: true, message: 'Success Getting Event', content: eventInstance,

@@ -18,6 +18,31 @@ module.exports = {
       createdAt: new Date(),
       updatedAt: new Date(),
     }));
+    if (process.env.NODE_ENV?.toLowerCase() === 'production') {
+      configurations.push({
+        categoryId: 1,
+        name: 'Base URL',
+        value: 'http://172.16.0.13:3050',
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      });
+    } else if (process.env.NODE_ENV?.toLowerCase() === 'development') {
+      configurations.push({
+        categoryId: 1,
+        name: 'Base URL',
+        value: 'http://172.16.0.11:3550',
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      });
+    } else if (process.env.NODE_ENV?.toLowerCase() === 'local') {
+      configurations.push({
+        categoryId: 1,
+        name: 'Base URL',
+        value: 'https://c138-112-78-165-92.ngrok-free.app',
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      });
+    }
     await queryInterface.bulkInsert('SYS_Configurations', configurations);
   },
 

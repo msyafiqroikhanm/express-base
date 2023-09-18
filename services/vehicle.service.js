@@ -206,8 +206,8 @@ const selectVehicleSchedules = async (vehicleId) => {
   });
 
   schedules.forEach((schedule) => {
-    schedule.dataValues.driver = schedule.driver.dataValues.name;
-    schedule.dataValues.status = schedule.status.dataValues.name;
+    schedule.dataValues.driver = schedule.driver?.dataValues.name;
+    schedule.dataValues.status = schedule.status?.dataValues.name;
   });
 
   return {

@@ -97,7 +97,10 @@ const selectRole = async (id) => {
   return { success: true, message: 'Success Getting Role', content: roleInstance };
 };
 
-const validateRoleInputs = async (form) => {
+const validateRoleInputs = async (form, id) => {
+  const invalid400 = [];
+  const invalid404 = [];
+
   const validFeatures = await USR_Feature.findAll({
     where: {
       id: { [Op.in]: form.features },
@@ -106,7 +109,30 @@ const validateRoleInputs = async (form) => {
 
   const templateInstance = await QRM_QRTemplate.findByPk(form.templateId);
   if (!templateInstance) {
-    return { isValid: false, code: 404, message: ['Qr Template Data Not Found'] };
+    invalid404.push('Qr Template Data Not Found');
+  }
+
+  // check role name duplicate
+  const duplicateRole = await USR_Role.findOne({
+    where: id ? { id: { [Op.ne]: id }, name: form.name } : { name: form.name },
+  });
+  if (duplicateRole) {
+    invalid400.push('Role Name Already Taken / Exist');
+  }
+
+  if (invalid400.length > 0) {
+    return {
+      isValid: false,
+      code: 400,
+      message: invalid400,
+    };
+  }
+  if (invalid404.length > 0) {
+    return {
+      isValid: false,
+      code: 404,
+      message: invalid404,
+    };
   }
 
   return {

@@ -33,6 +33,8 @@ const driverRoutes = require('./driver.routes');
 const vehicleRoutes = require('./vehicle.routes');
 const kitchenRoutes = require('./kitchen.routes');
 const menuRoutes = require('./menus.routes');
+const vehicleScheduleRoutes = require('./vehicleSchedule.routes');
+const dashboardRoutes = require('./dashboard.routes');
 
 router.use('/auth', authRoutes);
 router.use('/config', configRoutes);
@@ -67,5 +69,7 @@ router.use('/drivers', driverRoutes);
 router.use('/vehicles', vehicleRoutes);
 router.use('/kitchens', kitchenRoutes);
 router.use('/menus', menuRoutes);
+router.use('/vehicle-schedules', vehicleScheduleRoutes);
+router.use('/dashboard', dashboardRoutes);
 
 module.exports = router;
