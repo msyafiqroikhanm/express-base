@@ -53,6 +53,7 @@ router.post(
     );
   },
   [
+    check('picId', "PIC Id attribute can't be empty").notEmpty(),
     check('name', "Name attribute can't be empty").notEmpty(),
     check('phoneNbr', "Phone Number attribute can't be empty").isMobilePhone('id-ID'),
     check('email', "Email attribute can't be empty").isEmail(),
@@ -75,6 +76,7 @@ router.put(
     );
   },
   [
+    check('picId', "PIC Id attribute can't be empty").notEmpty(),
     check('name', "Name attribute can't be empty").notEmpty(),
     check('phoneNbr', "Phone Number attribute can't be empty").isMobilePhone('id-ID'),
     check('email', "Email attribute can't be empty").isEmail(),

@@ -14,6 +14,9 @@ module.exports = {
           primaryKey: true,
           type: Sequelize.INTEGER,
         },
+        picId: {
+          type: Sequelize.INTEGER,
+        },
         name: {
           type: Sequelize.STRING,
         },

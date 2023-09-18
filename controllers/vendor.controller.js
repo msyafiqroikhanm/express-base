@@ -1,6 +1,6 @@
 const ResponseFormatter = require('../helpers/responseFormatter.helper');
 const {
-  selectAllVendors, selectVendor, deleteVendor, updateVendor, createVendor,
+  selectAllVendors, selectVendor, deleteVendor, updateVendor, createVendor, validateVendorInputs,
 } = require('../services/vendor.service');
 
 class VendorController {
@@ -35,7 +35,15 @@ class VendorController {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
 
-      const data = await createVendor(req.body);
+      const inputs = await validateVendorInputs(req.body);
+      if (!inputs.isValid && inputs.code === 400) {
+        return ResponseFormatter.error400(res, 'Bad Request', inputs.message);
+      }
+      if (!inputs.isValid && inputs.code === 404) {
+        return ResponseFormatter.error404(res, 'Data Not Found', inputs.message);
+      }
+
+      const data = await createVendor(inputs.form);
 
       return ResponseFormatter.success201(res, data.message, data.content);
     } catch (error) {
@@ -47,7 +55,15 @@ class VendorController {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
 
-      const data = await updateVendor(req.body, req.params.id);
+      const inputs = await validateVendorInputs(req.body, req.params.id);
+      if (!inputs.isValid && inputs.code === 400) {
+        return ResponseFormatter.error400(res, 'Bad Request', inputs.message);
+      }
+      if (!inputs.isValid && inputs.code === 404) {
+        return ResponseFormatter.error404(res, 'Data Not Found', inputs.message);
+      }
+
+      const data = await updateVendor(inputs.form, req.params.id);
       if (!data.success && data.code === 404) {
         return ResponseFormatter.error404(res, 'Data Not Found', data.message);
       }
