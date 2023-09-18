@@ -17,6 +17,8 @@ router.get(
         feature.create_vehicle,
         feature.update_vehicle,
         feature.delete_vehicle,
+        feature.create_vehicle_schedule,
+        feature.update_vehicle_schedule,
       ]),
     );
   },
@@ -34,6 +36,8 @@ router.get(
         feature.view_vehicle,
         feature.update_vehicle,
         feature.delete_vehicle,
+        feature.create_vehicle_schedule,
+        feature.update_vehicle_schedule,
       ]),
     );
   },

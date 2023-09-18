@@ -117,7 +117,7 @@ const selectVehicle = async (id) => {
 
 const createVehicle = async (form) => {
   // QR setup for transportation
-  const templateInstance = await QRM_QRTemplate.findOne({ where: { name: { [Op.like]: '%transportation%' } } });
+  const templateInstance = await QRM_QRTemplate.findOne({ where: { name: { [Op.like]: '%vehicle%' } } });
   const qrInstance = await createQR({ templateId: templateInstance?.id || 1 }, { rawFile: `public/images/qrs/qrs-${Date.now()}.png`, combineFile: `public/images/qrCombines/combines-${Date.now()}.png` });
 
   // create vehicle

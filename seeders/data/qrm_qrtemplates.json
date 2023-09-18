@@ -1,7 +1,28 @@
 [
   {
+    "typeId":1,
+    "name":"participant",
+    "file":"public/images/qrTemplates/default.png",
+    "xCoordinate":"200",
+    "yCoordinate":"200"
+  },
+  {
     "typeId":2,
     "name":"Main Committe",
+    "file":"public/images/qrTemplates/default.png",
+    "xCoordinate":"200",
+    "yCoordinate":"200"
+  },
+  {
+    "typeId":3,
+    "name":"Vehicle",
+    "file":"public/images/qrTemplates/default.png",
+    "xCoordinate":"200",
+    "yCoordinate":"200"
+  },
+  {
+    "typeId":4,
+    "name":"FNB",
     "file":"public/images/qrTemplates/default.png",
     "xCoordinate":"200",
     "yCoordinate":"200"

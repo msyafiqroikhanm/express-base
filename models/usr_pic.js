@@ -15,6 +15,7 @@ module.exports = (sequelize, DataTypes) => {
       USR_PIC.belongsTo(models.REF_PICType, { foreignKey: 'typeId' });
 
       USR_PIC.hasMany(models.ENV_Event, { foreignKey: 'picId', as: 'events' });
+      USR_PIC.hasMany(models.TPT_Vendor, { foreignKey: 'picId', as: 'vendors' });
     }
   }
   USR_PIC.init(

@@ -310,5 +310,6 @@
   { "roleId": 1, "featureId": 235 },
   { "roleId": 1, "featureId": 236 },
   { "roleId": 1, "featureId": 237 },
-  { "roleId": 1, "featureId": 238 }
+  { "roleId": 1, "featureId": 238 },
+  { "roleId": 1, "featureId": 239 }
 ]

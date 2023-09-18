@@ -54,7 +54,7 @@ class KitchenController {
       if (!req.user.limitation.isAdmin) {
         req.body.picId = req.user.limitation.access.picId;
       }
-      console.log(JSON.stringify({ limitation: req.user.limitation, body: req.body }, null, 2));
+      // console.log(JSON.stringify({ limitation: req.user.limitation, body: req.body }, null, 2));
 
       const inputs = await validateKitchenInputs(req.body);
       if (!inputs.isValid && inputs.code === 404) {

@@ -1,29 +1,29 @@
+const { Op } = require('sequelize');
 const ResponseFormatter = require('../helpers/responseFormatter.helper');
 const {
-  selectAllLocations,
-  selectLocation,
-  createLocation,
-  validateLocationInputs,
-  updateLocation,
-  deleteLocation,
-} = require('../services/location.service');
+  validateFnBScheduleInputs,
+  createFnBSchedule,
+  selectAllFnBSchedules,
+  selectFnBSchedule,
+  updateFnBSchedule,
+  deleteFnbSchedule,
+} = require('../services/fnbSchedule.service');
 
-class LocationController {
+class FNBScheduleController {
   static async getAll(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
 
+      // resrict data that is not an admin
       const where = {};
       if (!req.user.limitation.isAdmin) {
-        where.picId = req.user.limitation.access.picId;
-      }
-      if (req.query) {
-        if (req.query.typeId) {
-          where.typeId = req.query.typeId;
-        }
+        where.kitchenId = { [Op.or]: req.user.limitation.access.kitchen };
       }
 
-      const data = await selectAllLocations(where);
+      const data = await selectAllFnBSchedules(where);
+      if (!data.success) {
+        return ResponseFormatter.error400(res, 'Bad Request', data.message);
+      }
 
       return ResponseFormatter.success200(res, data.message, data.content);
     } catch (error) {
@@ -35,13 +35,14 @@ class LocationController {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
 
+      // resrict data that is not an admin
       const where = { id: req.params.id };
       if (!req.user.limitation.isAdmin) {
-        req.body.picId = req.user.limitation.access.picId;
+        where.kitchenId = { [Op.or]: req.user.limitation.access.kitchen };
       }
 
-      const data = await selectLocation(where);
-      if (!data.success) {
+      const data = await selectFnBSchedule(req.params.id, where);
+      if (!data.success && data.code === 404) {
         return ResponseFormatter.error404(res, 'Data Not Found', data.message);
       }
 
@@ -55,17 +56,24 @@ class LocationController {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
 
+      // resrict data that is not an admin
+      const limitation = {};
       if (!req.user.limitation.isAdmin) {
-        req.body.picId = req.user.limitation.access.picId;
+        limitation.kitchens = req.user.limitation.access.kitchen;
       }
-      console.log(JSON.stringify({ limitation: req.user.limitation, body: req.body }, null, 2));
 
-      const inputs = await validateLocationInputs(req.body);
+      const inputs = await validateFnBScheduleInputs(req.body, limitation);
+      if (!inputs.isValid && inputs.code === 400) {
+        return ResponseFormatter.error400(res, 'Bad Request', inputs.message);
+      }
       if (!inputs.isValid && inputs.code === 404) {
         return ResponseFormatter.error404(res, 'Data Not Found', inputs.message);
       }
 
-      const data = await createLocation(inputs.form);
+      const data = await createFnBSchedule(inputs.form);
+      if (!data.success) {
+        return ResponseFormatter.error400(res, 'Bad Request', data.message);
+      }
 
       return ResponseFormatter.success201(res, data.message, data.content);
     } catch (error) {
@@ -77,14 +85,18 @@ class LocationController {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
 
+      // resrict data that is not an admin
       const where = { id: req.params.id };
       if (!req.user.limitation.isAdmin) {
-        where.picId = req.user.limitation.access.picId;
+        where.kitchenId = { [Op.or]: req.user.limitation.access.kitchen };
       }
 
-      const data = await updateLocation(where, req.body);
-      if (!data.success) {
+      const data = await updateFnBSchedule(req.body, where);
+      if (!data.success && data.code === 404) {
         return ResponseFormatter.error404(res, 'Data Not Found', data.message);
+      }
+      if (!data.isValid && data.code === 400) {
+        return ResponseFormatter.error400(res, 'Bad Request', data.message);
       }
 
       return ResponseFormatter.success200(res, data.message, data.content);
@@ -97,13 +109,14 @@ class LocationController {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
 
+      // resrict data that is not an admin
       const where = { id: req.params.id };
       if (!req.user.limitation.isAdmin) {
-        where.picId = req.user.limitation.access.picId;
+        where.id = req.user.limitation.access.contingentId;
       }
 
-      const data = await deleteLocation(where);
-      if (!data.success) {
+      const data = await deleteFnbSchedule(where);
+      if (!data.success && data.code === 404) {
         return ResponseFormatter.error404(res, 'Data Not Found', data.message);
       }
 
@@ -114,4 +127,4 @@ class LocationController {
   }
 }
 
-module.exports = LocationController;
+module.exports = FNBScheduleController;
