@@ -21,6 +21,7 @@ module.exports = (sequelize, DataTypes) => {
         foreignKey: 'statusId',
         as: 'status',
       });
+      ACM_ParticipantLodger.belongsTo(models.ACM_Room, { foreignKey: 'roomId', as: 'room' });
     }
   }
   ACM_ParticipantLodger.init(
