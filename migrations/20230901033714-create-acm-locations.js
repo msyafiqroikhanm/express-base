@@ -30,7 +30,7 @@ module.exports = {
           type: Sequelize.TEXT,
         },
         address: {
-          type: Sequelize.STRING,
+          type: Sequelize.TEXT,
         },
         phoneNbr: {
           type: Sequelize.STRING,
