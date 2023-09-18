@@ -83,6 +83,7 @@ router.post(
     check('longtitude', "longtitude attribute can't be empty").notEmpty(),
   ],
   ValidateMiddleware.result,
+  Authentication.accomodation,
   LocationController.create,
 );
 
