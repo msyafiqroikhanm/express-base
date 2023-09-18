@@ -29,10 +29,12 @@ const selectAllLocations = async (where) => {
 
   await Promise.all(
     locations.map(async (location) => {
-      const pic = await USR_PIC.findByPk(location.picId, {
+      const pic = await USR_PIC.findOne({
+        where: { id: location.picId },
         attributes: { exclude: ['createdAt', 'updatedAt'] },
         include: {
           model: USR_User,
+          as: 'user',
           attributes: ['id'],
           include: {
             model: PAR_Participant,
@@ -43,7 +45,7 @@ const selectAllLocations = async (where) => {
       });
 
       // eslint-disable-next-line no-param-reassign
-      location.dataValues.pic = pic.USR_User.participant;
+      location.dataValues.pic = pic.user.participant;
     }),
   );
 
