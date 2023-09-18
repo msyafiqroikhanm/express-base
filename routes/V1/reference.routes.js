@@ -1986,6 +1986,7 @@ router.get(
         feature.create_vehicle_schedule_status,
         feature.update_vehicle_schedule_status,
         feature.delete_vehicle_schedule_status,
+        feature.progress_vehicle_schedule,
       ]),
     );
   },
@@ -2003,6 +2004,7 @@ router.get(
         feature.view_vehicle_schedule_status,
         feature.update_vehicle_schedule_status,
         feature.delete_vehicle_schedule_status,
+        feature.progress_vehicle_schedule,
       ]),
     );
   },

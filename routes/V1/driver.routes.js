@@ -17,6 +17,8 @@ router.get(
         feature.create_driver,
         feature.update_driver,
         feature.delete_driver,
+        feature.create_vehicle_schedule,
+        feature.update_vehicle_schedule,
       ]),
     );
   },
@@ -34,6 +36,8 @@ router.get(
         feature.view_driver,
         feature.update_driver,
         feature.delete_driver,
+        feature.create_vehicle_schedule,
+        feature.update_vehicle_schedule,
       ]),
     );
   },

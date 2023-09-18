@@ -963,5 +963,9 @@
     {
         "moduleId":56,
         "name":"Delete Committee Type"
+    },
+    {
+        "moduleId":26,
+        "name":"Progress Vehicle Schedule"
     }
 ]

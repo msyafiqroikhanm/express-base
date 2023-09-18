@@ -27,6 +27,8 @@ router.get(
         feature.delete_lodger,
         feature.create_event,
         feature.update_event,
+        feature.create_vehicle_schedule,
+        feature.update_vehicle_schedule,
       ]),
     );
   },
@@ -56,6 +58,8 @@ router.get(
         feature.delete_lodger,
         feature.create_event,
         feature.update_event,
+        feature.create_vehicle_schedule,
+        feature.update_vehicle_schedule,
       ]),
     );
   },

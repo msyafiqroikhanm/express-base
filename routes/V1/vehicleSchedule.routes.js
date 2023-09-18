@@ -111,7 +111,7 @@ router.patch(
       res,
       next,
       await features().then((feature) => [
-        feature.update_vehicle_schedule,
+        feature.progress_vehicle_schedule,
       ]),
     );
   },
