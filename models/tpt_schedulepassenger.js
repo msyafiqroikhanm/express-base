@@ -28,7 +28,10 @@ module.exports = (sequelize, DataTypes) => {
       primaryKey: true,
       allowNull: false,
     },
-    statusId: DataTypes.INTEGER,
+    statusId: {
+      type: DataTypes.INTEGER,
+      defaultValue: 1,
+    },
   }, {
     sequelize,
     modelName: 'TPT_SchedulePassenger',
