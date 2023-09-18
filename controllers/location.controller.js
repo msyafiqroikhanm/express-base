@@ -37,7 +37,7 @@ class LocationController {
 
       const where = { id: req.params.id };
       if (!req.user.limitation.isAdmin) {
-        where.picId = req.user.limitation.access.picId;
+        req.body.picId = req.user.limitation.access.picId;
       }
 
       const data = await selectLocation(where);
@@ -54,6 +54,11 @@ class LocationController {
   static async create(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+
+      if (!req.user.limitation.isAdmin) {
+        req.body.picId = req.user.limitation.access.picId;
+      }
+      console.log(JSON.stringify({ limitation: req.user.limitation, body: req.body }, null, 2));
 
       const inputs = await validateLocationInputs(req.body);
       if (!inputs.isValid && inputs.code === 404) {
