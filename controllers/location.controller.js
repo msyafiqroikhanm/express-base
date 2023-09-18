@@ -55,7 +55,6 @@ class LocationController {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
 
-      req.body.picId = req.user.PIC.id;
       const inputs = await validateLocationInputs(req.body);
       if (!inputs.isValid && inputs.code === 404) {
         return ResponseFormatter.error404(res, 'Data Not Found', inputs.message);
