@@ -10,6 +10,7 @@ const {
   createComittee,
   updateCommittee,
   createCommitteeViaImport,
+  selectParticipantAllSchedules,
 } = require('../services/participant.service');
 
 class Participant {
@@ -306,6 +307,29 @@ class Participant {
       if (req.file) {
         await deleteFile(relative(__dirname, req.file.path));
       }
+      next(error);
+    }
+  }
+
+  static async TransportationSchedule(req, res, next) {
+    try {
+      res.url = `${req.method} ${req.originalUrl}`;
+
+      // resrict data that is not an admin
+      const where = {};
+      if (!req.user.limitation.isAdmin) {
+        where.id = req.user.limitation.access.contingentId;
+      }
+
+      console.log(where);
+
+      const data = await selectParticipantAllSchedules(req.params.id, where);
+      if (!data.success && data.code === 404) {
+        return ResponseFormatter.error404(res, 'Data Not Found', data.message);
+      }
+
+      return ResponseFormatter.success200(res, data.message, data.content);
+    } catch (error) {
       next(error);
     }
   }
