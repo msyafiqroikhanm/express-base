@@ -24,6 +24,11 @@ const selectAllLocations = async (where) => {
         model: ACM_Location,
         as: 'childLocation',
       },
+      {
+        model: ACM_Room,
+        as: 'rooms',
+        attributes: { exclude: ['createdAt', 'updatedAt'] },
+      },
     ],
   });
 
