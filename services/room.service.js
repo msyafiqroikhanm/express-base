@@ -12,12 +12,12 @@ const selectAllRooms = async (where) => {
       {
         model: REF_RoomType,
         as: 'type',
-        attributes: ['name'],
+        attributes: ['id', 'name'],
       },
       {
         model: REF_RoomStatus,
         as: 'status',
-        attributes: ['name'],
+        attributes: ['id', 'name'],
       },
     ],
   });
@@ -41,12 +41,12 @@ const selectRoom = async (where) => {
       {
         model: REF_RoomType,
         as: 'type',
-        attributes: ['name'],
+        attributes: ['id', 'name'],
       },
       {
         model: REF_RoomStatus,
         as: 'status',
-        attributes: ['name'],
+        attributes: ['id', 'name'],
       },
     ],
   });
