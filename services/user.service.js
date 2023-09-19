@@ -338,6 +338,9 @@ const selectUser = async (query) => {
       [Op.or]: query,
     },
   });
+  if (!userInstance) {
+    return null;
+  }
 
   const result = parsingUserModules(userInstance);
 

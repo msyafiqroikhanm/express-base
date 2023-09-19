@@ -1,5 +1,6 @@
 [
-  { "name": "In Progress"},
+  { "name": "Enroute"},
   { "name": "Completed"},
-  { "name": "Cancalled"}
+  { "name": "Cancalled"},
+  { "name": "Pick Up Passengers"}
 ]

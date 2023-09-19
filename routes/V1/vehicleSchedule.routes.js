@@ -17,6 +17,9 @@ router.get(
         feature.create_vehicle_schedule,
         feature.update_vehicle_schedule,
         feature.delete_vehicle_schedule,
+        feature.progress_vehicle_schedule,
+        feature.absent_vehicle_schedule,
+        feature.fulfill_vehicle_schedule,
       ]),
     );
   },
@@ -34,6 +37,9 @@ router.get(
         feature.view_vehicle_schedule,
         feature.update_vehicle_schedule,
         feature.delete_vehicle_schedule,
+        feature.progress_vehicle_schedule,
+        feature.absent_vehicle_schedule,
+        feature.fulfill_vehicle_schedule,
       ]),
     );
   },
@@ -53,12 +59,11 @@ router.post(
     );
   },
   [
-    check('vehicleId', "Vehicle Id attribute can't be empty").notEmpty(),
-    check('driverId', "Driver Id attribute can't be empty").notEmpty(),
     check('pickUpId', "Pick Up Id attribute can't be empty").notEmpty(),
     check('destinationId', "Destination Id attribute can't be empty").notEmpty(),
     check('name', "Name attribute can't be empty").notEmpty(),
     check('pickUpTime', "Pick Up Time attribute can't be empty").notEmpty(),
+    check('passengers', "Passengers attribute can't be empty").isArray(),
   ],
   ValidateMiddleware.result,
   VehicleScheduleController.create,
@@ -77,12 +82,11 @@ router.put(
     );
   },
   [
-    check('vehicleId', "Vehicle Id attribute can't be empty").notEmpty(),
-    check('driverId', "Driver Id attribute can't be empty").notEmpty(),
     check('pickUpId', "Pick Up Id attribute can't be empty").notEmpty(),
     check('destinationId', "Destination Id attribute can't be empty").notEmpty(),
     check('name', "Name attribute can't be empty").notEmpty(),
     check('pickUpTime', "Pick Up Time attribute can't be empty").notEmpty(),
+    check('passengers', "Passengers attribute can't be empty").isArray(),
   ],
   ValidateMiddleware.result,
   VehicleScheduleController.update,
@@ -116,6 +120,62 @@ router.patch(
     );
   },
   VehicleScheduleController.progressStatus,
+);
+
+router.put(
+  '/:id/fulfill',
+  async (req, res, next) => {
+    Authentication.authenticate(
+      req,
+      res,
+      next,
+      await features().then((feature) => [
+        feature.fulfill_vehicle_schedule,
+      ]),
+    );
+  },
+  [
+    check('driverId', "Driver Id attribute can't be empty").notEmpty(),
+    check('vehicleId', "Vehicle Id attribute can't be empty").notEmpty(),
+  ],
+  ValidateMiddleware.result,
+  VehicleScheduleController.fulfill,
+);
+
+router.put(
+  '/:id/absent',
+  async (req, res, next) => {
+    Authentication.authenticate(
+      req,
+      res,
+      next,
+      await features().then((feature) => [
+        feature.absent_vehicle_schedule,
+      ]),
+    );
+  },
+  [
+    check('participantId', "Participant Id attribute can't be empty").notEmpty(),
+    check('statusId', "Status Id attribute can't be empty").notEmpty(),
+  ],
+  ValidateMiddleware.result,
+  VehicleScheduleController.absent,
+);
+
+router.get(
+  '/:id/passengers',
+  async (req, res, next) => {
+    Authentication.authenticate(
+      req,
+      res,
+      next,
+      await features().then((feature) => [
+        feature.view_vehicle_schedule,
+        feature.absent_vehicle_schedule,
+      ]),
+    );
+  },
+  VehicleScheduleController.passengers,
 );
 
 module.exports = router;
