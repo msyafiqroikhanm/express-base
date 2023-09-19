@@ -20,9 +20,60 @@ const selectAllLodgers = async (where) => {
     where,
     include: [
       {
+        model: ACM_Room,
+        as: 'room',
+        attributes: { exclude: ['createdAt', 'updatedAt'] },
+        include: [
+          {
+            model: ACM_Location,
+            as: 'location',
+            attributes: { exclude: ['createdAt', 'updatedAt'] },
+            include: [
+              {
+                model: REF_LocationType,
+                as: 'type',
+                attributes: { exclude: ['createdAt', 'updatedAt'] },
+              },
+            ],
+          },
+          {
+            model: REF_RoomType,
+            as: 'type',
+            attributes: { exclude: ['createdAt', 'updatedAt'] },
+          },
+          {
+            model: REF_RoomStatus,
+            as: 'status',
+            attributes: { exclude: ['createdAt', 'updatedAt'] },
+          },
+        ],
+      },
+      {
         model: PAR_Participant,
         as: 'participant',
         attributes: { exclude: ['createdAt', 'updatedAt'] },
+        include: [
+          {
+            model: REF_IdentityType,
+            as: 'identityType',
+            attributes: { exclude: ['createdAt', 'updatedAt'] },
+          },
+          {
+            model: REF_ParticipantType,
+            as: 'participantType',
+            attributes: { exclude: ['createdAt', 'updatedAt'] },
+          },
+          {
+            model: PAR_Contingent,
+            as: 'contingent',
+            attributes: { exclude: ['createdAt', 'updatedAt'] },
+            include: {
+              model: REF_Region,
+              as: 'region',
+              attributes: { exclude: ['createdAt', 'updatedAt'] },
+            },
+          },
+        ],
       },
       {
         model: REF_LodgerStatus,
@@ -30,7 +81,6 @@ const selectAllLodgers = async (where) => {
         attributes: { exclude: ['createdAt', 'updatedAt'] },
       },
     ],
-    raw: true,
   });
 
   return {
