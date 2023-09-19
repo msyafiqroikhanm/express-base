@@ -364,6 +364,8 @@ const updateFnBSchedule = async (form, where) => {
     ? form.vehiclePlatNo
     : fnbScheduleInstance.vehiclePlateNo;
 
+  await FNB_Schedule.update(formUpdateScheduleInstance, { where: { id: fnbScheduleInstance.id } });
+
   if (courierIsUpdate) {
     await FNB_Courier.update({ isAvailable: true }, { where: { id: courierIdOld } });
     await FNB_Courier.update({ isAvailable: false }, { where: { id: newCourier.id } });

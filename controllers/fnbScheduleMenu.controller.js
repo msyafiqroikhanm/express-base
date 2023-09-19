@@ -1,15 +1,15 @@
 const { Op } = require('sequelize');
 const ResponseFormatter = require('../helpers/responseFormatter.helper');
 const {
-  validateFnBScheduleInputs,
-  createFnBSchedule,
-  selectAllFnBSchedules,
-  selectFnBSchedule,
-  updateFnBSchedule,
-  deleteFnbSchedule,
-} = require('../services/fnbSchedule.service');
+  validateFnBScheduleMenuInputs,
+  createFnBScheduleMenu,
+  selectAllFnBScheduleMenus,
+  selectFnBScheduleMenu,
+  updateFnBScheduleMenu,
+  deleteFnbScheduleMenu,
+} = require('../services/fnbScheduleMenu.service');
 
-class FNBScheduleController {
+class FNBScheduleMenuController {
   static async getAll(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
@@ -20,7 +20,7 @@ class FNBScheduleController {
         where.kitchenId = { [Op.or]: req.user.limitation.access.kitchen };
       }
 
-      const data = await selectAllFnBSchedules(where);
+      const data = await selectAllFnBScheduleMenus(where);
       if (!data.success) {
         return ResponseFormatter.error400(res, 'Bad Request', data.message);
       }
@@ -36,12 +36,12 @@ class FNBScheduleController {
       res.url = `${req.method} ${req.originalUrl}`;
 
       // resrict data that is not an admin
-      const where = { id: req.params.id };
+      const where = {};
       if (!req.user.limitation.isAdmin) {
         where.kitchenId = { [Op.or]: req.user.limitation.access.kitchen };
       }
 
-      const data = await selectFnBSchedule(req.params.id, where);
+      const data = await selectFnBScheduleMenu(req.params.id, where);
       if (!data.success && data.code === 404) {
         return ResponseFormatter.error404(res, 'Data Not Found', data.message);
       }
@@ -62,7 +62,7 @@ class FNBScheduleController {
         limitation.kitchens = req.user.limitation.access.kitchen;
       }
 
-      const inputs = await validateFnBScheduleInputs(req.body, limitation);
+      const inputs = await validateFnBScheduleMenuInputs(req.body, limitation);
       if (!inputs.isValid && inputs.code === 400) {
         return ResponseFormatter.error400(res, 'Bad Request', inputs.message);
       }
@@ -70,7 +70,7 @@ class FNBScheduleController {
         return ResponseFormatter.error404(res, 'Data Not Found', inputs.message);
       }
 
-      const data = await createFnBSchedule(inputs.form);
+      const data = await createFnBScheduleMenu(inputs.form);
       if (!data.success) {
         return ResponseFormatter.error400(res, 'Bad Request', data.message);
       }
@@ -91,7 +91,7 @@ class FNBScheduleController {
         where.kitchenId = { [Op.or]: req.user.limitation.access.kitchen };
       }
 
-      const data = await updateFnBSchedule(req.body, where);
+      const data = await updateFnBScheduleMenu(req.body, where);
       if (!data.success && data.code === 404) {
         return ResponseFormatter.error404(res, 'Data Not Found', data.message);
       }
@@ -115,7 +115,7 @@ class FNBScheduleController {
         where.kitchenId = { [Op.or]: req.user.limitation.access.kitchen };
       }
 
-      const data = await deleteFnbSchedule(where);
+      const data = await deleteFnbScheduleMenu(where);
       if (!data.success && data.code === 404) {
         return ResponseFormatter.error404(res, 'Data Not Found', data.message);
       }
@@ -127,4 +127,4 @@ class FNBScheduleController {
   }
 }
 
-module.exports = FNBScheduleController;
+module.exports = FNBScheduleMenuController;
