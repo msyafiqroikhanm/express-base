@@ -975,5 +975,21 @@
     {
         "moduleId":26,
         "name":"Absent Vehicle Schedule"
+    },
+    {
+        "moduleId":50,
+        "name":"View FNB Schedule Menu"
+    },
+    {
+        "moduleId":50,
+        "name":"Create FNB Schedule Menu"
+    },
+    {
+        "moduleId":50,
+        "name":"Update FNB Schedule Menu"
+    },
+    {
+        "moduleId":50,
+        "name":"Delete FNB Schedule Menu"
     }
 ]
