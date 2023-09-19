@@ -33,5 +33,19 @@
     "participantId": 6,
     "username": "adminfnb",
     "email": "adminfnb@jxboard.id"
+  },
+  {
+    "qrId": 1,
+    "roleId": 7,
+    "participantId": 7,
+    "username": "admintransportation",
+    "email": "admintransportation@jxboard.id"
+  },
+  {
+    "qrId": 1,
+    "roleId": 8,
+    "participantId": 8,
+    "username": "driver1",
+    "email": "driver1@jxboard.id"
   }
 ]

@@ -1,5 +1,6 @@
 [
     {"userId":1,"typeId":1},
     {"userId":2,"typeId":5},
-    {"userId":4,"typeId":3}
+    {"userId":4,"typeId":3},
+    {"userId":6,"typeId":4}
 ]
