@@ -967,5 +967,13 @@
     {
         "moduleId":26,
         "name":"Progress Vehicle Schedule"
+    },
+    {
+        "moduleId":26,
+        "name":"Fulfill Vehicle Schedule"
+    },
+    {
+        "moduleId":26,
+        "name":"Absent Vehicle Schedule"
     }
 ]
