@@ -6,6 +6,8 @@ const XLSX = require('xlsx');
 const {
   PAR_Participant, REF_IdentityType, REF_ParticipantType, QRM_QR, REF_CommitteeType,
   PAR_Contingent, REF_Region, PAR_Group, QRM_QRTemplate, PAR_ParticipantTracking,
+  TPT_VehicleSchedule, TPT_Vehicle, ACM_Location, REF_VehicleScheduleStatus,
+  TPT_Vendor, REF_VehicleType,
 } = require('../models');
 const { createQR } = require('./qr.service');
 const deleteFile = require('../helpers/deleteFile.helper');
@@ -700,6 +702,57 @@ const createCommitteeViaImport = async (file) => {
   };
 };
 
+const selectParticipantAllSchedules = async (id, where) => {
+  const participantInstance = await PAR_Participant.findOne({
+    where: Object.keys(where).length > 0 ? { id, contingentId: where.id } : { id },
+    attributes: ['id'],
+    include: {
+      model: TPT_VehicleSchedule,
+      attributes: { exclude: ['createdAt', 'updatedAt', 'driverId'] },
+      through: {
+        attributes: [],
+      },
+      include: [
+        {
+          model: TPT_Vehicle,
+          as: 'vehicle',
+          attributes: ['name', 'vehicleNo', 'VehiclePlateNo', 'capacity'],
+          include: [
+            { model: REF_VehicleType, attributes: ['name'], as: 'type' },
+            { model: TPT_Vendor, attributes: ['name'], as: 'vendor' },
+          ],
+        },
+        {
+          model: ACM_Location,
+          as: 'pickUp',
+          attributes: ['name', 'description', 'address', 'latitude', 'longtitude'],
+        },
+        {
+          model: ACM_Location,
+          as: 'destination',
+          attributes: ['name', 'description', 'address', 'latitude', 'longtitude'],
+        },
+        {
+          model: REF_VehicleScheduleStatus,
+          as: 'status',
+          attributes: ['name'],
+        },
+      ],
+    },
+  });
+  if (!participantInstance) {
+    return {
+      success: false, code: 404, message: ['Participant Data Not Found'],
+    };
+  }
+
+  return {
+    success: true,
+    message: 'Successfully Getting Participant Transportation Schedules',
+    content: participantInstance.TPT_VehicleSchedules,
+  };
+};
+
 module.exports = {
   selectAllParticipant,
   selectParticipant,
@@ -714,4 +767,5 @@ module.exports = {
   createComittee,
   updateCommittee,
   createCommitteeViaImport,
+  selectParticipantAllSchedules,
 };

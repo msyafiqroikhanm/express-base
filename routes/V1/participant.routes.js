@@ -247,4 +247,23 @@ router.put(
   ParticipantController.updateCommittee,
 );
 
+router.get(
+  '/:id/transportations',
+  async (req, res, next) => {
+    Authentication.authenticate(
+      req,
+      res,
+      next,
+      await features().then((feature) => [
+        feature.view_participant,
+        feature.update_participant,
+        feature.delete_participant,
+        feature.track_participant,
+      ]),
+    );
+  },
+  Authentication.participant,
+  ParticipantController.TransportationSchedule,
+);
+
 module.exports = router;
