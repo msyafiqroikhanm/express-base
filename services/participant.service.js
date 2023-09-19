@@ -12,56 +12,30 @@ const {
 const { createQR } = require('./qr.service');
 const deleteFile = require('../helpers/deleteFile.helper');
 
-const validateParticipantQuery = async (query) => {
-  const parsedQuery = {};
-
-  if (query.contingent) {
-    const contingentInstance = await PAR_Contingent.findOne({ where: { name: { [Op.like]: `%${query.contingent}%` } } });
-    parsedQuery.contingentId = contingentInstance?.id || null;
-  }
-
-  return parsedQuery;
-};
-
 const selectAllParticipant = async (query, where) => {
-  let participants;
-
-  if (Object.keys(where).length > 0) {
-    participants = await PAR_Participant.findAll({
-      where: query,
-      include: [
-        {
-          model: PAR_Contingent,
-          where,
-          as: 'contingent',
-          attributes: ['name'],
-          include: { model: REF_Region, as: 'region', attributes: ['name'] },
-        },
-        { model: QRM_QR, as: 'qr' },
-        { model: REF_IdentityType, attributes: ['name'], as: 'identityType' },
-        { model: REF_ParticipantType, attributes: ['name'], as: 'participantType' },
-        { model: PAR_Group, as: 'groups', through: { attributes: [] } },
-        { model: REF_CommitteeType, as: 'committeeType', attributes: ['name'] },
-      ],
-    });
-  } else {
-    participants = await PAR_Participant.findAll({
-      where: query,
-      include: [
-        {
-          model: PAR_Contingent,
-          as: 'contingent',
-          attributes: ['name'],
-          include: { model: REF_Region, as: 'region', attributes: ['name'] },
-        },
-        { model: QRM_QR, as: 'qr' },
-        { model: REF_CommitteeType, attributes: ['name'], as: 'committeeType' },
-        { model: REF_IdentityType, attributes: ['name'], as: 'identityType' },
-        { model: REF_ParticipantType, attributes: ['name'], as: 'participantType' },
-        { model: PAR_Group, as: 'groups', through: { attributes: [] } },
-      ],
-    });
-  }
+  console.log(query);
+  const participants = await PAR_Participant.findAll({
+    where: query?.contingentId ? { contingentId: query.contingentId } : null,
+    include: [
+      {
+        model: PAR_Contingent,
+        where: Object.keys(where).length > 0 ? where : null,
+        as: 'contingent',
+        attributes: ['name'],
+        include: { model: REF_Region, as: 'region', attributes: ['name'] },
+      },
+      { model: QRM_QR, as: 'qr' },
+      { model: REF_IdentityType, attributes: ['name'], as: 'identityType' },
+      { model: REF_ParticipantType, attributes: ['name'], as: 'participantType' },
+      {
+        model: PAR_Group,
+        as: 'groups',
+        through: { attributes: [] },
+        where: query?.groupId ? { id: query.groupId } : null,
+      },
+      { model: REF_CommitteeType, as: 'committeeType', attributes: ['name'] },
+    ],
+  });
 
   const seperatedParticipant = { committee: [], participant: [] };
 
@@ -757,7 +731,6 @@ module.exports = {
   selectAllParticipant,
   selectParticipant,
   validateParticipantInputs,
-  validateParticipantQuery,
   createParticipant,
   updateParticipant,
   deleteParticipant,

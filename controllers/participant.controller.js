@@ -4,13 +4,8 @@ const ResponseFormatter = require('../helpers/responseFormatter.helper');
 const {
   selectAllParticipant, selectParticipant, validateParticipantInputs,
   createParticipant, updateParticipant, deleteParticipant, trackingParticipant,
-  createParticipantViaImport,
-  validateParticipantQuery,
-  validateCommitteeInputs,
-  createComittee,
-  updateCommittee,
-  createCommitteeViaImport,
-  selectParticipantAllSchedules,
+  createParticipantViaImport, validateCommitteeInputs, createComittee, updateCommittee,
+  createCommitteeViaImport, selectParticipantAllSchedules,
 } = require('../services/participant.service');
 
 class Participant {
@@ -18,15 +13,13 @@ class Participant {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
 
-      const query = await validateParticipantQuery(req.query);
-
       // resrict data that is not an admin
       const where = {};
       if (!req.user.limitation.isAdmin) {
         where.id = req.user.limitation.access.contingentId;
       }
 
-      const data = await selectAllParticipant(query, where);
+      const data = await selectAllParticipant(req.query, where);
       if (!data.success) {
         return ResponseFormatter.error400(res, 'Bad Request', data.message);
       }
