@@ -13,7 +13,6 @@ const { createQR } = require('./qr.service');
 const deleteFile = require('../helpers/deleteFile.helper');
 
 const selectAllParticipant = async (query, where) => {
-  console.log(query);
   const participants = await PAR_Participant.findAll({
     where: query?.contingentId ? { contingentId: query.contingentId } : null,
     include: [
