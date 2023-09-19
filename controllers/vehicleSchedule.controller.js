@@ -5,8 +5,8 @@ const {
   updateVehicleSchedule,
   deleteVehicleSchedule,
   progressVehicleSchedule,
-  validateFulfillScheduleInputs,
-  vendorFulfillSchedule,
+  validateProvideScheduleInputs,
+  vendorProvideTransportationSchedule,
   validatePassengerAbsent,
   udpatePassengerAbsent,
   selectAllPassengersVehicleSchedule,
@@ -98,11 +98,11 @@ class VehicleScheduleController {
     }
   }
 
-  static async fulfill(req, res, next) {
+  static async provideTransportation(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
 
-      const inputs = await validateFulfillScheduleInputs(req.body, req.params.id);
+      const inputs = await validateProvideScheduleInputs(req.body, req.params.id);
       if (!inputs.isValid && inputs.code === 400) {
         return ResponseFormatter.error400(res, 'Bad Request', inputs.message);
       }
@@ -110,7 +110,7 @@ class VehicleScheduleController {
         return ResponseFormatter.error404(res, 'Data Not Found', inputs.message);
       }
 
-      const data = await vendorFulfillSchedule(inputs.form, req.params.id);
+      const data = await vendorProvideTransportationSchedule(inputs.form, req.params.id);
 
       return ResponseFormatter.success200(res, data.message, data.content);
     } catch (error) {

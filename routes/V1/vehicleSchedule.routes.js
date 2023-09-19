@@ -122,15 +122,15 @@ router.patch(
   VehicleScheduleController.progressStatus,
 );
 
-router.put(
-  '/:id/fulfill',
+router.patch(
+  '/:id/provide-transportation',
   async (req, res, next) => {
     Authentication.authenticate(
       req,
       res,
       next,
       await features().then((feature) => [
-        feature.fulfill_vehicle_schedule,
+        feature.provide_vehicle_schedule,
       ]),
     );
   },
@@ -139,10 +139,10 @@ router.put(
     check('vehicleId', "Vehicle Id attribute can't be empty").notEmpty(),
   ],
   ValidateMiddleware.result,
-  VehicleScheduleController.fulfill,
+  VehicleScheduleController.provideTransportation,
 );
 
-router.put(
+router.patch(
   '/:id/absent',
   async (req, res, next) => {
     Authentication.authenticate(
@@ -155,7 +155,7 @@ router.put(
     );
   },
   [
-    check('participantId', "Participant Id attribute can't be empty").notEmpty(),
+    check('passengers', "Passengers attribute can't be empty").isArray(),
     check('statusId', "Status Id attribute can't be empty").notEmpty(),
   ],
   ValidateMiddleware.result,

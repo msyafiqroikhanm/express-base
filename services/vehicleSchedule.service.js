@@ -224,13 +224,13 @@ const progressVehicleSchedule = async (form, id) => {
   scheduleInstance.statusId = statusInstance?.id || scheduleInstance.statusId;
   await scheduleInstance.save();
 
-  if (['Completed', 'Done', 'Finish', 'Arrived'].includes(statusInstance.name)) {
+  if (['Completed', 'Done', 'Finish', 'Arrived'].includes(statusInstance?.name)) {
     const passengerStatus = await REF_PassengerStatus.findOne({ where: { name: { [Op.like]: '%Arrived%' } } });
     await TPT_SchedulePassenger.update(
       { statusId: passengerStatus.id },
       { where: { vehicleScheduleId: scheduleInstance.id, statusId: 2 } },
     );
-  } else if (['Enroute', 'On Proggress'].includes(statusInstance.name)) {
+  } else if (['Enroute', 'On Proggress'].includes(statusInstance?.name)) {
     const passengerStatus = await REF_PassengerStatus.findOne({ where: { name: { [Op.like]: '%Enroute%' } } });
     await TPT_SchedulePassenger.update(
       { statusId: passengerStatus.id },
@@ -267,7 +267,7 @@ const deleteVehicleSchedule = async (id) => {
   };
 };
 
-const validateFulfillScheduleInputs = async (form, id) => {
+const validateProvideScheduleInputs = async (form, id) => {
   const invalid400 = [];
   const invalid404 = [];
 
@@ -317,11 +317,11 @@ const validateFulfillScheduleInputs = async (form, id) => {
   };
 };
 
-const vendorFulfillSchedule = async (form, id) => {
+const vendorProvideTransportationSchedule = async (form, id) => {
   const scheduleInstance = await TPT_VehicleSchedule.findOne({ where: { id } });
 
-  scheduleInstance.driverId = form.driver.id;
-  scheduleInstance.vehicleId = form.vehicle.id;
+  scheduleInstance.driverId = form.driver?.id || scheduleInstance.driverId;
+  scheduleInstance.vehicleId = form.vehicle?.id || scheduleInstance.vehicleId;
   await scheduleInstance.save();
 
   return {
@@ -341,10 +341,13 @@ const validatePassengerAbsent = async (form, id) => {
     invalid404.push('Vehicle Schedule Data Not Found');
   }
 
-  const participantInstance = await PAR_Participant.findByPk(form.participantId);
-  if (!participantInstance) {
-    invalid404.push('Participant Data Not Found');
-  }
+  // validate Recipiants / receivers
+  const validPassengers = await TPT_SchedulePassenger.findAll({
+    where: {
+      participantId: { [Op.in]: form.passengers },
+      vehicleScheduleId: id,
+    },
+  });
 
   const statusInstance = await REF_PassengerStatus.findByPk(form.statusId);
   if (!statusInstance) {
@@ -370,31 +373,21 @@ const validatePassengerAbsent = async (form, id) => {
     isValid: true,
     form: {
       schedule: scheduleInstance,
-      participant: participantInstance,
+      passengers: validPassengers.map((passenger) => passenger.participantId),
       status: statusInstance,
     },
   };
 };
 
 const udpatePassengerAbsent = async (form) => {
-  const SchedulePassengerInstance = await TPT_SchedulePassenger.findOne({
-    where: { vehicleScheduleId: form.schedule.id, participantId: form.participant.id },
-  });
-  if (!SchedulePassengerInstance) {
-    return {
-      success: false,
-      code: 404,
-      message: ['Passenger Schedule Data Not Found'],
-    };
-  }
-
-  SchedulePassengerInstance.statusId = form.status.id;
-  await SchedulePassengerInstance.save();
+  await TPT_SchedulePassenger.update(
+    { statusId: form.status.id },
+    { where: { vehicleScheduleId: form.schedule.id, participantId: { [Op.in]: form.passengers } } },
+  );
 
   return {
     success: true,
-    message: `Passenger ${form.participant.name}'s Status On Schedule ${form.schedule.name} Successfully Updated / Reported`,
-    content: SchedulePassengerInstance,
+    message: `Passenger's Status On Schedule ${form.schedule.name} Successfully Updated / Reported`,
   };
 };
 
@@ -446,10 +439,12 @@ const selectAllPassengersVehicleSchedule = async (id) => {
     }
   ));
 
+  const passengerList = passengers.map((passenger) => passenger.participantId);
+
   return {
     success: true,
     message: 'Successfully Getting All Passenger Of Related Schedule',
-    content: passengers,
+    content: { passengers, passengerList },
   };
 };
 
@@ -461,9 +456,9 @@ module.exports = {
   updateVehicleSchedule,
   deleteVehicleSchedule,
   progressVehicleSchedule,
-  vendorFulfillSchedule,
+  vendorProvideTransportationSchedule,
   udpatePassengerAbsent,
-  validateFulfillScheduleInputs,
+  validateProvideScheduleInputs,
   validatePassengerAbsent,
   selectAllPassengersVehicleSchedule,
 };
