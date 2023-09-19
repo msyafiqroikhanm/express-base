@@ -313,5 +313,19 @@
   { "roleId": 1, "featureId": 238 },
   { "roleId": 1, "featureId": 239 },
   { "roleId": 1, "featureId": 240 },
-  { "roleId": 1, "featureId": 241 }
+  { "roleId": 1, "featureId": 241 },
+  { "roleId": 1, "featureId": 242 },
+  { "roleId": 1, "featureId": 243 },
+  { "roleId": 1, "featureId": 244 },
+  { "roleId": 1, "featureId": 245 },
+
+  { "roleId": 5, "featureId": 242 },
+  { "roleId": 5, "featureId": 243 },
+  { "roleId": 5, "featureId": 244 },
+  { "roleId": 5, "featureId": 245 },
+
+  { "roleId": 6, "featureId": 242 },
+  { "roleId": 6, "featureId": 243 },
+  { "roleId": 6, "featureId": 244 },
+  { "roleId": 6, "featureId": 245 }
 ]
