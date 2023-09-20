@@ -55,6 +55,9 @@ class Participant {
           { address: { [Op.substring]: req.params.search } },
         ],
       };
+      if (req.query?.typeId) {
+        where.typeId = req.query.typeId;
+      }
       // if (!req.user.limitation.isAdmin) {
       //   where.id = req.user.limitation.access.contingentId;
       // }
