@@ -59,7 +59,7 @@ router.post(
   [
     check('vendorId', "Vendor Id attribute can't be empty").notEmpty(),
     check('name', "Name attribute can't be empty").notEmpty(),
-    check('phoneNbr', "Phone Number attribute can't be empty").isMobilePhone('id-ID'),
+    check('phoneNbr', "Phone Number attribute can't be empty").notEmpty(),
     check('email', "Email attribute can't be empty").isEmail(),
   ],
   ValidateMiddleware.result,
@@ -81,7 +81,7 @@ router.put(
   [
     check('vendorId', "Vendor Id attribute can't be empty").notEmpty(),
     check('name', "Name attribute can't be empty").notEmpty(),
-    check('phoneNbr', "Phone Number attribute can't be empty").isMobilePhone('id-ID'),
+    check('phoneNbr', "Phone Number attribute can't be empty").notEmpty(),
     check('email', "Email attribute can't be empty").isEmail(),
   ],
   ValidateMiddleware.result,

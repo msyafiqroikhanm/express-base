@@ -1,8 +1,10 @@
 const { Op } = require('sequelize');
 const { TPT_Vendor, USR_PIC } = require('../models');
 
-const selectAllVendors = async () => {
-  const data = await TPT_Vendor.findAll();
+const selectAllVendors = async (where) => {
+  const data = await TPT_Vendor.findAll({
+    where: where.picId ? { id: { [Op.in]: where.vendors } } : null,
+  });
 
   return {
     success: true,
@@ -11,7 +13,17 @@ const selectAllVendors = async () => {
   };
 };
 
-const selectVendor = async (id) => {
+const selectVendor = async (id, where) => {
+  if (where.picId) {
+    if (!where.vendors.includes(Number(id))) {
+      // check if user can have access to related vendor detail
+      return {
+        success: false,
+        code: 404,
+        message: ['Vendor Data Not Found'],
+      };
+    }
+  }
   const vendorInstance = await TPT_Vendor.findByPk(id);
   if (!vendorInstance) {
     return {

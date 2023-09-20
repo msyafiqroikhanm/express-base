@@ -151,9 +151,7 @@ const updateLocation = async (where, form) => {
     return { isValid: false, code: 404, message: errorMessages };
   }
 
-  Instance.parentLocationId = form.parentLocationId
-    ? form.parentLocationId
-    : Instance.parentLocationId;
+  Instance.parentLocationId = form.parentLocationId;
   Instance.typeId = form.typeId ? form.typeId : Instance.typeId;
   Instance.name = form.name ? form.name : Instance.name;
   Instance.description = form.description ? form.description : Instance.description;

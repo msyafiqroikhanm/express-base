@@ -7,7 +7,8 @@ const {
   PAR_Participant, REF_IdentityType, REF_ParticipantType, QRM_QR, REF_CommitteeType,
   PAR_Contingent, REF_Region, PAR_Group, QRM_QRTemplate, PAR_ParticipantTracking,
   TPT_VehicleSchedule, TPT_Vehicle, ACM_Location, REF_VehicleScheduleStatus,
-  TPT_Vendor, REF_VehicleType,
+  TPT_Vendor, REF_VehicleType, ACM_ParticipantLodger, ACM_Room, REF_RoomType,
+  ENV_Event, REF_EventCategory,
 } = require('../models');
 const { createQR } = require('./qr.service');
 const deleteFile = require('../helpers/deleteFile.helper');
@@ -60,50 +61,118 @@ const selectAllParticipant = async (query, where) => {
 };
 
 const selectParticipant = async (id, where) => {
-  let participantInstance;
-
-  if (Object.keys(where).length > 0) {
-    participantInstance = await PAR_Participant.findByPk(id, {
-      include: [
-        {
-          model: PAR_Contingent,
-          where,
-          as: 'contingent',
-          attributes: ['id', 'name'],
-          include: { model: REF_Region, as: 'region', attributes: ['id', 'name'] },
+  const participantInstance = await PAR_Participant.findOne({
+    where: { id },
+    include: [
+      {
+        model: PAR_Contingent,
+        where: where.id ? { id: where.id } : null,
+        as: 'contingent',
+        attributes: ['id', 'name'],
+        include: { model: REF_Region, as: 'region', attributes: ['id', 'name'] },
+      },
+      { model: QRM_QR, as: 'qr' },
+      { model: REF_CommitteeType, attributes: ['name'], as: 'committeeType' },
+      { model: REF_IdentityType, attributes: ['id', 'name'], as: 'identityType' },
+      { model: REF_ParticipantType, attributes: ['id', 'name'], as: 'participantType' },
+      {
+        model: PAR_Group,
+        as: 'groups',
+        through: { attributes: [] },
+        include: {
+          model: ENV_Event,
+          as: 'event',
+          attributes: { exclude: ['picId', 'createdAt', 'updatedAt'] },
+          include: [
+            { model: REF_EventCategory, attributes: ['name'], as: 'category' },
+            { model: ACM_Location, attributes: ['parentLocationId', 'name', 'address'], as: 'location' },
+          ],
         },
-        { model: QRM_QR, as: 'qr' },
-        { model: REF_CommitteeType, attributes: ['name'], as: 'committeeType' },
-        { model: REF_IdentityType, attributes: ['id', 'name'], as: 'identityType' },
-        { model: REF_ParticipantType, attributes: ['id', 'name'], as: 'participantType' },
-        { model: PAR_Group, as: 'groups', through: { attributes: [] } },
-        { model: PAR_ParticipantTracking, as: 'history' },
-      ],
-    });
-  } else {
-    participantInstance = await PAR_Participant.findByPk(id, {
-      include: [
-        {
-          model: PAR_Contingent,
-          as: 'contingent',
-          attributes: ['id', 'name'],
-          include: { model: REF_Region, as: 'region', attributes: ['id', 'name'] },
+      },
+      { model: PAR_ParticipantTracking, as: 'history' },
+      {
+        model: ACM_ParticipantLodger,
+        as: 'lodgers',
+        attributes: { exclude: ['createdAt', 'updatedAt', 'deletedAt', 'participantId'] },
+        include: {
+          model: ACM_Room,
+          as: 'room',
+          attributes: ['typeId', 'locationId', 'name', 'floor'],
+          include: [
+            { model: REF_RoomType, attributes: ['name'], as: 'type' },
+            { model: ACM_Location, attributes: ['parentLocationId', 'name', 'address'], as: 'location' },
+          ],
         },
-        { model: QRM_QR, as: 'qr' },
-        { model: REF_CommitteeType, attributes: ['id', 'name'], as: 'committeeType' },
-        { model: REF_IdentityType, attributes: ['id', 'name'], as: 'identityType' },
-        { model: REF_ParticipantType, attributes: ['id', 'name'], as: 'participantType' },
-        { model: PAR_Group, as: 'groups', through: { attributes: [] } },
-        { model: PAR_ParticipantTracking, as: 'history' },
-      ],
-    });
-  }
+      },
+      {
+        model: TPT_VehicleSchedule,
+        attributes: { exclude: ['createdAt', 'updatedAt', 'driverId'] },
+        through: {
+          attributes: [],
+        },
+        include: [
+          {
+            model: REF_VehicleScheduleStatus,
+            as: 'status',
+            attributes: ['name'],
+          },
+          {
+            model: TPT_Vehicle,
+            as: 'vehicle',
+            attributes: ['name', 'vehicleNo', 'VehiclePlateNo', 'capacity'],
+            include: [
+              { model: REF_VehicleType, attributes: ['name'], as: 'type' },
+              { model: TPT_Vendor, attributes: ['name'], as: 'vendor' },
+            ],
+          },
+          {
+            model: ACM_Location,
+            as: 'pickUp',
+            attributes: ['name', 'description', 'address', 'latitude', 'longtitude'],
+          },
+          {
+            model: ACM_Location,
+            as: 'destination',
+            attributes: ['name', 'description', 'address', 'latitude', 'longtitude'],
+          },
+        ],
+      },
+    ],
+  });
 
   if (!participantInstance) {
     return {
       success: false, code: 404, message: ['Participant Data Not Found'],
     };
   }
+
+  participantInstance.dataValues.events = [];
+  participantInstance.dataValues.transportationSchedules = [];
+
+  // parsing participant lodger history
+  participantInstance.lodgers.forEach((lodger) => {
+    lodger.room.dataValues.type = lodger.room.type.dataValues.name;
+  });
+
+  // parsing participant events
+  participantInstance.groups.forEach((group) => {
+    group.event.dataValues.groupId = group.dataValues.id;
+    group.event.dataValues.category = group.event.category.dataValues.name;
+    participantInstance.dataValues.events.push(group.event);
+    delete group.dataValues.event;
+  });
+
+  // parsing participant transportation schedule
+  participantInstance.TPT_VehicleSchedules.forEach((schedule) => {
+    schedule.dataValues.status = schedule.status.dataValues.name;
+    if (schedule.vehicle) {
+      schedule.vehicle.dataValues.type = schedule.vehicle.type.dataValues.name;
+      schedule.vehicle.dataValues.vendor = schedule.vehicle.vendor.dataValues.name;
+    }
+
+    participantInstance.dataValues.transportationSchedules.push(schedule);
+  });
+  delete participantInstance.dataValues.TPT_VehicleSchedules;
 
   return {
     success: true, message: 'Successfully Getting Participant', content: participantInstance,
@@ -687,6 +756,11 @@ const selectParticipantAllSchedules = async (id, where) => {
       },
       include: [
         {
+          model: REF_VehicleScheduleStatus,
+          as: 'status',
+          attributes: ['name'],
+        },
+        {
           model: TPT_Vehicle,
           as: 'vehicle',
           attributes: ['name', 'vehicleNo', 'VehiclePlateNo', 'capacity'],
@@ -704,11 +778,6 @@ const selectParticipantAllSchedules = async (id, where) => {
           model: ACM_Location,
           as: 'destination',
           attributes: ['name', 'description', 'address', 'latitude', 'longtitude'],
-        },
-        {
-          model: REF_VehicleScheduleStatus,
-          as: 'status',
-          attributes: ['name'],
         },
       ],
     },

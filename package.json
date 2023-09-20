@@ -11,6 +11,7 @@
     "seed": "npx sequelize-cli db:seed:all",
     "seed:reset": "npx sequelize-cli db:seed:undo:all",
     "seed:fresh": "npm run seed:reset && npm run seed",
+    "seed:user": "npx sequelize-cli db:seed:undo --seed 20230816022325-UserSeeder.js && npx sequelize-cli db:seed --seed 20230816022325-UserSeeder.js",
     "db:fresh": "npx sequelize-cli db:migrate:undo:all && npx sequelize-cli db:migrate && npx sequelize-cli db:seed:all"
   },
   "keywords": [],

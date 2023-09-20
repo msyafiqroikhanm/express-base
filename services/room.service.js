@@ -1,4 +1,10 @@
-const { ACM_Location, ACM_Room, REF_RoomType, REF_RoomStatus } = require('../models');
+const {
+  ACM_Location,
+  ACM_Room,
+  REF_RoomType,
+  REF_RoomStatus,
+  ACM_ParticipantLodger,
+} = require('../models');
 
 const selectAllRooms = async (where) => {
   const rooms = await ACM_Room.findAll({
@@ -112,7 +118,7 @@ const updateRoom = async (where, form) => {
 
   Instance.locationId = form.locationId ? form.locationId : Instance.locationId;
   Instance.typeId = form.typeId ? form.typeId : Instance.typeId;
-  // Instance.statusId = form.statusId ? form.statusId : Instance.statusId;
+  Instance.statusId = form.statusId ? form.statusId : Instance.statusId;
   Instance.name = form.name ? form.name : Instance.name;
   Instance.floor = form.floor ? form.floor : Instance.floor;
   Instance.capacity = form.capacity ? form.capacity : Instance.capacity;
@@ -139,6 +145,7 @@ const deleteRoom = async (where) => {
 
   //* Checking dependencies
   // ? ....
+  await ACM_ParticipantLodger.destroy({ where: { roomId: Instance.id } });
 
   const { name } = Instance.dataValues;
 
@@ -164,10 +171,10 @@ const validateRoomInputs = async (form, where) => {
     errorMessages.push('Room Type Data Not Found');
   }
 
-  const statusInstance = await REF_RoomStatus.findByPk(form.statusId);
-  if (!statusInstance) {
-    errorMessages.push('Room Status Data Not Found');
-  }
+  // const statusInstance = await REF_RoomStatus.findByPk(form.statusId);
+  // if (!statusInstance) {
+  //   errorMessages.push('Room Status Data Not Found');
+  // }
 
   if (errorMessages.length > 0) {
     return { isValid: false, code: 404, message: errorMessages };
@@ -178,7 +185,7 @@ const validateRoomInputs = async (form, where) => {
     form: {
       locationId: form.locationId,
       typeId: form.typeId,
-      statusId: form.statusId,
+      statusId: 1,
       name: form.name,
       floor: form.floor,
       capacity: form.capacity,

@@ -24,6 +24,7 @@ module.exports = (sequelize, DataTypes) => {
   }, {
     sequelize,
     modelName: 'PAR_Contingent',
+    paranoid: true,
   });
   return PAR_Contingent;
 };

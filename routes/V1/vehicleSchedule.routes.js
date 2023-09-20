@@ -23,6 +23,7 @@ router.get(
       ]),
     );
   },
+  Authentication.transportation,
   VehicleScheduleController.getAll,
 );
 
@@ -43,6 +44,7 @@ router.get(
       ]),
     );
   },
+  Authentication.transportation,
   VehicleScheduleController.getDetail,
 );
 
@@ -58,6 +60,7 @@ router.post(
       ]),
     );
   },
+  Authentication.transportation,
   [
     check('pickUpId', "Pick Up Id attribute can't be empty").notEmpty(),
     check('destinationId', "Destination Id attribute can't be empty").notEmpty(),
@@ -81,6 +84,7 @@ router.put(
       ]),
     );
   },
+  Authentication.transportation,
   [
     check('pickUpId', "Pick Up Id attribute can't be empty").notEmpty(),
     check('destinationId', "Destination Id attribute can't be empty").notEmpty(),
@@ -104,6 +108,7 @@ router.delete(
       ]),
     );
   },
+  Authentication.transportation,
   VehicleScheduleController.delete,
 );
 
@@ -119,6 +124,7 @@ router.patch(
       ]),
     );
   },
+  Authentication.transportation,
   VehicleScheduleController.progressStatus,
 );
 
@@ -134,6 +140,7 @@ router.patch(
       ]),
     );
   },
+  Authentication.transportation,
   [
     check('driverId', "Driver Id attribute can't be empty").notEmpty(),
     check('vehicleId', "Vehicle Id attribute can't be empty").notEmpty(),
@@ -154,6 +161,7 @@ router.patch(
       ]),
     );
   },
+  Authentication.transportation,
   [
     check('passengers', "Passengers attribute can't be empty").isArray(),
     check('statusId', "Status Id attribute can't be empty").notEmpty(),
@@ -175,6 +183,7 @@ router.get(
       ]),
     );
   },
+  Authentication.transportation,
   VehicleScheduleController.passengers,
 );
 

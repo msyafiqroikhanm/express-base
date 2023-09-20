@@ -4,7 +4,98 @@ const features = require('../../helpers/features.helper');
 const ValidateMiddleware = require('../../middlewares/validate.middleware');
 const Authentication = require('../../middlewares/auth.middleware');
 const RoomController = require('../../controllers/room.controller');
+const { RoomType } = require('../../controllers/reference.controller');
 
+//* Room Types
+router.post(
+  '/types',
+  async (req, res, next) => {
+    Authentication.authenticate(
+      req,
+      res,
+      next,
+      await features().then((feature) => [feature.create_room_type]),
+    );
+  },
+  [
+    check('name', "Name attribute can't be empty").notEmpty(),
+    check('locationId', "locationId attribute can't be empty").notEmpty(),
+  ],
+  ValidateMiddleware.result,
+  Authentication.accomodation,
+  RoomType.create,
+);
+router.get(
+  '/types',
+  async (req, res, next) => {
+    Authentication.authenticate(
+      req,
+      res,
+      next,
+      await features().then((feature) => [
+        feature.view_room_type,
+        feature.create_room_type,
+        feature.update_room_type,
+        feature.delete_room_type,
+      ]),
+    );
+  },
+  Authentication.accomodation,
+  RoomType.getAll,
+);
+router.get(
+  '/types/:id',
+  async (req, res, next) => {
+    Authentication.authenticate(
+      req,
+      res,
+      next,
+      await features().then((feature) => [
+        feature.view_room_type,
+        feature.create_room_type,
+        feature.update_room_type,
+        feature.delete_room_type,
+      ]),
+    );
+  },
+  Authentication.accomodation,
+  RoomType.getDetail,
+);
+router.put(
+  '/types/:id',
+  async (req, res, next) => {
+    Authentication.authenticate(
+      req,
+      res,
+      next,
+      await features().then((feature) => [
+        feature.view_room_type,
+        feature.create_room_type,
+        feature.update_room_type,
+        feature.delete_room_type,
+      ]),
+    );
+  },
+  [check('name', "Name attribute can't be empty").notEmpty()],
+  ValidateMiddleware.result,
+  Authentication.accomodation,
+  RoomType.update,
+);
+router.delete(
+  '/types/:id',
+  async (req, res, next) => {
+    Authentication.authenticate(
+      req,
+      res,
+      next,
+      await features().then((feature) => [feature.delete_room_type]),
+    );
+  },
+  Authentication.accomodation,
+  RoomType.delete,
+);
+
+//* ROOM
 router.get(
   '/',
   async (req, res, next) => {
@@ -64,7 +155,7 @@ router.post(
   [
     check('locationId', 'locationId attribute must be integer').isInt(),
     check('typeId', 'typeId attribute must be integer').isInt(),
-    check('statusId', 'statusId attribute must be integer').isInt(),
+    // check('statusId', 'statusId attribute must be integer').isInt(),
     check('name', "name attribute can't be empty").notEmpty(),
     check('floor', "floor attribute can't be empty").notEmpty(),
     check('capacity', 'capacity attribute must be integer').isInt(),

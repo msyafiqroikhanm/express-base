@@ -16,6 +16,7 @@ module.exports = {
       address: element.address,
       phoneNbr: element.phoneNbr,
       email: element.email,
+      picId: element?.picId || null,
       createdAt: new Date(),
       updatedAt: new Date(),
     }));

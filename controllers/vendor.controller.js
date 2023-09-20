@@ -8,7 +8,16 @@ class VendorController {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
 
-      const data = await selectAllVendors();
+      // resrict data that is not an admin
+      const where = {};
+      if (!req.user.limitation.isAdmin && req.user.limitation?.access?.picId) {
+        where.picId = req.user.limitation.access.picId;
+        where.vendors = req.user.limitation.access.vendors;
+      } else if (!req.user.limitation.isAdmin && req.user.limitation?.access?.driver) {
+        where.driverId = req.user.limitation.access.driverId;
+      }
+
+      const data = await selectAllVendors(where);
 
       return ResponseFormatter.success200(res, data.message, data.content);
     } catch (error) {
@@ -20,7 +29,16 @@ class VendorController {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
 
-      const data = await selectVendor(req.params.id);
+      // resrict data that is not an admin
+      const where = {};
+      if (!req.user.limitation.isAdmin && req.user.limitation?.access?.picId) {
+        where.picId = req.user.limitation.access.picId;
+        where.vendors = req.user.limitation.access.vendors;
+      } else if (!req.user.limitation.isAdmin && req.user.limitation?.access?.driver) {
+        where.driverId = req.user.limitation.access.driverId;
+      }
+
+      const data = await selectVendor(req.params.id, where);
       if (!data.success && data.code === 404) {
         return ResponseFormatter.error404(res, 'Data Not Found', data.message);
       }

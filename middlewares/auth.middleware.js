@@ -1,6 +1,6 @@
 const passport = require('passport');
 const rolesLib = require('../libraries/roles.lib');
-const { ACM_Location, FNB_Kitchen } = require('../models');
+const { ACM_Location, FNB_Kitchen, PAR_Participant, TPT_Driver, TPT_Vendor } = require('../models');
 const picTypeHelper = require('../helpers/pictype.helper');
 const ResponseFormatter = require('../helpers/responseFormatter.helper');
 
@@ -27,8 +27,8 @@ class AuthMiddleware {
 
         // check user access
         if (requiredFeatures) {
-          const authorized = req.user.Role.USR_Features.some(
-            (feature) => requiredFeatures.includes(feature.id),
+          const authorized = req.user.Role.USR_Features.some((feature) =>
+            requiredFeatures.includes(feature.id),
           );
 
           if (!authorized) {
@@ -54,6 +54,7 @@ class AuthMiddleware {
 
         const picTypes = await picTypeHelper().then((type) => [type.pic_location]);
         const picLocation = req.user.PIC.filter((pic) => pic.typeId === picTypes[0]);
+        console.log(JSON.stringify(req.user.PIC, null, 2));
         limitation.isAdmin = false;
         limitation.access.picId = picLocation[0].dataValues.id;
 
@@ -136,7 +137,8 @@ class AuthMiddleware {
       if (req.user.participant.contingentId && req.user.Role.id !== rolesLib.superAdmin) {
         limitation.isAdmin = false;
         limitation.access.contingent = {
-          contingentId: req.user.participant.contingentId, id: req.user.participant.contingentId,
+          contingentId: req.user.participant.contingentId,
+          id: req.user.participant.contingentId,
         };
       }
 
@@ -149,6 +151,48 @@ class AuthMiddleware {
       // * event
 
       // * customer service
+
+      req.user.limitation = limitation;
+      next();
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  static async transportation(req, res, next) {
+    try {
+      res.url = `${req.method} ${req.originalUrl}`;
+
+      const participantInstance = await PAR_Participant.findByPk(req.user?.participantId, {
+        attributes: ['phoneNbr'],
+      });
+
+      const driverInstance = await TPT_Driver.findOne({
+        where: { phoneNbr: participantInstance?.phoneNbr },
+      });
+
+      const limitation = { isAdmin: true, access: {} };
+      if (req.user.Role.id !== rolesLib.superAdmin) {
+        if (req.user.PIC) {
+          const picTypes = await picTypeHelper().then((type) => [type.pic_transportation]);
+          const picTransportation = req.user.PIC.filter((pic) => pic.typeId === picTypes[0]);
+          limitation.isAdmin = false;
+          limitation.access.picId = picTransportation[0].dataValues.id;
+
+          const vendors = await TPT_Vendor.findAll({
+            where: { picId: limitation.access.picId },
+            attributes: ['id'],
+          });
+
+          const parsedVendors = vendors.map((vendor) => vendor.id);
+
+          limitation.access.vendors = parsedVendors.length > 0 ? parsedVendors : null;
+        } else if (driverInstance) {
+          limitation.access.driverId = driverInstance.id;
+        } else {
+          return ResponseFormatter.error401(res, "You Don't Have Access To This Service");
+        }
+      }
 
       req.user.limitation = limitation;
       next();

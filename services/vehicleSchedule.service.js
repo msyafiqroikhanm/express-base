@@ -6,10 +6,16 @@ const {
   REF_CommitteeType, REF_ParticipantType,
 } = require('../models');
 
-const selectAllVehicleSchedule = async () => {
+const selectAllVehicleSchedule = async (where = {}) => {
   const schedules = await TPT_VehicleSchedule.findAll({
+    where: where.driverId ? { driverId: where.driverId } : null,
     include: [
-      { model: TPT_Vehicle, attributes: ['name'], as: 'vehicle' },
+      {
+        model: TPT_Vehicle,
+        attributes: ['name'],
+        as: 'vehicle',
+        where: where.picId ? { vendorId: { [Op.in]: where.vendors } } : null,
+      },
       { model: TPT_Driver, attributes: ['name'], as: 'driver' },
       { model: REF_VehicleScheduleStatus, attributes: ['name'], as: 'status' },
       { model: ACM_Location, attributes: ['id', 'name', 'address'], as: 'pickUp' },
@@ -30,11 +36,16 @@ const selectAllVehicleSchedule = async () => {
   };
 };
 
-const selectVehicleSchedule = async (id) => {
+const selectVehicleSchedule = async (id, where = {}) => {
   const scheduleInstance = await TPT_VehicleSchedule.findOne({
-    where: { id },
+    where: where.driverId ? { id, driverId: where.driverId } : { id },
     include: [
-      { model: TPT_Vehicle, attributes: ['name'], as: 'vehicle' },
+      {
+        model: TPT_Vehicle,
+        attributes: ['name'],
+        as: 'vehicle',
+        where: where.vendors ? { id: { [Op.in]: where.vendors } } : null,
+      },
       { model: TPT_Driver, attributes: ['name'], as: 'driver' },
       { model: REF_VehicleScheduleStatus, attributes: ['name'], as: 'status' },
       { model: ACM_Location, attributes: ['id', 'name', 'address'], as: 'pickUp' },
@@ -206,9 +217,9 @@ const updateVehicleSchedule = async (form, id) => {
   };
 };
 
-const progressVehicleSchedule = async (form, id) => {
+const progressVehicleSchedule = async (form, id, where = {}) => {
   const scheduleInstance = await TPT_VehicleSchedule.findOne({
-    where: { id },
+    where: where.driverId ? { id, driverId: where.driverId } : { id },
     include: { model: REF_VehicleScheduleStatus, attributes: ['name'], as: 'status' },
   });
   if (!scheduleInstance) {
@@ -219,17 +230,45 @@ const progressVehicleSchedule = async (form, id) => {
     };
   }
 
+  if (where.vendors?.length > 0 && scheduleInstance) {
+    const vehicleInstance = await TPT_Vehicle.findOne({
+      where: { id: scheduleInstance.vehicleId, vendorId: { [Op.in]: where.vendors } },
+    });
+    if (!vehicleInstance) {
+      return {
+        success: false,
+        code: 404,
+        message: ['Vehicle Schedule Data Not Found'],
+      };
+    }
+  }
+
   const statusInstance = await REF_VehicleScheduleStatus.findByPk(form.statusId);
 
   scheduleInstance.statusId = statusInstance?.id || scheduleInstance.statusId;
   await scheduleInstance.save();
 
   if (['Completed', 'Done', 'Finish', 'Arrived'].includes(statusInstance?.name)) {
+    // when a trip is finish change passenger status
+    // and set both driver and vehicle became available again
+    // and set dropOff Time
     const passengerStatus = await REF_PassengerStatus.findOne({ where: { name: { [Op.like]: '%Arrived%' } } });
     await TPT_SchedulePassenger.update(
       { statusId: passengerStatus.id },
       { where: { vehicleScheduleId: scheduleInstance.id, statusId: 2 } },
     );
+
+    await TPT_Driver.update(
+      { isAvailable: true },
+      { where: { id: scheduleInstance.driverId } },
+    );
+    await TPT_Vehicle.update(
+      { isAvailable: true },
+      { where: { id: scheduleInstance.vehicleId } },
+    );
+
+    scheduleInstance.dropOffTime = new Date();
+    await scheduleInstance.save();
   } else if (['Enroute', 'On Proggress'].includes(statusInstance?.name)) {
     const passengerStatus = await REF_PassengerStatus.findOne({ where: { name: { [Op.like]: '%Enroute%' } } });
     await TPT_SchedulePassenger.update(
@@ -267,7 +306,7 @@ const deleteVehicleSchedule = async (id) => {
   };
 };
 
-const validateProvideScheduleInputs = async (form, id) => {
+const validateProvideScheduleInputs = async (form, id, where) => {
   const invalid400 = [];
   const invalid404 = [];
 
@@ -277,18 +316,32 @@ const validateProvideScheduleInputs = async (form, id) => {
     invalid404.push('Vehicle Schedule Data Not Found');
   }
 
-  const vehicleInstance = await TPT_Vehicle.findByPk(form.vehicleId);
+  const vehicleInstance = await TPT_Vehicle.findOne({
+    where: where.vendors
+      ? { id: form.vehicleId, vendorId: { [Op.in]: where.vendors } } : { id: form.vehicleId },
+  });
   if (!vehicleInstance) {
     invalid404.push('Vehicle Data Not Found');
+  } else if (scheduleInstance.vehicleId !== vehicleInstance.id && !vehicleInstance.isAvailable) {
+    // check when with different vehicle data, is the vehicle available
+    invalid400.push('Vehicle Is Not Available');
   }
 
-  const driverInstance = await TPT_Driver.findByPk(form.driverId);
+  const driverInstance = await TPT_Driver.findOne({
+    where: where.vendors
+      ? { id: form.driverId, vendorId: { [Op.in]: where.vendors } } : { id: form.driverId },
+  });
   if (!driverInstance) {
+    // check if driver exits
     invalid404.push('Driver Data Not Found');
+  } else if (scheduleInstance.driverId !== driverInstance.id && !driverInstance.isAvailable) {
+    // check when with different driver data, is the driver available
+    invalid400.push('Driver Is Not Available');
   }
 
   if (driverInstance && vehicleInstance) {
     if (driverInstance.vendorId !== vehicleInstance.vendorId) {
+      // check if vehicle and driver have same vendor
       invalid400.push('Vehicle And Driver Belongs To Different Vendor');
     }
   }
@@ -324,6 +377,16 @@ const vendorProvideTransportationSchedule = async (form, id) => {
   scheduleInstance.vehicleId = form.vehicle?.id || scheduleInstance.vehicleId;
   await scheduleInstance.save();
 
+  if (form.driver && form.driver?.isAvailable) {
+    form.driver.isAvailable = false;
+    await form.driver.save();
+  }
+
+  if (form.vehicle && form.vehicle?.isAvailable) {
+    form.vehicle.isAvailable = false;
+    await form.vehicle.save();
+  }
+
   return {
     success: true,
     message: 'Vehicle Schedule\'s Driver And Vehicle Successfully Fulfill By The Vendor',
@@ -331,14 +394,25 @@ const vendorProvideTransportationSchedule = async (form, id) => {
   };
 };
 
-const validatePassengerAbsent = async (form, id) => {
+const validatePassengerAbsent = async (form, id, where) => {
   const invalid400 = [];
   const invalid404 = [];
 
   // check schedule id
-  const scheduleInstance = await TPT_VehicleSchedule.findOne({ where: { id } });
+  const scheduleInstance = await TPT_VehicleSchedule.findOne({
+    where: where.driverId ? { id, driverId: where.driverId } : { id },
+  });
   if (!scheduleInstance) {
     invalid404.push('Vehicle Schedule Data Not Found');
+  }
+
+  if (where.vendors?.length > 0 && scheduleInstance) {
+    const vehicleInstance = await TPT_Vehicle.findOne({
+      where: { id: scheduleInstance.vehicleId, vendorId: { [Op.in]: where.vendors } },
+    });
+    if (!vehicleInstance) {
+      invalid404.push('Vehicle Schedule Data Not Found');
+    }
   }
 
   // validate Recipiants / receivers
@@ -391,9 +465,9 @@ const udpatePassengerAbsent = async (form) => {
   };
 };
 
-const selectAllPassengersVehicleSchedule = async (id) => {
+const selectAllPassengersVehicleSchedule = async (id, where = {}) => {
   const scheduleInstance = await TPT_VehicleSchedule.findOne({
-    where: { id },
+    where: where.driverId ? { id, driverId: where.driverId } : { id },
     include: {
       model: TPT_SchedulePassenger,
       attributes: { exclude: ['createdAt', 'updatedAt'] },
@@ -421,6 +495,19 @@ const selectAllPassengersVehicleSchedule = async (id) => {
       code: 404,
       message: ['Vehicle Schedule Data Not Found'],
     };
+  }
+
+  if (where.vendors?.length > 0 && scheduleInstance) {
+    const vehicleInstance = await TPT_Vehicle.findOne({
+      where: { id: scheduleInstance.vehicleId, vendorId: { [Op.in]: where.vendors } },
+    });
+    if (!vehicleInstance) {
+      return {
+        success: false,
+        code: 404,
+        message: ['Vehicle Schedule Data Not Found'],
+      };
+    }
   }
 
   const passengers = scheduleInstance.TPT_SchedulePassengers.map((passenger) => (

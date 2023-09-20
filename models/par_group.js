@@ -37,6 +37,7 @@ module.exports = (sequelize, DataTypes) => {
   }, {
     sequelize,
     modelName: 'PAR_Group',
+    paranoid: true,
   });
   return PAR_Group;
 };
