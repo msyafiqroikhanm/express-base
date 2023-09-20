@@ -29,6 +29,7 @@ module.exports = (sequelize, DataTypes) => {
   }, {
     sequelize,
     modelName: 'USR_Feature',
+    paranoid: true,
   });
   return USR_Feature;
 };

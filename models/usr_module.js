@@ -24,6 +24,7 @@ module.exports = (sequelize, DataTypes) => {
   }, {
     sequelize,
     modelName: 'USR_Module',
+    paranoid: true,
   });
   return USR_Module;
 };
