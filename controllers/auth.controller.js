@@ -30,11 +30,13 @@ class AuthController {
 
       await updateUserLogin({ id: user.id }, { lastLogin: new Date() });
       const message = 'Berhasil Login';
+      console.log(JSON.stringify(user, null, 2));
       return ResponseFormatter.success200(res, message, {
         id: user.id,
         name: user.participant.name,
         role: user.Role.name,
         access_token: `Bearer ${access_token}`,
+        PIC: user.PIC,
         modules: user.Role.modules,
       });
     } catch (error) {
