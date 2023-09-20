@@ -22,6 +22,7 @@ router.get(
       ]),
     );
   },
+  Authentication.transportation,
   VehicleController.getAll,
 );
 
@@ -41,6 +42,7 @@ router.get(
       ]),
     );
   },
+  Authentication.transportation,
   VehicleController.getDetail,
 );
 
@@ -64,6 +66,7 @@ router.post(
     check('name', "Name attribute can't be empty").notEmpty(),
     check('capacity', "Capacity attribute can't be empty").isInt({ gt: 0 }),
   ],
+  Authentication.transportation,
   ValidateMiddleware.result,
   VehicleController.create,
 );
@@ -88,6 +91,7 @@ router.put(
     check('name', "Name attribute can't be empty").notEmpty(),
     check('capacity', "Capacity attribute can't be empty").isInt({ gt: 0 }),
   ],
+  Authentication.transportation,
   ValidateMiddleware.result,
   VehicleController.update,
 );
@@ -104,6 +108,7 @@ router.delete(
       ]),
     );
   },
+  Authentication.transportation,
   VehicleController.delete,
 );
 
@@ -119,6 +124,7 @@ router.get(
       ]),
     );
   },
+  Authentication.transportation,
   VehicleController.getSchedule,
 );
 
@@ -134,6 +140,7 @@ router.get(
       ]),
     );
   },
+  Authentication.transportation,
   VehicleController.getTrack,
 );
 
@@ -155,6 +162,7 @@ router.post(
     check('longtitude', "Longtitude attribute can't be empty").notEmpty(),
     check('accuracy', "Accuracy attribute can't be empty").notEmpty(),
   ],
+  Authentication.transportation,
   ValidateMiddleware.result,
   VehicleController.track,
 );
