@@ -1,6 +1,6 @@
 /* eslint-disable no-param-reassign */
 const { Op } = require('sequelize');
-const { TPT_Driver, TPT_Vendor } = require('../models');
+const { TPT_Driver, TPT_Vendor, TPT_VehicleSchedule } = require('../models');
 
 const selectAllDrivers = async (where = {}) => {
   const data = await TPT_Driver.findAll({
@@ -141,6 +141,11 @@ const deleteDriver = async (id, where) => {
   const { name } = driverInstance.dataValues;
 
   await driverInstance.destroy();
+
+  await TPT_VehicleSchedule.update(
+    { driverId: null },
+    { where: { driverId: driverInstance.id, dropOffTime: null } },
+  );
 
   return {
     success: true,

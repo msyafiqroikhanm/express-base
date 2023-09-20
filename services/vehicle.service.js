@@ -201,6 +201,11 @@ const deleteVehicle = async (id, where) => {
 
   await vehicleInstance.destroy();
 
+  await TPT_VehicleSchedule.update(
+    { vehicleId: null },
+    { where: { vehicleId: vehicleInstance.id, dropOffTime: null } },
+  );
+
   return {
     success: true,
     message: 'Vehicle Successfully Deleted',
