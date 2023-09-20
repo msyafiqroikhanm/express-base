@@ -20,6 +20,7 @@ router.get(
       ]),
     );
   },
+  Authentication.transportation,
   VendorController.getAll,
 );
 
@@ -37,6 +38,7 @@ router.get(
       ]),
     );
   },
+  Authentication.transportation,
   VendorController.getDetail,
 );
 
