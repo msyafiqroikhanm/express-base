@@ -90,5 +90,16 @@
     "address": "cijanntung",
     "identityTypeId": 1,
     "committeeTypeId": 3
+  },
+  {
+    "name": "Admin Accomodation",
+    "gender": "Male",
+    "birthDate": "1999-01-01",
+    "identityNo": "31711123231232",
+    "phoneNbr": "6285780217411",
+    "email": "accomodation@jxboard.com",
+    "address": "cijanntung",
+    "identityTypeId": 1,
+    "committeeTypeId": 3
   }
 ]

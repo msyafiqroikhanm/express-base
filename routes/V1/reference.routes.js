@@ -729,6 +729,7 @@ router.post(
   },
   [check('name', "Name attribute can't be empty").notEmpty()],
   ValidateMiddleware.result,
+  Authentication.accomodation,
   RoomType.create,
 );
 router.get(
@@ -746,6 +747,7 @@ router.get(
       ]),
     );
   },
+  Authentication.accomodation,
   RoomType.getAll,
 );
 router.get(
@@ -763,6 +765,7 @@ router.get(
       ]),
     );
   },
+  Authentication.accomodation,
   RoomType.getDetail,
 );
 router.put(
@@ -782,6 +785,7 @@ router.put(
   },
   [check('name', "Name attribute can't be empty").notEmpty()],
   ValidateMiddleware.result,
+  Authentication.accomodation,
   RoomType.update,
 );
 router.delete(
@@ -794,6 +798,7 @@ router.delete(
       await features().then((feature) => [feature.delete_room_type]),
     );
   },
+  Authentication.accomodation,
   RoomType.delete,
 );
 

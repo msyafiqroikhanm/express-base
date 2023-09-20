@@ -39,6 +39,7 @@ module.exports = (sequelize, DataTypes) => {
   }, {
     sequelize,
     modelName: 'TPT_VehicleSchedule',
+    paranoid: true,
   });
   return TPT_VehicleSchedule;
 };

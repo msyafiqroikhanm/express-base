@@ -47,27 +47,27 @@ class AuthMiddleware {
       res.url = `${req.method} ${req.originalUrl}`;
 
       const limitation = { isAdmin: true, access: {} };
+
+      console.log(JSON.stringify(req.user, null, 2));
       if (req.user.Role.id !== rolesLib.superAdmin) {
-        if (!req.user.PIC) {
-          return ResponseFormatter.error401(res, "You Don't Have Access To This Service");
-        }
+        if (req.user.PIC.length) {
+          const picTypes = await picTypeHelper().then((type) => [type.pic_location]);
+          const picLocation = req.user.PIC.filter((pic) => pic.typeId === picTypes[0]);
+          // console.log(JSON.stringify(req.user.PIC, null, 2));
+          limitation.isAdmin = false;
+          limitation.access.picId = picLocation[0].dataValues.id;
 
-        const picTypes = await picTypeHelper().then((type) => [type.pic_location]);
-        const picLocation = req.user.PIC.filter((pic) => pic.typeId === picTypes[0]);
-        console.log(JSON.stringify(req.user.PIC, null, 2));
-        limitation.isAdmin = false;
-        limitation.access.picId = picLocation[0].dataValues.id;
+          const locationLimitation = await ACM_Location.findAll({
+            where: { picId: limitation.access.picId },
+            attributes: ['id'],
+            raw: true,
+          });
 
-        const locationLimitation = await ACM_Location.findAll({
-          where: { picId: limitation.access.picId },
-          attributes: ['id'],
-          raw: true,
-        });
+          const locations = locationLimitation.map((element) => element.id);
 
-        const locations = locationLimitation.map((element) => element.id);
-
-        if (locationLimitation.length > 0) {
-          limitation.access.location = locations;
+          if (locationLimitation.length > 0) {
+            limitation.access.location = locations;
+          }
         }
       }
       req.user.limitation = limitation;
