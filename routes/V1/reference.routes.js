@@ -2299,6 +2299,12 @@ router.delete(
   CommitteeType.delete,
 );
 
-router.get('/coordinates', LocationController.coordinate);
+router.get(
+  '/coordinates',
+  async (req, res, next) => {
+    Authentication.authenticate(req, res, next, null);
+  },
+  LocationController.coordinate,
+);
 
 module.exports = router;
