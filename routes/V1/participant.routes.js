@@ -38,6 +38,37 @@ router.get(
 );
 
 router.get(
+  '/search/:search',
+  async (req, res, next) => {
+    Authentication.authenticate(
+      req,
+      res,
+      next,
+      await features().then((feature) => [
+        feature.view_participant,
+        feature.create_participant,
+        feature.update_participant,
+        feature.delete_participant,
+        feature.track_participant,
+        feature.view_lodger,
+        feature.create_lodger,
+        feature.update_lodger,
+        feature.delete_lodger,
+        feature.create_group,
+        feature.update_group,
+        feature.create_user,
+        feature.update_user,
+        feature.create_broadcast,
+        feature.update_broadcast,
+        feature.create_participant_committe,
+      ]),
+    );
+  },
+  Authentication.participant,
+  ParticipantController.search,
+);
+
+router.get(
   '/:id',
   async (req, res, next) => {
     Authentication.authenticate(
@@ -158,10 +189,7 @@ router.post(
       req,
       res,
       next,
-      await features().then((feature) => [
-        feature.track_participant,
-        feature.view_participant,
-      ]),
+      await features().then((feature) => [feature.track_participant, feature.view_participant]),
     );
   },
   [
@@ -181,9 +209,7 @@ router.post(
       req,
       res,
       next,
-      await features().then((feature) => [
-        feature.create_participant_committee,
-      ]),
+      await features().then((feature) => [feature.create_participant_committee]),
     );
   },
   uploadDocument.single('participantDocument'),
@@ -198,9 +224,7 @@ router.post(
       req,
       res,
       next,
-      await features().then((feature) => [
-        feature.create_participant_committee,
-      ]),
+      await features().then((feature) => [feature.create_participant_committee]),
     );
   },
   uploadImage.single('committeeImage'),
@@ -226,9 +250,7 @@ router.put(
       req,
       res,
       next,
-      await features().then((feature) => [
-        feature.update_participant_committee,
-      ]),
+      await features().then((feature) => [feature.update_participant_committee]),
     );
   },
   uploadImage.single('committeeImage'),

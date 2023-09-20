@@ -4,11 +4,27 @@ const { relative } = require('path');
 const { Op } = require('sequelize');
 const XLSX = require('xlsx');
 const {
-  PAR_Participant, REF_IdentityType, REF_ParticipantType, QRM_QR, REF_CommitteeType,
-  PAR_Contingent, REF_Region, PAR_Group, QRM_QRTemplate, PAR_ParticipantTracking,
-  TPT_VehicleSchedule, TPT_Vehicle, ACM_Location, REF_VehicleScheduleStatus,
-  TPT_Vendor, REF_VehicleType, ACM_ParticipantLodger, ACM_Room, REF_RoomType,
-  ENV_Event, REF_EventCategory,
+  PAR_Participant,
+  REF_IdentityType,
+  REF_ParticipantType,
+  QRM_QR,
+  REF_CommitteeType,
+  PAR_Contingent,
+  REF_Region,
+  PAR_Group,
+  QRM_QRTemplate,
+  PAR_ParticipantTracking,
+  TPT_VehicleSchedule,
+  TPT_Vehicle,
+  ACM_Location,
+  REF_VehicleScheduleStatus,
+  TPT_Vendor,
+  REF_VehicleType,
+  ACM_ParticipantLodger,
+  ACM_Room,
+  REF_RoomType,
+  ENV_Event,
+  REF_EventCategory,
 } = require('../models');
 const { createQR } = require('./qr.service');
 const deleteFile = require('../helpers/deleteFile.helper');
@@ -56,7 +72,9 @@ const selectAllParticipant = async (query, where) => {
   });
 
   return {
-    success: true, message: 'Successfully Getting All Participant', content: seperatedParticipant,
+    success: true,
+    message: 'Successfully Getting All Participant',
+    content: seperatedParticipant,
   };
 };
 
@@ -85,7 +103,11 @@ const selectParticipant = async (id, where) => {
           attributes: { exclude: ['picId', 'createdAt', 'updatedAt'] },
           include: [
             { model: REF_EventCategory, attributes: ['name'], as: 'category' },
-            { model: ACM_Location, attributes: ['parentLocationId', 'name', 'address'], as: 'location' },
+            {
+              model: ACM_Location,
+              attributes: ['parentLocationId', 'name', 'address'],
+              as: 'location',
+            },
           ],
         },
       },
@@ -100,7 +122,11 @@ const selectParticipant = async (id, where) => {
           attributes: ['typeId', 'locationId', 'name', 'floor'],
           include: [
             { model: REF_RoomType, attributes: ['name'], as: 'type' },
-            { model: ACM_Location, attributes: ['parentLocationId', 'name', 'address'], as: 'location' },
+            {
+              model: ACM_Location,
+              attributes: ['parentLocationId', 'name', 'address'],
+              as: 'location',
+            },
           ],
         },
       },
@@ -142,7 +168,9 @@ const selectParticipant = async (id, where) => {
 
   if (!participantInstance) {
     return {
-      success: false, code: 404, message: ['Participant Data Not Found'],
+      success: false,
+      code: 404,
+      message: ['Participant Data Not Found'],
     };
   }
 
@@ -175,14 +203,155 @@ const selectParticipant = async (id, where) => {
   delete participantInstance.dataValues.TPT_VehicleSchedules;
 
   return {
-    success: true, message: 'Successfully Getting Participant', content: participantInstance,
+    success: true,
+    message: 'Successfully Getting Participant',
+    content: participantInstance,
+  };
+};
+
+const searchParticipant = async (where) => {
+  const participantInstance = await PAR_Participant.findAll({
+    where,
+    include: [
+      {
+        model: PAR_Contingent,
+        where: where.id ? { id: where.id } : null,
+        as: 'contingent',
+        attributes: ['id', 'name'],
+        include: { model: REF_Region, as: 'region', attributes: ['id', 'name'] },
+      },
+      { model: QRM_QR, as: 'qr' },
+      { model: REF_CommitteeType, attributes: ['name'], as: 'committeeType' },
+      { model: REF_IdentityType, attributes: ['id', 'name'], as: 'identityType' },
+      { model: REF_ParticipantType, attributes: ['id', 'name'], as: 'participantType' },
+      {
+        model: PAR_Group,
+        as: 'groups',
+        through: { attributes: [] },
+        include: {
+          model: ENV_Event,
+          as: 'event',
+          attributes: { exclude: ['picId', 'createdAt', 'updatedAt'] },
+          include: [
+            { model: REF_EventCategory, attributes: ['name'], as: 'category' },
+            {
+              model: ACM_Location,
+              attributes: ['parentLocationId', 'name', 'address'],
+              as: 'location',
+            },
+          ],
+        },
+      },
+      { model: PAR_ParticipantTracking, as: 'history' },
+      {
+        model: ACM_ParticipantLodger,
+        as: 'lodgers',
+        attributes: { exclude: ['createdAt', 'updatedAt', 'deletedAt', 'participantId'] },
+        include: {
+          model: ACM_Room,
+          as: 'room',
+          attributes: ['typeId', 'locationId', 'name', 'floor'],
+          include: [
+            { model: REF_RoomType, attributes: ['name'], as: 'type' },
+            {
+              model: ACM_Location,
+              attributes: ['parentLocationId', 'name', 'address'],
+              as: 'location',
+            },
+          ],
+        },
+      },
+      {
+        model: TPT_VehicleSchedule,
+        attributes: { exclude: ['createdAt', 'updatedAt', 'driverId'] },
+        through: {
+          attributes: [],
+        },
+        include: [
+          {
+            model: REF_VehicleScheduleStatus,
+            as: 'status',
+            attributes: ['name'],
+          },
+          {
+            model: TPT_Vehicle,
+            as: 'vehicle',
+            attributes: ['name', 'vehicleNo', 'VehiclePlateNo', 'capacity'],
+            include: [
+              { model: REF_VehicleType, attributes: ['name'], as: 'type' },
+              { model: TPT_Vendor, attributes: ['name'], as: 'vendor' },
+            ],
+          },
+          {
+            model: ACM_Location,
+            as: 'pickUp',
+            attributes: ['name', 'description', 'address', 'latitude', 'longtitude'],
+          },
+          {
+            model: ACM_Location,
+            as: 'destination',
+            attributes: ['name', 'description', 'address', 'latitude', 'longtitude'],
+          },
+        ],
+      },
+    ],
+  });
+
+  if (!participantInstance) {
+    return {
+      success: false,
+      code: 404,
+      message: ['Participant Data Not Found'],
+    };
+  }
+
+  // participantInstance.dataValues.events = [];
+  // participantInstance.dataValues.transportationSchedules = [];
+
+  // // parsing participant lodger history
+  // participantInstance.lodgers.forEach((lodger) => {
+  //   lodger.room.dataValues.type = lodger.room.type.dataValues.name;
+  // });
+
+  // // parsing participant events
+  // participantInstance.groups.forEach((group) => {
+  //   group.event.dataValues.groupId = group.dataValues.id;
+  //   group.event.dataValues.category = group.event.category.dataValues.name;
+  //   // participantInstance.dataValues.events.push(group.event);
+  //   delete group.dataValues.event;
+  // });
+
+  // // parsing participant transportation schedule
+  // participantInstance.TPT_VehicleSchedules.forEach((schedule) => {
+  //   schedule.dataValues.status = schedule.status.dataValues.name;
+  //   if (schedule.vehicle) {
+  //     schedule.vehicle.dataValues.type = schedule.vehicle.type.dataValues.name;
+  //     schedule.vehicle.dataValues.vendor = schedule.vehicle.vendor.dataValues.name;
+  //   }
+
+  //   participantInstance.dataValues.transportationSchedules.push(schedule);
+  // });
+  // delete participantInstance.dataValues.TPT_VehicleSchedules;
+
+  return {
+    success: true,
+    message: 'Successfully Getting Participant',
+    content: participantInstance,
   };
 };
 
 const validateParticipantInputs = async (form, file, id, where) => {
   const {
-    contingentId, typeId, identityTypeId, name, gender,
-    birthDate, identityNo, phoneNbr, email, address,
+    contingentId,
+    typeId,
+    identityTypeId,
+    name,
+    gender,
+    birthDate,
+    identityNo,
+    phoneNbr,
+    email,
+    address,
   } = form;
 
   const invalid400 = [];
@@ -194,9 +363,11 @@ const validateParticipantInputs = async (form, file, id, where) => {
     invalid404.push('Contingent Data Not Found');
   }
 
-  if (where?.id && (where.id !== Number(contingentId))) {
+  if (where?.id && where.id !== Number(contingentId)) {
     return {
-      isValid: false, code: 400, message: ['Prohibited To Create Participant For Other Contingent'],
+      isValid: false,
+      code: 400,
+      message: ['Prohibited To Create Participant For Other Contingent'],
     };
   }
 
@@ -253,7 +424,8 @@ const validateParticipantInputs = async (form, file, id, where) => {
     // check email duplicate
     const isDuplicateEmail = await PAR_Participant.findOne({
       where: {
-        id: { [Op.ne]: id }, email,
+        id: { [Op.ne]: id },
+        email,
       },
     });
     if (isDuplicateEmail) {
@@ -314,8 +486,16 @@ const validateParticipantInputs = async (form, file, id, where) => {
 
 const createParticipant = async (form) => {
   // Qr setup for participant
-  const templateInstance = await QRM_QRTemplate.findOne({ where: { name: { [Op.like]: '%participant%' } } });
-  const qrInstance = await createQR({ templateId: templateInstance?.id || 1 }, { rawFile: `public/images/qrs/qrs-${Date.now()}.png`, combineFile: `public/images/qrCombines/combines-${Date.now()}.png` });
+  const templateInstance = await QRM_QRTemplate.findOne({
+    where: { name: { [Op.like]: '%participant%' } },
+  });
+  const qrInstance = await createQR(
+    { templateId: templateInstance?.id || 1 },
+    {
+      rawFile: `public/images/qrs/qrs-${Date.now()}.png`,
+      combineFile: `public/images/qrCombines/combines-${Date.now()}.png`,
+    },
+  );
 
   // creating participant
   const participantInstance = await PAR_Participant.create({
@@ -334,7 +514,9 @@ const createParticipant = async (form) => {
   });
 
   return {
-    success: true, message: 'Participant Successfully Created', content: participantInstance,
+    success: true,
+    message: 'Participant Successfully Created',
+    content: participantInstance,
   };
 };
 
@@ -349,7 +531,9 @@ const updateParticipant = async (id, form, where) => {
   }
   if (!participantInstance) {
     return {
-      success: false, code: 404, message: ['Participant Data Not Found'],
+      success: false,
+      code: 404,
+      message: ['Participant Data Not Found'],
     };
   }
 
@@ -372,7 +556,9 @@ const updateParticipant = async (id, form, where) => {
   await participantInstance.save();
 
   return {
-    success: true, message: 'Participant Successfully Updated', content: participantInstance,
+    success: true,
+    message: 'Participant Successfully Updated',
+    content: participantInstance,
   };
 };
 
@@ -382,7 +568,9 @@ const deleteParticipant = async (where) => {
   const participantInstance = await PAR_Participant.findOne({ where });
   if (!participantInstance) {
     return {
-      success: false, code: 404, message: ['Participant Data Not Found'],
+      success: false,
+      code: 404,
+      message: ['Participant Data Not Found'],
     };
   }
 
@@ -406,7 +594,9 @@ const trackingParticipant = async (form) => {
 
   if (!qrInstance) {
     return {
-      success: false, code: 404, message: ['QR Data Not Found'],
+      success: false,
+      code: 404,
+      message: ['QR Data Not Found'],
     };
   }
 
@@ -419,25 +609,33 @@ const trackingParticipant = async (form) => {
   });
 
   return {
-    success: true, message: 'Praticipant Track Successfully Created', content: trackInstance,
+    success: true,
+    message: 'Praticipant Track Successfully Created',
+    content: trackInstance,
   };
 };
 
 const createParticipantViaImport = async (file) => {
   if (!['xlsx'].includes(file.originalname.split('.')[1])) {
     return {
-      success: false, code: 400, message: ['Upload only supports file types [xlsx]'],
+      success: false,
+      code: 400,
+      message: ['Upload only supports file types [xlsx]'],
     };
   }
 
   const participantTypes = await REF_ParticipantType.findAll({ attributes: ['id', 'name'] });
   const identityTypes = await REF_IdentityType.findAll({ attributes: ['id', 'name'] });
   const contignets = await PAR_Contingent.findAll({ attributes: ['id', 'name'] });
-  const existingParticipants = await PAR_Participant.findAll({ attributes: ['identityTypeId', 'identityNo', 'phoneNbr', 'email'] });
+  const existingParticipants = await PAR_Participant.findAll({
+    attributes: ['identityTypeId', 'identityNo', 'phoneNbr', 'email'],
+  });
 
   const existPhoneNbr = existingParticipants.map((participant) => participant.phoneNbr);
   const existEmail = existingParticipants.map((participant) => participant.email);
-  const existIdentity = existingParticipants.map((participant) => `${participant.identityTypeId}-${participant.identityNo}`);
+  const existIdentity = existingParticipants.map(
+    (participant) => `${participant.identityTypeId}-${participant.identityNo}`,
+  );
 
   const workbook = XLSX.readFile(file.path);
   const sheet = workbook.SheetNames[0];
@@ -467,39 +665,53 @@ const createParticipantViaImport = async (file) => {
   });
 
   const invalidData = [];
-  await Promise.all(participants.map(async (participant, index) => {
-    // check if participant have duplicate data with phoneNbr, email, identityNo
-    if (existEmail.includes(participant.email)) {
-      invalidData.push(`Duplicate email ${participant.email} for participant ${participant.name} at row ${index + 1}`);
-      return;
-    }
-    if (existPhoneNbr.includes(participant.phoneNbr)) {
-      invalidData.push(`Duplicate phone number ${participant.phoneNbr} for participant ${participant.name} at row ${index + 1}`);
-      return;
-    }
-    if (existIdentity.includes(`${participant.identityTypeId}-${participant.identityNo}`)) {
-      invalidData.push(`Duplicate identity number ${participant.identityNo} with type ${participant.identityTypeId} for committee ${participant.name} at row ${index + 1}`);
-      return;
-    }
+  await Promise.all(
+    participants.map(async (participant, index) => {
+      // check if participant have duplicate data with phoneNbr, email, identityNo
+      if (existEmail.includes(participant.email)) {
+        invalidData.push(
+          `Duplicate email ${participant.email} for participant ${participant.name} at row ${
+            index + 1
+          }`,
+        );
+        return;
+      }
+      if (existPhoneNbr.includes(participant.phoneNbr)) {
+        invalidData.push(
+          `Duplicate phone number ${participant.phoneNbr} for participant ${
+            participant.name
+          } at row ${index + 1}`,
+        );
+        return;
+      }
+      if (existIdentity.includes(`${participant.identityTypeId}-${participant.identityNo}`)) {
+        invalidData.push(
+          `Duplicate identity number ${participant.identityNo} with type ${
+            participant.identityTypeId
+          } for committee ${participant.name} at row ${index + 1}`,
+        );
+        return;
+      }
 
-    // validate participant inputs
-    const inputs = await validateParticipantInputs(participant);
-    if (!inputs.isValid && inputs.code === 404) {
-      invalidData.push(`${inputs.message} at row ${index + 1}`);
-      return;
-    }
-    if (!inputs.isValid && inputs.code === 400) {
-      invalidData.push(`${inputs.message} at row ${index + 1}`);
-      return;
-    }
+      // validate participant inputs
+      const inputs = await validateParticipantInputs(participant);
+      if (!inputs.isValid && inputs.code === 404) {
+        invalidData.push(`${inputs.message} at row ${index + 1}`);
+        return;
+      }
+      if (!inputs.isValid && inputs.code === 400) {
+        invalidData.push(`${inputs.message} at row ${index + 1}`);
+        return;
+      }
 
-    // create participant and
-    // register new participant email, phoneNbr, and identityNo To Exist Array
-    await createParticipant(inputs.form);
-    existEmail.push(participant.email);
-    existPhoneNbr.push(participant.phoneNbr);
-    existIdentity.push(participant.identityNo);
-  }));
+      // create participant and
+      // register new participant email, phoneNbr, and identityNo To Exist Array
+      await createParticipant(inputs.form);
+      existEmail.push(participant.email);
+      existPhoneNbr.push(participant.phoneNbr);
+      existIdentity.push(participant.identityNo);
+    }),
+  );
 
   return {
     success: true,
@@ -510,7 +722,15 @@ const createParticipantViaImport = async (file) => {
 
 const validateCommitteeInputs = async (form, file, id) => {
   const {
-    committeeTypeId, identityTypeId, name, gender, birthDate, identityNo, phoneNbr, email, address,
+    committeeTypeId,
+    identityTypeId,
+    name,
+    gender,
+    birthDate,
+    identityNo,
+    phoneNbr,
+    email,
+    address,
   } = form;
 
   const invalid400 = [];
@@ -629,7 +849,9 @@ const createComittee = async (form) => {
   });
 
   return {
-    success: true, message: 'Participant Committe Successfully Created', content: participantInstance,
+    success: true,
+    message: 'Participant Committe Successfully Created',
+    content: participantInstance,
   };
 };
 
@@ -637,7 +859,9 @@ const updateCommittee = async (id, form) => {
   const participantInstance = await PAR_Participant.findOne({ where: { id, contingentId: null } });
   if (!participantInstance) {
     return {
-      success: false, code: 404, message: ['Participant Committe Data Not Found'],
+      success: false,
+      code: 404,
+      message: ['Participant Committe Data Not Found'],
     };
   }
 
@@ -659,25 +883,33 @@ const updateCommittee = async (id, form) => {
   await participantInstance.save();
 
   return {
-    success: true, message: 'Participant Committe Successfully Updated', content: participantInstance,
+    success: true,
+    message: 'Participant Committe Successfully Updated',
+    content: participantInstance,
   };
 };
 
 const createCommitteeViaImport = async (file) => {
   if (!['xlsx'].includes(file.originalname.split('.')[1])) {
     return {
-      success: false, code: 400, message: ['Upload only supports file types [xlsx]'],
+      success: false,
+      code: 400,
+      message: ['Upload only supports file types [xlsx]'],
     };
   }
 
   const identityTypes = await REF_IdentityType.findAll({ attributes: ['id', 'name'] });
   const committeeTypes = await REF_CommitteeType.findAll({ attributes: ['id', 'name'] });
 
-  const existingParticipants = await PAR_Participant.findAll({ attributes: ['identityTypeId', 'identityNo', 'phoneNbr', 'email'] });
+  const existingParticipants = await PAR_Participant.findAll({
+    attributes: ['identityTypeId', 'identityNo', 'phoneNbr', 'email'],
+  });
 
   const existPhoneNbr = existingParticipants.map((participant) => participant.phoneNbr);
   const existEmail = existingParticipants.map((participant) => participant.email);
-  const existIdentity = existingParticipants.map((participant) => `${participant.identityTypeId}-${participant.identityNo}`);
+  const existIdentity = existingParticipants.map(
+    (participant) => `${participant.identityTypeId}-${participant.identityNo}`,
+  );
 
   const workbook = XLSX.readFile(file.path);
   const sheet = workbook.SheetNames[0];
@@ -703,39 +935,53 @@ const createCommitteeViaImport = async (file) => {
   });
 
   const invalidData = [];
-  await Promise.all(participants.map(async (participant, index) => {
-    // check if participant have duplicate data with phoneNbr, email, identityNo
-    if (existEmail.includes(participant.email)) {
-      invalidData.push(`Duplicate email ${participant.email} for committee ${participant.name} at row ${index + 1}`);
-      return;
-    }
-    if (existPhoneNbr.includes(participant.phoneNbr)) {
-      invalidData.push(`Duplicate phone number ${participant.phoneNbr} for committee ${participant.name} at row ${index + 1}`);
-      return;
-    }
-    if (existIdentity.includes(`${participant.identityTypeId}-${participant.identityNo}`)) {
-      invalidData.push(`Duplicate identity number ${participant.identityNo} with type ${participant.identityTypeId} for committee ${participant.name} at row ${index + 1}`);
-      return;
-    }
+  await Promise.all(
+    participants.map(async (participant, index) => {
+      // check if participant have duplicate data with phoneNbr, email, identityNo
+      if (existEmail.includes(participant.email)) {
+        invalidData.push(
+          `Duplicate email ${participant.email} for committee ${participant.name} at row ${
+            index + 1
+          }`,
+        );
+        return;
+      }
+      if (existPhoneNbr.includes(participant.phoneNbr)) {
+        invalidData.push(
+          `Duplicate phone number ${participant.phoneNbr} for committee ${
+            participant.name
+          } at row ${index + 1}`,
+        );
+        return;
+      }
+      if (existIdentity.includes(`${participant.identityTypeId}-${participant.identityNo}`)) {
+        invalidData.push(
+          `Duplicate identity number ${participant.identityNo} with type ${
+            participant.identityTypeId
+          } for committee ${participant.name} at row ${index + 1}`,
+        );
+        return;
+      }
 
-    // validate participant inputs
-    const inputs = await validateCommitteeInputs(participant);
-    if (!inputs.isValid && inputs.code === 404) {
-      invalidData.push(`${inputs.message} at row ${index + 1}`);
-      return;
-    }
-    if (!inputs.isValid && inputs.code === 400) {
-      invalidData.push(`${inputs.message} at row ${index + 1}`);
-      return;
-    }
+      // validate participant inputs
+      const inputs = await validateCommitteeInputs(participant);
+      if (!inputs.isValid && inputs.code === 404) {
+        invalidData.push(`${inputs.message} at row ${index + 1}`);
+        return;
+      }
+      if (!inputs.isValid && inputs.code === 400) {
+        invalidData.push(`${inputs.message} at row ${index + 1}`);
+        return;
+      }
 
-    // create committee and
-    // register new committee email, phoneNbr, and identityNo To Exist Array
-    await createComittee(inputs.form);
-    existEmail.push(participant.email);
-    existPhoneNbr.push(participant.phoneNbr);
-    existIdentity.push(participant.identityNo);
-  }));
+      // create committee and
+      // register new committee email, phoneNbr, and identityNo To Exist Array
+      await createComittee(inputs.form);
+      existEmail.push(participant.email);
+      existPhoneNbr.push(participant.phoneNbr);
+      existIdentity.push(participant.identityNo);
+    }),
+  );
 
   return {
     success: true,
@@ -784,7 +1030,9 @@ const selectParticipantAllSchedules = async (id, where) => {
   });
   if (!participantInstance) {
     return {
-      success: false, code: 404, message: ['Participant Data Not Found'],
+      success: false,
+      code: 404,
+      message: ['Participant Data Not Found'],
     };
   }
 
@@ -798,6 +1046,7 @@ const selectParticipantAllSchedules = async (id, where) => {
 module.exports = {
   selectAllParticipant,
   selectParticipant,
+  searchParticipant,
   validateParticipantInputs,
   createParticipant,
   updateParticipant,

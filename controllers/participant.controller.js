@@ -1,11 +1,22 @@
 const { relative } = require('path');
+const { Op } = require('sequelize');
 const deleteFile = require('../helpers/deleteFile.helper');
 const ResponseFormatter = require('../helpers/responseFormatter.helper');
 const {
-  selectAllParticipant, selectParticipant, validateParticipantInputs,
-  createParticipant, updateParticipant, deleteParticipant, trackingParticipant,
-  createParticipantViaImport, validateCommitteeInputs, createComittee, updateCommittee,
-  createCommitteeViaImport, selectParticipantAllSchedules,
+  selectAllParticipant,
+  selectParticipant,
+  validateParticipantInputs,
+  createParticipant,
+  updateParticipant,
+  deleteParticipant,
+  trackingParticipant,
+  createParticipantViaImport,
+  validateCommitteeInputs,
+  createComittee,
+  updateCommittee,
+  createCommitteeViaImport,
+  selectParticipantAllSchedules,
+  searchParticipant,
 } = require('../services/participant.service');
 
 class Participant {
@@ -22,6 +33,38 @@ class Participant {
       const data = await selectAllParticipant(req.query, where);
       if (!data.success) {
         return ResponseFormatter.error400(res, 'Bad Request', data.message);
+      }
+
+      return ResponseFormatter.success200(res, data.message, data.content);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  static async search(req, res, next) {
+    try {
+      res.url = `${req.method} ${req.originalUrl}`;
+
+      // resrict data that is not an admin
+      const where = {
+        [Op.or]: [
+          { name: { [Op.substring]: req.params.search } },
+          { email: { [Op.substring]: req.params.search } },
+          { phoneNbr: { [Op.substring]: req.params.search } },
+          { identityNo: { [Op.substring]: req.params.search } },
+          { address: { [Op.substring]: req.params.search } },
+        ],
+      };
+      if (req.query?.typeId) {
+        where.typeId = req.query.typeId;
+      }
+      // if (!req.user.limitation.isAdmin) {
+      //   where.id = req.user.limitation.access.contingentId;
+      // }
+
+      const data = await searchParticipant(where);
+      if (!data.success && data.code === 404) {
+        return ResponseFormatter.error404(res, 'Data Not Found', data.message);
       }
 
       return ResponseFormatter.success200(res, data.message, data.content);
