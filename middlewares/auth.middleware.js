@@ -1,6 +1,8 @@
 const passport = require('passport');
 const rolesLib = require('../libraries/roles.lib');
-const { ACM_Location, FNB_Kitchen } = require('../models');
+const {
+  ACM_Location, FNB_Kitchen, PAR_Participant, TPT_Driver, TPT_Vendor,
+} = require('../models');
 const picTypeHelper = require('../helpers/pictype.helper');
 const ResponseFormatter = require('../helpers/responseFormatter.helper');
 
@@ -149,6 +151,48 @@ class AuthMiddleware {
       // * event
 
       // * customer service
+
+      req.user.limitation = limitation;
+      next();
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  static async transportation(req, res, next) {
+    try {
+      res.url = `${req.method} ${req.originalUrl}`;
+
+      const participantInstance = await PAR_Participant.findByPk(req.user?.participantId, {
+        attributes: ['phoneNbr'],
+      });
+
+      const driverInstance = await TPT_Driver.findOne({
+        where: { phoneNbr: participantInstance?.phoneNbr },
+      });
+
+      const limitation = { isAdmin: true, access: {} };
+      if (req.user.Role.id !== rolesLib.superAdmin) {
+        if (req.user.PIC) {
+          const picTypes = await picTypeHelper().then((type) => [type.pic_transportation]);
+          const picTransportation = req.user.PIC.filter((pic) => pic.typeId === picTypes[0]);
+          limitation.isAdmin = false;
+          limitation.access.picId = picTransportation[0].dataValues.id;
+
+          const vendors = await TPT_Vendor.findAll({
+            where: { picId: limitation.access.picId },
+            attributes: ['id'],
+          });
+
+          const parsedVendors = vendors.map((vendor) => vendor.id);
+
+          limitation.access.vendors = parsedVendors.length > 0 ? parsedVendors : null;
+        } else if (driverInstance) {
+          limitation.access.driverId = driverInstance.id;
+        } else {
+          return ResponseFormatter.error401(res, "You Don't Have Access To This Service");
+        }
+      }
 
       req.user.limitation = limitation;
       next();

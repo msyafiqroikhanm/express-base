@@ -17,7 +17,16 @@ class VehicleScheduleController {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
 
-      const data = await selectAllVehicleSchedule();
+      // resrict data that is not an admin
+      const where = {};
+      if (!req.user.limitation.isAdmin && req.user.limitation?.access?.picId) {
+        where.picId = req.user.limitation.access.picId;
+        where.vendors = req.user.limitation.access.vendors;
+      } else if (!req.user.limitation.isAdmin && req.user.limitation?.access?.driver) {
+        where.driverId = req.user.limitation.access.driverId;
+      }
+
+      const data = await selectAllVehicleSchedule(where);
 
       return ResponseFormatter.success200(res, data.message, data.content);
     } catch (error) {
@@ -29,7 +38,16 @@ class VehicleScheduleController {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
 
-      const data = await selectVehicleSchedule(req.params.id);
+      // resrict data that is not an admin
+      const where = {};
+      if (!req.user.limitation.isAdmin && req.user.limitation?.access?.picId) {
+        where.picId = req.user.limitation.access.picId;
+        where.vendors = req.user.limitation.access.vendors;
+      } else if (!req.user.limitation.isAdmin && req.user.limitation?.access?.driver) {
+        where.driverId = req.user.limitation.access.driverId;
+      }
+
+      const data = await selectVehicleSchedule(req.params.id, where);
       if (!data.success && data.code === 404) {
         return ResponseFormatter.error404(res, 'Data Not Found', data.message);
       }
@@ -102,7 +120,16 @@ class VehicleScheduleController {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
 
-      const inputs = await validateProvideScheduleInputs(req.body, req.params.id);
+      // resrict data that is not an admin
+      const where = {};
+      if (!req.user.limitation.isAdmin && req.user.limitation?.access?.picId) {
+        where.picId = req.user.limitation.access.picId;
+        where.vendors = req.user.limitation.access.vendors;
+      } else if (!req.user.limitation.isAdmin && req.user.limitation?.access?.driver) {
+        where.driverId = req.user.limitation.access.driverId;
+      }
+
+      const inputs = await validateProvideScheduleInputs(req.body, req.params.id, where);
       if (!inputs.isValid && inputs.code === 400) {
         return ResponseFormatter.error400(res, 'Bad Request', inputs.message);
       }
@@ -122,7 +149,16 @@ class VehicleScheduleController {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
 
-      const inputs = await validatePassengerAbsent(req.body, req.params.id);
+      // resrict data that is not an admin
+      const where = {};
+      if (!req.user.limitation.isAdmin && req.user.limitation?.access?.picId) {
+        where.picId = req.user.limitation.access.picId;
+        where.vendors = req.user.limitation.access.vendors;
+      } else if (!req.user.limitation.isAdmin && req.user.limitation?.access?.driver) {
+        where.driverId = req.user.limitation.access.driverId;
+      }
+
+      const inputs = await validatePassengerAbsent(req.body, req.params.id, where);
       if (!inputs.isValid && inputs.code === 400) {
         return ResponseFormatter.error400(res, 'Bad Request', inputs.message);
       }
@@ -145,7 +181,16 @@ class VehicleScheduleController {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
 
-      const data = await progressVehicleSchedule(req.body, req.params.id);
+      // resrict data that is not an admin
+      const where = {};
+      if (!req.user.limitation.isAdmin && req.user.limitation?.access?.picId) {
+        where.picId = req.user.limitation.access.picId;
+        where.vendors = req.user.limitation.access.vendors;
+      } else if (!req.user.limitation.isAdmin && req.user.limitation?.access?.driver) {
+        where.driverId = req.user.limitation.access.driverId;
+      }
+
+      const data = await progressVehicleSchedule(req.body, req.params.id, where);
       if (!data.success && data.code === 404) {
         return ResponseFormatter.error404(res, 'Data Not Found', data.message);
       }
@@ -160,7 +205,16 @@ class VehicleScheduleController {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
 
-      const data = await selectAllPassengersVehicleSchedule(req.params.id);
+      // resrict data that is not an admin
+      const where = {};
+      if (!req.user.limitation.isAdmin && req.user.limitation?.access?.picId) {
+        where.picId = req.user.limitation.access.picId;
+        where.vendors = req.user.limitation.access.vendors;
+      } else if (!req.user.limitation.isAdmin && req.user.limitation?.access?.driver) {
+        where.driverId = req.user.limitation.access.driverId;
+      }
+
+      const data = await selectAllPassengersVehicleSchedule(req.params.id, where);
       if (!data.success && data.code === 404) {
         return ResponseFormatter.error404(res, 'Data Not Found', data.message);
       }
