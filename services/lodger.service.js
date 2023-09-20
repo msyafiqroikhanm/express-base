@@ -219,7 +219,7 @@ const updateLodger = async (id, form) => {
   let newRoom;
   if (form.roomId) {
     if (Number(form.roomId) !== Number(lodgerInstance.roomId)) {
-      const roomInstance = await ACM_Room.findByPk(form.roomId);
+      const roomInstance = await ACM_Room.findOne({ where: { id: form.roomId, statusId: 1 } });
       if (!roomInstance) {
         errorMessages.push('Room Data Not Found');
       }
@@ -307,7 +307,7 @@ const deleteLodger = async (id) => {
 const validateLodgerInputs = async (form) => {
   const errorMessages = [];
 
-  const roomInstance = await ACM_Room.findByPk(form.roomId);
+  const roomInstance = await ACM_Room.findOne({ where: { id: form.roomId, statusId: 1 } });
   if (!roomInstance) {
     errorMessages.push('Room Data Not Found');
   }
