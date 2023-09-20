@@ -36,6 +36,7 @@ class LocationController {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
 
+      console.log(JSON.stringify({ limitation: req.user, body: req.body }, null, 2));
       const where = { id: req.params.id };
       if (!req.user.limitation.isAdmin) {
         req.body.picId = req.user.limitation.access.picId;

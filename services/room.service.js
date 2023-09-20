@@ -171,12 +171,15 @@ const validateRoomInputs = async (form, where) => {
     errorMessages.push('Location Data Not Found');
   }
 
+  console.log(JSON.stringify(locationInstance, null, 2));
   const typeInstance = await REF_RoomType.findByPk(form.typeId);
   if (!typeInstance) {
     errorMessages.push('Room Type Data Not Found');
   }
-  if (typeInstance.locationId !== locationInstance.id) {
-    errorMessages.push('Prohibited To Create Room For Other Location');
+  if (locationInstance && typeInstance) {
+    if (typeInstance.locationId !== locationInstance.id) {
+      errorMessages.push('Prohibited To Create Room For Other Location');
+    }
   }
 
   // const statusInstance = await REF_RoomStatus.findByPk(form.statusId);
