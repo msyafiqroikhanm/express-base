@@ -32,6 +32,7 @@ const {
   TPT_Vehicle,
   REF_CommitteeType,
   PAR_Participant,
+  ACM_Location,
 } = require('../models');
 
 // * Configuration Category
@@ -1311,8 +1312,17 @@ const deleteTemplateHeaderType = async (id) => {
 
 // * Room Type
 
-const selectAllRoomTypes = async () => {
-  const typeInstance = await REF_RoomType.findAll();
+const selectAllRoomTypes = async (where) => {
+  const typeInstance = await REF_RoomType.findAll({
+    where,
+    include: [
+      {
+        model: ACM_Location,
+        as: 'location',
+        attributes: { exclude: ['createdAt', 'updatedAt'] },
+      },
+    ],
+  });
 
   return {
     success: true,
@@ -1321,8 +1331,17 @@ const selectAllRoomTypes = async () => {
   };
 };
 
-const selectRoomType = async (id) => {
-  const locationType = await REF_RoomType.findByPk(id);
+const selectRoomType = async (where) => {
+  const locationType = await REF_RoomType.findOne({
+    where,
+    include: [
+      {
+        model: ACM_Location,
+        as: 'location',
+        attributes: { exclude: ['createdAt', 'updatedAt'] },
+      },
+    ],
+  });
   if (!locationType) {
     return {
       success: false,
@@ -1338,7 +1357,14 @@ const selectRoomType = async (id) => {
 };
 
 const createRoomType = async (form) => {
-  const typeInstance = await REF_RoomType.create({ name: form.name });
+  const locationInstance = await ACM_Location.findOne({ where: { id: form.locationId } });
+  if (!locationInstance) {
+    return {
+      success: false,
+      message: ['Location Data Not Found'],
+    };
+  }
+  const typeInstance = await REF_RoomType.create({ name: form.name, locationId: form.locationId });
 
   return {
     success: true,
@@ -1347,9 +1373,9 @@ const createRoomType = async (form) => {
   };
 };
 
-const updateRoomType = async (id, form) => {
+const updateRoomType = async (where, form) => {
   // check identity type id validity
-  const typeInstance = await REF_RoomType.findByPk(id);
+  const typeInstance = await REF_RoomType.findOne({ where });
   if (!typeInstance) {
     return {
       success: false,
@@ -1357,6 +1383,17 @@ const updateRoomType = async (id, form) => {
     };
   }
 
+  if (form.locationId) {
+    const locationInstance = await ACM_Location.findOne({ where: { id: form.locationId } });
+    if (!locationInstance) {
+      return {
+        success: false,
+        message: ['Location Data Not Found'],
+      };
+    }
+  }
+
+  typeInstance.locationId = form.locationId;
   typeInstance.name = form.name;
   await typeInstance.save();
 
@@ -1367,9 +1404,9 @@ const updateRoomType = async (id, form) => {
   };
 };
 
-const deleteRoomType = async (id) => {
+const deleteRoomType = async (where) => {
   // check identity type id validity
-  const typeInstance = await REF_RoomType.findByPk(id);
+  const typeInstance = await REF_RoomType.findOne({ where });
   if (!typeInstance) {
     return {
       success: false,

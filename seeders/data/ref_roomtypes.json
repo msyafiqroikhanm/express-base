@@ -1,6 +1,6 @@
 [
-    {"name":"Family Room"},
-    {"name":"Deluxe"},
-    {"name":"President Suite"},
-    {"name":"Double"}
+  { "locationId": 4, "name": "Family Room" },
+  { "locationId": 4, "name": "Deluxe" },
+  { "locationId": 4, "name": "President Suite" },
+  { "locationId": 4, "name": "Double" }
 ]

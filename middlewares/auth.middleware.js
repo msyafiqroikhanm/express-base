@@ -1,8 +1,6 @@
 const passport = require('passport');
 const rolesLib = require('../libraries/roles.lib');
-const {
-  ACM_Location, FNB_Kitchen, PAR_Participant, TPT_Driver, TPT_Vendor,
-} = require('../models');
+const { ACM_Location, FNB_Kitchen, PAR_Participant, TPT_Driver, TPT_Vendor } = require('../models');
 const picTypeHelper = require('../helpers/pictype.helper');
 const ResponseFormatter = require('../helpers/responseFormatter.helper');
 
@@ -29,8 +27,8 @@ class AuthMiddleware {
 
         // check user access
         if (requiredFeatures) {
-          const authorized = req.user.Role.USR_Features.some(
-            (feature) => requiredFeatures.includes(feature.id),
+          const authorized = req.user.Role.USR_Features.some((feature) =>
+            requiredFeatures.includes(feature.id),
           );
 
           if (!authorized) {
@@ -56,6 +54,7 @@ class AuthMiddleware {
 
         const picTypes = await picTypeHelper().then((type) => [type.pic_location]);
         const picLocation = req.user.PIC.filter((pic) => pic.typeId === picTypes[0]);
+        console.log(JSON.stringify(req.user.PIC, null, 2));
         limitation.isAdmin = false;
         limitation.access.picId = picLocation[0].dataValues.id;
 
@@ -138,7 +137,8 @@ class AuthMiddleware {
       if (req.user.participant.contingentId && req.user.Role.id !== rolesLib.superAdmin) {
         limitation.isAdmin = false;
         limitation.access.contingent = {
-          contingentId: req.user.participant.contingentId, id: req.user.participant.contingentId,
+          contingentId: req.user.participant.contingentId,
+          id: req.user.participant.contingentId,
         };
       }
 

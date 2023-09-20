@@ -89,6 +89,7 @@ module.exports = {
     //* REF_RoomTypes
     const ref_roomtypes = JSON.parse(fs.readFileSync('./seeders/data/ref_roomtypes.json'));
     const roomTypes = ref_roomtypes.map((element) => ({
+      locationId: element.locationId,
       name: element.name,
       createdAt: new Date(),
       updatedAt: new Date(),
@@ -250,7 +251,9 @@ module.exports = {
     await queryInterface.bulkInsert('REF_FoodScheduleStatuses', food_schedule_statuses);
 
     //* REF_PassengerStatuses
-    const ref_passengerstatuses = JSON.parse(fs.readFileSync('./seeders/data/ref_passengerstatuses.json'));
+    const ref_passengerstatuses = JSON.parse(
+      fs.readFileSync('./seeders/data/ref_passengerstatuses.json'),
+    );
     const passengerstatus = ref_passengerstatuses.map((element) => ({
       name: element.name,
       createdAt: new Date(),
@@ -259,7 +262,9 @@ module.exports = {
     await queryInterface.bulkInsert('REF_PassengerStatuses', passengerstatus);
 
     //* REF_VehicleScheduleStatuses
-    const ref_vehicleschedulestatuses = JSON.parse(fs.readFileSync('./seeders/data/ref_vehicleschedulestatuses.json'));
+    const ref_vehicleschedulestatuses = JSON.parse(
+      fs.readFileSync('./seeders/data/ref_vehicleschedulestatuses.json'),
+    );
     const vehicleschedulestatuses = ref_vehicleschedulestatuses.map((element) => ({
       name: element.name,
       createdAt: new Date(),
@@ -277,7 +282,9 @@ module.exports = {
     await queryInterface.bulkInsert('REF_VehicleTypes', vehicletypes);
 
     //* REF_CommitteeTypes
-    const ref_committeetypes = JSON.parse(fs.readFileSync('./seeders/data/ref_committeetypes.json'));
+    const ref_committeetypes = JSON.parse(
+      fs.readFileSync('./seeders/data/ref_committeetypes.json'),
+    );
     const committeetypes = ref_committeetypes.map((element) => ({
       name: element.name,
       createdAt: new Date(),

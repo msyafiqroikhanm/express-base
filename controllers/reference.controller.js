@@ -1,4 +1,5 @@
 /* eslint-disable max-classes-per-file */
+const { Op } = require('sequelize');
 const ResponseFormatter = require('../helpers/responseFormatter.helper');
 const {
   selectAllConfigCategories,
@@ -612,7 +613,16 @@ class RoomType {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
 
-      const data = await roomType.selectAllRoomTypes();
+      const where = {};
+
+      // console.log(JSON.stringify(req.user.limitation.access.location, null, 2));
+      if (!req.user.limitation.isAdmin) {
+        where.locationId = { [Op.or]: req.user.limitation.access.location };
+      }
+      if (req.query?.locationId) {
+        where.locationId = req.query.locationId;
+      }
+      const data = await roomType.selectAllRoomTypes(where);
 
       return ResponseFormatter.success200(res, data.message, data.content);
     } catch (error) {
@@ -624,7 +634,11 @@ class RoomType {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
 
-      const data = await roomType.selectRoomType(req.params.id);
+      const where = { id: req.params.id };
+      if (!req.user.limitation.isAdmin) {
+        where.locationId = { [Op.or]: req.user.limitation.access.location };
+      }
+      const data = await roomType.selectRoomType(where);
       if (!data.success) {
         return ResponseFormatter.error404(res, 'Data Not Found', data.message);
       }
@@ -639,6 +653,15 @@ class RoomType {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
 
+      // console.log(JSON.stringify(req.user.limitation.access.location, null, 2));
+      if (!req.user.limitation.isAdmin) {
+        if (!req.user.limitation.access.location.includes(Number(req.body.locationId))) {
+          return ResponseFormatter.error401(res, [
+            'Prohibited To Create Room Type For Other Location',
+          ]);
+        }
+      }
+
       const data = await roomType.createRoomType(req.body);
 
       return ResponseFormatter.success201(res, data.message, data.content);
@@ -651,7 +674,12 @@ class RoomType {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
 
-      const data = await roomType.updateRoomType(req.params.id, req.body);
+      const where = { id: req.params.id };
+      if (!req.user.limitation.isAdmin) {
+        where.locationId = { [Op.or]: req.user.limitation.access.location };
+      }
+
+      const data = await roomType.updateRoomType(where, req.body);
       if (!data.success) {
         return ResponseFormatter.error404(res, 'Data Not Found', data.message);
       }
@@ -666,7 +694,11 @@ class RoomType {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
 
-      const data = await roomType.deleteRoomType(req.params.id);
+      const where = { id: req.params.id };
+      if (!req.user.limitation.isAdmin) {
+        where.locationId = { [Op.or]: req.user.limitation.access.location };
+      }
+      const data = await roomType.deleteRoomType(where);
       if (!data.success) {
         return ResponseFormatter.error404(res, 'Data Not Found', data.message);
       }

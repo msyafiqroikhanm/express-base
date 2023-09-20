@@ -716,7 +716,7 @@ router.delete(
   LocationType.delete,
 );
 
-//* Room Types
+//! Room Types
 router.post(
   '/room-types',
   async (req, res, next) => {
@@ -2257,9 +2257,7 @@ router.post(
       req,
       res,
       next,
-      await features().then((feature) => [
-        feature.create_committee_type,
-      ]),
+      await features().then((feature) => [feature.create_committee_type]),
     );
   },
   [check('name', "Name attribute can't be empty").notEmpty()],
@@ -2274,9 +2272,7 @@ router.put(
       req,
       res,
       next,
-      await features().then((feature) => [
-        feature.update_committee_type,
-      ]),
+      await features().then((feature) => [feature.update_committee_type]),
     );
   },
   [check('name', "Name attribute can't be empty").notEmpty()],
@@ -2291,9 +2287,7 @@ router.delete(
       req,
       res,
       next,
-      await features().then((feature) => [
-        feature.delete_committee_type,
-      ]),
+      await features().then((feature) => [feature.delete_committee_type]),
     );
   },
   CommitteeType.delete,

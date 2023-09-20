@@ -1,8 +1,6 @@
 'use strict';
 
-const {
-  Model,
-} = require('sequelize');
+const { Model } = require('sequelize');
 
 module.exports = (sequelize, DataTypes) => {
   class REF_RoomType extends Model {
@@ -13,16 +11,23 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
+      REF_RoomType.belongsTo(models.ACM_Location, { foreignKey: 'locationId', as: 'location' });
     }
   }
-  REF_RoomType.init({
-    name: {
-      type: DataTypes.STRING,
-      allowNull: false,
+  REF_RoomType.init(
+    {
+      locationId: DataTypes.INTEGER,
+      name: {
+        type: DataTypes.STRING,
+        allowNull: false,
+      },
     },
-  }, {
-    sequelize,
-    modelName: 'REF_RoomType',
-  });
+    {
+      sequelize,
+      paranoid: true,
+      deletedAt: 'deletedAt',
+      modelName: 'REF_RoomType',
+    },
+  );
   return REF_RoomType;
 };
