@@ -12,6 +12,8 @@ const {
   PAR_Contingent,
   REF_ParticipantType,
   USR_Module,
+  USR_PIC,
+  REF_PICType,
 } = require('../models');
 const { createQR, updateQR } = require('./qr.service');
 const { parsingUserModules } = require('../helpers/parsing.helper');
@@ -332,6 +334,12 @@ const selectUser = async (query) => {
         model: PAR_Participant,
         as: 'participant',
         attributes: ['name'],
+      },
+      {
+        model: USR_PIC,
+        as: 'PIC',
+        attributes: ['id', 'userId', 'typeId'],
+        include: { model: REF_PICType, attributes: { exclude: ['createdAt', 'updatedAt'] } },
       },
     ],
     where: {

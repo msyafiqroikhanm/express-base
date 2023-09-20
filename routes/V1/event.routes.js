@@ -22,6 +22,7 @@ router.get(
       ]),
     );
   },
+  Authentication.event,
   EventController.getAll,
 );
 
@@ -64,6 +65,7 @@ router.get(
       ]),
     );
   },
+  Authentication.event,
   EventController.getDetail,
 );
 
@@ -102,7 +104,51 @@ router.delete(
       ]),
     );
   },
+  Authentication.event,
   EventController.delete,
+);
+
+router.get(
+  '/:id/groups',
+  async (req, res, next) => {
+    Authentication.authenticate(
+      req,
+      res,
+      next,
+      await features().then((feature) => [
+        feature.view_event,
+        feature.create_event,
+        feature.update_event,
+        feature.delete_event,
+      ]),
+    );
+  },
+  Authentication.event,
+  EventController.getGroup,
+);
+
+router.put(
+  '/:id/group-progress',
+  async (req, res, next) => {
+    Authentication.authenticate(
+      req,
+      res,
+      next,
+      await features().then((feature) => [
+        feature.view_event,
+        feature.create_event,
+        feature.update_event,
+        feature.delete_event,
+      ]),
+    );
+  },
+  [
+    check('groupId', 'Group Id attribute can\'t be empty').notEmpty(),
+    check('statusId', 'Status Id attribute can\'t be empty').notEmpty(),
+  ],
+  ValidateMiddleware.result,
+  Authentication.event,
+  EventController.progressGroup,
 );
 
 module.exports = router;
