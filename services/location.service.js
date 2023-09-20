@@ -1,3 +1,5 @@
+const { default: axios } = require('axios');
+const { default: slugify } = require('slugify');
 const {
   ACM_Location,
   REF_LocationType,
@@ -257,6 +259,50 @@ const validateLocationInputs = async (form) => {
   };
 };
 
+const findCoordinate = async (query) => {
+  // const openstreetmapUrl = 'https://nominatim.openstreetmap.org/';
+  // const coordinate = await axios({
+  //   method: 'GET',
+  //   url: 'https://nominatim.openstreetmap.org/search?q=aston+pluit&format=json&polygon=1&addressdetails=1',
+  // });
+  let q = '';
+  let url = '';
+  let city = '';
+
+  if (query?.locationName) {
+    q = slugify(query.locationName, '+');
+    url = `https://nominatim.openstreetmap.org/search?q=${q}&format=json&polygon=1&addressdetails=1`;
+  }
+  if (query?.city) {
+    city = slugify(query.city, '+');
+    url = `https://nominatim.openstreetmap.org/search?city=${city}&format=json&polygon=1&addressdetails=1`;
+  }
+
+  if (!url) {
+    url = 'https://nominatim.openstreetmap.org/search.php?city=DKI+Jakarta&format=json';
+  }
+
+  let coordinate = await axios.get(url);
+  if (!coordinate.data.length) {
+    coordinate = await axios.get(
+      'https://nominatim.openstreetmap.org/search.php?city=DKI+Jakarta&format=json',
+    );
+  }
+
+  const data = {
+    name: coordinate.data[0].name,
+    lat: coordinate.data[0].lat,
+    lon: coordinate.data[0].lon,
+  };
+  console.log(JSON.stringify(coordinate.data, null, 2));
+
+  return {
+    success: true,
+    message: 'Coordinate Successfully Found',
+    content: data,
+  };
+};
+
 module.exports = {
   selectAllLocations,
   selectLocation,
@@ -264,4 +310,5 @@ module.exports = {
   updateLocation,
   deleteLocation,
   validateLocationInputs,
+  findCoordinate,
 };

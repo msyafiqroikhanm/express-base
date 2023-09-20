@@ -33,6 +33,7 @@ const {
 const ValidateMiddleware = require('../../middlewares/validate.middleware');
 const Authentication = require('../../middlewares/auth.middleware');
 const { FoodScheduleStatus } = require('../../controllers/reference.controller');
+const LocationController = require('../../controllers/location.controller');
 
 // * Configuration Category
 
@@ -2297,5 +2298,7 @@ router.delete(
   },
   CommitteeType.delete,
 );
+
+router.get('/coordinates', LocationController.coordinate);
 
 module.exports = router;

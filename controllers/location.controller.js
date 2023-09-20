@@ -6,6 +6,7 @@ const {
   validateLocationInputs,
   updateLocation,
   deleteLocation,
+  findCoordinate,
 } = require('../services/location.service');
 
 class LocationController {
@@ -106,6 +107,18 @@ class LocationController {
       if (!data.success) {
         return ResponseFormatter.error404(res, 'Data Not Found', data.message);
       }
+
+      return ResponseFormatter.success200(res, data.message, data.content);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  static async coordinate(req, res, next) {
+    try {
+      res.url = `${req.method} ${req.originalUrl}`;
+
+      const data = await findCoordinate(req.query);
 
       return ResponseFormatter.success200(res, data.message, data.content);
     } catch (error) {
