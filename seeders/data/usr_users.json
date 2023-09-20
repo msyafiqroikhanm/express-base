@@ -47,5 +47,12 @@
     "participantId": 8,
     "username": "driver1",
     "email": "driver1@jxboard.id"
+  },
+  {
+    "qrId": 1,
+    "roleId": 9,
+    "participantId": 9,
+    "username": "accomodation",
+    "email": "accomodation@jxboard.id"
   }
 ]

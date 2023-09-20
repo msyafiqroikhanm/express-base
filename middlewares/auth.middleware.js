@@ -48,11 +48,12 @@ class AuthMiddleware {
 
       const limitation = { isAdmin: true, access: {} };
 
+      console.log(JSON.stringify(req.user, null, 2));
       if (req.user.Role.id !== rolesLib.superAdmin) {
-        if (req.user.PIC) {
+        if (req.user.PIC.length) {
           const picTypes = await picTypeHelper().then((type) => [type.pic_location]);
           const picLocation = req.user.PIC.filter((pic) => pic.typeId === picTypes[0]);
-          console.log(JSON.stringify(req.user.PIC, null, 2));
+          // console.log(JSON.stringify(req.user.PIC, null, 2));
           limitation.isAdmin = false;
           limitation.access.picId = picLocation[0].dataValues.id;
 
@@ -67,8 +68,6 @@ class AuthMiddleware {
           if (locationLimitation.length > 0) {
             limitation.access.location = locations;
           }
-        } else {
-          return ResponseFormatter.error401(res, "You Don't Have Access To This Service");
         }
       }
       req.user.limitation = limitation;
