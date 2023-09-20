@@ -51,6 +51,7 @@ module.exports = (sequelize, DataTypes) => {
       });
       PAR_Participant.hasMany(models.CSM_BroadcastParticipant, { foreignKey: 'participantId' });
       PAR_Participant.hasMany(models.TPT_SchedulePassenger, { foreignKey: 'participantId' });
+      PAR_Participant.hasMany(models.ACM_ParticipantLodger, { foreignKey: 'participantId', as: 'lodgers' });
 
       PAR_Participant.hasOne(models.USR_User, { foreignKey: 'participantId', as: 'user' });
     }
