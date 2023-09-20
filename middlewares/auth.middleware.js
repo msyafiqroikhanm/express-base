@@ -1,6 +1,8 @@
 const passport = require('passport');
 const rolesLib = require('../libraries/roles.lib');
-const { ACM_Location, FNB_Kitchen, PAR_Participant, TPT_Driver, TPT_Vendor } = require('../models');
+const {
+  ACM_Location, FNB_Kitchen, PAR_Participant, TPT_Driver, TPT_Vendor, ENV_Event,
+} = require('../models');
 const picTypeHelper = require('../helpers/pictype.helper');
 const ResponseFormatter = require('../helpers/responseFormatter.helper');
 
@@ -27,8 +29,8 @@ class AuthMiddleware {
 
         // check user access
         if (requiredFeatures) {
-          const authorized = req.user.Role.USR_Features.some((feature) =>
-            requiredFeatures.includes(feature.id),
+          const authorized = req.user.Role.USR_Features.some(
+            (feature) => requiredFeatures.includes(feature.id),
           );
 
           if (!authorized) {
@@ -193,6 +195,40 @@ class AuthMiddleware {
         } else {
           return ResponseFormatter.error401(res, "You Don't Have Access To This Service");
         }
+      }
+
+      req.user.limitation = limitation;
+      next();
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  static async event(req, res, next) {
+    try {
+      res.url = `${req.method} ${req.originalUrl}`;
+
+      const limitation = { isAdmin: true, access: {} };
+
+      if (req.user.Role.id !== rolesLib.superAdmin) {
+        if (!req.user.PIC) {
+          return ResponseFormatter.error401(res, "You Don't Have Access To This Service");
+        }
+
+        const picTypes = await picTypeHelper().then((type) => [type.pic_event]);
+        const picEvent = req.user.PIC.filter((pic) => pic.typeId === picTypes[0]);
+        limitation.isAdmin = false;
+        limitation.access.picId = picEvent[0].dataValues.id;
+
+        const eventLimitation = await ENV_Event.findAll({
+          where: { picId: limitation.access.picId },
+          attributes: ['id'],
+          raw: true,
+        });
+
+        const events = eventLimitation.map((event) => event.id);
+
+        limitation.access.events = events;
       }
 
       req.user.limitation = limitation;
