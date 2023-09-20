@@ -159,7 +159,7 @@ router.post(
     check('name', "name attribute can't be empty").notEmpty(),
     check('floor', "floor attribute can't be empty").notEmpty(),
     check('capacity', 'capacity attribute must be integer').isInt(),
-    check('occupied', 'occupied attribute must be integer').isInt(),
+    // check('occupied', 'occupied attribute must be integer').isInt(),
   ],
   ValidateMiddleware.result,
   Authentication.accomodation,
