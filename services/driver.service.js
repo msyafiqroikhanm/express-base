@@ -1,8 +1,12 @@
 /* eslint-disable no-param-reassign */
+const { Op } = require('sequelize');
 const { TPT_Driver, TPT_Vendor } = require('../models');
 
-const selectAllDrivers = async () => {
+const selectAllDrivers = async (where = {}) => {
   const data = await TPT_Driver.findAll({
+    // eslint-disable-next-line no-nested-ternary
+    where: where.driverId ? { id: where.driverId } : where.picId
+      ? { vendorId: { [Op.in]: where.vendors } } : null,
     include: { model: TPT_Vendor, as: 'vendor', attributes: { exclude: ['createdAt', 'updatedAt', 'deletedAt'] } },
   });
 
@@ -17,15 +21,24 @@ const selectAllDrivers = async () => {
   };
 };
 
-const selectDriver = async (id) => {
-  const driverInstance = await TPT_Driver.findByPk(id, {
+const selectDriver = async (id, where) => {
+  if (where.driverId && where.driverId !== Number(id)) {
+    return {
+      success: false,
+      code: 404,
+      message: ['Driver Data Not Found'],
+    };
+  }
+
+  const driverInstance = await TPT_Driver.findOne({
+    where: where.picId ? { id, vendorId: { [Op.in]: where.vendors } } : { id },
     include: { model: TPT_Vendor, as: 'vendor', attributes: { exclude: ['createdAt', 'updatedAt', 'deletedAt'] } },
   });
   if (!driverInstance) {
     return {
       success: false,
       code: 404,
-      message: 'Driver Data Not Found',
+      message: ['Driver Data Not Found'],
     };
   }
 
@@ -38,10 +51,18 @@ const selectDriver = async (id) => {
   };
 };
 
-const validateDriverInputs = async (form) => {
+const validateDriverInputs = async (form, where) => {
   const {
     vendorId, name, phoneNbr, email,
   } = form;
+
+  if (where.picId && !where.vendors?.includes(vendorId)) {
+    return {
+      success: false,
+      code: 404,
+      message: ['Vendor Data Not Found'],
+    };
+  }
 
   // check vendor id
   const vendorInstance = await TPT_Vendor.findByPk(vendorId);
@@ -49,7 +70,7 @@ const validateDriverInputs = async (form) => {
     return {
       success: false,
       code: 404,
-      message: 'Vendor Data Not Found',
+      message: ['Vendor Data Not Found'],
     };
   }
 
@@ -80,13 +101,15 @@ const createDriver = async (form) => {
   };
 };
 
-const updateDriver = async (form, id) => {
-  const driverInstance = await TPT_Driver.findByPk(id);
+const updateDriver = async (form, id, where) => {
+  const driverInstance = await TPT_Driver.findOne({
+    where: where.picId ? { id, vendorId: { [Op.in]: where.vendors } } : { id },
+  });
   if (!driverInstance) {
     return {
       success: false,
       code: 404,
-      message: 'Driver Data Not Found',
+      message: ['Driver Data Not Found'],
     };
   }
 
@@ -103,13 +126,15 @@ const updateDriver = async (form, id) => {
   };
 };
 
-const deleteDriver = async (id) => {
-  const driverInstance = await TPT_Driver.findByPk(id);
+const deleteDriver = async (id, where) => {
+  const driverInstance = await TPT_Driver.findOne({
+    where: where.picId ? { id, vendorId: { [Op.in]: where.vendors } } : { id },
+  });
   if (!driverInstance) {
     return {
       success: false,
       code: 404,
-      message: 'Driver Data Not Found',
+      message: ['Driver Data Not Found'],
     };
   }
 
