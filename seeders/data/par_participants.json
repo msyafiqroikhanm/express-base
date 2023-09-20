@@ -100,6 +100,17 @@
     "email": "accomodation@jxboard.com",
     "address": "cijanntung",
     "identityTypeId": 1,
-    "committeeTypeId": 3
+    "committeeTypeId": 2
+  },
+  {
+    "name": "PIC Grand Mercure",
+    "gender": "Male",
+    "birthDate": "1999-01-01",
+    "identityNo": "317113231232",
+    "phoneNbr": "62885780217411",
+    "email": "H9896-PR@ACCOR.COM",
+    "address": "RRWX+HR2, Superblok Mega,Jalan Kota Baru Bandar, Jl. Benyamin Suaeb No.Kav B6, South Gunung Sahari, Kemayoran, Central Jakarta City, Jakarta 10610",
+    "identityTypeId": 1,
+    "committeeTypeId": 2
   }
 ]
