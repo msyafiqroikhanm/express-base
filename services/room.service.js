@@ -90,9 +90,9 @@ const updateRoom = async (where, form) => {
       message: 'Room Data Not Found',
     };
   }
-
+  let locationInstance = null;
   if (form.locationId) {
-    const locationInstance = await ACM_Location.findByPk(form.locationId);
+    locationInstance = await ACM_Location.findByPk(form.locationId);
     if (!locationInstance) {
       errorMessages.push('Location Data Not Found');
     }
@@ -102,6 +102,11 @@ const updateRoom = async (where, form) => {
     const typeInstance = await REF_RoomType.findByPk(form.typeId);
     if (!typeInstance) {
       errorMessages.push('Room Type Data Not Found');
+    }
+    if (locationInstance) {
+      if (typeInstance.locationId !== locationInstance.id) {
+        errorMessages.push('Prohibited To Create Room For Other Location');
+      }
     }
   }
 
@@ -169,6 +174,9 @@ const validateRoomInputs = async (form, where) => {
   const typeInstance = await REF_RoomType.findByPk(form.typeId);
   if (!typeInstance) {
     errorMessages.push('Room Type Data Not Found');
+  }
+  if (typeInstance.locationId !== locationInstance.id) {
+    errorMessages.push('Prohibited To Create Room For Other Location');
   }
 
   // const statusInstance = await REF_RoomStatus.findByPk(form.statusId);

@@ -13,21 +13,24 @@ const validateVehicleQuery = async (query) => {
     parsedQuery.isAvailable = query.available.toLowerCase() === 'true';
   }
 
-  if (query.vendor) {
-    const vendorInstace = await TPT_Vendor.findOne({ where: { name: { [Op.like]: `%${query.vendor}%` } } });
-    parsedQuery.vendorId = vendorInstace?.id || null;
-  }
-
   return parsedQuery;
 };
 
-const validateVehicleInputs = async (form) => {
+const validateVehicleInputs = async (form, where, id) => {
   const {
     vendorId, typeId, vehicleNo, vehiclePlateNo, name, capacity,
   } = form;
 
   const invalid400 = [];
   const invalid404 = [];
+
+  if (where.picId && !where.vendors?.includes(Number(vendorId))) {
+    return {
+      success: false,
+      code: 404,
+      message: ['Vendor Data Not Found'],
+    };
+  }
 
   const vendorInstace = await TPT_Vendor.findByPk(vendorId);
   if (!vendorInstace) {
@@ -37,6 +40,13 @@ const validateVehicleInputs = async (form) => {
   const typeInstance = await REF_VehicleType.findByPk(typeId);
   if (!typeInstance) {
     invalid404.push('Vehicle Type Data Not Found');
+  }
+
+  const duplicatePlateNo = await TPT_Vehicle.findOne({
+    where: id ? { id: { [Op.ne]: id }, vehiclePlateNo } : { vehiclePlateNo },
+  });
+  if (duplicatePlateNo) {
+    invalid400.push('Vehicle Plate No Already Exist / Taken');
   }
 
   if (invalid400.length > 0) {
@@ -67,9 +77,17 @@ const validateVehicleInputs = async (form) => {
   };
 };
 
-const selectAllVehicles = async (query) => {
+const selectAllVehicles = async (query, where) => {
+  const parsedQuery = {};
+  if (Object.keys(query).length > 0) {
+    parsedQuery.isAvailable = query.isAvailable;
+  }
+  if (where.picId) {
+    parsedQuery.vendorId = { [Op.in]: where.vendors };
+  }
+
   const data = await TPT_Vehicle.findAll({
-    where: query,
+    where: parsedQuery,
     include: [
       { model: TPT_Vendor, as: 'vendor', attributes: ['name'] },
       { model: REF_VehicleType, as: 'type', attributes: ['name'] },
@@ -89,8 +107,9 @@ const selectAllVehicles = async (query) => {
   };
 };
 
-const selectVehicle = async (id) => {
-  const vehicleInstance = await TPT_Vehicle.findByPk(id, {
+const selectVehicle = async (id, where) => {
+  const vehicleInstance = await TPT_Vehicle.findOne({
+    where: where.picId ? { id, vendorId: { [Op.in]: where.vendors } } : { id },
     include: [
       { model: TPT_Vendor, as: 'vendor', attributes: ['name'] },
       { model: REF_VehicleType, as: 'type', attributes: ['name'] },
@@ -139,8 +158,10 @@ const createVehicle = async (form) => {
   };
 };
 
-const updateVehicle = async (form, id) => {
-  const vehicleInstance = await TPT_Vehicle.findByPk(id);
+const updateVehicle = async (form, id, where) => {
+  const vehicleInstance = await TPT_Vehicle.findOne({
+    where: where.picId ? { id, vendorId: { [Op.in]: where.vendors } } : { id },
+  });
   if (!vehicleInstance) {
     return {
       success: false,
@@ -164,8 +185,10 @@ const updateVehicle = async (form, id) => {
   };
 };
 
-const deleteVehicle = async (id) => {
-  const vehicleInstance = await TPT_Vehicle.findByPk(id);
+const deleteVehicle = async (id, where) => {
+  const vehicleInstance = await TPT_Vehicle.findOne({
+    where: where.picId ? { id, vendorId: { [Op.in]: where.vendors } } : { id },
+  });
   if (!vehicleInstance) {
     return {
       success: false,
@@ -178,6 +201,11 @@ const deleteVehicle = async (id) => {
 
   await vehicleInstance.destroy();
 
+  await TPT_VehicleSchedule.update(
+    { vehicleId: null },
+    { where: { vehicleId: vehicleInstance.id, dropOffTime: null } },
+  );
+
   return {
     success: true,
     message: 'Vehicle Successfully Deleted',
@@ -185,8 +213,11 @@ const deleteVehicle = async (id) => {
   };
 };
 
-const selectVehicleSchedules = async (vehicleId) => {
-  const vehicleInstance = await TPT_Vehicle.findByPk(vehicleId);
+const selectVehicleSchedules = async (vehicleId, where) => {
+  const vehicleInstance = await TPT_Vehicle.findOne({
+    where: where.picId
+      ? { id: vehicleId, vendorId: { [Op.in]: where.vendors } } : { id: vehicleId },
+  });
   if (!vehicleInstance) {
     return {
       success: false,
@@ -217,8 +248,11 @@ const selectVehicleSchedules = async (vehicleId) => {
   };
 };
 
-const selectVehicleTracks = async (vehicleId) => {
-  const vehicleInstance = await TPT_Vehicle.findByPk(vehicleId);
+const selectVehicleTracks = async (vehicleId, where) => {
+  const vehicleInstance = await TPT_Vehicle.findOne({
+    where: where.picId
+      ? { id: vehicleId, vendorId: { [Op.in]: where.vendors } } : { id: vehicleId },
+  });
   if (!vehicleInstance) {
     return {
       success: false,
@@ -236,8 +270,11 @@ const selectVehicleTracks = async (vehicleId) => {
   };
 };
 
-const createTrackingVehicle = async (form, vehicleId) => {
-  const vehicleInstance = await TPT_Vehicle.findByPk(vehicleId);
+const createTrackingVehicle = async (form, vehicleId, where) => {
+  const vehicleInstance = await TPT_Vehicle.findOne({
+    where: where.picId
+      ? { id: vehicleId, vendorId: { [Op.in]: where.vendors } } : { id: vehicleId },
+  });
   if (!vehicleInstance) {
     return {
       success: false,

@@ -22,6 +22,7 @@ router.get(
       ]),
     );
   },
+  Authentication.transportation,
   DriverController.getAll,
 );
 
@@ -41,6 +42,7 @@ router.get(
       ]),
     );
   },
+  Authentication.transportation,
   DriverController.getDetail,
 );
 
@@ -56,6 +58,7 @@ router.post(
       ]),
     );
   },
+  Authentication.transportation,
   [
     check('vendorId', "Vendor Id attribute can't be empty").notEmpty(),
     check('name', "Name attribute can't be empty").notEmpty(),
@@ -78,6 +81,7 @@ router.put(
       ]),
     );
   },
+  Authentication.transportation,
   [
     check('vendorId', "Vendor Id attribute can't be empty").notEmpty(),
     check('name', "Name attribute can't be empty").notEmpty(),
@@ -100,6 +104,7 @@ router.delete(
       ]),
     );
   },
+  Authentication.transportation,
   DriverController.delete,
 );
 

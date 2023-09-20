@@ -8,7 +8,16 @@ class DriverController {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
 
-      const data = await selectAllDrivers();
+      // resrict data that is not an admin
+      const where = {};
+      if (!req.user.limitation.isAdmin && req.user.limitation?.access?.picId) {
+        where.picId = req.user.limitation.access.picId;
+        where.vendors = req.user.limitation.access.vendors;
+      } else if (!req.user.limitation.isAdmin && req.user.limitation?.access?.driver) {
+        where.driverId = req.user.limitation.access.driverId;
+      }
+
+      const data = await selectAllDrivers(where);
 
       return ResponseFormatter.success200(res, data.message, data.content);
     } catch (error) {
@@ -20,7 +29,16 @@ class DriverController {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
 
-      const data = await selectDriver(req.params.id);
+      // resrict data that is not an admin
+      const where = {};
+      if (!req.user.limitation.isAdmin && req.user.limitation?.access?.picId) {
+        where.picId = req.user.limitation.access.picId;
+        where.vendors = req.user.limitation.access.vendors;
+      } else if (!req.user.limitation.isAdmin && req.user.limitation?.access?.driver) {
+        where.driverId = req.user.limitation.access.driverId;
+      }
+
+      const data = await selectDriver(req.params.id, where);
       if (!data.success && data.code === 404) {
         return ResponseFormatter.error404(res, 'Data Not Found', data.message);
       }
@@ -35,7 +53,16 @@ class DriverController {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
 
-      const inputs = await validateDriverInputs(req.body);
+      // resrict data that is not an admin
+      const where = {};
+      if (!req.user.limitation.isAdmin && req.user.limitation?.access?.picId) {
+        where.picId = req.user.limitation.access.picId;
+        where.vendors = req.user.limitation.access.vendors;
+      } else if (!req.user.limitation.isAdmin && req.user.limitation?.access?.driver) {
+        where.driverId = req.user.limitation.access.driverId;
+      }
+
+      const inputs = await validateDriverInputs(req.body, where);
       if (!inputs.isValid && inputs.code === 400) {
         return ResponseFormatter.error400(res, 'Bad Request', inputs.message);
       }
@@ -55,7 +82,16 @@ class DriverController {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
 
-      const inputs = await validateDriverInputs(req.body);
+      // resrict data that is not an admin
+      const where = {};
+      if (!req.user.limitation.isAdmin && req.user.limitation?.access?.picId) {
+        where.picId = req.user.limitation.access.picId;
+        where.vendors = req.user.limitation.access.vendors;
+      } else if (!req.user.limitation.isAdmin && req.user.limitation?.access?.driver) {
+        where.driverId = req.user.limitation.access.driverId;
+      }
+
+      const inputs = await validateDriverInputs(req.body, where);
       if (!inputs.isValid && inputs.code === 400) {
         return ResponseFormatter.error400(res, 'Bad Request', inputs.message);
       }
@@ -78,7 +114,16 @@ class DriverController {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
 
-      const data = await deleteDriver(req.params.id);
+      // resrict data that is not an admin
+      const where = {};
+      if (!req.user.limitation.isAdmin && req.user.limitation?.access?.picId) {
+        where.picId = req.user.limitation.access.picId;
+        where.vendors = req.user.limitation.access.vendors;
+      } else if (!req.user.limitation.isAdmin && req.user.limitation?.access?.driver) {
+        where.driverId = req.user.limitation.access.driverId;
+      }
+
+      const data = await deleteDriver(req.params.id, where);
       if (!data.success && data.code === 404) {
         return ResponseFormatter.error404(res, 'Data Not Found', data.message);
       }

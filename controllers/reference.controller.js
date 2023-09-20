@@ -615,7 +615,7 @@ class RoomType {
 
       const where = {};
 
-      // console.log(JSON.stringify(req.user.limitation.access.location, null, 2));
+      console.log(JSON.stringify(req.user.limitation, null, 2));
       if (!req.user.limitation.isAdmin) {
         where.locationId = { [Op.or]: req.user.limitation.access.location };
       }
