@@ -28,6 +28,7 @@ module.exports = (sequelize, DataTypes) => {
   }, {
     sequelize,
     modelName: 'ENV_Event',
+    paranoid: true,
   });
   return ENV_Event;
 };

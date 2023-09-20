@@ -1,31 +1,43 @@
+/* eslint-disable no-unused-vars */
+
 'use strict';
+
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable('USR_PICs', {
-      id: {
-        allowNull: false,
-        autoIncrement: true,
-        primaryKey: true,
-        type: Sequelize.INTEGER
+    await queryInterface.createTable(
+      'USR_PICs',
+      {
+        id: {
+          allowNull: false,
+          autoIncrement: true,
+          primaryKey: true,
+          type: Sequelize.INTEGER,
+        },
+        userId: {
+          type: Sequelize.INTEGER,
+        },
+        typeId: {
+          type: Sequelize.INTEGER,
+        },
+        deletedAt: {
+          type: Sequelize.DATE,
+        },
+        createdAt: {
+          allowNull: false,
+          type: Sequelize.DATE,
+        },
+        updatedAt: {
+          allowNull: false,
+          type: Sequelize.DATE,
+        },
       },
-      userId: {
-        type: Sequelize.INTEGER
+      {
+        paranoid: true,
       },
-      typeId: {
-        type: Sequelize.INTEGER
-      },
-      createdAt: {
-        allowNull: false,
-        type: Sequelize.DATE
-      },
-      updatedAt: {
-        allowNull: false,
-        type: Sequelize.DATE
-      }
-    });
+    );
   },
   async down(queryInterface, Sequelize) {
     await queryInterface.dropTable('USR_PICs');
-  }
+  },
 };
