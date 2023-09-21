@@ -56,7 +56,8 @@ const selectEvent = async (id, where = {}) => {
     return { success: false, code: 404, message: ['Event Data Not Found'] };
   }
 
-  const pic = await USR_PIC.findByPk(eventInstance.picId, {
+  const pic = await USR_PIC.findOne({
+    where: { id: eventInstance.picId },
     attributes: { exclude: ['createdAt', 'updatedAt'] },
     include: {
       model: USR_User,
