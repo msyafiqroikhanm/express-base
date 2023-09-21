@@ -10,7 +10,7 @@ const selectAllEvents = async (where) => {
     where: where.picId ? { id: { [Op.in]: where.events } } : null,
     include: [
       { model: REF_EventCategory, attributes: ['name'], as: 'category' },
-      { model: ACM_Location, as: 'location', attributes: { exclude: ['id', 'deletedAt', 'createdAt', 'updatedAt'] } },
+      { model: ACM_Location, as: 'location', attributes: { exclude: ['deletedAt', 'createdAt', 'updatedAt'] } },
       { model: ENV_TimeEvent, attributes: ['id', 'start', 'end'], as: 'schedules' },
       // {
       //   model: USR_PIC,
@@ -23,7 +23,7 @@ const selectAllEvents = async (where) => {
     event.dataValues.category = event.category.dataValues.name;
     const pic = await USR_PIC.findOne({
       where: { id: event.picId },
-      attributes: { exclude: ['createdAt', 'updatedAt'] },
+      attributes: ['id', 'userId', 'typeId'],
       include: {
         model: USR_User,
         as: 'user',
@@ -32,7 +32,7 @@ const selectAllEvents = async (where) => {
       },
     });
 
-    event.dataValues.pic = pic?.user?.participant || null;
+    event.dataValues.pic = pic || null;
   }));
 
   return {
@@ -49,7 +49,7 @@ const selectEvent = async (id, where = {}) => {
     include: [
       { model: REF_EventCategory, attributes: ['name'], as: 'category' },
       { model: ENV_TimeEvent, attributes: ['start', 'end'], as: 'schedules' },
-      { model: ACM_Location, as: 'location', attributes: { exclude: ['id', 'deletedAt', 'createdAt', 'updatedAt'] } },
+      { model: ACM_Location, as: 'location', attributes: { exclude: ['deletedAt', 'createdAt', 'updatedAt'] } },
     ],
   });
   if (!eventInstance) {
@@ -58,16 +58,16 @@ const selectEvent = async (id, where = {}) => {
 
   const pic = await USR_PIC.findOne({
     where: { id: eventInstance.picId },
-    attributes: { exclude: ['createdAt', 'updatedAt'] },
+    attributes: ['id', 'userId', 'typeId'],
     include: {
       model: USR_User,
       as: 'user',
-      attributes: ['id'],
+      attributes: ['id', 'username'],
       include: { model: PAR_Participant, as: 'participant', attributes: ['name', 'phoneNbr', 'email'] },
     },
   });
 
-  eventInstance.dataValues.pic = pic?.user?.participant || null;
+  eventInstance.dataValues.pic = pic || null;
   eventInstance.dataValues.category = eventInstance.category?.dataValues.name;
 
   return {
