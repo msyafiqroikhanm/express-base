@@ -233,24 +233,22 @@ class AuthMiddleware {
 
         const picTypes = await picTypeHelper().then((type) => [type.pic_event]);
         const picEvent = req.user.PIC.filter((pic) => pic.typeId === picTypes[0]);
+        if (picEvent.length) {
+          console.log(picEvent);
 
-        if (!picEvent.length) {
-          req.user.limitation = limitation;
-          next();
+          limitation.isAdmin = false;
+          limitation.access.picId = picEvent[0].dataValues.id;
+
+          const eventLimitation = await ENV_Event.findAll({
+            where: { picId: limitation.access.picId },
+            attributes: ['id'],
+            raw: true,
+          });
+
+          const events = eventLimitation.map((event) => event.id);
+
+          limitation.access.events = events;
         }
-
-        limitation.isAdmin = false;
-        limitation.access.picId = picEvent[0].dataValues.id;
-
-        const eventLimitation = await ENV_Event.findAll({
-          where: { picId: limitation.access.picId },
-          attributes: ['id'],
-          raw: true,
-        });
-
-        const events = eventLimitation.map((event) => event.id);
-
-        limitation.access.events = events;
       }
 
       req.user.limitation = limitation;
