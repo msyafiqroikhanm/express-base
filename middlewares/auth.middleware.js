@@ -1,7 +1,12 @@
 const passport = require('passport');
 const rolesLib = require('../libraries/roles.lib');
 const {
-  ACM_Location, FNB_Kitchen, PAR_Participant, TPT_Driver, TPT_Vendor, ENV_Event,
+  ACM_Location,
+  FNB_Kitchen,
+  PAR_Participant,
+  TPT_Driver,
+  TPT_Vendor,
+  ENV_Event,
 } = require('../models');
 const picTypeHelper = require('../helpers/pictype.helper');
 const ResponseFormatter = require('../helpers/responseFormatter.helper');
@@ -29,8 +34,8 @@ class AuthMiddleware {
 
         // check user access
         if (requiredFeatures) {
-          const authorized = req.user.Role.USR_Features.some(
-            (feature) => requiredFeatures.includes(feature.id),
+          const authorized = req.user.Role.USR_Features.some((feature) =>
+            requiredFeatures.includes(feature.id),
           );
 
           if (!authorized) {
@@ -50,7 +55,7 @@ class AuthMiddleware {
 
       const limitation = { isAdmin: true, access: {} };
 
-      console.log(JSON.stringify(req.user.PIC, null, 2));
+      // console.log(JSON.stringify(req.user.PIC, null, 2));
       // console.log(JSON.stringify(req.user, null, 2));
       if (req.user.Role.id !== rolesLib.superAdmin) {
         if (req.user.PIC.length) {
@@ -65,7 +70,7 @@ class AuthMiddleware {
             raw: true,
           });
 
-          console.log(JSON.stringify(locationLimitation, null, 2));
+          // console.log(JSON.stringify(locationLimitation, null, 2));
           const locations = locationLimitation.map((element) => element.id);
 
           if (locationLimitation.length > 0) {

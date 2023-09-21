@@ -61,5 +61,19 @@
     "participantId": 10,
     "username": "mercure.kemayoran",
     "email": "H9896-PR@ACCOR.COM"
+  },
+  {
+    "qrId": 1,
+    "roleId": 10,
+    "participantId": 11,
+    "username": "picevent",
+    "email": "e@vent.com"
+  },
+  {
+    "qrId": 1,
+    "roleId": 10,
+    "participantId": 12,
+    "username": "adminevent",
+    "email": "admin@event.com"
   }
 ]
