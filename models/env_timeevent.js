@@ -17,6 +17,7 @@ module.exports = (sequelize, DataTypes) => {
   }
   ENV_TimeEvent.init({
     eventId: DataTypes.INTEGER,
+    name: DataTypes.STRING,
     start: DataTypes.DATE,
     end: DataTypes.DATE,
   }, {
