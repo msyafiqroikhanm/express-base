@@ -1,5 +1,7 @@
 /* eslint-disable no-param-reassign */
-const { USR_PIC, REF_PICType, USR_User } = require('../models');
+const {
+  USR_PIC, REF_PICType, USR_User, PAR_Participant,
+} = require('../models');
 
 const selectAllPICs = async () => {
   const pics = await USR_PIC.findAll({
@@ -9,6 +11,7 @@ const selectAllPICs = async () => {
         model: USR_User,
         as: 'user',
         attributes: ['username'],
+        include: { model: PAR_Participant, attributes: ['name'], as: 'participant' },
       },
       {
         model: REF_PICType,
@@ -38,6 +41,7 @@ const selectPIC = async (id) => {
         model: USR_User,
         as: 'user',
         attributes: { exclude: ['password', 'createdAt', 'updatedAt'] },
+        include: { model: PAR_Participant, attributes: ['name'], as: 'participant' },
       },
       {
         model: REF_PICType,
