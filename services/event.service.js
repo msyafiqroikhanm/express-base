@@ -11,7 +11,7 @@ const selectAllEvents = async (where) => {
     include: [
       { model: REF_EventCategory, attributes: ['name'], as: 'category' },
       { model: ACM_Location, as: 'location', attributes: { exclude: ['deletedAt', 'createdAt', 'updatedAt'] } },
-      { model: ENV_TimeEvent, attributes: ['id', 'start', 'end'], as: 'schedules' },
+      { model: ENV_TimeEvent, attributes: ['name', 'id', 'start', 'end'], as: 'schedules' },
       // {
       //   model: USR_PIC,
       //   as: 'pic',
@@ -46,10 +46,11 @@ const selectEvent = async (id, where = {}) => {
   }
   // check event id validity
   const eventInstance = await ENV_Event.findOne({
+    where: { id },
     include: [
       { model: REF_EventCategory, attributes: ['name'], as: 'category' },
-      { model: ENV_TimeEvent, attributes: ['start', 'end'], as: 'schedules' },
       { model: ACM_Location, as: 'location', attributes: { exclude: ['deletedAt', 'createdAt', 'updatedAt'] } },
+      { model: ENV_TimeEvent, attributes: ['name', 'start', 'end'], as: 'schedules' },
     ],
   });
   if (!eventInstance) {
@@ -105,6 +106,7 @@ const validateEventInputs = async (form) => {
       return true;
     }
     parsedTimes.push({
+      name: time.name,
       start: new Date(time.start),
       end: new Date(time.end),
     });
@@ -153,6 +155,7 @@ const createEvent = async (form) => {
   await times.forEach(async (time) => {
     await ENV_TimeEvent.create({
       eventId: eventInstance.id,
+      name: time.name,
       start: time.start,
       end: time.end,
     });
@@ -189,6 +192,7 @@ const updateEvent = async (id, form) => {
   times?.forEach(async (time) => {
     await ENV_TimeEvent.create({
       eventId: eventInstance.id,
+      name: time.name,
       start: time.start,
       end: time.end,
     });
