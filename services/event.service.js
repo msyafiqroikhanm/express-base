@@ -66,7 +66,7 @@ const selectEvent = async (id, where = {}) => {
     },
   });
 
-  eventInstance.dataValues.pic = pic.user?.participant;
+  eventInstance.dataValues.pic = pic?.user?.participant || null;
   eventInstance.dataValues.category = eventInstance.category?.dataValues.name;
 
   return {
