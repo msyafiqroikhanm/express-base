@@ -383,5 +383,15 @@
   { "roleId": 8, "featureId":18 },
   { "roleId": 8, "featureId":55 },
   { "roleId": 8, "featureId":239 },
-  { "roleId": 8, "featureId":241 }
+  { "roleId": 8, "featureId":241 },
+
+  { "roleId": 10, "featureId":31 },
+  { "roleId": 10, "featureId":35 },
+  { "roleId": 10, "featureId":79 },
+  { "roleId": 10, "featureId":80 },
+  { "roleId": 10, "featureId":81 },
+  { "roleId": 10, "featureId":82 },
+  { "roleId": 10, "featureId":156 },
+  { "roleId": 10, "featureId":224 },
+  { "roleId": 10, "featureId":228 }
 ]

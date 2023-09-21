@@ -2,5 +2,6 @@
   { "name": "IT"},
   { "name": "Accommodation"},
   { "name": "Transportation"},
-  { "name": "FNB"}
+  { "name": "FNB"},
+  { "name": "Event"}
 ]

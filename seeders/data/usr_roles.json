@@ -7,5 +7,7 @@
   { "name": "Admin FnB", "templateId": 1 },
   { "name": "PIC Transportation", "templateId": 1 },
   { "name": "Driver", "templateId": 1 },
-  { "name": "Admin Accomodation","templateId":1}
+  { "name": "Admin Accomodation","templateId":1},
+  { "name": "Admin Event","templateId":1},
+  { "name": "PIC Event","templateId":1}
 ]
