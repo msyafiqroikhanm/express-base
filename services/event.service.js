@@ -10,7 +10,7 @@ const selectAllEvents = async (where) => {
     where: where.picId ? { id: { [Op.in]: where.events } } : null,
     include: [
       { model: REF_EventCategory, attributes: ['name'], as: 'category' },
-      { model: ACM_Location, as: 'location', attributes: { exclude: ['id', 'deletedAt', 'createdAt', 'updatedAt'] } },
+      { model: ACM_Location, as: 'location', attributes: { exclude: ['deletedAt', 'createdAt', 'updatedAt'] } },
       { model: ENV_TimeEvent, attributes: ['id', 'start', 'end'], as: 'schedules' },
       // {
       //   model: USR_PIC,
@@ -49,7 +49,7 @@ const selectEvent = async (id, where = {}) => {
     include: [
       { model: REF_EventCategory, attributes: ['name'], as: 'category' },
       { model: ENV_TimeEvent, attributes: ['start', 'end'], as: 'schedules' },
-      { model: ACM_Location, as: 'location', attributes: { exclude: ['id', 'deletedAt', 'createdAt', 'updatedAt'] } },
+      { model: ACM_Location, as: 'location', attributes: { exclude: ['deletedAt', 'createdAt', 'updatedAt'] } },
     ],
   });
   if (!eventInstance) {
