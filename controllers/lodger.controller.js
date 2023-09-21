@@ -15,7 +15,12 @@ class LodgerController {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
 
-      const data = await selectAllLodgers({});
+      // console.log(JSON.stringify(req.user.limitation, null, 2));
+      const where = {};
+      if (!req.user.limitation.isAdmin) {
+        where.locationId = { [Op.or]: req.user.limitation.access.location };
+      }
+      const data = await selectAllLodgers(where);
 
       return ResponseFormatter.success200(res, data.message, data.content);
     } catch (error) {
@@ -44,7 +49,12 @@ class LodgerController {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
 
-      const data = await selectLodger(req.params.id);
+      // console.log(JSON.stringify(req.user.limitation, null, 2));
+      const where = {};
+      if (!req.user.limitation.isAdmin) {
+        where.locationId = { [Op.or]: req.user.limitation.access.location };
+      }
+      const data = await selectLodger(req.params.id, where);
       if (!data.success) {
         return ResponseFormatter.error404(res, 'Data Not Found', data.message);
       }

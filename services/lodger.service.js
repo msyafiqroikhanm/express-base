@@ -17,11 +17,12 @@ const {
 
 const selectAllLodgers = async (where) => {
   const lodgerInstance = await ACM_ParticipantLodger.findAll({
-    where,
+    // where,
     include: [
       {
         model: ACM_Room,
         as: 'room',
+        where,
         attributes: { exclude: ['createdAt', 'updatedAt'] },
         include: [
           {
@@ -85,17 +86,18 @@ const selectAllLodgers = async (where) => {
 
   return {
     success: true,
-    message: 'Successfully Getting All Facility',
+    message: 'Successfully Getting All Lodger',
     content: lodgerInstance,
   };
 };
 
-const selectLodger = async (id) => {
+const selectLodger = async (id, where) => {
   const lodgerInstance = await ACM_ParticipantLodger.findByPk(id, {
     include: [
       {
         model: ACM_Room,
         as: 'room',
+        where,
         attributes: { exclude: ['createdAt', 'updatedAt'] },
         include: [
           {

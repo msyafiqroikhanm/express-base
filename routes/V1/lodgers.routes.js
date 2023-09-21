@@ -40,6 +40,7 @@ router.get(
       ]),
     );
   },
+  Authentication.accomodation,
   LodgerController.getAll,
 );
 
@@ -76,6 +77,7 @@ router.get(
       ]),
     );
   },
+  Authentication.accomodation,
   LodgerController.getDetail,
 );
 
@@ -89,6 +91,7 @@ router.put(
       await features().then((feature) => [feature.update_lodger]),
     );
   },
+  Authentication.accomodation,
   LodgerController.update,
 );
 

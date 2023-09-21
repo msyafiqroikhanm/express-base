@@ -249,6 +249,10 @@
   { "roleId": 3, "featureId": 146 },
   { "roleId": 3, "featureId": 147 },
   { "roleId": 3, "featureId": 228 },
+  { "roleId": 3, "featureId": 229 },
+  { "roleId": 3, "featureId": 230 },
+  { "roleId": 3, "featureId": 231 },
+  { "roleId": 3, "featureId": 232 },
 
   { "roleId": 9, "featureId": 31 },
   { "roleId": 9, "featureId": 32 },
@@ -271,6 +275,10 @@
   { "roleId": 9, "featureId": 146 },
   { "roleId": 9, "featureId": 147 },
   { "roleId": 9, "featureId": 228 },
+  { "roleId": 9, "featureId": 229 },
+  { "roleId": 9, "featureId": 230 },
+  { "roleId": 9, "featureId": 231 },
+  { "roleId": 9, "featureId": 232 },
 
   { "roleId": 1, "featureId": 229 },
   { "roleId": 1, "featureId": 230 },
