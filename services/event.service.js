@@ -23,7 +23,7 @@ const selectAllEvents = async (where) => {
     event.dataValues.category = event.category.dataValues.name;
     const pic = await USR_PIC.findOne({
       where: { id: event.picId },
-      attributes: { exclude: ['createdAt', 'updatedAt'] },
+      attributes: ['id', 'userId', 'typeId'],
       include: {
         model: USR_User,
         as: 'user',
@@ -32,7 +32,7 @@ const selectAllEvents = async (where) => {
       },
     });
 
-    event.dataValues.pic = pic?.user?.participant || null;
+    event.dataValues.pic = pic || null;
   }));
 
   return {
@@ -58,16 +58,16 @@ const selectEvent = async (id, where = {}) => {
 
   const pic = await USR_PIC.findOne({
     where: { id: eventInstance.picId },
-    attributes: { exclude: ['createdAt', 'updatedAt'] },
+    attributes: ['id', 'userId', 'typeId'],
     include: {
       model: USR_User,
       as: 'user',
-      attributes: ['id'],
+      attributes: ['id', 'username'],
       include: { model: PAR_Participant, as: 'participant', attributes: ['name', 'phoneNbr', 'email'] },
     },
   });
 
-  eventInstance.dataValues.pic = pic?.user?.participant || null;
+  eventInstance.dataValues.pic = pic || null;
   eventInstance.dataValues.category = eventInstance.category?.dataValues.name;
 
   return {
