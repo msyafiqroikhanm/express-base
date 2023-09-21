@@ -34,8 +34,8 @@ class AuthMiddleware {
 
         // check user access
         if (requiredFeatures) {
-          const authorized = req.user.Role.USR_Features.some((feature) =>
-            requiredFeatures.includes(feature.id),
+          const authorized = req.user.Role.USR_Features.some(
+            (feature) => requiredFeatures.includes(feature.id),
           );
 
           if (!authorized) {
@@ -55,12 +55,13 @@ class AuthMiddleware {
 
       const limitation = { isAdmin: true, access: {} };
 
-      // console.log(JSON.stringify(req.user.PIC, null, 2));
-      // console.log(JSON.stringify(req.user, null, 2));
       if (req.user.Role.id !== rolesLib.superAdmin) {
         if (req.user.PIC.length) {
           const picTypes = await picTypeHelper().then((type) => [type.pic_location]);
           const picLocation = req.user.PIC.filter((pic) => pic.typeId === picTypes[0]);
+
+          // * Need More Investigation for user is PIC for not this module
+
           limitation.isAdmin = false;
           limitation.access.picId = picLocation[0].dataValues.id;
 
@@ -97,6 +98,9 @@ class AuthMiddleware {
 
         const picTypes = await picTypeHelper().then((type) => [type.pic_kitchen]);
         const picKitchen = req.user.PIC.filter((pic) => pic.typeId === picTypes[0]);
+
+        // * Need More Investigation for user is PIC for not this module
+
         limitation.isAdmin = false;
         limitation.access.picId = picKitchen[0].dataValues.id;
 
@@ -184,6 +188,13 @@ class AuthMiddleware {
         if (req.user.PIC) {
           const picTypes = await picTypeHelper().then((type) => [type.pic_transportation]);
           const picTransportation = req.user.PIC.filter((pic) => pic.typeId === picTypes[0]);
+
+          // * Need More Investigation for user is PIC for not this module
+          // if (!picTransportation.length) {
+          //   req.user.limitation = limitation;
+          //   next();
+          // }
+
           limitation.isAdmin = false;
           limitation.access.picId = picTransportation[0].dataValues.id;
 
@@ -222,6 +233,12 @@ class AuthMiddleware {
 
         const picTypes = await picTypeHelper().then((type) => [type.pic_event]);
         const picEvent = req.user.PIC.filter((pic) => pic.typeId === picTypes[0]);
+
+        if (!picEvent.length) {
+          req.user.limitation = limitation;
+          next();
+        }
+
         limitation.isAdmin = false;
         limitation.access.picId = picEvent[0].dataValues.id;
 
