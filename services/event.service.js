@@ -82,7 +82,7 @@ const validateEventInputs = async (form) => {
   const invalid400 = [];
   const invalid404 = [];
 
-  const picInstance = await USR_PIC.findByPk(picId);
+  const picInstance = await USR_PIC.findOne({ where: { id: picId } });
   if (!picInstance) {
     invalid404.push('PIC / User Data Not Found');
   }
