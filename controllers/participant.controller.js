@@ -17,6 +17,8 @@ const {
   createCommitteeViaImport,
   selectParticipantAllSchedules,
   searchParticipant,
+  selectAllNormalParticipants,
+  selectAllCommitteeParticipants,
 } = require('../services/participant.service');
 
 class Participant {
@@ -362,6 +364,42 @@ class Participant {
       const data = await selectParticipantAllSchedules(req.params.id, where);
       if (!data.success && data.code === 404) {
         return ResponseFormatter.error404(res, 'Data Not Found', data.message);
+      }
+
+      return ResponseFormatter.success200(res, data.message, data.content);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  static async getAllParticipants(req, res, next) {
+    try {
+      res.url = `${req.method} ${req.originalUrl}`;
+
+      // resrict data that is not an admin
+      const where = {};
+      if (!req.user.limitation.isAdmin) {
+        where.contingentId = req.user.limitation.access.contingentId;
+      }
+
+      const data = await selectAllNormalParticipants(where);
+      if (!data.success) {
+        return ResponseFormatter.error400(res, 'Bad Request', data.message);
+      }
+
+      return ResponseFormatter.success200(res, data.message, data.content);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  static async getAllCommittees(req, res, next) {
+    try {
+      res.url = `${req.method} ${req.originalUrl}`;
+
+      const data = await selectAllCommitteeParticipants();
+      if (!data.success) {
+        return ResponseFormatter.error400(res, 'Bad Request', data.message);
       }
 
       return ResponseFormatter.success200(res, data.message, data.content);

@@ -991,5 +991,9 @@
     {
         "moduleId":50,
         "name":"Delete FNB Schedule Menu"
+    },
+    {
+        "moduleId":19,
+        "name":"View Participant Committee"
     }
 ]
