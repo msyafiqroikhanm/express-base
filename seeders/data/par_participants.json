@@ -112,5 +112,27 @@
     "address": "RRWX+HR2, Superblok Mega,Jalan Kota Baru Bandar, Jl. Benyamin Suaeb No.Kav B6, South Gunung Sahari, Kemayoran, Central Jakarta City, Jakarta 10610",
     "identityTypeId": 1,
     "committeeTypeId": 2
+  },
+  {
+    "name": "Example PIC Event",
+    "gender": "Male",
+    "birthDate": "1999-01-01",
+    "identityNo": "31711323121232",
+    "phoneNbr": "6288540217411",
+    "email": "exam@ple.com",
+    "address": "Example of address",
+    "identityTypeId": 1,
+    "committeeTypeId": 5
+  },
+  {
+    "name": "Example Admin Event",
+    "gender": "Male",
+    "birthDate": "1999-01-01",
+    "identityNo": "317113147124",
+    "phoneNbr": "628852094724",
+    "email": "admin@event.com",
+    "address": "Example of address",
+    "identityTypeId": 1,
+    "committeeTypeId": 5
   }
 ]
