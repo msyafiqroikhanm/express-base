@@ -28,6 +28,9 @@ class RoomController {
         if (req.query.typeId) {
           where.typeId = req.query.typeId;
         }
+        if (req.query.bedId) {
+          where.bedId = req.query.bedId;
+        }
         if (req.query.statusId) {
           where.statusId = req.query.statusId;
         }
