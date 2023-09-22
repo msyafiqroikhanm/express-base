@@ -49,6 +49,16 @@ module.exports = {
       updatedAt: new Date(),
     }));
     await queryInterface.bulkInsert('ACM_Rooms', rooms);
+
+    //* ACM_RoomBedTypes
+    const acm_roombedtypes = JSON.parse(fs.readFileSync('./seeders/data/acm_roombedtypes.json'));
+    const bedtypes = acm_roombedtypes.map((element) => ({
+      locationId: element.locationId,
+      name: element.name,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    }));
+    await queryInterface.bulkInsert('ACM_RoomBedTypes', bedtypes);
   },
 
   async down(queryInterface, Sequelize) {
@@ -61,6 +71,10 @@ module.exports = {
       restartIdentity: true,
     });
     await queryInterface.bulkDelete('ACM_Rooms', null, {
+      truncate: true,
+      restartIdentity: true,
+    });
+    await queryInterface.bulkDelete('ACM_RoomBedTypes', null, {
       truncate: true,
       restartIdentity: true,
     });
