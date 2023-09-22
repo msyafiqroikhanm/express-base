@@ -7,6 +7,7 @@ const {
   selectLodger,
   updateLodger,
   deleteLodger,
+  selectAllParticipantLodger,
 } = require('../services/lodger.service');
 const { selectAllParticipant } = require('../services/participant.service');
 
@@ -32,12 +33,26 @@ class LodgerController {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
 
+      // const where = {};
+      // if (req.query?.contingentId) {
+      //   where.contingentId = req.query.contingentId;
+      // }
+      // if (req.query?.isComitee) {
+      //   where.contingentId = null;
+      // }
+
       const participantLodgers = await selectAllLodgers({});
       const participantLodgerIds = await participantLodgers.content.map(
         (element) => element.participantId,
       );
       const query = { id: { [Op.notIn]: participantLodgerIds } };
-      const data = await selectAllParticipant(query, {});
+      if (req.query?.contingentId) {
+        query.contingentId = req.query.contingentId;
+      }
+      if (req.query?.isComitee) {
+        query.contingentId = null;
+      }
+      const data = await selectAllParticipantLodger(query, {});
 
       return ResponseFormatter.success200(res, data.message, data.content);
     } catch (error) {
