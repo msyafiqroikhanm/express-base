@@ -367,4 +367,18 @@ router.get(
   ParticipantController.TransportationSchedule,
 );
 
+router.get(
+  '/:id/:file',
+  async (req, res, next) => {
+    Authentication.authenticate(
+      req,
+      res,
+      next,
+      await features().then((feature) => [feature.view_participant_document]),
+    );
+  },
+  Authentication.participant,
+  ParticipantController.getSecretFile,
+);
+
 module.exports = router;
