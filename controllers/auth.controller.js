@@ -13,7 +13,6 @@ class AuthController {
         username: req.body.user,
       });
 
-      // console.log(JSON.stringify(user, null, 2));
       if (!user) {
         return ResponseFormatter.error401(res, 'Invalid user or password');
       }
@@ -30,7 +29,6 @@ class AuthController {
 
       await updateUserLogin({ id: user.id }, { lastLogin: new Date() });
       const message = 'Berhasil Login';
-      console.log(JSON.stringify(user, null, 2));
       return ResponseFormatter.success200(res, message, {
         id: user.id,
         name: user.participant.name,
