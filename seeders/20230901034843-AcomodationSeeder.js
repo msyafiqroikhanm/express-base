@@ -40,6 +40,7 @@ module.exports = {
     const rooms = acm_rooms.map((element) => ({
       locationId: element.locationId,
       typeId: element.typeId,
+      bedId: element.bedId,
       statusId: element.statusId,
       name: element.name,
       floor: element.floor,

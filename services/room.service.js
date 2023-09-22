@@ -4,6 +4,7 @@ const {
   REF_RoomType,
   REF_RoomStatus,
   ACM_ParticipantLodger,
+  ACM_RoomBedType,
 } = require('../models');
 
 const selectAllRooms = async (where) => {
@@ -18,6 +19,11 @@ const selectAllRooms = async (where) => {
       {
         model: REF_RoomType,
         as: 'type',
+        attributes: ['id', 'name'],
+      },
+      {
+        model: ACM_RoomBedType,
+        as: 'bed',
         attributes: ['id', 'name'],
       },
       {
@@ -47,6 +53,11 @@ const selectRoom = async (where) => {
       {
         model: REF_RoomType,
         as: 'type',
+        attributes: ['id', 'name'],
+      },
+      {
+        model: ACM_RoomBedType,
+        as: 'bed',
         attributes: ['id', 'name'],
       },
       {
@@ -105,7 +116,19 @@ const updateRoom = async (where, form) => {
     }
     if (locationInstance) {
       if (typeInstance.locationId !== locationInstance.id) {
-        errorMessages.push('Prohibited To Create Room For Other Location');
+        errorMessages.push('Prohibited To Fill Room Type For Other Location');
+      }
+    }
+  }
+
+  if (form.bedId) {
+    const bedInstance = await ACM_RoomBedType.findByPk(form.typeId);
+    if (!bedInstance) {
+      errorMessages.push('Bed Type Data Not Found');
+    }
+    if (locationInstance && bedInstance) {
+      if (bedInstance.locationId !== locationInstance.id) {
+        errorMessages.push('Prohibited To Fill Bed Type From Other Location');
       }
     }
   }
@@ -178,7 +201,17 @@ const validateRoomInputs = async (form, where) => {
   }
   if (locationInstance && typeInstance) {
     if (typeInstance.locationId !== locationInstance.id) {
-      errorMessages.push('Prohibited To Create Room For Other Location');
+      errorMessages.push('Prohibited To Fill Room Type From Other Location');
+    }
+  }
+
+  const bedInstance = await ACM_RoomBedType.findByPk(form.typeId);
+  if (!bedInstance) {
+    errorMessages.push('Bed Type Data Not Found');
+  }
+  if (locationInstance && bedInstance) {
+    if (bedInstance.locationId !== locationInstance.id) {
+      errorMessages.push('Prohibited To Fill Bed Type From Other Location');
     }
   }
 
@@ -196,6 +229,7 @@ const validateRoomInputs = async (form, where) => {
     form: {
       locationId: form.locationId,
       typeId: form.typeId,
+      bedId: form.bedId,
       statusId: 1,
       name: form.name,
       floor: form.floor,
