@@ -20,6 +20,7 @@ const {
   selectAllNormalParticipants,
   selectAllCommitteeParticipants,
 } = require('../services/participant.service');
+const { deleteFiles } = require('../helpers/deleteMultipleFile.helper');
 
 class Participant {
   static async getAll(req, res, next) {
@@ -106,39 +107,43 @@ class Participant {
         where.id = req.user.limitation.access.contingentId;
       }
 
-      const inputs = await validateParticipantInputs(req.body, req.file, null, where);
+      const inputs = await validateParticipantInputs(req.body, req.files, null, where);
       if (!inputs.isValid && inputs.code === 404) {
-        // Delete uploaded file when error happens
-        if (req.file) {
-          await deleteFile(relative(__dirname, req.file.path));
+        // Delete uploaded files when error happens
+        if (Object.keys(req.files).length > 0) {
+          await deleteFiles(Object.values(req.files));
         }
         return ResponseFormatter.error404(res, 'Data Not Found', inputs.message);
       }
       if (!inputs.isValid && inputs.code === 401) {
-        // Delete uploaded file when error happens
-        if (req.file) {
-          await deleteFile(relative(__dirname, req.file.path));
+        // Delete uploaded files when error happens
+        if (Object.keys(req.files).length > 0) {
+          await deleteFiles(Object.values(req.files));
         }
         return ResponseFormatter.error401(res, 'Unauthorized Request', inputs.message);
       }
       if (!inputs.isValid && inputs.code === 400) {
-        // Delete uploaded file when error happens
-        if (req.file) {
-          await deleteFile(relative(__dirname, req.file.path));
+        // Delete uploaded files when error happens
+        if (Object.keys(req.files).length > 0) {
+          await deleteFiles(Object.values(req.files));
         }
         return ResponseFormatter.error400(res, 'Bad Request', inputs.message);
       }
 
       const data = await createParticipant(inputs.form);
       if (!data.success) {
-        return ResponseFormatter.error400(res, 'Bad Request', data.content);
+        // Delete uploaded files when error happens
+        if (Object.keys(req.files).length > 0) {
+          await deleteFiles(Object.values(req.files));
+        }
+        return ResponseFormatter.error400(res, 'Bad Request', data.message);
       }
 
       return ResponseFormatter.success201(res, data.message, data.content);
     } catch (error) {
-      // Delete uploaded file when error happens
-      if (req.file) {
-        await deleteFile(relative(__dirname, req.file.path));
+      // Delete uploaded files when error happens
+      if (Object.keys(req.files).length > 0) {
+        await deleteFiles(Object.values(req.files));
       }
       next(error);
     }
@@ -181,36 +186,36 @@ class Participant {
         where.id = req.user.limitation.access.contingentId;
       }
 
-      const inputs = await validateParticipantInputs(req.body, req.file, req.params.id, where);
+      const inputs = await validateParticipantInputs(req.body, req.files, req.params.id, where);
       if (!inputs.isValid && inputs.code === 404) {
-        // Delete uploaded file when error happens
-        if (req.file) {
-          await deleteFile(relative(__dirname, req.file.path));
+        // Delete uploaded files when error happens
+        if (Object.keys(req.files).length > 0) {
+          await deleteFiles(Object.values(req.files));
         }
         return ResponseFormatter.error404(res, 'Data Not Found', inputs.message);
       }
       if (!inputs.isValid && inputs.code === 400) {
-        // Delete uploaded file when error happens
-        if (req.file) {
-          await deleteFile(relative(__dirname, req.file.path));
+        // Delete uploaded files when error happens
+        if (Object.keys(req.files).length > 0) {
+          await deleteFiles(Object.values(req.files));
         }
         return ResponseFormatter.error400(res, 'Bad Request', inputs.message);
       }
 
       const data = await updateParticipant(req.params.id, inputs.form, where);
       if (!data.success && data.code === 404) {
-        // Delete uploaded file when error happens
-        if (req.file) {
-          await deleteFile(relative(__dirname, req.file.path));
+        // Delete uploaded files when error happens
+        if (Object.keys(req.files).length > 0) {
+          await deleteFiles(Object.values(req.files));
         }
         return ResponseFormatter.error404(res, 'Data Not Found', data.message);
       }
 
       return ResponseFormatter.success200(res, data.message, data.content);
     } catch (error) {
-      // Delete uploaded file when error happens
-      if (req.file) {
-        await deleteFile(relative(__dirname, req.file.path));
+      // Delete uploaded files when error happens
+      if (Object.keys(req.files).length > 0) {
+        await deleteFiles(Object.values(req.files));
       }
       next(error);
     }

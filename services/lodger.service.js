@@ -12,6 +12,7 @@ const {
   REF_RoomType,
   REF_RoomStatus,
   REF_LocationType,
+  ACM_RoomBedType,
   sequelize,
 } = require('../models');
 
@@ -41,6 +42,11 @@ const selectAllLodgers = async (where) => {
             model: REF_RoomType,
             as: 'type',
             attributes: { exclude: ['createdAt', 'updatedAt'] },
+          },
+          {
+            model: ACM_RoomBedType,
+            as: 'bed',
+            attributes: ['id', 'name'],
           },
           {
             model: REF_RoomStatus,
@@ -111,6 +117,11 @@ const selectLodger = async (id, where) => {
                 attributes: { exclude: ['createdAt', 'updatedAt'] },
               },
             ],
+          },
+          {
+            model: ACM_RoomBedType,
+            as: 'bed',
+            attributes: ['id', 'name'],
           },
           {
             model: REF_RoomType,

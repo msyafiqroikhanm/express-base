@@ -148,6 +148,55 @@ const combineStorage = multer.diskStorage({
   },
 });
 
+const participantStorage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    const fieldname = splitFieldname(file.fieldname);
+    target = fieldname.targetName.toLowerCase();
+
+    if (file.fieldname === 'participantImage') {
+      const ext = path.extname(file.originalname);
+      if (['.jpeg', '.png', '.jpg'].includes(ext)) {
+        folder = 'image';
+      } else if (['.mp4', '.3gp'].includes(ext)) {
+        folder = 'video';
+      } else if (['.pdf', '.docx', '.xlsx', '.csv'].includes(ext)) {
+        folder = 'document';
+      }
+
+      if (target) {
+        dirPath = path.join(__dirname, `../public/${folder}s/${target}s`);
+      } else {
+        dirPath = path.join(__dirname, '../public/');
+      }
+    } else {
+      const ext = path.extname(file.originalname);
+      if (['.jpeg', '.png', '.jpg'].includes(ext)) {
+        folder = 'image';
+      } else if (['.pdf', '.docx'].includes(ext)) {
+        folder = 'document';
+      }
+
+      if (target) {
+        dirPath = path.join(__dirname, `../private/${folder}s/${target}s`);
+      } else {
+        dirPath = path.join(__dirname, '../private/');
+      }
+    }
+    if (!fs.existsSync(dirPath)) {
+      fs.mkdirSync(dirPath, { recursive: true });
+    }
+
+    cb(null, dirPath);
+  },
+  filename: (req, file, cb) => {
+    if (target) {
+      cb(null, `${target}-${Date.now()}${path.extname(file.originalname).toLowerCase()}`);
+    } else {
+      cb(null, `${Date.now()}${path.extname(file.originalname).toLowerCase()}`);
+    }
+  },
+});
+
 const memoryStorage = multer.memoryStorage();
 
 const uploadImage = multer({
@@ -170,6 +219,11 @@ const uploadCombine = multer({
   limits: { fileSize: 500000000 },
 });
 
+const uploadParticipant = multer({
+  storage: participantStorage,
+  limits: { fieldSize: 50000000 },
+});
+
 const uploadWithMemory = multer({ memoryStorage });
 
 module.exports = {
@@ -179,4 +233,5 @@ module.exports = {
   uploadVideo,
   uploadCombine,
   uploadWithMemory,
+  uploadParticipant,
 };

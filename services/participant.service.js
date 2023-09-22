@@ -25,6 +25,7 @@ const {
   REF_RoomType,
   ENV_Event,
   REF_EventCategory,
+  SYS_Configuration,
 } = require('../models');
 const { createQR } = require('./qr.service');
 const deleteFile = require('../helpers/deleteFile.helper');
@@ -340,7 +341,7 @@ const searchParticipant = async (where) => {
   };
 };
 
-const validateParticipantInputs = async (form, file, id, where) => {
+const validateParticipantInputs = async (form, files, id, where) => {
   const {
     contingentId,
     typeId,
@@ -384,19 +385,47 @@ const validateParticipantInputs = async (form, file, id, where) => {
   }
 
   let filePath = null;
-  if (file) {
-    if (!['png', 'jpeg', 'jpg'].includes(file.originalname.split('.')[1])) {
-      invalid400.push('Upload only supports file types [png, jpeg, and jpg]');
-    }
+  let identityFilePath = null;
+  let baptismFilePath = null;
+  let referenceFilePath = null;
+  Object.values(files).forEach(async (file) => {
+    if (file[0].fieldname === 'participantImage') {
+      if (!['png', 'jpeg', 'jpg'].includes(file[0].originalname.split('.')[1])) {
+        invalid400.push('Upload only supports file types [png, jpeg, and jpg]');
+      }
 
-    const imageBuffer = await fs.readFile(file.path);
-    const maxSizeInByte = 2000000;
-    if (imageBuffer.length > maxSizeInByte) {
-      invalid400.push('The file size exceeds the maximum size limit of 2 Megabyte');
-    }
+      const maxSizeInByte = 3000000;
+      if (file[0].size > maxSizeInByte) {
+        invalid400.push('The file size exceeds the maximum size limit of 3 Megabyte');
+      }
 
-    filePath = `public/images/participants/${file.filename}`;
-  }
+      filePath = `public/images/participants/${file[0].filename}`;
+    } else {
+      if (!['png', 'jpeg', 'jpg', 'pdf', 'docx'].includes(file[0].originalname.split('.')[1])) {
+        invalid400.push('Upload only supports file types [png, jpeg, and jpg]');
+      }
+
+      let format = 'images';
+      if (['pdf', 'docx'].includes(file[0].originalname.split('.')[1])) {
+        format = 'documents';
+      }
+
+      const maxSizeInByte = 3000000;
+      if (file[0].size > maxSizeInByte) {
+        invalid400.push('The file size exceeds the maximum size limit of 3 Megabyte');
+      }
+
+      if (file[0].fieldname === 'identityFile') {
+        identityFilePath = `private/${format}/identitys/${file[0].filename}`;
+      }
+      if (file[0].fieldname === 'baptismFile') {
+        baptismFilePath = `private/${format}/baptisms/${file[0].filename}`;
+      }
+      if (file[0].fieldname === 'referenceFile') {
+        referenceFilePath = `private/${format}/references/${file[0].filename}`;
+      }
+    }
+  });
 
   if (id) {
     // check identity number duplicate
@@ -480,11 +509,28 @@ const validateParticipantInputs = async (form, file, id, where) => {
       email,
       address,
       file: filePath,
+      identityFile: identityFilePath,
+      baptismFile: baptismFilePath,
+      referenceFile: referenceFilePath,
     },
   };
 };
 
 const createParticipant = async (form) => {
+  // check maximum contingent participant
+  const contingentLimit = await SYS_Configuration.findOne({ where: { name: 'Contingent Limit' }, attributes: ['value'] });
+  const contingentInstance = await PAR_Contingent.findOne({
+    where: { id: form.contingent?.id },
+    include: { model: PAR_Participant, attributes: ['id'], as: 'participants' },
+  });
+  if (contingentInstance.participants.length >= Number(contingentLimit.value)) {
+    return {
+      success: false,
+      code: 404,
+      message: `Contingent Reach It's Maximum Of ${Number(contingentLimit.value)} Participants`,
+    };
+  }
+
   // Qr setup for participant
   const templateInstance = await QRM_QRTemplate.findOne({
     where: { name: { [Op.like]: '%participant%' } },
@@ -511,6 +557,9 @@ const createParticipant = async (form) => {
     email: form.email,
     address: form.address,
     file: form.file,
+    identityFile: form.identityFile,
+    baptismFile: form.baptismFile,
+    referenceFile: form.referenceFile,
   });
 
   return {
@@ -539,7 +588,20 @@ const updateParticipant = async (id, form, where) => {
 
   // delete old file when user want to change it
   if (form.file && participantInstance.file) {
+    console.log('deleting photo participant');
     await deleteFile(relative(__dirname, participantInstance.file));
+  }
+  if (form.identityFile && participantInstance.identityFile) {
+    console.log('deleting identity participant');
+    await deleteFile(relative(__dirname, participantInstance.identityFile));
+  }
+  if (form.baptismFile && participantInstance.baptismFile) {
+    console.log('deleting baptism participant');
+    await deleteFile(relative(__dirname, participantInstance.baptismFile));
+  }
+  if (form.referenceFile && participantInstance.referenceFile) {
+    console.log('deleting reference participant');
+    await deleteFile(relative(__dirname, participantInstance.referenceFile));
   }
 
   participantInstance.contingetId = form.contingent?.id || null;
@@ -553,6 +615,9 @@ const updateParticipant = async (id, form, where) => {
   participantInstance.email = form.email;
   participantInstance.address = form.address;
   participantInstance.file = form.file || participantInstance.file;
+  participantInstance.identityFile = form.identityFile || participantInstance.identityFile;
+  participantInstance.baptismFile = form.baptismFile || participantInstance.baptismFile;
+  participantInstance.referenceFile = form.referenceFile || participantInstance.referenceFile;
   await participantInstance.save();
 
   return {
