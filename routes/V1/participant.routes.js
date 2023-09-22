@@ -1,6 +1,6 @@
 const router = require('express').Router();
 const { check } = require('express-validator');
-const { uploadDocument, uploadImage } = require('../../services/multerStorage.service');
+const { uploadDocument, uploadImage, uploadParticipant } = require('../../services/multerStorage.service');
 const features = require('../../helpers/features.helper');
 const ParticipantController = require('../../controllers/participant.controller');
 const ValidateMiddleware = require('../../middlewares/validate.middleware');
@@ -144,7 +144,24 @@ router.post(
       await features().then((feature) => [feature.create_participant]),
     );
   },
-  uploadImage.single('participantImage'),
+  uploadParticipant.fields([
+    {
+      name: 'participantImage',
+      maxCount: 1,
+    },
+    {
+      name: 'identityFile',
+      maxCount: 1,
+    },
+    {
+      name: 'baptismFile',
+      maxCount: 1,
+    },
+    {
+      name: 'referenceFile',
+      maxCount: 1,
+    },
+  ]),
   [
     check('contingentId', "Contingent Id attribute can't be empty").notEmpty(),
     check('typeId', "Type Id attribute can't be empty").notEmpty(),
@@ -157,7 +174,14 @@ router.post(
     check('email', "Email attribute can't be empty").isEmail(),
     check('address', "Address attribute can't be empty").notEmpty(),
   ],
-  ValidateMiddleware.result,
+  async (req, res, next) => {
+    ValidateMiddleware.resultWithMultipleMandatoryFile(
+      req,
+      res,
+      next,
+      ['baptismFile', 'identityFile', 'participantImage', 'referenceFile'],
+    );
+  },
   Authentication.participant,
   ParticipantController.create,
 );
@@ -188,7 +212,24 @@ router.put(
       await features().then((feature) => [feature.update_participant]),
     );
   },
-  uploadImage.single('participantImage'),
+  uploadParticipant.fields([
+    {
+      name: 'participantImage',
+      maxCount: 1,
+    },
+    {
+      name: 'identityFile',
+      maxCount: 1,
+    },
+    {
+      name: 'baptismFile',
+      maxCount: 1,
+    },
+    {
+      name: 'referenceFile',
+      maxCount: 1,
+    },
+  ]),
   [
     check('contingentId', "Contingent Id attribute can't be empty").notEmpty(),
     check('typeId', "Type Id attribute can't be empty").notEmpty(),

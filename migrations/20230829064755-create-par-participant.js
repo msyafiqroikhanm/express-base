@@ -54,6 +54,15 @@ module.exports = {
         file: {
           type: Sequelize.STRING,
         },
+        identityFile: {
+          type: Sequelize.STRING,
+        },
+        baptismFile: {
+          type: Sequelize.STRING,
+        },
+        referenceFile: {
+          type: Sequelize.STRING,
+        },
         deletedAt: {
           type: Sequelize.DATE,
         },

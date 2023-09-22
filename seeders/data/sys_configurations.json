@@ -43,5 +43,10 @@
     "categoryId": 3,
     "name": "Whatsapp Menu Keyword",
     "value": "Main Menu"
+  },
+  {
+    "categoryId": 1,
+    "name": "Contingent Limit",
+    "value": "250"
   }
 ]
