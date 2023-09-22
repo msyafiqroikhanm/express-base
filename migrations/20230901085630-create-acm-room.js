@@ -20,6 +20,9 @@ module.exports = {
         typeId: {
           type: Sequelize.INTEGER,
         },
+        bedId: {
+          type: Sequelize.INTEGER,
+        },
         statusId: {
           type: Sequelize.INTEGER,
         },
