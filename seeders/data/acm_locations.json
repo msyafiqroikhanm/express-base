@@ -45,7 +45,7 @@
     "address": "Jl. Pluit Selatan Raya No. 1, Pluit, Jakarta Utara, Indonesia",
     "phoneNbr": "+62 21 6660 2828",
     "latitude": "-6.116448",
-    "longitude": "106.792721"
+    "longtitude": "106.792721"
   },
   {
     "parentLocationId": null,
@@ -57,7 +57,7 @@
     "address": "Jl. Bunga Raya No. 27, Ancol, Jakarta Utara, Indonesia",
     "phoneNbr": "+62 21 29578888",
     "latitude": "-6.123271",
-    "longitude": "106.834988"
+    "longtitude": "106.834988"
   },
   {
     "parentLocationId": null,
@@ -69,7 +69,7 @@
     "address": "Jl. Mangga Dua Abad No. 111, Jakarta Utara, Indonesia",
     "phoneNbr": "+62 21 6122999",
     "latitude": "-6.139241",
-    "longitude": "106.832604"
+    "longtitude": "106.832604"
   },
   {
     "parentLocationId": null,
@@ -81,7 +81,7 @@
     "address": "Jl. Mangga Dua Raya No. 1, Jakarta Utara, Indonesia",
     "phoneNbr": "+62 21 6128888",
     "latitude": "-6.136663",
-    "longitude": "106.835461"
+    "longtitude": "106.835461"
   },
   {
     "parentLocationId": null,
@@ -93,7 +93,7 @@
     "address": "Jl. Gajah Mada No. 188, Jakarta Pusat, Indonesia",
     "phoneNbr": "+62 21 29367777",
     "latitude": "-6.156224",
-    "longitude": "106.821116"
+    "longtitude": "106.821116"
   },
   {
     "parentLocationId": null,
@@ -105,7 +105,7 @@
     "address": "Jl. Gajah Mada No. 100, Jakarta Pusat, Indonesia",
     "phoneNbr": "+62 21 63850000",
     "latitude": "-6.158652",
-    "longitude": "106.817582"
+    "longtitude": "106.817582"
   },
   {
     "parentLocationId": null,
@@ -117,7 +117,7 @@
     "address": "Jl. Hayam Wuruk No. 6, Jakarta Pusat, Indonesia",
     "phoneNbr": "+62 21 29268888",
     "latitude": "-6.158188",
-    "longitude": "106.820226"
+    "longtitude": "106.820226"
   },
   {
     "parentLocationId": null,
@@ -129,7 +129,7 @@
     "address": "Jl. Hayam Wuruk No. 6, Jakarta Pusat, Indonesia",
     "phoneNbr": "+62 21 22030000",
     "latitude": "-6.158188",
-    "longitude": "106.820226"
+    "longtitude": "106.820226"
   },
   {
     "parentLocationId": null,
@@ -141,7 +141,7 @@
     "address": "Jl. Benyamin Suaeb Blok A5 Kemayoran, Jakarta, Indonesia",
     "phoneNbr": "+62 21 2266 9999",
     "latitude": "-6.148518",
-    "longitude": "106.843588"
+    "longtitude": "106.843588"
   },
   {
     "parentLocationId": null,
@@ -153,7 +153,7 @@
     "address": "Jl. HBR Motik No. 3-5, Kemayoran, Jakarta, Indonesia",
     "phoneNbr": "+62 21 2956 8800",
     "latitude": "-6.148826",
-    "longitude": "106.841957"
+    "longtitude": "106.841957"
   },
   {
     "parentLocationId": null,
@@ -165,7 +165,7 @@
     "address": "Jl. Benyamin Suaeb Blok A No. 6, Kemayoran, Jakarta, Indonesia",
     "phoneNbr": "+62 21 2260 6888",
     "latitude": "-6.149487",
-    "longitude": "106.841783"
+    "longtitude": "106.841783"
   },
   {
     "parentLocationId": null,
@@ -177,7 +177,7 @@
     "address": "Jl. HBR Motik No. 3-5, Kemayoran, Jakarta, Indonesia",
     "phoneNbr": "+62 21 2260 0888",
     "latitude": "-6.148731",
-    "longitude": "106.842098"
+    "longtitude": "106.842098"
   },
   {
     "parentLocationId": null,
@@ -189,7 +189,7 @@
     "address": "Jl. Raya Bukit Gading Raya No. 18, Kelapa Gading, Jakarta, Indonesia",
     "phoneNbr": "+62 21 4586 8888",
     "latitude": "-6.151750",
-    "longitude": "106.912647"
+    "longtitude": "106.912647"
   },
   {
     "parentLocationId": null,
@@ -201,6 +201,6 @@
     "address": "Jl. Yos Sudarso Kav. 87 Sunter, Jakarta, Indonesia",
     "phoneNbr": "+62 21 2907 1888",
     "latitude": "-6.129559",
-    "longitude": "106.875944"
+    "longtitude": "106.875944"
   }
 ]
