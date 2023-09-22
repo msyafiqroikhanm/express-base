@@ -96,7 +96,7 @@ const selectGroup = async (id, where) => {
 
 const validateGroupInputs = async (form, limitation = null) => {
   const {
-    eventId, contingentId, statusId, name,
+    eventId, contingentId, name,
   } = form;
 
   const invalid400 = [];
@@ -119,7 +119,9 @@ const validateGroupInputs = async (form, limitation = null) => {
     };
   }
 
-  const statusInstance = await REF_GroupStatus.findByPk(statusId);
+  const statusInstance = await REF_GroupStatus.findOne({
+    where: { name: { [Op.in]: ['Active', 'active', 'Live'] } },
+  });
   if (!statusInstance) {
     invalid404.push('Status Data Not Found');
   }
@@ -177,7 +179,7 @@ const createGroup = async (form) => {
 
 const updateGroup = async (id, form, where) => {
   const {
-    event, contingent, status, name, participants,
+    event, contingent, name, participants,
   } = form;
 
   let groupInstance;
@@ -196,7 +198,6 @@ const updateGroup = async (id, form, where) => {
 
   groupInstance.eventId = event.id;
   groupInstance.contingentId = contingent.id;
-  groupInstance.ststatusId = status.id;
   groupInstance.name = name;
   await groupInstance.save();
 

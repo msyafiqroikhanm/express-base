@@ -1043,6 +1043,68 @@ const selectParticipantAllSchedules = async (id, where) => {
   };
 };
 
+const selectAllNormalParticipants = async (where = {}) => {
+  const participants = await PAR_Participant.findAll({
+    where: { contingentId: { [Op.ne]: null } },
+    include: [
+      {
+        model: PAR_Contingent,
+        as: 'contingent',
+        where: where.contingentId ? { id: where.contingentId } : null,
+        attributes: ['name'],
+        include: { model: REF_Region, as: 'region', attributes: ['name'] },
+      },
+      { model: QRM_QR, as: 'qr' },
+      { model: REF_IdentityType, attributes: ['name'], as: 'identityType' },
+      { model: REF_ParticipantType, attributes: ['name'], as: 'participantType' },
+      {
+        model: PAR_Group,
+        as: 'groups',
+        attributes: { exclude: ['createdAt', 'updatedAt', 'deletedAt'] },
+        through: { attributes: [] },
+      },
+    ],
+  });
+
+  // parsed retun data
+  participants.forEach((participant) => {
+    if (participant.contingent) {
+      participant.contingent.dataValues.region = participant.contingent.region?.dataValues.name;
+    }
+    participant.dataValues.identityType = participant.identityType?.dataValues.name;
+    participant.dataValues.participantType = participant.participantType?.dataValues.name;
+  });
+
+  return {
+    success: true,
+    message: 'Successfully Getting All Participant',
+    content: participants,
+  };
+};
+
+const selectAllCommitteeParticipants = async () => {
+  const committees = await PAR_Participant.findAll({
+    where: { contingentId: null },
+    include: [
+      { model: QRM_QR, as: 'qr' },
+      { model: REF_IdentityType, attributes: ['name'], as: 'identityType' },
+      { model: REF_CommitteeType, as: 'committeeType', attributes: ['name'] },
+    ],
+  });
+
+  // parsed retun data
+  committees.forEach((committee) => {
+    committee.dataValues.identityType = committee.identityType?.dataValues.name;
+    committee.dataValues.committeeType = committee.committeeType?.dataValues.name;
+  });
+
+  return {
+    success: true,
+    message: 'Successfully Getting All Participant',
+    content: committees,
+  };
+};
+
 module.exports = {
   selectAllParticipant,
   selectParticipant,
@@ -1058,4 +1120,6 @@ module.exports = {
   updateCommittee,
   createCommitteeViaImport,
   selectParticipantAllSchedules,
+  selectAllNormalParticipants,
+  selectAllCommitteeParticipants,
 };

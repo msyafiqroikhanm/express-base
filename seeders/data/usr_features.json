@@ -991,5 +991,25 @@
     {
         "moduleId":50,
         "name":"Delete FNB Schedule Menu"
+    },
+    {
+        "moduleId":19,
+        "name":"View Participant Committee"
+    },
+    {
+        "moduleId":62,
+        "name":"View Bed Type"
+    },
+    {
+        "moduleId":62,
+        "name":"Create Bed Type"
+    },
+    {
+        "moduleId":62,
+        "name":"Update Bed Type"
+    },
+    {
+        "moduleId":62,
+        "name":"Delete Bed Type"
     }
 ]

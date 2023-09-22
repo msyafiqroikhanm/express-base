@@ -1,0 +1,12 @@
+[
+    {"locationId": 4, "name": "Single Bed"},
+    {"locationId": 4, "name": "Double Bed"},
+    {"locationId": 4, "name": "Queen Bed"},
+    {"locationId": 4, "name": "King Bed"},
+    {"locationId": 4, "name": "Twin Bed"},
+    {"locationId": 4, "name": "Sofa Bed"},
+    {"locationId": 4, "name": "Bunk Bed"},
+    {"locationId": 4, "name": "Trundle Bed"},
+    {"locationId": 4, "name": "Futon"},
+    {"locationId": 4, "name": "Murphy Bed"}
+]

@@ -69,6 +69,44 @@ router.get(
 );
 
 router.get(
+  '/normal',
+  async (req, res, next) => {
+    Authentication.authenticate(
+      req,
+      res,
+      next,
+      await features().then((feature) => [
+        feature.view_participant,
+        feature.create_participant,
+        feature.update_participant,
+        feature.delete_participant,
+        feature.track_participant,
+      ]),
+    );
+  },
+  Authentication.participant,
+  ParticipantController.getAllParticipants,
+);
+
+router.get(
+  '/committee',
+  async (req, res, next) => {
+    Authentication.authenticate(
+      req,
+      res,
+      next,
+      await features().then((feature) => [
+        feature.view_participant_committee,
+        feature.create_participant_committee,
+        feature.update_participant_committee,
+      ]),
+    );
+  },
+  Authentication.participant,
+  ParticipantController.getAllCommittees,
+);
+
+router.get(
   '/:id',
   async (req, res, next) => {
     Authentication.authenticate(

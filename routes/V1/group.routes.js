@@ -57,8 +57,6 @@ router.post(
   [
     check('eventId', 'Event Id attribute can\'t be empty').notEmpty(),
     check('contingentId', 'Contingent Id attribute can\'t be empty').notEmpty(),
-    check('statusId', 'Status Id attribute can\'t be empty').notEmpty(),
-    check('name', 'Name attribute can\'t be empty').notEmpty(),
     check('participants', 'Participants attribute can\'t be empty').isArray(),
   ],
   ValidateMiddleware.result,
@@ -81,8 +79,6 @@ router.put(
   [
     check('eventId', 'Event Id attribute can\'t be empty').notEmpty(),
     check('contingentId', 'Contingent Id attribute can\'t be empty').notEmpty(),
-    check('statusId', 'Status Id attribute can\'t be empty').notEmpty(),
-    check('name', 'Name attribute can\'t be empty').notEmpty(),
     check('participants', 'Participants attribute can\'t be empty').isArray(),
   ],
   ValidateMiddleware.result,

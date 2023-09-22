@@ -69,3 +69,4 @@ sequelize model:generate --name FNB_KitchenTarget --attributes menuId:integer,ki
 sequelize model:generate --name FNB_ScheduleMenu --attributes scheduleId:integer,menuId:integer,quantity:integer
 sequelize model:generate --name FNB_Schedule --attributes picLocationId:integer,picKitchenId:integer,qrId:integer,locationId:integer,kitchenId:integer,statusId:integer,courierId:integer,name:string,pickUpTime:date,dropOfTime:date,vehiclePlateNo:string
 sequelize model:generate --name REF_CommitteeType --attributes name:string
+sequelize model:generate --name ACM_RoomBedType --attributes locationId:integer,name:string,deletedAt:date
