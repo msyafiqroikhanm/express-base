@@ -1011,5 +1011,9 @@
     {
         "moduleId":62,
         "name":"Delete Bed Type"
+    },
+    {
+        "moduleId":19,
+        "name":"View Participant Document"
     }
 ]

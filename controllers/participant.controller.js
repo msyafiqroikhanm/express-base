@@ -19,6 +19,7 @@ const {
   searchParticipant,
   selectAllNormalParticipants,
   selectAllCommitteeParticipants,
+  downloadParticipantSecretFile,
 } = require('../services/participant.service');
 const { deleteFiles } = require('../helpers/deleteMultipleFile.helper');
 
@@ -408,6 +409,29 @@ class Participant {
       }
 
       return ResponseFormatter.success200(res, data.message, data.content);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  static async getSecretFile(req, res, next) {
+    try {
+      // resrict data that is not an admin
+      const where = {};
+      if (!req.user?.limitation.isAdmin) {
+        where.contingentId = req.user.limitation.access.contingentId;
+      }
+
+      const data = await downloadParticipantSecretFile(req.params.id, req.params.file, where);
+      if (!data.success && data.code === 400) {
+        return ResponseFormatter.error400(res, 'Bad Request', data.message);
+      }
+      if (!data.success && data.code === 404) {
+        return ResponseFormatter.error404(res, 'Data Not Found', data.message);
+      }
+
+      res.setHeader('Content-Disposition', `attachment; filename="${data.filename}"`);
+      return res.end(data.content);
     } catch (error) {
       next(error);
     }

@@ -1,6 +1,7 @@
 /* eslint-disable no-param-reassign */
 const fs = require('fs/promises');
-const { relative } = require('path');
+const fsn = require('fs');
+const { relative, join } = require('path');
 const { Op } = require('sequelize');
 const XLSX = require('xlsx');
 const {
@@ -1170,6 +1171,46 @@ const selectAllCommitteeParticipants = async () => {
   };
 };
 
+const downloadParticipantSecretFile = async (id, file, where) => {
+  const participantInstance = await PAR_Participant.findOne({
+    where: where.contingentId ? { id, contingentId: where.contingentId } : { id },
+    attributes: { exclude: ['qrId', 'typeId', 'identityId', 'committeeTypeId', 'name', 'gender', 'birthDate', 'identityNo', 'phoneNbr', 'email', 'address', 'createdAt', 'updatedAt', 'deletedAt'] },
+  });
+  if (!participantInstance) {
+    return {
+      success: false,
+      code: 404,
+      message: 'Participant Data Not Found',
+    };
+  }
+  if (!Object.keys(participantInstance.dataValues).includes(file)) {
+    return {
+      success: false,
+      code: 400,
+      message: `File ${file} Doesn't Exist`,
+    };
+  }
+
+  const filePath = join(__dirname, '../', participantInstance[file]);
+
+  if (!fsn.existsSync(filePath)) {
+    return {
+      success: false,
+      code: 400,
+      message: `File ${file} Doesn't Exist`,
+    };
+  }
+
+  const filename = participantInstance[file].split('/').pop();
+  const fileContent = await fs.readFile(filePath);
+
+  return {
+    success: true,
+    filename,
+    content: fileContent,
+  };
+};
+
 module.exports = {
   selectAllParticipant,
   selectParticipant,
@@ -1187,4 +1228,5 @@ module.exports = {
   selectParticipantAllSchedules,
   selectAllNormalParticipants,
   selectAllCommitteeParticipants,
+  downloadParticipantSecretFile,
 };

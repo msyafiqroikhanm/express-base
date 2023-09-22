@@ -1,3 +1,4 @@
+/* eslint-disable no-param-reassign */
 const lodgerHelper = require('../helpers/lodgerStatus.helper');
 const {
   REF_IdentityType,
@@ -14,6 +15,9 @@ const {
   REF_LocationType,
   ACM_RoomBedType,
   sequelize,
+  QRM_QR,
+  PAR_Group,
+  REF_CommitteeType,
 } = require('../models');
 
 const selectAllLodgers = async (where) => {
@@ -94,6 +98,37 @@ const selectAllLodgers = async (where) => {
     success: true,
     message: 'Successfully Getting All Lodger',
     content: lodgerInstance,
+  };
+};
+
+const selectAllParticipantLodger = async (query, where) => {
+  const participants = await PAR_Participant.findAll({
+    where: query,
+    include: [
+      {
+        model: PAR_Contingent,
+        where: Object.keys(where).length > 0 ? where : null,
+        as: 'contingent',
+        attributes: ['name'],
+        include: { model: REF_Region, as: 'region', attributes: ['name'] },
+      },
+      { model: QRM_QR, as: 'qr' },
+      { model: REF_IdentityType, attributes: ['name'], as: 'identityType' },
+      { model: REF_ParticipantType, attributes: ['name'], as: 'participantType' },
+      {
+        model: PAR_Group,
+        as: 'groups',
+        through: { attributes: [] },
+        where: query?.groupId ? { id: query.groupId } : null,
+      },
+      { model: REF_CommitteeType, as: 'committeeType', attributes: ['name'] },
+    ],
+  });
+
+  return {
+    success: true,
+    message: 'Successfully Getting All Participant',
+    content: participants,
   };
 };
 
@@ -379,4 +414,5 @@ module.exports = {
   selectLodger,
   updateLodger,
   deleteLodger,
+  selectAllParticipantLodger,
 };
