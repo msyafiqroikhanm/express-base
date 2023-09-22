@@ -4,7 +4,7 @@ const features = require('../../helpers/features.helper');
 const ValidateMiddleware = require('../../middlewares/validate.middleware');
 const Authentication = require('../../middlewares/auth.middleware');
 const RoomController = require('../../controllers/room.controller');
-const { RoomType } = require('../../controllers/reference.controller');
+const { RoomType, BedType } = require('../../controllers/reference.controller');
 
 //* Room Types
 router.post(
@@ -93,6 +93,95 @@ router.delete(
   },
   Authentication.accomodation,
   RoomType.delete,
+);
+
+//* Bed Types
+router.post(
+  '/bed-types',
+  async (req, res, next) => {
+    Authentication.authenticate(
+      req,
+      res,
+      next,
+      await features().then((feature) => [feature.create_bed_type]),
+    );
+  },
+  [
+    check('name', "Name attribute can't be empty").notEmpty(),
+    check('locationId', "locationId attribute can't be empty").notEmpty(),
+  ],
+  ValidateMiddleware.result,
+  Authentication.accomodation,
+  BedType.create,
+);
+router.get(
+  '/bed-types',
+  async (req, res, next) => {
+    Authentication.authenticate(
+      req,
+      res,
+      next,
+      await features().then((feature) => [
+        feature.view_bed_type,
+        feature.create_bed_type,
+        feature.update_bed_type,
+        feature.delete_bed_type,
+      ]),
+    );
+  },
+  Authentication.accomodation,
+  BedType.getAll,
+);
+router.get(
+  '/bed-types/:id',
+  async (req, res, next) => {
+    Authentication.authenticate(
+      req,
+      res,
+      next,
+      await features().then((feature) => [
+        feature.view_bed_type,
+        feature.create_bed_type,
+        feature.update_bed_type,
+        feature.delete_bed_type,
+      ]),
+    );
+  },
+  Authentication.accomodation,
+  BedType.getDetail,
+);
+router.put(
+  '/bed-types/:id',
+  async (req, res, next) => {
+    Authentication.authenticate(
+      req,
+      res,
+      next,
+      await features().then((feature) => [
+        feature.view_bed_type,
+        feature.create_bed_type,
+        feature.update_bed_type,
+        feature.delete_bed_type,
+      ]),
+    );
+  },
+  [check('name', "Name attribute can't be empty").notEmpty()],
+  ValidateMiddleware.result,
+  Authentication.accomodation,
+  BedType.update,
+);
+router.delete(
+  '/bed-types/:id',
+  async (req, res, next) => {
+    Authentication.authenticate(
+      req,
+      res,
+      next,
+      await features().then((feature) => [feature.delete_bed_type]),
+    );
+  },
+  Authentication.accomodation,
+  BedType.delete,
 );
 
 //* ROOM

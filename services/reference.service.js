@@ -33,6 +33,7 @@ const {
   REF_CommitteeType,
   PAR_Participant,
   ACM_Location,
+  ACM_RoomBedType,
 } = require('../models');
 
 // * Configuration Category
@@ -1425,6 +1426,124 @@ const deleteRoomType = async (where) => {
   };
 };
 
+// * Bed Type
+
+const selectAllBedTypes = async (where) => {
+  const typeInstance = await ACM_RoomBedType.findAll({
+    where,
+    include: [
+      {
+        model: ACM_Location,
+        as: 'location',
+        attributes: { exclude: ['createdAt', 'updatedAt'] },
+      },
+    ],
+  });
+
+  return {
+    success: true,
+    message: 'Successfully Getting All Bed Type',
+    content: typeInstance,
+  };
+};
+
+const selectBedType = async (where) => {
+  const locationType = await ACM_RoomBedType.findOne({
+    where,
+    include: [
+      {
+        model: ACM_Location,
+        as: 'location',
+        attributes: { exclude: ['createdAt', 'updatedAt'] },
+      },
+    ],
+  });
+  if (!locationType) {
+    return {
+      success: false,
+      message: ['Bed Type Data Not Found'],
+    };
+  }
+
+  return {
+    success: true,
+    message: 'Successfully Getting All Bed Type',
+    content: locationType,
+  };
+};
+
+const createBedType = async (form) => {
+  const locationInstance = await ACM_Location.findOne({ where: { id: form.locationId } });
+  if (!locationInstance) {
+    return {
+      success: false,
+      message: ['Location Data Not Found'],
+    };
+  }
+  const typeInstance = await ACM_RoomBedType.create({
+    name: form.name,
+    locationId: form.locationId,
+  });
+
+  return {
+    success: true,
+    message: 'Bed Type Successfully Created',
+    content: typeInstance,
+  };
+};
+
+const updateBedType = async (where, form) => {
+  // check identity type id validity
+  const typeInstance = await ACM_RoomBedType.findOne({ where });
+  if (!typeInstance) {
+    return {
+      success: false,
+      message: ['Bed Type Data Not Found'],
+    };
+  }
+
+  if (form.locationId) {
+    const locationInstance = await ACM_Location.findOne({ where: { id: form.locationId } });
+    if (!locationInstance) {
+      return {
+        success: false,
+        message: ['Location Data Not Found'],
+      };
+    }
+  }
+
+  typeInstance.locationId = form.locationId;
+  typeInstance.name = form.name;
+  await typeInstance.save();
+
+  return {
+    success: true,
+    message: 'Bed Type Successfully Updated',
+    content: typeInstance,
+  };
+};
+
+const deleteBedType = async (where) => {
+  // check identity type id validity
+  const typeInstance = await ACM_RoomBedType.findOne({ where });
+  if (!typeInstance) {
+    return {
+      success: false,
+      message: ['Bed Type Data Not Found'],
+    };
+  }
+
+  const { name } = typeInstance.dataValues;
+
+  await typeInstance.destroy();
+
+  return {
+    success: true,
+    message: 'Bed Type Successfully Deleted',
+    content: `Bed Type ${name} Successfully Deleted`,
+  };
+};
+
 // * Room Status
 
 const selectAllRoomStatuses = async () => {
@@ -2355,6 +2474,13 @@ module.exports = {
     createRoomType,
     updateRoomType,
     deleteRoomType,
+  },
+  bedType: {
+    selectAllBedTypes,
+    selectBedType,
+    createBedType,
+    updateBedType,
+    deleteBedType,
   },
   roomStatus: {
     selectAllRoomStatuses,

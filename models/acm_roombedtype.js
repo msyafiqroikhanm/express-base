@@ -11,6 +11,7 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
+      ACM_RoomBedType.belongsTo(models.ACM_Location, { foreignKey: 'locationId', as: 'location' });
     }
   }
   ACM_RoomBedType.init(

@@ -38,6 +38,7 @@ const {
   vehicleType,
   foodScheduleStatus,
   committeeType,
+  bedType,
 } = require('../services/reference.service');
 
 class SysConfigCategory {
@@ -663,6 +664,9 @@ class RoomType {
       }
 
       const data = await roomType.createRoomType(req.body);
+      if (!data.success) {
+        return ResponseFormatter.error404(res, 'Data Not Found', data.message);
+      }
 
       return ResponseFormatter.success201(res, data.message, data.content);
     } catch (error) {
@@ -699,6 +703,111 @@ class RoomType {
         where.locationId = { [Op.or]: req.user.limitation.access.location };
       }
       const data = await roomType.deleteRoomType(where);
+      if (!data.success) {
+        return ResponseFormatter.error404(res, 'Data Not Found', data.message);
+      }
+
+      return ResponseFormatter.success200(res, data.message, data.content);
+    } catch (error) {
+      next(error);
+    }
+  }
+}
+
+class BedType {
+  static async getAll(req, res, next) {
+    try {
+      res.url = `${req.method} ${req.originalUrl}`;
+
+      const where = {};
+
+      console.log(JSON.stringify(req.user.limitation, null, 2));
+      if (!req.user.limitation.isAdmin) {
+        where.locationId = { [Op.or]: req.user.limitation.access.location };
+      }
+      if (req.query?.locationId) {
+        where.locationId = req.query.locationId;
+      }
+      const data = await bedType.selectAllBedTypes(where);
+
+      return ResponseFormatter.success200(res, data.message, data.content);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  static async getDetail(req, res, next) {
+    try {
+      res.url = `${req.method} ${req.originalUrl}`;
+
+      const where = { id: req.params.id };
+      if (!req.user.limitation.isAdmin) {
+        where.locationId = { [Op.or]: req.user.limitation.access.location };
+      }
+
+      const data = await bedType.selectBedType(where);
+      if (!data.success) {
+        return ResponseFormatter.error404(res, 'Data Not Found', data.message);
+      }
+
+      return ResponseFormatter.success200(res, data.message, data.content);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  static async create(req, res, next) {
+    try {
+      res.url = `${req.method} ${req.originalUrl}`;
+
+      // console.log(JSON.stringify(req.user.limitation.access.location, null, 2));
+      if (!req.user.limitation.isAdmin) {
+        if (!req.user.limitation.access.location.includes(Number(req.body.locationId))) {
+          return ResponseFormatter.error401(res, [
+            'Prohibited To Create Bed Type For Other Location',
+          ]);
+        }
+      }
+
+      const data = await bedType.createBedType(req.body);
+      if (!data.success) {
+        return ResponseFormatter.error404(res, 'Data Not Found', data.message);
+      }
+      return ResponseFormatter.success201(res, data.message, data.content);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  static async update(req, res, next) {
+    try {
+      res.url = `${req.method} ${req.originalUrl}`;
+
+      const where = { id: req.params.id };
+      if (!req.user.limitation.isAdmin) {
+        where.locationId = { [Op.or]: req.user.limitation.access.location };
+      }
+
+      const data = await bedType.updateBedType(where, req.body);
+      if (!data.success) {
+        return ResponseFormatter.error404(res, 'Data Not Found', data.message);
+      }
+
+      return ResponseFormatter.success200(res, data.message, data.content);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  static async delete(req, res, next) {
+    try {
+      res.url = `${req.method} ${req.originalUrl}`;
+
+      const where = { id: req.params.id };
+      if (!req.user.limitation.isAdmin) {
+        where.locationId = { [Op.or]: req.user.limitation.access.location };
+      }
+      const data = await bedType.deleteBedType(where);
       if (!data.success) {
         return ResponseFormatter.error404(res, 'Data Not Found', data.message);
       }
@@ -2031,4 +2140,5 @@ module.exports = {
   VehicleType,
   FoodScheduleStatus,
   CommitteeType,
+  BedType,
 };
