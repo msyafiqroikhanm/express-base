@@ -38,11 +38,17 @@ router.post(
       ]),
     );
   },
+  Authentication.event,
   [
     check('picId', 'Pic Id attribute can\'t be empty').notEmpty(),
     check('categoryId', 'Category Id attribute can\'t be empty').notEmpty(),
     check('locationId', 'Location Id attribute can\'t be empty').notEmpty(),
     check('name', 'Name attribute can\'t be empty').notEmpty(),
+    check('code', 'Code attribute can\'t be empty').notEmpty(),
+    check('minAge', 'Minimum Age Must Be Greater Than 0').optional().isInt({ gt: 0 }),
+    check('maxAge', 'Maximum Age Must Be Greater Than 0').optional().isInt({ gt: 0 }),
+    check('maxParticipantPerGroup', 'Maximum Participant Per Group Must Be Greater Than 0').optional().isInt({ gt: 0 }),
+    check('maxTotalParticipant', 'Maximum Total Participant Must Be Greater Than 0').optional().isInt({ gt: 0 }),
     check('schedules', 'Schedules attribute can\'t be empty').notEmpty(),
   ],
   ValidateMiddleware.result,
@@ -81,11 +87,16 @@ router.put(
       ]),
     );
   },
+  Authentication.event,
   [
     check('picId', 'Pic Id attribute can\'t be empty').notEmpty(),
     check('categoryId', 'Category Id attribute can\'t be empty').notEmpty(),
     check('locationId', 'Location Id attribute can\'t be empty').notEmpty(),
     check('name', 'Name attribute can\'t be empty').notEmpty(),
+    check('minAge', 'Minimum Age Must Be Greater Than 0').optional().isInt({ gt: 0 }),
+    check('maxAge', 'Maximum Age Must Be Greater Than 0').optional().isInt({ gt: 0 }),
+    check('maxParticipantPerGroup', 'Maximum Participant Per Group Must Be Greater Than 0').optional().isInt({ gt: 0 }),
+    check('maxTotalParticipant', 'Maximum Total Participant Must Be Greater Than 0').optional().isInt({ gt: 0 }),
     check('schedules', 'Schedules attribute can\'t be empty').notEmpty(),
   ],
   ValidateMiddleware.result,
@@ -142,12 +153,12 @@ router.put(
       ]),
     );
   },
+  Authentication.event,
   [
     check('groupId', 'Group Id attribute can\'t be empty').notEmpty(),
     check('statusId', 'Status Id attribute can\'t be empty').notEmpty(),
   ],
   ValidateMiddleware.result,
-  Authentication.event,
   EventController.progressGroup,
 );
 

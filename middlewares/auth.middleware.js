@@ -71,7 +71,6 @@ class AuthMiddleware {
             raw: true,
           });
 
-          // console.log(JSON.stringify(locationLimitation, null, 2));
           const locations = locationLimitation.map((element) => element.id);
 
           if (locationLimitation.length > 0) {
@@ -234,8 +233,6 @@ class AuthMiddleware {
         const picTypes = await picTypeHelper().then((type) => [type.pic_event]);
         const picEvent = req.user.PIC.filter((pic) => pic.typeId === picTypes[0]);
         if (picEvent.length) {
-          console.log(picEvent);
-
           limitation.isAdmin = false;
           limitation.access.picId = picEvent[0].dataValues.id;
 
@@ -247,11 +244,12 @@ class AuthMiddleware {
 
           const events = eventLimitation.map((event) => event.id);
 
-          limitation.access.events = events;
+          limitation.access.events = events?.length > 0 ? events : [];
         }
       }
 
       req.user.limitation = limitation;
+      req.user.dataValues.limitation = limitation;
       next();
     } catch (error) {
       next(error);

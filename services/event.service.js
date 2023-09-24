@@ -76,15 +76,16 @@ const selectEvent = async (id, where = {}) => {
   };
 };
 
-const validateEventInputs = async (form) => {
+const validateEventInputs = async (form, id, where = {}) => {
   const {
-    picId, categoryId, locationId, name, schedules,
+    picId, categoryId, locationId, name, schedules, code, minAge, maxAge,
+    maxParticipantPerGroup, maxTotalParticipant,
   } = form;
 
   const invalid400 = [];
   const invalid404 = [];
 
-  const picInstance = await USR_PIC.findOne({ where: { id: picId } });
+  const picInstance = await USR_PIC.findOne({ where: { id: picId }, attributes: ['id', 'typeId'] });
   if (!picInstance) {
     invalid404.push('PIC / User Data Not Found');
   }
@@ -116,6 +117,32 @@ const validateEventInputs = async (form) => {
     invalid400.push('End must be set after Start');
   }
 
+  // check if pic is pic event
+  if (picInstance.typeId !== 5) {
+    invalid400.push('PIC For Event Must Be PIC Event');
+  }
+
+  // check duplicate event code
+  const isDuplicateCode = await ENV_Event.findOne({
+    where: id ? { id: { [Op.ne]: id }, code } : { code },
+  });
+  if (isDuplicateCode) {
+    invalid400.push('Code Event Already Exist / Taken');
+  }
+
+  // check min age is always less than max age
+  if (maxAge && minAge > maxAge) {
+    invalid400.push('Minimum Age Cannot Be Greater Than Maximum Age');
+  }
+
+  if (where.picId && where.picId !== Number(picId)) {
+    invalid400.push("Can't Create Event For Another PIC As An PIC");
+  }
+
+  if (id && where.picId && !where.events?.includes(Number(id))) {
+    invalid400.push("Can't Edit Event Belongs To Another PIC");
+  }
+
   if (invalid400.length > 0) {
     return {
       isValid: false,
@@ -139,17 +166,31 @@ const validateEventInputs = async (form) => {
       locationId,
       name,
       times: parsedTimes,
+      code,
+      minAge,
+      maxAge,
+      maxParticipantPerGroup,
+      maxTotalParticipant,
     },
   };
 };
 
 const createEvent = async (form) => {
   const {
-    picId, categoryId, locationId, name, times,
+    picId, categoryId, locationId, name, times, code, minAge, maxAge,
+    maxParticipantPerGroup, maxTotalParticipant,
   } = form;
 
   const eventInstance = await ENV_Event.create({
-    picId, categoryId, locationId, name,
+    picId,
+    categoryId,
+    locationId,
+    name,
+    code,
+    minAge,
+    maxAge,
+    maxParticipantPerGroup,
+    maxTotalParticipant,
   });
 
   await times.forEach(async (time) => {
@@ -168,7 +209,8 @@ const createEvent = async (form) => {
 
 const updateEvent = async (id, form) => {
   const {
-    picId, categoryId, locationId, name, times,
+    picId, categoryId, locationId, name, times, code, maxAge, minAge,
+    maxParticipantPerGroup, maxTotalParticipant,
   } = form;
 
   // check event id validity
@@ -183,6 +225,11 @@ const updateEvent = async (id, form) => {
   eventInstance.categoryId = categoryId;
   eventInstance.locationId = locationId;
   eventInstance.name = name;
+  eventInstance.code = code;
+  eventInstance.minAge = minAge;
+  eventInstance.maxAge = maxAge;
+  eventInstance.maxParticipantPerGroup = maxParticipantPerGroup;
+  eventInstance.maxTotalParticipant = maxTotalParticipant;
   await eventInstance.save();
 
   await ENV_TimeEvent.destroy({

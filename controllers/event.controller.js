@@ -50,7 +50,14 @@ class Events {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
 
-      const inputs = await validateEventInputs(req.body);
+      // resrict data that is not an admin
+      const where = {};
+      if (!req.user.limitation.isAdmin && req.user.limitation?.access?.picId) {
+        where.picId = req.user.limitation.access.picId;
+        where.events = req.user.limitation.access.events;
+      }
+
+      const inputs = await validateEventInputs(req.body, null, where);
       if (!inputs.isValid && inputs.code === 400) {
         return ResponseFormatter.error400(res, 'Bad Request', inputs.message);
       }
@@ -70,7 +77,14 @@ class Events {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
 
-      const inputs = await validateEventInputs(req.body);
+      // resrict data that is not an admin
+      const where = {};
+      if (!req.user.limitation.isAdmin && req.user.limitation?.access?.picId) {
+        where.picId = req.user.limitation.access.picId;
+        where.events = req.user.limitation.access.events;
+      }
+
+      const inputs = await validateEventInputs(req.body, req.params.id, where);
       if (!inputs.isValid && inputs.code === 400) {
         return ResponseFormatter.error400(res, 'Bad Request', inputs.message);
       }
