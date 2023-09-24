@@ -204,7 +204,7 @@ class AuthMiddleware {
 
           const parsedVendors = vendors.map((vendor) => vendor.id);
 
-          limitation.access.vendors = parsedVendors.length > 0 ? parsedVendors : null;
+          limitation.access.vendors = parsedVendors.length > 0 ? parsedVendors : [];
         } else if (driverInstance) {
           limitation.access.driverId = driverInstance.id;
         } else {
