@@ -9,7 +9,6 @@ const {
   deleteLodger,
   selectAllParticipantLodger,
 } = require('../services/lodger.service');
-const { selectAllParticipant } = require('../services/participant.service');
 
 class LodgerController {
   static async getAll(req, res, next) {

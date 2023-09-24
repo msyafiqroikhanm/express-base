@@ -19,8 +19,10 @@ class ValidateMiddleware {
         if (req.file && !req.file.buffer) {
           await deleteFile(relative(__dirname, req.file.path));
         }
-        if (Object.keys(req.files)?.length > 0) {
-          await deleteFiles(Object.values(req.files));
+        if (req.files) {
+          if (Object.keys(req.files)?.length > 0) {
+            await deleteFiles(Object.values(req.files));
+          }
         }
         return ResponseFormatter.error400(res, 'Data Not Complete', resErrors);
       }
@@ -62,8 +64,10 @@ class ValidateMiddleware {
       res.url = req.originalUrl;
 
       const errors = validationResult(req);
-      if (!errors.isEmpty()
-          || Object.keys(req.files).sort().toString() !== requredFiles.sort().toString()) {
+      if (
+        !errors.isEmpty() ||
+        Object.keys(req.files).sort().toString() !== requredFiles.sort().toString()
+      ) {
         const resErrors = [];
         errors.errors.forEach((element) => {
           resErrors.push(element.msg);
