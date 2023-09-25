@@ -3,12 +3,117 @@
     "picId":1,
     "categoryId":1,
     "locationId":1,
-    "name":"Children's Choir Competition"
+    "name":"Paduan Suara Anak",
+    "minAge":0,
+    "maxAge":12,
+    "maxParticipantPerGroup":33
   },
   {
-    "picId":2,
-    "categoryId":2,
-    "locationId":2,
-    "name":"Singing Competition"
+    "picId":1,
+    "categoryId":1,
+    "locationId":1,
+    "name":"Paduan Suara Remaja Gergorian",
+    "minAge":13,
+    "maxAge":17,
+    "maxParticipantPerGroup":33
+  },
+  {
+    "picId":1,
+    "categoryId":1,
+    "locationId":1,
+    "name":"Paduan Suara OMK Campuran",
+    "minAge":18,
+    "maxAge":30,
+    "maxParticipantPerGroup":33
+  },
+  {
+    "picId":1,
+    "categoryId":1,
+    "locationId":1,
+    "name":"Paduan Suara Dewasa Pria Gregorian",
+    "minAge":31,
+    "maxAge":0,
+    "maxParticipantPerGroup":33
+  },
+  {
+    "picId":1,
+    "categoryId":1,
+    "locationId":1,
+    "name":"Paduan Suara Dewasa Wanita",
+    "minAge":31,
+    "maxAge":0,
+    "maxParticipantPerGroup":33
+  },
+  {
+    "picId":1,
+    "categoryId":1,
+    "locationId":1,
+    "name":"Paduan Suara Dewasa Campuran",
+    "minAge":31,
+    "maxAge":0,
+    "maxParticipantPerGroup":33
+  },
+  {
+    "picId":1,
+    "categoryId":1,
+    "locationId":1,
+    "name":"Menyanyikan Mazmur Kategori Anak",
+    "minAge":0,
+    "maxAge":12,
+    "maxParticipantPerGroup":1
+  },
+  {
+    "picId":1,
+    "categoryId":1,
+    "locationId":1,
+    "name":"Menyanyikan Mazmur Kategori Remaja",
+    "minAge":13,
+    "maxAge":17,
+    "maxParticipantPerGroup":1
+  },
+  {
+    "picId":1,
+    "categoryId":1,
+    "locationId":1,
+    "name":"Menyanyikan Mazmur Kategori OMK",
+    "minAge":18,
+    "maxAge":30,
+    "maxParticipantPerGroup":1
+  },
+  {
+    "picId":1,
+    "categoryId":1,
+    "locationId":1,
+    "name":"Menyanyikan Mazmur Kategori Dewasa",
+    "minAge":31,
+    "maxAge":0,
+    "maxParticipantPerGroup":1
+  },
+  {
+    "picId":1,
+    "categoryId":1,
+    "locationId":1,
+    "name":"Cerdas Cermat Rohani Kategori Anak",
+    "minAge":0,
+    "maxAge":12,
+    "maxParticipantPerGroup":3
+  },
+  {
+    "picId":1,
+    "categoryId":1,
+    "locationId":1,
+    "name":"Cerdas Cermat Rohani Kategori Remaja",
+    "minAge":13,
+    "maxAge":17,
+    "maxParticipantPerGroup":3
+  },
+  {
+    "picId":1,
+    "categoryId":1,
+    "locationId":1,
+    "name":"Bertutur Kitab Suci",
+    "minAge":6,
+    "maxAge":12,
+    "maxParticipantPerGroup":1
   }
 ]
