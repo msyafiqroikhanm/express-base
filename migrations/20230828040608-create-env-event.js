@@ -26,6 +26,21 @@ module.exports = {
         name: {
           type: Sequelize.STRING,
         },
+        code: {
+          type: Sequelize.STRING,
+        },
+        minAge: {
+          type: Sequelize.INTEGER,
+        },
+        maxAge: {
+          type: Sequelize.INTEGER,
+        },
+        maxParticipantPerGroup: {
+          type: Sequelize.INTEGER,
+        },
+        maxTotalParticipant: {
+          type: Sequelize.INTEGER,
+        },
         deletedAt: {
           type: Sequelize.DATE,
         },

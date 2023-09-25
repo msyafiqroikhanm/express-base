@@ -1,5 +1,7 @@
 [
   { "name":"Competition Individual"},
   { "name":"Competition Group"},
-  { "name":"Ceremonial"}
+  { "name":"Ceremonial"},
+  { "name":"Seminar"},
+  { "name":"exhibition"}
 ]

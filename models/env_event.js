@@ -25,6 +25,11 @@ module.exports = (sequelize, DataTypes) => {
     categoryId: DataTypes.INTEGER,
     locationId: DataTypes.INTEGER,
     name: DataTypes.STRING,
+    code: DataTypes.STRING,
+    minAge: DataTypes.INTEGER,
+    maxAge: DataTypes.INTEGER,
+    maxParticipantPerGroup: DataTypes.INTEGER,
+    maxTotalParticipant: DataTypes.INTEGER,
   }, {
     sequelize,
     modelName: 'ENV_Event',

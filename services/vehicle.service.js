@@ -83,7 +83,7 @@ const selectAllVehicles = async (query, where) => {
     parsedQuery.isAvailable = query.isAvailable;
   }
   if (where.picId) {
-    parsedQuery.vendorId = { [Op.in]: where.vendors };
+    parsedQuery.vendorId = { [Op.in]: where.vendors || [] };
   }
 
   const data = await TPT_Vehicle.findAll({
