@@ -4,7 +4,7 @@
     "categoryId":1,
     "locationId":1,
     "name":"Paduan Suara Anak",
-    "minAge":0,
+    "minAge":1,
     "maxAge":12,
     "maxParticipantPerGroup":33
   },
@@ -32,7 +32,7 @@
     "locationId":1,
     "name":"Paduan Suara Dewasa Pria Gregorian",
     "minAge":31,
-    "maxAge":0,
+    "maxAge":99,
     "maxParticipantPerGroup":33
   },
   {
@@ -41,7 +41,7 @@
     "locationId":1,
     "name":"Paduan Suara Dewasa Wanita",
     "minAge":31,
-    "maxAge":0,
+    "maxAge":99,
     "maxParticipantPerGroup":33
   },
   {
@@ -50,7 +50,7 @@
     "locationId":1,
     "name":"Paduan Suara Dewasa Campuran",
     "minAge":31,
-    "maxAge":0,
+    "maxAge":99,
     "maxParticipantPerGroup":33
   },
   {
@@ -58,7 +58,7 @@
     "categoryId":1,
     "locationId":1,
     "name":"Menyanyikan Mazmur Kategori Anak",
-    "minAge":0,
+    "minAge":1,
     "maxAge":12,
     "maxParticipantPerGroup":1
   },
@@ -86,7 +86,7 @@
     "locationId":1,
     "name":"Menyanyikan Mazmur Kategori Dewasa",
     "minAge":31,
-    "maxAge":0,
+    "maxAge":99,
     "maxParticipantPerGroup":1
   },
   {
@@ -94,7 +94,7 @@
     "categoryId":1,
     "locationId":1,
     "name":"Cerdas Cermat Rohani Kategori Anak",
-    "minAge":0,
+    "minAge":1,
     "maxAge":12,
     "maxParticipantPerGroup":3
   },

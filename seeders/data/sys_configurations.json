@@ -48,5 +48,10 @@
     "categoryId": 1,
     "name": "Contingent Limit",
     "value": "250"
+  },
+  {
+    "categoryId": 1,
+    "name": "Event Start",
+    "value": "2023-10-30"
   }
 ]

@@ -1,6 +1,11 @@
 const ResponseFormatter = require('../helpers/responseFormatter.helper');
 const {
-  selectAllGroups, selectGroup, validateGroupInputs, createGroup, updateGroup, deleteGroup,
+  selectAllGroups,
+  selectGroup,
+  validateGroupInputs,
+  createGroup,
+  updateGroup,
+  deleteGroup,
 } = require('../services/group.service');
 
 class ParticipantGroup {
