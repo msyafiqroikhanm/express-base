@@ -519,7 +519,10 @@ const validateParticipantInputs = async (form, files, id, where) => {
 
 const createParticipant = async (form) => {
   // check maximum contingent participant
-  const contingentLimit = await SYS_Configuration.findOne({ where: { name: 'Contingent Limit' }, attributes: ['value'] });
+  const contingentLimit = await SYS_Configuration.findOne({
+    where: { name: 'Contingent Limit' },
+    attributes: ['value'],
+  });
   const contingentInstance = await PAR_Contingent.findOne({
     where: { id: form.contingent?.id },
     include: { model: PAR_Participant, attributes: ['id'], as: 'participants' },
@@ -1174,7 +1177,24 @@ const selectAllCommitteeParticipants = async () => {
 const downloadParticipantSecretFile = async (id, file, where) => {
   const participantInstance = await PAR_Participant.findOne({
     where: where.contingentId ? { id, contingentId: where.contingentId } : { id },
-    attributes: { exclude: ['qrId', 'typeId', 'identityId', 'committeeTypeId', 'name', 'gender', 'birthDate', 'identityNo', 'phoneNbr', 'email', 'address', 'createdAt', 'updatedAt', 'deletedAt'] },
+    attributes: {
+      exclude: [
+        'qrId',
+        'typeId',
+        'identityId',
+        'committeeTypeId',
+        'name',
+        'gender',
+        'birthDate',
+        'identityNo',
+        'phoneNbr',
+        'email',
+        'address',
+        'createdAt',
+        'updatedAt',
+        'deletedAt',
+      ],
+    },
   });
   if (!participantInstance) {
     return {
@@ -1211,6 +1231,24 @@ const downloadParticipantSecretFile = async (id, file, where) => {
   };
 };
 
+const calculateAge = (dateOfBirth, dateNow) => {
+  const dob = new Date(dateOfBirth);
+
+  const currentDate = new Date(dateNow);
+
+  const age = currentDate.getFullYear() - dob.getFullYear();
+
+  // Check if the birthday for this year has already occurred
+  if (
+    currentDate.getMonth() < dob.getMonth() ||
+    (currentDate.getMonth() === dob.getMonth() && currentDate.getDate() < dob.getDate())
+  ) {
+    return age - 1;
+  }
+
+  return age;
+};
+
 module.exports = {
   selectAllParticipant,
   selectParticipant,
@@ -1229,4 +1267,5 @@ module.exports = {
   selectAllNormalParticipants,
   selectAllCommitteeParticipants,
   downloadParticipantSecretFile,
+  calculateAge,
 };

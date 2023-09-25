@@ -1,8 +1,14 @@
 /* eslint-disable no-param-reassign */
 const { Op } = require('sequelize');
 const {
-  PAR_Group, ENV_Event, PAR_Contingent, REF_GroupStatus, PAR_Participant,
+  PAR_Group,
+  ENV_Event,
+  PAR_Contingent,
+  REF_GroupStatus,
+  PAR_Participant,
+  SYS_Configuration,
 } = require('../models');
+const { calculateAge } = require('./participant.service');
 
 const selectAllGroups = async (where) => {
   const groups = await PAR_Group.findAll({
@@ -40,7 +46,9 @@ const selectAllGroups = async (where) => {
   });
 
   return {
-    success: true, message: 'Successfully Getting All Groups', content: groups,
+    success: true,
+    message: 'Successfully Getting All Groups',
+    content: groups,
   };
 };
 
@@ -75,7 +83,9 @@ const selectGroup = async (id, where) => {
 
   if (!groupInstance) {
     return {
-      success: false, code: 404, message: 'Group Data Not Found',
+      success: false,
+      code: 404,
+      message: 'Group Data Not Found',
     };
   }
 
@@ -90,17 +100,18 @@ const selectGroup = async (id, where) => {
   delete groupInstance.dataValues.PAR_Participants;
 
   return {
-    success: true, message: 'Successfully Getting Group', content: groupInstance,
+    success: true,
+    message: 'Successfully Getting Group',
+    content: groupInstance,
   };
 };
 
 const validateGroupInputs = async (form, limitation = null) => {
-  const {
-    eventId, contingentId, name,
-  } = form;
+  const { eventId, contingentId, name } = form;
 
   const invalid400 = [];
   const invalid404 = [];
+  const formParticipants = [];
 
   // check eventId validity
   const eventInstance = await ENV_Event.findByPk(eventId);
@@ -113,9 +124,11 @@ const validateGroupInputs = async (form, limitation = null) => {
   if (!contingentInstance) {
     invalid404.push('Contingent Data Not Found');
   }
-  if (limitation?.id && (limitation?.id !== Number(contingentId))) {
+  if (limitation?.id && limitation?.id !== Number(contingentId)) {
     return {
-      isValid: false, code: 400, message: ['Prohibited To Create Group For Other Contingent'],
+      isValid: false,
+      code: 400,
+      message: ['Prohibited To Create Group For Other Contingent'],
     };
   }
 
@@ -126,13 +139,41 @@ const validateGroupInputs = async (form, limitation = null) => {
     invalid404.push('Status Data Not Found');
   }
 
-  // validate Recipiants / receivers
-  const validParcipants = await PAR_Participant.findAll({
-    where: {
-      id: { [Op.in]: form.participants },
-      contingentId,
-    },
-  });
+  let validParticipants;
+
+  if (form.participants.length <= eventInstance.maxParticipantPerGroup) {
+    // validate Recipiants / receivers
+    validParticipants = await PAR_Participant.findAll({
+      where: {
+        id: { [Op.in]: form.participants },
+        contingentId,
+      },
+    });
+    if (validParticipants.length) {
+      const startEvent = await SYS_Configuration.findOne({
+        where: { name: { [Op.substring]: 'Event Start' } },
+      });
+      validParticipants.forEach((participant) => {
+        const age = calculateAge(participant.birthDate, startEvent.value);
+        if (eventInstance?.minAge <= age && eventInstance.maxAge >= age) {
+          formParticipants.push(participant.id);
+        } else {
+          invalid400.push(
+            'Participant on behalf of a does not meet the minimum or maximum age criteria',
+          );
+        }
+      });
+    } else {
+      invalid404.push('Participants Data Not Found');
+    }
+  } else {
+    invalid400.push('The Number Of Participants Exceeded The Quota Provided');
+  }
+
+  if (!formParticipants.length) {
+    invalid404.push('Participant Data Does Not Meet the Criteria');
+  }
+  // console.log(formParticipants);
 
   if (invalid400.length > 0) {
     return {
@@ -156,31 +197,32 @@ const validateGroupInputs = async (form, limitation = null) => {
       contingent: contingentInstance,
       status: statusInstance,
       name,
-      participants: validParcipants,
+      participants: formParticipants,
     },
   };
 };
 
 const createGroup = async (form) => {
-  const {
-    event, contingent, status, name, participants,
-  } = form;
+  const { event, contingent, status, name, participants } = form;
 
   const groupInstance = await PAR_Group.create({
-    eventId: event.id, contingentId: contingent.id, statusId: status.id, name,
+    eventId: event.id,
+    contingentId: contingent.id,
+    statusId: status.id,
+    name,
   });
 
   await groupInstance.addPAR_Participants(participants);
 
   return {
-    success: true, message: 'Group Successfully Created', content: groupInstance,
+    success: true,
+    message: 'Group Successfully Created',
+    content: groupInstance,
   };
 };
 
 const updateGroup = async (id, form, where) => {
-  const {
-    event, contingent, name, participants,
-  } = form;
+  const { event, contingent, name, participants } = form;
 
   let groupInstance;
   if (Object.keys(where).length > 0) {
@@ -192,7 +234,9 @@ const updateGroup = async (id, form, where) => {
   }
   if (!groupInstance) {
     return {
-      success: false, code: 404, message: ['Group Data Not Found'],
+      success: false,
+      code: 404,
+      message: ['Group Data Not Found'],
     };
   }
 
@@ -204,7 +248,9 @@ const updateGroup = async (id, form, where) => {
   await groupInstance.setPAR_Participants(participants);
 
   return {
-    success: true, message: 'Group Successfully Updated', content: groupInstance,
+    success: true,
+    message: 'Group Successfully Updated',
+    content: groupInstance,
   };
 };
 
@@ -214,7 +260,9 @@ const deleteGroup = async (id, where) => {
   });
   if (!groupInstance) {
     return {
-      success: false, code: 404, message: ['Group Data Not Found'],
+      success: false,
+      code: 404,
+      message: ['Group Data Not Found'],
     };
   }
 
