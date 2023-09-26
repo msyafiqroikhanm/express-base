@@ -56,7 +56,7 @@ class Participant {
           { email: { [Op.substring]: req.params.search } },
           { phoneNbr: { [Op.substring]: req.params.search } },
           { identityNo: { [Op.substring]: req.params.search } },
-          { address: { [Op.substring]: req.params.search } },
+          // { address: { [Op.substring]: req.params.search } },
         ],
       };
       if (req.query?.typeId) {
