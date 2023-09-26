@@ -27,6 +27,10 @@ module.exports = (sequelize, DataTypes) => {
         foreignKey: 'bedId',
         as: 'bed',
       });
+      ACM_Room.hasMany(models.ACM_ParticipantLodger, {
+        foreignKey: 'roomId',
+        as: 'lodger',
+      });
     }
   }
   ACM_Room.init(
