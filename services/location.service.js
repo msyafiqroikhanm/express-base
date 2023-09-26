@@ -149,11 +149,19 @@ const updateLocation = async (where, form) => {
     }
   }
 
+  if (form.picId) {
+    const picInstance = await USR_PIC.findOne({ where: { id: form.picId } });
+    if (!picInstance) {
+      errorMessages.push('PIC Data Not Found');
+    }
+  }
+
   if (errorMessages.length > 0) {
     return { isValid: false, code: 404, message: errorMessages };
   }
 
   Instance.parentLocationId = form.parentLocationId;
+  Instance.picId = form.picId ? form.picId : Instance.picId;
   Instance.typeId = form.typeId ? form.typeId : Instance.typeId;
   Instance.name = form.name ? form.name : Instance.name;
   Instance.description = form.description ? form.description : Instance.description;
