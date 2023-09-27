@@ -1,7 +1,9 @@
+/* eslint-disable no-unused-vars */
+
 'use strict';
-const {
-  Model
-} = require('sequelize');
+
+const { Model } = require('sequelize');
+
 module.exports = (sequelize, DataTypes) => {
   class FNB_KitchenTarget extends Model {
     /**
@@ -11,17 +13,25 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
+      FNB_KitchenTarget.belongsTo(models.FNB_Menu, { foreignKey: 'menuId', as: 'menu' });
+      FNB_KitchenTarget.belongsTo(models.FNB_Kitchen, { foreignKey: 'kitchenId', as: 'kitchen' });
     }
   }
-  FNB_KitchenTarget.init({
-    menuId: DataTypes.INTEGER,
-    kitchenId: DataTypes.INTEGER,
-    date: DataTypes.DATEONLY,
-    quantityTarget: DataTypes.INTEGER,
-    quantityActual: DataTypes.INTEGER
-  }, {
-    sequelize,
-    modelName: 'FNB_KitchenTarget',
-  });
+  FNB_KitchenTarget.init(
+    {
+      menuId: DataTypes.INTEGER,
+      kitchenId: DataTypes.INTEGER,
+      date: DataTypes.DATEONLY,
+      quantityTarget: DataTypes.INTEGER,
+      quantityActual: DataTypes.INTEGER,
+      deletedAt: DataTypes.DATE,
+    },
+    {
+      sequelize,
+      paranoid: true,
+      deletedAt: 'deletedAt',
+      modelName: 'FNB_KitchenTarget',
+    },
+  );
   return FNB_KitchenTarget;
 };
