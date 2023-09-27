@@ -5,6 +5,8 @@ const {
   REF_RoomStatus,
   ACM_ParticipantLodger,
   ACM_RoomBedType,
+  PAR_Participant,
+  REF_LodgerStatus,
 } = require('../models');
 
 const selectAllRooms = async (where) => {
@@ -30,6 +32,23 @@ const selectAllRooms = async (where) => {
         model: REF_RoomStatus,
         as: 'status',
         attributes: ['id', 'name'],
+      },
+      {
+        model: ACM_ParticipantLodger,
+        as: 'lodger',
+        attributes: ['id', 'reservationIn', 'reservationOut', 'checkIn', 'checkout'],
+        include: [
+          {
+            model: PAR_Participant,
+            as: 'participant',
+            attributes: ['name', 'phoneNbr', 'email'],
+          },
+          {
+            model: REF_LodgerStatus,
+            as: 'status',
+            attributes: ['id', 'name'],
+          },
+        ],
       },
     ],
   });
@@ -64,6 +83,23 @@ const selectRoom = async (where) => {
         model: REF_RoomStatus,
         as: 'status',
         attributes: ['id', 'name'],
+      },
+      {
+        model: ACM_ParticipantLodger,
+        as: 'lodger',
+        attributes: ['id', 'reservationIn', 'reservationOut', 'checkIn', 'checkout'],
+        include: [
+          {
+            model: PAR_Participant,
+            as: 'participant',
+            attributes: ['name', 'phoneNbr', 'email'],
+          },
+          {
+            model: REF_LodgerStatus,
+            as: 'status',
+            attributes: ['id', 'name'],
+          },
+        ],
       },
     ],
   });
