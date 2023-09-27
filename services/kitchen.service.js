@@ -33,7 +33,7 @@ const selectKitchen = async (where) => {
 const validateKitchenInputs = async (form) => {
   const errorMessages = [];
 
-  const picInstance = await USR_PIC.findOne({ id: form.picId });
+  const picInstance = await USR_PIC.findOne({ where: { id: form.picId } });
   if (!picInstance) {
     errorMessages.push('PIC Data Not Found');
   }
@@ -142,8 +142,8 @@ const deleteKitchen = async (where) => {
 
   return {
     success: true,
-    message: 'Location  Successfully Deleted',
-    content: `Location  ${name} Successfully Deleted`,
+    message: 'Kitchen Successfully Deleted',
+    content: `Kitchen ${name} Successfully Deleted`,
   };
 };
 
