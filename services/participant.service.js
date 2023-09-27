@@ -27,6 +27,7 @@ const {
   ENV_Event,
   REF_EventCategory,
   SYS_Configuration,
+  ACM_RoomBedType,
 } = require('../models');
 const { createQR } = require('./qr.service');
 const deleteFile = require('../helpers/deleteFile.helper');
@@ -146,6 +147,7 @@ const selectParticipant = async (id, where) => {
           as: 'room',
           attributes: ['typeId', 'locationId', 'name', 'floor'],
           include: [
+            { model: ACM_RoomBedType, attributes: ['name'], as: 'bed' },
             { model: REF_RoomType, attributes: ['name'], as: 'type' },
             {
               model: ACM_Location,
@@ -205,6 +207,7 @@ const selectParticipant = async (id, where) => {
   // parsing participant lodger history
   participantInstance.lodgers.forEach((lodger) => {
     lodger.room.dataValues.type = lodger.room.type.dataValues.name;
+    lodger.room.dataValues.bed = lodger.room.bed.dataValues.name;
   });
 
   // parsing participant events
