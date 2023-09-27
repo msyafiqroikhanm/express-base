@@ -31,6 +31,24 @@ const {
 const { createQR } = require('./qr.service');
 const deleteFile = require('../helpers/deleteFile.helper');
 
+const calculateAge = (dateOfBirth, dateNow) => {
+  const dob = new Date(dateOfBirth);
+
+  const currentDate = new Date(dateNow);
+
+  const age = currentDate.getFullYear() - dob.getFullYear();
+
+  // Check if the birthday for this year has already occurred
+  if (
+    currentDate.getMonth() < dob.getMonth() ||
+    (currentDate.getMonth() === dob.getMonth() && currentDate.getDate() < dob.getDate())
+  ) {
+    return age - 1;
+  }
+
+  return age;
+};
+
 const selectAllParticipant = async (query, where) => {
   const participants = await PAR_Participant.findAll({
     where: query?.contingentId ? { contingentId: query.contingentId } : null,
@@ -57,6 +75,10 @@ const selectAllParticipant = async (query, where) => {
 
   const seperatedParticipant = { committee: [], participant: [] };
 
+  const startEvent = await SYS_Configuration.findOne({
+    where: { name: { [Op.substring]: 'Event Start' } },
+  });
+
   // parsed retun data
   participants.forEach((participant) => {
     if (participant.contingent) {
@@ -71,6 +93,7 @@ const selectAllParticipant = async (query, where) => {
     } else {
       seperatedParticipant.committee.push(participant);
     }
+    participant.dataValues.age = calculateAge(participant.birthDate, startEvent.value);
   });
 
   return {
@@ -1229,24 +1252,6 @@ const downloadParticipantSecretFile = async (id, file, where) => {
     filename,
     content: fileContent,
   };
-};
-
-const calculateAge = (dateOfBirth, dateNow) => {
-  const dob = new Date(dateOfBirth);
-
-  const currentDate = new Date(dateNow);
-
-  const age = currentDate.getFullYear() - dob.getFullYear();
-
-  // Check if the birthday for this year has already occurred
-  if (
-    currentDate.getMonth() < dob.getMonth() ||
-    (currentDate.getMonth() === dob.getMonth() && currentDate.getDate() < dob.getDate())
-  ) {
-    return age - 1;
-  }
-
-  return age;
 };
 
 module.exports = {
