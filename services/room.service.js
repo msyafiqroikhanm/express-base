@@ -245,6 +245,10 @@ const validateRoomInputs = async (form, where) => {
   if (!bedInstance) {
     errorMessages.push('Bed Type Data Not Found');
   }
+  console.log(bedInstance.locationId);
+  console.log(typeof bedInstance.locationId);
+  console.log(locationInstance.id);
+  console.log(typeof locationInstance.id);
   if (locationInstance && bedInstance) {
     if (bedInstance.locationId !== locationInstance.id) {
       // errorMessages.push('Prohibited To Fill Bed Type From Other Location');
