@@ -1,5 +1,8 @@
 /* eslint-disable no-param-reassign */
-const { PAR_Contingent, REF_Region, PAR_Participant, PAR_Group } = require('../models');
+const { Op } = require('sequelize');
+const {
+  PAR_Contingent, REF_Region, PAR_Participant, PAR_Group,
+} = require('../models');
 
 const selectAllContingents = async (where) => {
   const contingents = await PAR_Contingent.findAll({
@@ -81,7 +84,7 @@ const selectContingent = async (id, where) => {
   };
 };
 
-const validateContingentInput = async (form) => {
+const validateContingentInput = async (form, id) => {
   const { regionId, name } = form;
 
   const invalid400 = [];
@@ -94,7 +97,7 @@ const validateContingentInput = async (form) => {
   }
 
   const contingentInstance = await PAR_Contingent.findOne({
-    where: { name: form.name, regionId: form.regionId },
+    where: { name: form.name, id: { [Op.ne]: id } },
   });
   if (contingentInstance) {
     invalid400.push('Contingent Data Already Exist');

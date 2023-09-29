@@ -85,6 +85,22 @@ const validateEventInputs = async (form, id, where = {}) => {
   const invalid400 = [];
   const invalid404 = [];
 
+  if (minAge && minAge < 0) {
+    invalid400.push('Minimum Age Must Be Greater Than 0');
+  }
+
+  if (maxAge && maxAge < 0) {
+    invalid400.push('Maximum Age Must Be Greater Than 0');
+  }
+
+  if (maxParticipantPerGroup && maxParticipantPerGroup < 0) {
+    invalid400.push('Maximum Participant Per Group Must Be Greater Than 0');
+  }
+
+  if (maxTotalParticipant && maxTotalParticipant < 0) {
+    invalid400.push('Maximum Total Participant Must Be Greater Than 0');
+  }
+
   const picInstance = await USR_PIC.findOne({ where: { id: picId }, attributes: ['id', 'typeId'] });
   if (!picInstance) {
     invalid404.push('PIC / User Data Not Found');
