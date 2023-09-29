@@ -480,17 +480,6 @@ const validateParticipantInputs = async (form, files, id, where) => {
     if (isDuplicatePhoneNo) {
       invalid400.push(`Phone Number ${phoneNbr} Already Used In System`);
     }
-
-    // check email duplicate
-    const isDuplicateEmail = await PAR_Participant.findOne({
-      where: {
-        id: { [Op.ne]: id },
-        email,
-      },
-    });
-    if (isDuplicateEmail) {
-      invalid400.push(`Email ${email} Already Used In System`);
-    }
   } else {
     // check identity number duplicate
     const isDuplicateIdentityNo = await PAR_Participant.findOne({ where: { identityNo } });
@@ -502,12 +491,6 @@ const validateParticipantInputs = async (form, files, id, where) => {
     const isDuplicatePhoneNo = await PAR_Participant.findOne({ where: { phoneNbr } });
     if (isDuplicatePhoneNo) {
       invalid400.push(`Phone Number ${phoneNbr} Already Used In System`);
-    }
-
-    // check email duplicate
-    const isDuplicateEmail = await PAR_Participant.findOne({ where: { email } });
-    if (isDuplicateEmail) {
-      invalid400.push(`Email ${email} Already Used In System`);
     }
   }
 
