@@ -242,10 +242,10 @@ const updateEvent = async (id, form) => {
   eventInstance.locationId = locationId;
   eventInstance.name = name;
   eventInstance.code = code;
-  eventInstance.minAge = minAge;
-  eventInstance.maxAge = maxAge;
-  eventInstance.maxParticipantPerGroup = maxParticipantPerGroup;
-  eventInstance.maxTotalParticipant = maxTotalParticipant;
+  eventInstance.minAge = minAge || null;
+  eventInstance.maxAge = maxAge || null;
+  eventInstance.maxParticipantPerGroup = maxParticipantPerGroup || null;
+  eventInstance.maxTotalParticipant = maxTotalParticipant || null;
   await eventInstance.save();
 
   await ENV_TimeEvent.destroy({
