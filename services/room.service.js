@@ -245,6 +245,7 @@ const validateRoomInputs = async (form, where) => {
   if (!bedInstance) {
     errorMessages.push('Bed Type Data Not Found');
   }
+  console.log(JSON.stringify(bedInstance, null, 2));
   console.log(bedInstance.locationId);
   console.log(typeof bedInstance.locationId);
   console.log(locationInstance.id);
