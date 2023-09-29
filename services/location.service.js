@@ -52,6 +52,7 @@ const selectAllLocations = async (where) => {
         },
       });
 
+      // console.log(JSON.stringify(pic.user, null, 2));
       // eslint-disable-next-line no-param-reassign
       location.dataValues.pic = pic?.user.participant || null;
     }),

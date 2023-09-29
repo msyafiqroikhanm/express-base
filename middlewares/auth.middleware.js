@@ -34,8 +34,8 @@ class AuthMiddleware {
 
         // check user access
         if (requiredFeatures) {
-          const authorized = req.user.Role.USR_Features.some(
-            (feature) => requiredFeatures.includes(feature.id),
+          const authorized = req.user.Role.USR_Features.some((feature) =>
+            requiredFeatures.includes(feature.id),
           );
 
           if (!authorized) {
@@ -55,14 +55,16 @@ class AuthMiddleware {
 
       const limitation = { isAdmin: true, access: {} };
 
+      // console.log(JSON.stringify(req.user.PIC, null, 2));
       if (req.user.Role.id !== rolesLib.superAdmin) {
         if (req.user.PIC.length) {
           const picTypes = await picTypeHelper().then((type) => [type.pic_location]);
           const picLocation = req.user.PIC.filter((pic) => pic.typeId === picTypes[0]);
 
+          console.log(JSON.stringify(picLocation, null, 2));
           // * Need More Investigation for user is PIC for not this module
 
-          limitation.isAdmin = false;
+          // limitation.isAdmin = false;
           limitation.access.picId = picLocation[0].dataValues.id;
 
           const locationLimitation = await ACM_Location.findAll({
@@ -74,11 +76,13 @@ class AuthMiddleware {
           const locations = locationLimitation.map((element) => element.id);
 
           if (locationLimitation.length > 0) {
+            limitation.isAdmin = false;
             limitation.access.location = locations;
           }
         }
       }
       req.user.limitation = limitation;
+      console.log(req.user.limitation);
       next();
     } catch (error) {
       next(error);
