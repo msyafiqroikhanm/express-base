@@ -268,7 +268,7 @@ const validateLocationInputs = async (form) => {
     form: {
       parentLocationId: form.parentLocationId,
       typeId: typeInstance.id,
-      picId: form.picId,
+      picId: form.picId || null,
       name: form.name,
       description: form.description,
       address: form.address,
