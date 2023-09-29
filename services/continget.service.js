@@ -83,6 +83,7 @@ const selectContingent = async (id, where) => {
 
 const validateContingentInput = async (form) => {
   const { regionId, name } = form;
+
   const invalid400 = [];
   const invalid404 = [];
 

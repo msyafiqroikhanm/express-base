@@ -1,3 +1,4 @@
+const { Op } = require('sequelize');
 const { default: axios } = require('axios');
 const { default: slugify } = require('slugify');
 const {
@@ -234,6 +235,17 @@ const deleteLocation = async (where) => {
 
 const validateLocationInputs = async (form) => {
   const errorMessages = [];
+
+  //* check data duplication
+  const locationInstance = await ACM_Location.findOne({
+    where: {
+      typeId: form.typeId,
+      [Op.or]: [{ name: form.name }, { address: form.address }],
+    },
+  });
+  if (locationInstance) {
+    errorMessages.push('Location Data Already Exist');
+  }
 
   const typeInstance = await REF_LocationType.findByPk(form.typeId);
   if (!typeInstance) {
