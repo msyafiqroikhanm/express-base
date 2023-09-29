@@ -431,9 +431,8 @@ class Participant {
       }
 
       // res.setHeader('Content-Disposition', `attachment; filename="${data.filename}"`);
+      res.setHeader('Access-Control-Expose-Headers', 'filename');
       res.setHeader('filename', data.filename);
-      res.setHeader('Access-Control-Expose-Headers', 'X-Suggested-Filename');
-      res.setHeader('X-Suggested-Filename', data.filename);
 
       return res.download(data.filePath);
     } catch (error) {
