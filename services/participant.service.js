@@ -1258,6 +1258,7 @@ const downloadParticipantSecretFile = async (id, file, where) => {
     success: true,
     filename,
     content: fileContent,
+    filePath,
   };
 };
 
