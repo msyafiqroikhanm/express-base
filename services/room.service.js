@@ -264,8 +264,8 @@ const validateRoomInputs = async (form, where) => {
     isValid: true,
     form: {
       locationId: form.locationId,
-      typeId: typeInstance || null,
-      bedId: bedInstance || null,
+      typeId: typeInstance ? form.typeId : null,
+      bedId: bedInstance ? form.bedId : null,
       statusId: 1,
       name: form.name,
       floor: form.floor,
