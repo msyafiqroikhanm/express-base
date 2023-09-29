@@ -13,7 +13,12 @@ class PICController {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
 
-      const data = await selectAllPICs();
+      const where = {};
+      if (req.query?.typeId) {
+        where.typeId = req.query.typeId;
+      }
+
+      const data = await selectAllPICs(where);
 
       return ResponseFormatter.success200(res, data.message, data.content);
     } catch (error) {
