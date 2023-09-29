@@ -41,8 +41,8 @@ const calculateAge = (dateOfBirth, dateNow) => {
 
   // Check if the birthday for this year has already occurred
   if (
-    currentDate.getMonth() < dob.getMonth() ||
-    (currentDate.getMonth() === dob.getMonth() && currentDate.getDate() < dob.getDate())
+    currentDate.getMonth() < dob.getMonth()
+    || (currentDate.getMonth() === dob.getMonth() && currentDate.getDate() < dob.getDate())
   ) {
     return age - 1;
   }
@@ -203,6 +203,10 @@ const selectParticipant = async (id, where) => {
 
   participantInstance.dataValues.events = [];
   participantInstance.dataValues.transportationSchedules = [];
+  participantInstance.dataValues.profileFilename = participantInstance.dataValues.file?.split('/').pop() || null;
+  participantInstance.dataValues.identityFilename = participantInstance.dataValues.identityFile?.split('/').pop() || null;
+  participantInstance.dataValues.baptismFilename = participantInstance.dataValues.baptismFile?.split('/').pop() || null;
+  participantInstance.dataValues.referenceFilename = participantInstance.dataValues.referenceFile?.split('/').pop() || null;
 
   // parsing participant lodger history
   participantInstance.lodgers.forEach((lodger) => {
