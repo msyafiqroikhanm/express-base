@@ -421,7 +421,7 @@ const validateParticipantInputs = async (form, files, id, where) => {
   let referenceFilePath = null;
   Object.values(files).forEach(async (file) => {
     if (file[0].fieldname === 'participantImage') {
-      if (!['png', 'jpeg', 'jpg'].includes(file[0].originalname.split('.')[1])) {
+      if (!['png', 'jpeg', 'jpg'].includes(file[0].originalname.split('.').pop())) {
         invalid400.push('Upload only supports file types [png, jpeg, and jpg]');
       }
 
@@ -432,12 +432,12 @@ const validateParticipantInputs = async (form, files, id, where) => {
 
       filePath = `public/images/participants/${file[0].filename}`;
     } else {
-      if (!['png', 'jpeg', 'jpg', 'pdf', 'docx'].includes(file[0].originalname.split('.')[1])) {
+      if (!['png', 'jpeg', 'jpg', 'pdf', 'docx'].includes(file[0].originalname.split('.').pop())) {
         invalid400.push('Upload only supports file types [png, jpeg, and jpg]');
       }
 
       let format = 'images';
-      if (['pdf', 'docx'].includes(file[0].originalname.split('.')[1])) {
+      if (['pdf', 'docx'].includes(file[0].originalname.split('.').pop())) {
         format = 'documents';
       }
 
