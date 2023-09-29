@@ -71,7 +71,7 @@ class Contingent {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
 
-      const inputs = await validateContingentInput(req.body);
+      const inputs = await validateContingentInput(req.body, req.params.id);
       if (!inputs.isValid && inputs.code === 400) {
         return ResponseFormatter.error400(res, 'Bad Request', inputs.message);
       }
