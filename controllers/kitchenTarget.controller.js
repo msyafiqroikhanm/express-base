@@ -3,6 +3,9 @@ const {
   validateKitchenTargetInputs,
   createKitchenTarget,
   selectAllKitchenTargets,
+  selectKitchenTarget,
+  updateKitchenTarget,
+  deleteKitchenTarget,
 } = require('../services/kitchenTarget.service');
 
 class KitchenTargetController {
@@ -33,7 +36,7 @@ class KitchenTargetController {
         where.picId = req.user.limitation.access.picId;
       }
 
-      const data = await selectKitchen(where);
+      const data = await selectKitchenTarget(where);
       if (!data.success) {
         return ResponseFormatter.error404(res, 'Data Not Found', data.message);
       }
@@ -75,7 +78,7 @@ class KitchenTargetController {
         where.picId = req.user.limitation.access.picId;
       }
 
-      const data = await updateKitchen(where, req.body);
+      const data = await updateKitchenTarget(where, req.body);
       if (!data.success) {
         return ResponseFormatter.error404(res, 'Data Not Found', data.message);
       }
@@ -95,7 +98,7 @@ class KitchenTargetController {
         where.picId = req.user.limitation.access.picId;
       }
 
-      const data = await deleteKitchen(where);
+      const data = await deleteKitchenTarget(where);
       if (!data.success) {
         return ResponseFormatter.error404(res, 'Data Not Found', data.message);
       }
