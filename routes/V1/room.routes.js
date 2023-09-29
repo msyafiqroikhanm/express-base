@@ -243,8 +243,8 @@ router.post(
   },
   [
     check('locationId', 'locationId attribute must be integer').isInt(),
-    check('typeId', 'typeId attribute must be integer').isInt(),
-    check('bedId', 'bedId attribute must be integer').isInt(),
+    // check('typeId', 'typeId attribute must be integer').isInt(),
+    // check('bedId', 'bedId attribute must be integer').isInt(),
     check('name', "name attribute can't be empty").notEmpty(),
     check('floor', "floor attribute can't be empty").notEmpty(),
     check('capacity', 'capacity attribute must be integer').isInt(),
