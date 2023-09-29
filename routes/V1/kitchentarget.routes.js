@@ -24,24 +24,24 @@ router.get(
   KitchenTargetController.getAll,
 );
 
-// router.get(
-//   '/:id',
-//   async (req, res, next) => {
-//     Authentication.authenticate(
-//       req,
-//       res,
-//       next,
-//       await features().then((feature) => [
-//         feature.view_kitchen_target,
-//         feature.create_kitchen_target,
-//         feature.update_kitchen_target,
-//         feature.delete_kitchen_target,
-//       ]),
-//     );
-//   },
-//   Authentication.fnb,
-//   KitchenTargetController.getDetail,
-// );
+router.get(
+  '/:id',
+  async (req, res, next) => {
+    Authentication.authenticate(
+      req,
+      res,
+      next,
+      await features().then((feature) => [
+        feature.view_kitchen_target,
+        feature.create_kitchen_target,
+        feature.update_kitchen_target,
+        feature.delete_kitchen_target,
+      ]),
+    );
+  },
+  Authentication.fnb,
+  KitchenTargetController.getDetail,
+);
 
 router.post(
   '/',
@@ -65,32 +65,32 @@ router.post(
   KitchenTargetController.create,
 );
 
-// router.put(
-//   '/:id',
-//   async (req, res, next) => {
-//     Authentication.authenticate(
-//       req,
-//       res,
-//       next,
-//       await features().then((feature) => [feature.update_kitchen_target]),
-//     );
-//   },
-//   Authentication.fnb,
-//   KitchenTargetController.update,
-// );
+router.put(
+  '/:id',
+  async (req, res, next) => {
+    Authentication.authenticate(
+      req,
+      res,
+      next,
+      await features().then((feature) => [feature.update_kitchen_target]),
+    );
+  },
+  Authentication.fnb,
+  KitchenTargetController.update,
+);
 
-// router.delete(
-//   '/:id',
-//   async (req, res, next) => {
-//     Authentication.authenticate(
-//       req,
-//       res,
-//       next,
-//       await features().then((feature) => [feature.delete_kitchen_target]),
-//     );
-//   },
-//   Authentication.fnb,
-//   KitchenTargetController.delete,
-// );
+router.delete(
+  '/:id',
+  async (req, res, next) => {
+    Authentication.authenticate(
+      req,
+      res,
+      next,
+      await features().then((feature) => [feature.delete_kitchen_target]),
+    );
+  },
+  Authentication.fnb,
+  KitchenTargetController.delete,
+);
 
 module.exports = router;
