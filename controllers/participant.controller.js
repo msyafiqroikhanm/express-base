@@ -418,9 +418,9 @@ class Participant {
     try {
       // resrict data that is not an admin
       const where = {};
-      // if (!req.user?.limitation.isAdmin) {
-      //   where.contingentId = req.user.limitation.access.contingentId;
-      // }
+      if (!req.user?.limitation.isAdmin) {
+        where.contingentId = req.user.limitation.access.contingentId;
+      }
 
       const data = await downloadParticipantSecretFile(req.params.id, req.params.file, where);
       if (!data.success && data.code === 400) {
@@ -430,9 +430,9 @@ class Participant {
         return ResponseFormatter.error404(res, 'Data Not Found', data.message);
       }
 
-      res.setHeader('Content-Disposition', `attachment; filename="${data.filename}"`);
+      // res.setHeader('Content-Disposition', `attachment; filename="${data.filename}"`);
       res.setHeader('filename', data.filename);
-      return res.end(data.content);
+      return res.download(data.filePath);
     } catch (error) {
       next(error);
     }
