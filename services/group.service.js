@@ -106,7 +106,7 @@ const selectGroup = async (id, where) => {
   };
 };
 
-const validateGroupInputs = async (form, limitation = null) => {
+const validateGroupInputs = async (form, id, limitation = null) => {
   const { eventId, contingentId, name } = form;
 
   const invalid400 = [];
@@ -114,10 +114,28 @@ const validateGroupInputs = async (form, limitation = null) => {
   const formParticipants = [];
 
   // check eventId validity
-  const eventInstance = await ENV_Event.findByPk(eventId);
+  const eventInstance = await ENV_Event.findOne({
+    where: { id: eventId },
+    include: {
+      model: PAR_Group,
+      attributes: ['id'],
+      include: {
+        model: PAR_Participant,
+        attributes: ['id', 'name'],
+        through: {
+          attributes: [],
+        },
+      },
+    },
+  });
   if (!eventInstance) {
     invalid404.push('Event Data Not Found');
   }
+
+  // assingning participant that already regirestered to the event
+  const registeredParticipants = eventInstance.PAR_Groups
+    .flatMap((group) => group.PAR_Participants)
+    .map((participant) => ({ id: participant.id, name: participant.name }));
 
   // check contingentId validity
   const contingentInstance = await PAR_Contingent.findByPk(contingentId);
@@ -173,7 +191,38 @@ const validateGroupInputs = async (form, limitation = null) => {
   if (!formParticipants.length) {
     invalid404.push('Participant Data Does Not Meet the Criteria');
   }
-  // console.log(formParticipants);
+
+  // check user already registered to an event
+  if (id) {
+    const groupInstance = await PAR_Group.findOne({
+      where: { id },
+      include: {
+        model: PAR_Participant,
+        attributes: ['id'],
+        through: {
+          attributes: [],
+        },
+      },
+    });
+
+    const oldParticipants = groupInstance?.PAR_Participants.map((participant) => participant.id);
+
+    const filteredRegisteredParticipants = registeredParticipants.filter(
+      (participant) => !oldParticipants.includes(participant.id),
+    );
+
+    filteredRegisteredParticipants.forEach((participant) => {
+      if (formParticipants.includes(participant.id)) {
+        invalid400.push(`Participant ${participant.name} Already Registered`);
+      }
+    });
+  } else {
+    registeredParticipants.forEach((participant) => {
+      if (formParticipants.includes(participant.id)) {
+        invalid400.push(`Participant ${participant.name} Already Registered`);
+      }
+    });
+  }
 
   if (invalid400.length > 0) {
     return {
@@ -203,7 +252,9 @@ const validateGroupInputs = async (form, limitation = null) => {
 };
 
 const createGroup = async (form) => {
-  const { event, contingent, status, name, participants } = form;
+  const {
+    event, contingent, status, name, participants,
+  } = form;
 
   const groupInstance = await PAR_Group.create({
     eventId: event.id,
@@ -222,7 +273,9 @@ const createGroup = async (form) => {
 };
 
 const updateGroup = async (id, form, where) => {
-  const { event, contingent, name, participants } = form;
+  const {
+    event, contingent, name, participants,
+  } = form;
 
   let groupInstance;
   if (Object.keys(where).length > 0) {
