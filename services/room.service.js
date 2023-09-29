@@ -247,7 +247,7 @@ const validateRoomInputs = async (form, where) => {
   }
   if (locationInstance && bedInstance) {
     if (bedInstance.locationId !== locationInstance.id) {
-      errorMessages.push('Prohibited To Fill Bed Type From Other Location');
+      // errorMessages.push('Prohibited To Fill Bed Type From Other Location');
     }
   }
 
