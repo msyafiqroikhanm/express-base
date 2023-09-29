@@ -203,10 +203,10 @@ const createEvent = async (form) => {
     locationId,
     name,
     code,
-    minAge,
-    maxAge,
-    maxParticipantPerGroup,
-    maxTotalParticipant,
+    minAge: minAge || null,
+    maxAge: maxAge || null,
+    maxParticipantPerGroup: maxParticipantPerGroup || null,
+    maxTotalParticipant: maxTotalParticipant || null,
   });
 
   await times.forEach(async (time) => {
