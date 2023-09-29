@@ -53,7 +53,7 @@ const selectAllLocations = async (where) => {
       });
 
       // eslint-disable-next-line no-param-reassign
-      location.dataValues.pic = pic.user.participant;
+      location.dataValues.pic = pic?.user.participant || null;
     }),
   );
 

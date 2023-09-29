@@ -480,17 +480,6 @@ const validateParticipantInputs = async (form, files, id, where) => {
     if (isDuplicatePhoneNo) {
       invalid400.push(`Phone Number ${phoneNbr} Already Used In System`);
     }
-
-    // check email duplicate
-    const isDuplicateEmail = await PAR_Participant.findOne({
-      where: {
-        id: { [Op.ne]: id },
-        email,
-      },
-    });
-    if (isDuplicateEmail) {
-      invalid400.push(`Email ${email} Already Used In System`);
-    }
   } else {
     // check identity number duplicate
     const isDuplicateIdentityNo = await PAR_Participant.findOne({ where: { identityNo } });
@@ -502,12 +491,6 @@ const validateParticipantInputs = async (form, files, id, where) => {
     const isDuplicatePhoneNo = await PAR_Participant.findOne({ where: { phoneNbr } });
     if (isDuplicatePhoneNo) {
       invalid400.push(`Phone Number ${phoneNbr} Already Used In System`);
-    }
-
-    // check email duplicate
-    const isDuplicateEmail = await PAR_Participant.findOne({ where: { email } });
-    if (isDuplicateEmail) {
-      invalid400.push(`Email ${email} Already Used In System`);
     }
   }
 
@@ -767,14 +750,6 @@ const createParticipantViaImport = async (file) => {
   await Promise.all(
     participants.map(async (participant, index) => {
       // check if participant have duplicate data with phoneNbr, email, identityNo
-      if (existEmail.includes(participant.email)) {
-        invalidData.push(
-          `Duplicate email ${participant.email} for participant ${participant.name} at row ${
-            index + 1
-          }`,
-        );
-        return;
-      }
       if (existPhoneNbr.includes(participant.phoneNbr)) {
         invalidData.push(
           `Duplicate phone number ${participant.phoneNbr} for participant ${
@@ -1036,15 +1011,6 @@ const createCommitteeViaImport = async (file) => {
   const invalidData = [];
   await Promise.all(
     participants.map(async (participant, index) => {
-      // check if participant have duplicate data with phoneNbr, email, identityNo
-      if (existEmail.includes(participant.email)) {
-        invalidData.push(
-          `Duplicate email ${participant.email} for committee ${participant.name} at row ${
-            index + 1
-          }`,
-        );
-        return;
-      }
       if (existPhoneNbr.includes(participant.phoneNbr)) {
         invalidData.push(
           `Duplicate phone number ${participant.phoneNbr} for committee ${
