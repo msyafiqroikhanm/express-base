@@ -750,14 +750,6 @@ const createParticipantViaImport = async (file) => {
   await Promise.all(
     participants.map(async (participant, index) => {
       // check if participant have duplicate data with phoneNbr, email, identityNo
-      if (existEmail.includes(participant.email)) {
-        invalidData.push(
-          `Duplicate email ${participant.email} for participant ${participant.name} at row ${
-            index + 1
-          }`,
-        );
-        return;
-      }
       if (existPhoneNbr.includes(participant.phoneNbr)) {
         invalidData.push(
           `Duplicate phone number ${participant.phoneNbr} for participant ${
@@ -1019,15 +1011,6 @@ const createCommitteeViaImport = async (file) => {
   const invalidData = [];
   await Promise.all(
     participants.map(async (participant, index) => {
-      // check if participant have duplicate data with phoneNbr, email, identityNo
-      if (existEmail.includes(participant.email)) {
-        invalidData.push(
-          `Duplicate email ${participant.email} for committee ${participant.name} at row ${
-            index + 1
-          }`,
-        );
-        return;
-      }
       if (existPhoneNbr.includes(participant.phoneNbr)) {
         invalidData.push(
           `Duplicate phone number ${participant.phoneNbr} for committee ${
