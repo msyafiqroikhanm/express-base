@@ -125,7 +125,6 @@ const validateVehicleScheduleInputs = async (form) => {
 
   // check destination (location id) validity
   const destinationInstance = await ACM_Location.findByPk(form.destinationId);
-  console.log(JSON.stringify(destinationInstance, null, 2));
   if (!destinationInstance) {
     invalid404.push('Destination Location Id Not Found');
   }

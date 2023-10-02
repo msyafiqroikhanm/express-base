@@ -88,13 +88,14 @@ const selectAllParticipant = async (query, where) => {
     participant.dataValues.identityType = participant.identityType?.dataValues.name;
     participant.dataValues.participantType = participant.participantType?.dataValues.name;
     participant.dataValues.committeeType = participant.committeeType?.dataValues.name;
+    participant.dataValues.age = calculateAge(participant.birthDate, startEvent.value);
+
     // separating bettween normal participant and committee participant
-    if (participant.contingent && participant.participantType) {
+    if ((participant.contingent && participant.participantType) || !participant.committeeTypeId) {
       seperatedParticipant.participant.push(participant);
     } else {
       seperatedParticipant.committee.push(participant);
     }
-    participant.dataValues.age = calculateAge(participant.birthDate, startEvent.value);
   });
 
   return {

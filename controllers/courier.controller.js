@@ -13,7 +13,6 @@ class CourierController {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
 
-      // console.log(JSON.stringify(req.user.limitation, null, 2));
       const where = {};
       const data = await selectAllCouriers(where);
 

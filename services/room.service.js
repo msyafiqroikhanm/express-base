@@ -230,7 +230,6 @@ const validateRoomInputs = async (form, where) => {
     errorMessages.push('Location Data Not Found');
   }
 
-  console.log(JSON.stringify(locationInstance, null, 2));
   const typeInstance = await REF_RoomType.findByPk(form.typeId);
   if (!typeInstance) {
     errorMessages.push('Room Type Data Not Found');
