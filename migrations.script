@@ -70,3 +70,4 @@ sequelize model:generate --name FNB_ScheduleMenu --attributes scheduleId:integer
 sequelize model:generate --name FNB_Schedule --attributes picLocationId:integer,picKitchenId:integer,qrId:integer,locationId:integer,kitchenId:integer,statusId:integer,courierId:integer,name:string,pickUpTime:date,dropOfTime:date,vehiclePlateNo:string
 sequelize model:generate --name REF_CommitteeType --attributes name:string
 sequelize model:generate --name ACM_RoomBedType --attributes locationId:integer,name:string,deletedAt:date
+sequelize model:generate --name SYS_Notification --attributes userId:integer,typeId:integer,relatedDataId:intiger,url:text,message:text,isRead:boolean
