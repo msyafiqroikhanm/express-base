@@ -343,7 +343,10 @@ const deleteLodger = async (id) => {
   }
 
   await lodgerInstance.destroy();
-  await ACM_Room.update({ statusId: 1, occupied: -1 }, { where: { id: lodgerInstance.roomId } });
+  await ACM_Room.update(
+    { statusId: 1, occupied: sequelize.literal('occupied - 1') },
+    { where: { id: lodgerInstance.roomId } },
+  );
 
   return {
     success: true,
