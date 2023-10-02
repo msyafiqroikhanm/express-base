@@ -61,7 +61,7 @@ class ParticipantGroup {
         where.id = req.user.limitation.access.contingentId;
       }
 
-      const inputs = await validateGroupInputs(req.body, where);
+      const inputs = await validateGroupInputs(req.body, null, where);
       if (!inputs.isValid && inputs.code === 400) {
         return ResponseFormatter.error400(res, 'Bad Request', inputs.message);
       }
@@ -90,7 +90,7 @@ class ParticipantGroup {
         where.id = req.user.limitation.access.contingentId;
       }
 
-      const inputs = await validateGroupInputs(req.body, where);
+      const inputs = await validateGroupInputs(req.body, req.params.id, where);
       if (!inputs.isValid && inputs.code === 400) {
         return ResponseFormatter.error400(res, 'Bad Request', inputs.message);
       }

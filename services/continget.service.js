@@ -38,7 +38,6 @@ const selectAllContingents = async (where) => {
 };
 
 const selectContingent = async (id, where) => {
-  console.log(`${typeof id} vs ${typeof where?.id}`);
   // check contingent id validity
   if (where?.id && where?.id !== Number(id)) {
     return {

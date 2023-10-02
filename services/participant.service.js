@@ -88,13 +88,14 @@ const selectAllParticipant = async (query, where) => {
     participant.dataValues.identityType = participant.identityType?.dataValues.name;
     participant.dataValues.participantType = participant.participantType?.dataValues.name;
     participant.dataValues.committeeType = participant.committeeType?.dataValues.name;
+    participant.dataValues.age = calculateAge(participant.birthDate, startEvent.value);
+
     // separating bettween normal participant and committee participant
-    if (participant.contingent && participant.participantType) {
+    if ((participant.contingent && participant.participantType) || !participant.committeeTypeId) {
       seperatedParticipant.participant.push(participant);
     } else {
       seperatedParticipant.committee.push(participant);
     }
-    participant.dataValues.age = calculateAge(participant.birthDate, startEvent.value);
   });
 
   return {
@@ -421,7 +422,7 @@ const validateParticipantInputs = async (form, files, id, where) => {
   let referenceFilePath = null;
   Object.values(files).forEach(async (file) => {
     if (file[0].fieldname === 'participantImage') {
-      if (!['png', 'jpeg', 'jpg'].includes(file[0].originalname.split('.')[1])) {
+      if (!['png', 'jpeg', 'jpg'].includes(file[0].originalname.split('.').pop())) {
         invalid400.push('Upload only supports file types [png, jpeg, and jpg]');
       }
 
@@ -432,12 +433,12 @@ const validateParticipantInputs = async (form, files, id, where) => {
 
       filePath = `public/images/participants/${file[0].filename}`;
     } else {
-      if (!['png', 'jpeg', 'jpg', 'pdf', 'docx'].includes(file[0].originalname.split('.')[1])) {
+      if (!['png', 'jpeg', 'jpg', 'pdf', 'docx'].includes(file[0].originalname.split('.').pop())) {
         invalid400.push('Upload only supports file types [png, jpeg, and jpg]');
       }
 
       let format = 'images';
-      if (['pdf', 'docx'].includes(file[0].originalname.split('.')[1])) {
+      if (['pdf', 'docx'].includes(file[0].originalname.split('.').pop())) {
         format = 'documents';
       }
 
@@ -480,17 +481,6 @@ const validateParticipantInputs = async (form, files, id, where) => {
     if (isDuplicatePhoneNo) {
       invalid400.push(`Phone Number ${phoneNbr} Already Used In System`);
     }
-
-    // check email duplicate
-    const isDuplicateEmail = await PAR_Participant.findOne({
-      where: {
-        id: { [Op.ne]: id },
-        email,
-      },
-    });
-    if (isDuplicateEmail) {
-      invalid400.push(`Email ${email} Already Used In System`);
-    }
   } else {
     // check identity number duplicate
     const isDuplicateIdentityNo = await PAR_Participant.findOne({ where: { identityNo } });
@@ -502,12 +492,6 @@ const validateParticipantInputs = async (form, files, id, where) => {
     const isDuplicatePhoneNo = await PAR_Participant.findOne({ where: { phoneNbr } });
     if (isDuplicatePhoneNo) {
       invalid400.push(`Phone Number ${phoneNbr} Already Used In System`);
-    }
-
-    // check email duplicate
-    const isDuplicateEmail = await PAR_Participant.findOne({ where: { email } });
-    if (isDuplicateEmail) {
-      invalid400.push(`Email ${email} Already Used In System`);
     }
   }
 
@@ -767,14 +751,6 @@ const createParticipantViaImport = async (file) => {
   await Promise.all(
     participants.map(async (participant, index) => {
       // check if participant have duplicate data with phoneNbr, email, identityNo
-      if (existEmail.includes(participant.email)) {
-        invalidData.push(
-          `Duplicate email ${participant.email} for participant ${participant.name} at row ${
-            index + 1
-          }`,
-        );
-        return;
-      }
       if (existPhoneNbr.includes(participant.phoneNbr)) {
         invalidData.push(
           `Duplicate phone number ${participant.phoneNbr} for participant ${
@@ -1036,15 +1012,6 @@ const createCommitteeViaImport = async (file) => {
   const invalidData = [];
   await Promise.all(
     participants.map(async (participant, index) => {
-      // check if participant have duplicate data with phoneNbr, email, identityNo
-      if (existEmail.includes(participant.email)) {
-        invalidData.push(
-          `Duplicate email ${participant.email} for committee ${participant.name} at row ${
-            index + 1
-          }`,
-        );
-        return;
-      }
       if (existPhoneNbr.includes(participant.phoneNbr)) {
         invalidData.push(
           `Duplicate phone number ${participant.phoneNbr} for committee ${

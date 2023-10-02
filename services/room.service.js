@@ -230,7 +230,6 @@ const validateRoomInputs = async (form, where) => {
     errorMessages.push('Location Data Not Found');
   }
 
-  console.log(JSON.stringify(locationInstance, null, 2));
   const typeInstance = await REF_RoomType.findByPk(form.typeId);
   if (!typeInstance) {
     errorMessages.push('Room Type Data Not Found');
@@ -241,10 +240,11 @@ const validateRoomInputs = async (form, where) => {
     }
   }
 
-  const bedInstance = await ACM_RoomBedType.findByPk(form.typeId);
+  const bedInstance = await ACM_RoomBedType.findByPk(form.bedId);
   if (!bedInstance) {
     errorMessages.push('Bed Type Data Not Found');
   }
+
   if (locationInstance && bedInstance) {
     if (bedInstance.locationId !== locationInstance.id) {
       errorMessages.push('Prohibited To Fill Bed Type From Other Location');
@@ -264,8 +264,8 @@ const validateRoomInputs = async (form, where) => {
     isValid: true,
     form: {
       locationId: form.locationId,
-      typeId: form.typeId,
-      bedId: form.bedId,
+      typeId: typeInstance ? form.typeId : null,
+      bedId: bedInstance ? form.bedId : null,
       statusId: 1,
       name: form.name,
       floor: form.floor,

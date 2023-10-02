@@ -3,8 +3,9 @@ const {
   USR_PIC, REF_PICType, USR_User, PAR_Participant,
 } = require('../models');
 
-const selectAllPICs = async () => {
+const selectAllPICs = async (query) => {
   const pics = await USR_PIC.findAll({
+    where: query.typeId ? { typeId: query.typeId } : null,
     attributes: ['id', 'userId', 'typeId'],
     include: [
       {

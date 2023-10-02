@@ -365,8 +365,6 @@ class Participant {
         where.id = req.user.limitation.access.contingentId;
       }
 
-      console.log(where);
-
       const data = await selectParticipantAllSchedules(req.params.id, where);
       if (!data.success && data.code === 404) {
         return ResponseFormatter.error404(res, 'Data Not Found', data.message);

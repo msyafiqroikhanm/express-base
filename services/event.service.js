@@ -20,7 +20,7 @@ const selectAllEvents = async (where) => {
   });
 
   await Promise.all(data.map(async (event) => {
-    event.dataValues.category = event.category.dataValues.name;
+    event.dataValues.category = event.category?.dataValues.name || null;
     const pic = await USR_PIC.findOne({
       where: { id: event.picId },
       attributes: ['id', 'userId', 'typeId'],
@@ -69,7 +69,7 @@ const selectEvent = async (id, where = {}) => {
   });
 
   eventInstance.dataValues.pic = pic || null;
-  eventInstance.dataValues.category = eventInstance.category?.dataValues.name;
+  eventInstance.dataValues.category = eventInstance.category?.dataValues.name || null;
 
   return {
     success: true, message: 'Success Getting Event', content: eventInstance,
@@ -84,6 +84,22 @@ const validateEventInputs = async (form, id, where = {}) => {
 
   const invalid400 = [];
   const invalid404 = [];
+
+  if (minAge && minAge < 0) {
+    invalid400.push('Minimum Age Must Be Greater Than 0');
+  }
+
+  if (maxAge && maxAge < 0) {
+    invalid400.push('Maximum Age Must Be Greater Than 0');
+  }
+
+  if (maxParticipantPerGroup && maxParticipantPerGroup < 0) {
+    invalid400.push('Maximum Participant Per Group Must Be Greater Than 0');
+  }
+
+  if (maxTotalParticipant && maxTotalParticipant < 0) {
+    invalid400.push('Maximum Total Participant Must Be Greater Than 0');
+  }
 
   const picInstance = await USR_PIC.findOne({ where: { id: picId }, attributes: ['id', 'typeId'] });
   if (!picInstance) {
@@ -187,10 +203,10 @@ const createEvent = async (form) => {
     locationId,
     name,
     code,
-    minAge,
-    maxAge,
-    maxParticipantPerGroup,
-    maxTotalParticipant,
+    minAge: minAge || null,
+    maxAge: maxAge || null,
+    maxParticipantPerGroup: maxParticipantPerGroup || null,
+    maxTotalParticipant: maxTotalParticipant || null,
   });
 
   await times.forEach(async (time) => {
@@ -226,10 +242,10 @@ const updateEvent = async (id, form) => {
   eventInstance.locationId = locationId;
   eventInstance.name = name;
   eventInstance.code = code;
-  eventInstance.minAge = minAge;
-  eventInstance.maxAge = maxAge;
-  eventInstance.maxParticipantPerGroup = maxParticipantPerGroup;
-  eventInstance.maxTotalParticipant = maxTotalParticipant;
+  eventInstance.minAge = minAge || null;
+  eventInstance.maxAge = maxAge || null;
+  eventInstance.maxParticipantPerGroup = maxParticipantPerGroup || null;
+  eventInstance.maxTotalParticipant = maxTotalParticipant || null;
   await eventInstance.save();
 
   await ENV_TimeEvent.destroy({

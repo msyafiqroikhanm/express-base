@@ -54,7 +54,7 @@ const selectAllLocations = async (where) => {
 
       // console.log(JSON.stringify(pic.user, null, 2));
       // eslint-disable-next-line no-param-reassign
-      location.dataValues.pic = pic.user.participant;
+      location.dataValues.pic = pic?.user.participant || null;
     }),
   );
 
@@ -269,7 +269,7 @@ const validateLocationInputs = async (form) => {
     form: {
       parentLocationId: form.parentLocationId,
       typeId: typeInstance.id,
-      picId: form.picId,
+      picId: form.picId || null,
       name: form.name,
       description: form.description,
       address: form.address,

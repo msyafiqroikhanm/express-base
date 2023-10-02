@@ -368,7 +368,7 @@ const validateLodgerInputs = async (form) => {
     }
   }
 
-  const participantInstance = await ACM_Location.findByPk(form.participantId);
+  const participantInstance = await PAR_Participant.findByPk(form.participantId);
   if (!participantInstance) {
     errorMessages.push('Participant Data Not Found');
   }

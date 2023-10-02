@@ -34,8 +34,8 @@ class AuthMiddleware {
 
         // check user access
         if (requiredFeatures) {
-          const authorized = req.user.Role.USR_Features.some((feature) =>
-            requiredFeatures.includes(feature.id),
+          const authorized = req.user.Role.USR_Features.some(
+            (feature) => requiredFeatures.includes(feature.id),
           );
 
           if (!authorized) {
@@ -82,7 +82,6 @@ class AuthMiddleware {
         }
       }
       req.user.limitation = limitation;
-      console.log(req.user.limitation);
       next();
     } catch (error) {
       next(error);

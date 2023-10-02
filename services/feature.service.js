@@ -58,7 +58,6 @@ const validateFeatureInputs = async (form, id) => {
   const duplicateModule = await USR_Feature.findOne({
     where: id ? { id: { [Op.ne]: id }, name: form.name } : { name },
   });
-  console.log(JSON.stringify(duplicateModule, null, 2));
   if (duplicateModule) {
     invalid400.push('Feature Name Already Taken / Exist');
   }

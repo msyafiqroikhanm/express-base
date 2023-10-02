@@ -543,7 +543,6 @@ class LocationType {
       res.url = `${req.method} ${req.originalUrl}`;
 
       const data = await locationType.selectAllLocationTypes();
-      console.log(data);
 
       return ResponseFormatter.success200(res, data.message, data.content);
     } catch (error) {
@@ -616,7 +615,6 @@ class RoomType {
 
       const where = {};
 
-      console.log(JSON.stringify(req.user.limitation, null, 2));
       if (!req.user.limitation.isAdmin) {
         where.locationId = { [Op.or]: req.user.limitation.access.location };
       }
@@ -721,7 +719,6 @@ class BedType {
 
       const where = {};
 
-      console.log(JSON.stringify(req.user.limitation, null, 2));
       if (!req.user.limitation.isAdmin) {
         where.locationId = { [Op.or]: req.user.limitation.access.location };
       }

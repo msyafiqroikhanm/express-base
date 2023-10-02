@@ -14,7 +14,6 @@ class FacilityController {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
 
-      // console.log(JSON.stringify(req.user.limitation, null, 2));
       const where = {};
       if (!req.user.limitation.isAdmin) {
         where.locationId = {
@@ -63,7 +62,6 @@ class FacilityController {
         where.picId = req.user.limitation.access.picId;
       }
 
-      console.log(JSON.stringify(req.user.limitation, null, 2));
       const inputs = await validateFacilityInputs(req.body, where);
       if (!inputs.isValid && inputs.code === 404) {
         return ResponseFormatter.error404(res, 'Data Not Found', inputs.message);
