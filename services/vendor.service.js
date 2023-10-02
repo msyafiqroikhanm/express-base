@@ -44,7 +44,7 @@ const validateVendorInputs = async (form, id) => {
   const invalid400 = [];
   const invalid404 = [];
 
-  const picInstance = await USR_PIC.findOne({ where: { id: form.picId }, attributes: ['id'] });
+  const picInstance = await USR_PIC.findOne({ where: { id: form.picId }, attributes: ['id', 'typeId'] });
   if (!picInstance) {
     invalid404.push('PIC Data Not Found');
   }
@@ -69,6 +69,13 @@ const validateVendorInputs = async (form, id) => {
   });
   if (duplicateEmail) {
     invalid400.push('Vendor Email Already Taken / Exist');
+  }
+
+  console.log(JSON.stringify(picInstance, null, 2));
+
+  // check if pic is pic transportation
+  if (picInstance.typeId !== 4) {
+    invalid400.push('PIC For Transportation Must Be Type PIC Transportation');
   }
 
   if (invalid400.length > 0) {
