@@ -26,7 +26,6 @@ const participantDasboard = async (limitation = null) => {
     ],
   });
 
-  console.log(JSON.stringify(participantPerRegion, null, 2));
   const regionCounts = participantPerRegion.map((region) => {
     const participantCount = region.contingents.reduce(
       (sum, contingent) => sum + Number(contingent.participants?.length),

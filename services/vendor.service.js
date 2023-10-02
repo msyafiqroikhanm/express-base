@@ -71,8 +71,6 @@ const validateVendorInputs = async (form, id) => {
     invalid400.push('Vendor Email Already Taken / Exist');
   }
 
-  console.log(JSON.stringify(picInstance, null, 2));
-
   // check if pic is pic transportation
   if (picInstance.typeId !== 4) {
     invalid400.push('PIC For Transportation Must Be Type PIC Transportation');
