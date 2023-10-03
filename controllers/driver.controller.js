@@ -16,6 +16,7 @@ class DriverController {
       } else if (!req.user.limitation.isAdmin && req.user.limitation?.access?.driver) {
         where.driverId = req.user.limitation.access.driverId;
       }
+      where.isAvailable = req.query?.isAvailable;
 
       const data = await selectAllDrivers(where);
 

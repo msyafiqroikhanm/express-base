@@ -7,10 +7,20 @@ const { validateCommitteeInputs, createComittee, deleteParticipant } = require('
 const { validateUserInputs, createUser } = require('./user.service');
 
 const selectAllDrivers = async (where = {}) => {
+  const query = {};
+  if (where.driverId) {
+    query.id = where.driverId;
+  }
+  if (where.picId) {
+    query.vendorId = { [Op.in]: where.vendors };
+  }
+  if (where.isAvailable) {
+    query.isAvailable = where.isAvailable.toLowerCase() === 'true';
+  }
+
   const data = await TPT_Driver.findAll({
     // eslint-disable-next-line no-nested-ternary
-    where: where.driverId ? { id: where.driverId } : where.picId
-      ? { vendorId: { [Op.in]: where.vendors } } : null,
+    where: Object.keys(query).length > 0 ? query : null,
     include: { model: TPT_Vendor, as: 'vendor', attributes: { exclude: ['createdAt', 'updatedAt', 'deletedAt'] } },
   });
 
