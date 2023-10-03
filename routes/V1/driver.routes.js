@@ -60,6 +60,13 @@ router.post(
   },
   Authentication.transportation,
   [
+    check('identityTypeId', "Identity type Id attribute can't be empty").notEmpty(),
+    check('gender', "Gender attribute can't be empty").notEmpty(),
+    check('birthDate', "Birth Date attribute can't be empty").isDate(),
+    check('identityNo', "Identity Number attribute can't be empty").notEmpty(),
+    // check('address', "Address attribute can't be empty").notEmpty(),
+    check('username', "Username attribute can't be empty").notEmpty(),
+    check('password', "Password attribute can't be empty").notEmpty(),
     check('vendorId', "Vendor Id attribute can't be empty").notEmpty(),
     check('name', "Name attribute can't be empty").notEmpty(),
     check('phoneNbr', "Phone Number attribute can't be empty").notEmpty(),

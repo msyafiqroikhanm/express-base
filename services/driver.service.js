@@ -1,6 +1,10 @@
 /* eslint-disable no-param-reassign */
 const { Op } = require('sequelize');
-const { TPT_Driver, TPT_Vendor, TPT_VehicleSchedule } = require('../models');
+const {
+  TPT_Driver, TPT_Vendor, TPT_VehicleSchedule, USR_User, PAR_Participant,
+} = require('../models');
+const { validateCommitteeInputs, createComittee, deleteParticipant } = require('./participant.service');
+const { validateUserInputs, createUser } = require('./user.service');
 
 const selectAllDrivers = async (where = {}) => {
   const data = await TPT_Driver.findAll({
@@ -51,26 +55,127 @@ const selectDriver = async (id, where) => {
   };
 };
 
-const validateDriverInputs = async (form, where) => {
+const validateDriverInputs = async (form, where, file, id) => {
   const {
     vendorId, name, phoneNbr, email,
   } = form;
 
+  const invalid400 = [];
+  const invalid404 = [];
+
   if (where.picId && !where.vendors?.includes(vendorId)) {
-    return {
-      success: false,
-      code: 404,
-      message: ['Vendor Data Not Found'],
-    };
+    invalid404.push('Vendor Data Not Found');
   }
 
   // check vendor id
   const vendorInstance = await TPT_Vendor.findByPk(vendorId);
   if (!vendorInstance) {
+    invalid404.push('Vendor Data Not Found');
+  }
+
+  let userInstance = null;
+  let committeeInstance = null;
+  let driverInstance = null;
+  if (!id) {
+    // validate for committee part of data
+    const committeeInputs = await validateCommitteeInputs(
+      {
+        committeeTypeId: 3,
+        identityTypeId: form.identityTypeId,
+        name: form.name,
+        gender: form.gender,
+        birthDate: form.birthDate,
+        identityNo: form.identityNo,
+        phoneNbr: form.phoneNbr,
+        email: form.email,
+        address: form.address,
+      },
+      file,
+      null,
+    );
+    if (!committeeInputs.isValid && committeeInputs.code === 404) {
+      invalid404.push(...committeeInputs.message);
+    } else if (!committeeInputs.isValid && committeeInputs.code === 400) {
+      invalid400.push(...committeeInputs.message);
+    }
+
+    if (invalid400.length > 0) {
+      return {
+        isValid: false,
+        code: 400,
+        message: invalid400,
+      };
+    }
+    if (invalid404.length > 0) {
+      return {
+        isValid: false,
+        code: 404,
+        message: invalid404,
+      };
+    }
+
+    committeeInstance = await createComittee(committeeInputs.form);
+
+    // validate for user part of data
+    const userInputs = await validateUserInputs(
+      {
+        roleId: 8,
+        participantId: committeeInstance.content?.id,
+        username: form.username,
+        password: form.password,
+        email: form.email,
+      },
+      null,
+    );
+
+    // when input for creating user is invalid push error according to error code
+    // and delete committee participant that created before it
+    if (!userInputs.isValid && userInputs.code === 404) {
+      invalid404.push(...userInputs.message);
+      await deleteParticipant({ id: committeeInstance.content?.id });
+    } else if (!userInputs.isValid && userInputs.code === 400) {
+      invalid400.push(...userInputs.message);
+      await deleteParticipant({ id: committeeInstance.content?.id });
+    }
+
+    if (invalid400.length > 0) {
+      return {
+        isValid: false,
+        code: 400,
+        message: invalid400,
+      };
+    }
+    if (invalid404.length > 0) {
+      return {
+        isValid: false,
+        code: 404,
+        message: invalid404,
+      };
+    }
+
+    userInstance = await createUser(userInputs.form);
+  } else {
+    driverInstance = await TPT_Driver.findOne({
+      where: { id },
+      include: { model: USR_User, attributes: ['id', 'participantId'], as: 'user' },
+    });
+    if (!driverInstance) {
+      invalid404.push('Driver Data Not Found');
+    }
+  }
+
+  if (invalid400.length > 0) {
     return {
-      success: false,
+      isValid: false,
+      code: 400,
+      message: invalid400,
+    };
+  }
+  if (invalid404.length > 0) {
+    return {
+      isValid: false,
       code: 404,
-      message: ['Vendor Data Not Found'],
+      message: invalid404,
     };
   }
 
@@ -78,6 +183,8 @@ const validateDriverInputs = async (form, where) => {
     isValid: true,
     form: {
       vendor: vendorInstance,
+      user: userInstance?.content || driverInstance?.user?.id,
+      committee: committeeInstance?.content || driverInstance?.user?.participantId,
       name,
       phoneNbr,
       email,
@@ -88,6 +195,7 @@ const validateDriverInputs = async (form, where) => {
 const createDriver = async (form) => {
   const driverInstance = await TPT_Driver.create({
     vendorId: form.vendor.id,
+    userId: form.user.id,
     name: form.name,
     phoneNbr: form.phoneNbr,
     email: form.email,
@@ -96,12 +204,13 @@ const createDriver = async (form) => {
 
   return {
     success: true,
-    message: 'Driver Successfully Deleted',
+    message: 'Driver Successfully Created',
     content: driverInstance,
   };
 };
 
 const updateDriver = async (form, id, where) => {
+  // updating driver data
   const driverInstance = await TPT_Driver.findOne({
     where: where.picId ? { id, vendorId: { [Op.in]: where.vendors } } : { id },
   });
@@ -119,6 +228,18 @@ const updateDriver = async (form, id, where) => {
   driverInstance.email = form.email;
   await driverInstance.save();
 
+  // updating committee / participant
+  await PAR_Participant.update(
+    { email: form.email, phoneNbr: form.phoneNbr, name: form.name },
+    { where: { id: form.committee } },
+  );
+
+  // updating user
+  await USR_User.update(
+    { email: form.email, phoneNbr: form.phoneNbr },
+    { where: { id: form.user } },
+  );
+
   return {
     success: true,
     message: 'Driver Successfully Updated',
@@ -129,6 +250,7 @@ const updateDriver = async (form, id, where) => {
 const deleteDriver = async (id, where) => {
   const driverInstance = await TPT_Driver.findOne({
     where: where.picId ? { id, vendorId: { [Op.in]: where.vendors } } : { id },
+    include: { model: USR_User, attributes: ['id', 'participantId'], as: 'user' },
   });
   if (!driverInstance) {
     return {
@@ -141,6 +263,8 @@ const deleteDriver = async (id, where) => {
   const { name } = driverInstance.dataValues;
 
   await driverInstance.destroy();
+  await PAR_Participant.destroy({ where: { id: driverInstance.user.participantId } });
+  await USR_User.destroy({ where: { id: driverInstance.user.id } });
 
   await TPT_VehicleSchedule.update(
     { driverId: null },
