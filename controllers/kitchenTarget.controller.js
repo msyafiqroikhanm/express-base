@@ -86,7 +86,7 @@ class KitchenTargetController {
 
       const where = { id: req.params.id };
       if (!req.user.limitation.isAdmin) {
-        where.picId = req.user.limitation.access.picId;
+        req.body.picId = req.user.limitation.access.picId;
       }
 
       const data = await updateKitchenTarget(where, req.body);
@@ -106,7 +106,7 @@ class KitchenTargetController {
 
       const where = { id: req.params.id };
       if (!req.user.limitation.isAdmin) {
-        where.picId = req.user.limitation.access.picId;
+        req.body.picId = req.user.limitation.access.picId;
       }
 
       const data = await deleteKitchenTarget(where);
