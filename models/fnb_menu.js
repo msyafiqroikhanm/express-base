@@ -22,6 +22,7 @@ module.exports = (sequelize, DataTypes) => {
       parentMenuId: DataTypes.INTEGER,
       menuTypeId: DataTypes.INTEGER,
       foodTypeId: DataTypes.INTEGER,
+      date: DataTypes.DATEONLY,
       name: DataTypes.STRING,
       quantity: DataTypes.INTEGER,
       description: DataTypes.TEXT,

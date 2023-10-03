@@ -110,6 +110,7 @@ const validateMenuInputs = async (form) => {
       parentMenuId: form.parentMenuId ? form.parentMenuId : null,
       menuTypeId: form.menuTypeId,
       foodTypeId: form.foodTypeId,
+      date: form.date,
       name: form.name,
       quantity: form.quantity,
       description: form.description,
@@ -167,6 +168,7 @@ const updateMenu = async (where, form) => {
   menuInstance.parentMenuId = form.parentMenuId ? form.parentMenuId : menuInstance.parentMenuId;
   menuInstance.menuTypeId = form.menuTypeId ? form.menuTypeId : menuInstance.menuTypeId;
   menuInstance.foodTypeId = form.foodTypeId ? form.menuTypeId : menuInstance.menuTypeId;
+  menuInstance.date = form.date ? form.date : menuInstance.date;
   menuInstance.name = form.name ? form.name : menuInstance.name;
   menuInstance.quantity = form.quantity ? form.quantity : menuInstance.quantity;
   menuInstance.description = form.description ? form.description : menuInstance.description;

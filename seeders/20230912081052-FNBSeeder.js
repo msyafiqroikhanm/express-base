@@ -8,15 +8,15 @@ const fs = require('fs');
 module.exports = {
   async up(queryInterface, Sequelize) {
     //* FNB_Couriers
-    const fnb_couriers = JSON.parse(fs.readFileSync('./seeders/data/fnb_couriers.json'));
-    const responses = fnb_couriers.map((element) => ({
-      name: element.name,
-      phoneNbr: element.phoneNbr,
-      isAvailable: true,
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    }));
-    await queryInterface.bulkInsert('FNB_Couriers', responses);
+    // const fnb_couriers = JSON.parse(fs.readFileSync('./seeders/data/fnb_couriers.json'));
+    // const responses = fnb_couriers.map((element) => ({
+    //   name: element.name,
+    //   phoneNbr: element.phoneNbr,
+    //   isAvailable: true,
+    //   createdAt: new Date(),
+    //   updatedAt: new Date(),
+    // }));
+    // await queryInterface.bulkInsert('FNB_Couriers', responses);
 
     //* FNB_Kitchen
     const fnb_kitchen = JSON.parse(fs.readFileSync('./seeders/data/fnb_kitchens.json'));
@@ -38,6 +38,7 @@ module.exports = {
       parentMenuId: element.parentMenuId,
       menuTypeId: element.menuTypeId,
       foodTypeId: element.foodTypeId,
+      date: '2023-10-03',
       name: element.name,
       quantity: element.quantity,
       description: element.description,
@@ -48,10 +49,10 @@ module.exports = {
   },
 
   async down(queryInterface, Sequelize) {
-    await queryInterface.bulkDelete('FNB_Couriers', null, {
-      truncate: true,
-      restartIdentity: true,
-    });
+    // await queryInterface.bulkDelete('FNB_Couriers', null, {
+    //   truncate: true,
+    //   restartIdentity: true,
+    // });
     await queryInterface.bulkDelete('FNB_Kitchens', null, {
       truncate: true,
       restartIdentity: true,
