@@ -19,6 +19,16 @@ class KitchenTargetController {
         where.picId = req.user.limitation.access.picId;
       }
 
+      if (req.query?.date) {
+        where.date = req.query.date;
+      }
+      if (req.query?.menuId) {
+        where.menuId = req.query.menuId;
+      }
+      if (req.query?.kitchenId) {
+        where.kitchenId = req.query.kitchenId;
+      }
+
       const data = await selectAllKitchenTargets(where);
 
       return ResponseFormatter.success200(res, data.message, data.content);
