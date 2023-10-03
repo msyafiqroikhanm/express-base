@@ -79,6 +79,22 @@ router.put(
   KitchenTargetController.update,
 );
 
+router.patch(
+  '/:id/actuals',
+  async (req, res, next) => {
+    Authentication.authenticate(
+      req,
+      res,
+      next,
+      await features().then((feature) => [feature.update_kitchen_target]),
+    );
+  },
+  [check('quantityActual', "quantityActual attribute can't be empty").isInt()],
+  ValidateMiddleware.result,
+  Authentication.fnb,
+  KitchenTargetController.updateActualKitchenTarget,
+);
+
 router.delete(
   '/:id',
   async (req, res, next) => {

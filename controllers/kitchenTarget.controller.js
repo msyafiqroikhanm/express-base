@@ -7,6 +7,7 @@ const {
   selectKitchenTarget,
   updateKitchenTarget,
   deleteKitchenTarget,
+  progressActualKitchenTarget,
 } = require('../services/kitchenTarget.service');
 
 class KitchenTargetController {
@@ -90,6 +91,27 @@ class KitchenTargetController {
       }
 
       const data = await updateKitchenTarget(where, req.body);
+      if (!data.success) {
+        return ResponseFormatter.error404(res, 'Data Not Found', data.message);
+      }
+
+      return ResponseFormatter.success200(res, data.message, data.content);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  static async updateActualKitchenTarget(req, res, next) {
+    try {
+      res.url = `${req.method} ${req.originalUrl}`;
+
+      const where = { id: req.params.id };
+      if (!req.user.limitation.isAdmin) {
+        where.kitchenId = { [Op.or]: req.user.limitation.access.kitchen };
+      }
+
+      console.log(req.body);
+      const data = await progressActualKitchenTarget(where, req.body);
       if (!data.success) {
         return ResponseFormatter.error404(res, 'Data Not Found', data.message);
       }

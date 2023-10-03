@@ -171,6 +171,30 @@ const updateKitchenTarget = async (where, form) => {
   };
 };
 
+const progressActualKitchenTarget = async (where, form) => {
+  // check identity  id validity
+  const errorMessages = [];
+
+  const kitchenTargetInstance = await FNB_KitchenTarget.findOne({ where });
+  if (!kitchenTargetInstance) {
+    errorMessages.push('Data Kitchen Target Not Found');
+  }
+
+  if (errorMessages.length > 0) {
+    return { isValid: false, code: 404, message: errorMessages };
+  }
+  // console.log(JSON.stringify(kitchenTargetInstance, null, 2));
+  kitchenTargetInstance.quantityActual = form.quantityActual;
+
+  await kitchenTargetInstance.save();
+
+  return {
+    success: true,
+    message: 'Kitchen Target Successfully Updated',
+    content: kitchenTargetInstance,
+  };
+};
+
 const deleteKitchenTarget = async (where) => {
   // check identity  id validity
   const Instance = await FNB_KitchenTarget.findOne({ where });
@@ -200,4 +224,5 @@ module.exports = {
   createKitchenTarget,
   updateKitchenTarget,
   deleteKitchenTarget,
+  progressActualKitchenTarget,
 };
