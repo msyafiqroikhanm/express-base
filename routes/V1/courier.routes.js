@@ -4,6 +4,7 @@ const features = require('../../helpers/features.helper');
 const ValidateMiddleware = require('../../middlewares/validate.middleware');
 const Authentication = require('../../middlewares/auth.middleware');
 const CourierController = require('../../controllers/courier.controller');
+const { uploadImage } = require('../../services/multerStorage.service');
 
 router.post(
   '/',
@@ -15,9 +16,18 @@ router.post(
       await features().then((feature) => [feature.create_courier]),
     );
   },
+  uploadImage.single('committeeImage'),
   [
     check('name', 'name attribute cant be empty').notEmpty(),
+    check('identityTypeId', "Identity type Id attribute can't be empty").notEmpty(),
+    check('gender', "Gender attribute can't be empty").notEmpty(),
+    check('birthDate', "Birth Date attribute can't be empty").isDate(),
+    check('identityNo', "Identity Number attribute can't be empty").notEmpty(),
     check('phoneNbr', 'phoneNbr attribute cant be empty').notEmpty(),
+    check('email', "Email attribute can't be empty").isEmail(),
+    check('address', "Address attribute can't be empty").notEmpty(),
+    check('username', "Username attribute can't be empty").notEmpty(),
+    check('password', "Password attribute can't be empty").notEmpty(),
   ],
   ValidateMiddleware.result,
   CourierController.create,
