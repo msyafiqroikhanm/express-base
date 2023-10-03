@@ -3,6 +3,8 @@ node_modules
 *.log
 /public/**
 !/public/**/
+!committee_example.xlsx
+!participant_example.xlsx
 /private/**
 !/private/**/
 !.gitkeep
