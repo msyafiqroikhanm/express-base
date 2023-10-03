@@ -25,6 +25,7 @@ class VehicleScheduleController {
       } else if (!req.user.limitation.isAdmin && req.user.limitation?.access?.driver) {
         where.driverId = req.user.limitation.access.driverId;
       }
+      where.query = req.query?.type || null;
 
       const data = await selectAllVehicleSchedule(where);
 
@@ -62,7 +63,7 @@ class VehicleScheduleController {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
 
-      const inputs = await validateVehicleScheduleInputs(req.body);
+      const inputs = await validateVehicleScheduleInputs(req.body, true);
       if (!inputs.isValid && inputs.code === 400) {
         return ResponseFormatter.error400(res, 'Bad Request', inputs.message);
       }
@@ -82,7 +83,7 @@ class VehicleScheduleController {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
 
-      const inputs = await validateVehicleScheduleInputs(req.body);
+      const inputs = await validateVehicleScheduleInputs(req.body, true);
       if (!inputs.isValid && inputs.code === 400) {
         return ResponseFormatter.error400(res, 'Bad Request', inputs.message);
       }
@@ -201,7 +202,7 @@ class VehicleScheduleController {
     }
   }
 
-  static async passengers(req, res, next) {
+  static async getPassengers(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
 

@@ -7,8 +7,15 @@ const {
 } = require('../models');
 
 const selectAllVehicleSchedule = async (where = {}) => {
+  const query = where.driverId ? { driverId: where.driverId } : {};
+  if (where.query && where.query?.toLowerCase() === 'non-event') {
+    query.otherLocation = { [Op.ne]: null };
+  } else if (where.query && where.query?.toLowerCase() === 'event') {
+    query.destinationId = { [Op.ne]: null };
+  }
+
   const schedules = await TPT_VehicleSchedule.findAll({
-    where: where.driverId ? { driverId: where.driverId } : null,
+    where: Object.keys(query).length > 0 ? query : null,
     include: [
       {
         model: TPT_Vehicle,
@@ -16,10 +23,16 @@ const selectAllVehicleSchedule = async (where = {}) => {
         as: 'vehicle',
         where: where.picId ? { vendorId: { [Op.in]: where.vendors } } : null,
       },
-      { model: TPT_Driver, attributes: ['name'], as: 'driver' },
+      {
+        model: TPT_Driver, attributes: ['name'], as: 'driver',
+      },
       { model: REF_VehicleScheduleStatus, attributes: ['name'], as: 'status' },
-      { model: ACM_Location, attributes: ['id', 'name', 'address'], as: 'pickUp' },
-      { model: ACM_Location, attributes: ['id', 'name', 'address'], as: 'destination' },
+      {
+        model: ACM_Location, attributes: ['id', 'name', 'address'], as: 'pickUp', required: true,
+      },
+      {
+        model: ACM_Location, attributes: ['id', 'name', 'address'], as: 'destination',
+      },
     ],
   });
 
@@ -46,10 +59,16 @@ const selectVehicleSchedule = async (id, where = {}) => {
         as: 'vehicle',
         where: where.vendors ? { id: { [Op.in]: where.vendors } } : null,
       },
-      { model: TPT_Driver, attributes: ['name'], as: 'driver' },
+      {
+        model: TPT_Driver, attributes: ['name'], as: 'driver',
+      },
       { model: REF_VehicleScheduleStatus, attributes: ['name'], as: 'status' },
-      { model: ACM_Location, attributes: ['id', 'name', 'address'], as: 'pickUp' },
-      { model: ACM_Location, attributes: ['id', 'name', 'address'], as: 'destination' },
+      {
+        model: ACM_Location, attributes: ['id', 'name', 'address'], as: 'pickUp', required: true,
+      },
+      {
+        model: ACM_Location, attributes: ['id', 'name', 'address'], as: 'destination',
+      },
       {
         model: TPT_SchedulePassenger,
         attributes: { exclude: ['createdAt', 'updatedAt'] },
@@ -57,6 +76,7 @@ const selectVehicleSchedule = async (id, where = {}) => {
           {
             model: PAR_Participant,
             attributes: ['name', 'contingentId', 'typeId', 'committeeTypeId'],
+            required: true,
             include: [
               { model: PAR_Contingent, attributes: ['name'], as: 'contingent' },
               { model: REF_ParticipantType, attributes: ['name'], as: 'participantType' },
@@ -124,9 +144,18 @@ const validateVehicleScheduleInputs = async (form) => {
   }
 
   // check destination (location id) validity
-  const destinationInstance = await ACM_Location.findByPk(form.destinationId);
-  if (!destinationInstance) {
-    invalid404.push('Destination Location Id Not Found');
+  let destinationInstance = null;
+  if (form.destinationId) {
+    destinationInstance = await ACM_Location.findByPk(form.destinationId);
+    if (!destinationInstance) {
+      invalid404.push('Destination Location Id Not Found');
+    }
+  }
+
+  // check if both destination and otherlocation empty and filled at the same time
+  if ((!destinationInstance && !form.otherLocation)
+      || (destinationInstance && form.otherLocation)) {
+    invalid400.push('Required Either DestinationId Or OtherLocation Attribute');
   }
 
   // check if pick up is the same as destination
@@ -168,6 +197,8 @@ const validateVehicleScheduleInputs = async (form) => {
       destination: destinationInstance,
       name: form.name,
       pickUpTime: new Date(form.pickUpTime),
+      description: form.description,
+      otherLocation: form.otherLocation,
       passengers: validPassengers,
     },
   };
@@ -178,8 +209,10 @@ const createVehicleSchedule = async (form) => {
     name: form.name,
     statusId: 1,
     pickUpId: form.pickUp?.id,
-    destinationId: form.destination?.id,
+    destinationId: form.destination?.id || null,
+    otherLocation: form.otherLocation || null,
     pickUpTime: form.pickUpTime,
+    description: form.description,
   });
 
   await scheduleInstance.addPAR_Participants(form.passengers);
@@ -192,7 +225,9 @@ const createVehicleSchedule = async (form) => {
 };
 
 const updateVehicleSchedule = async (form, id) => {
-  const scheduleInstance = await TPT_VehicleSchedule.findOne({ where: { id } });
+  const scheduleInstance = await TPT_VehicleSchedule.findOne({
+    where: { id },
+  });
   if (!scheduleInstance) {
     return {
       success: false,
@@ -203,8 +238,10 @@ const updateVehicleSchedule = async (form, id) => {
 
   scheduleInstance.name = form.name;
   scheduleInstance.pickUpId = form.pickUp?.id;
-  scheduleInstance.destinationId = form.destination?.id;
+  scheduleInstance.destinationId = form.destination?.id || null;
+  scheduleInstance.otherLocation = form.otherLocation || null;
   scheduleInstance.pickUpTime = form.pickUpTime;
+  scheduleInstance.description = form.description;
   await scheduleInstance.save();
 
   await scheduleInstance.setPAR_Participants(form.passengers);
@@ -474,6 +511,7 @@ const selectAllPassengersVehicleSchedule = async (id, where = {}) => {
         {
           model: PAR_Participant,
           attributes: ['name', 'contingentId', 'typeId', 'committeeTypeId'],
+          required: true,
           include: [
             { model: PAR_Contingent, attributes: ['name'], as: 'contingent' },
             { model: REF_ParticipantType, attributes: ['name'], as: 'participantType' },
