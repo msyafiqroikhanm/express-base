@@ -160,7 +160,7 @@ class Participant {
         if (req.file) {
           await deleteFile(relative(__dirname, req.file.path));
         }
-        return ResponseFormatter.error400(res, 'Bad Request', data.message);
+        return ResponseFormatter.error400(res, data.message, data.content);
       }
 
       // Delete uploaded file after success create participant in bulk
@@ -338,7 +338,10 @@ class Participant {
         if (req.file) {
           await deleteFile(relative(__dirname, req.file.path));
         }
-        return ResponseFormatter.error400(res, 'Bad Request', data.message);
+        if (data.filePath) {
+          res.download(data.filePath);
+        }
+        return ResponseFormatter.error400(res, data.message, data.content);
       }
 
       // Delete uploaded file after success create committee in bulk
