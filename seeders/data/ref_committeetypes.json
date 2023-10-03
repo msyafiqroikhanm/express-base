@@ -3,5 +3,7 @@
   { "name": "Accommodation"},
   { "name": "Transportation"},
   { "name": "FNB"},
-  { "name": "Event"}
+  { "name": "Event"},
+  { "name": "Administration"},
+  { "name": "LO"}
 ]

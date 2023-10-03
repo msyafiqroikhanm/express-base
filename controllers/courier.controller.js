@@ -1,3 +1,5 @@
+const { relative } = require('path');
+const deleteFile = require('../helpers/deleteFile.helper');
 const ResponseFormatter = require('../helpers/responseFormatter.helper');
 const {
   selectAllCouriers,
@@ -41,10 +43,24 @@ class CourierController {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
 
-      const inputs = await validateCourierInputs(req.body);
+      req.body.committeeTypeId = 4; //* fnb
+      // req.body.roleId =
+      console.log(req.file);
+      const inputs = await validateCourierInputs(req.body, req.file, null);
       if (!inputs.isValid && inputs.code === 404) {
+        // Delete uploaded file when error happens
+        if (req.file) {
+          await deleteFile(relative(__dirname, req.file.path));
+        }
         return ResponseFormatter.error404(res, 'Data Not Found', inputs.message);
       }
+      if (!inputs.isValid && inputs.code === 400) {
+        if (req.file) {
+          await deleteFile(relative(__dirname, req.file.path));
+        }
+        return ResponseFormatter.error400(res, 'Bad Request', inputs.message);
+      }
+      console.log(inputs);
 
       const data = await createCourier(inputs.form);
       return ResponseFormatter.success201(res, data.message, data.content);

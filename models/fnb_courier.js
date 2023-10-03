@@ -13,10 +13,12 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
+      FNB_Courier.belongsTo(models.USR_User, { foreignKey: 'userId', as: 'user' });
     }
   }
   FNB_Courier.init(
     {
+      userId: DataTypes.INTEGER,
       name: DataTypes.STRING,
       phoneNbr: DataTypes.STRING,
       isAvailable: DataTypes.BOOLEAN,

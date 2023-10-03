@@ -420,44 +420,46 @@ const validateParticipantInputs = async (form, files, id, where) => {
   let identityFilePath = null;
   let baptismFilePath = null;
   let referenceFilePath = null;
-  Object.values(files).forEach(async (file) => {
-    if (file[0].fieldname === 'participantImage') {
-      if (!['png', 'jpeg', 'jpg'].includes(file[0].originalname.split('.').pop())) {
-        invalid400.push('Upload only supports file types [png, jpeg, and jpg]');
-      }
+  if (files) {
+    Object.values(files).forEach(async (file) => {
+      if (file[0].fieldname === 'participantImage') {
+        if (!['png', 'jpeg', 'jpg'].includes(file[0].originalname.split('.').pop())) {
+          invalid400.push('Upload only supports file types [png, jpeg, and jpg]');
+        }
 
-      const maxSizeInByte = 3000000;
-      if (file[0].size > maxSizeInByte) {
-        invalid400.push('The file size exceeds the maximum size limit of 3 Megabyte');
-      }
+        const maxSizeInByte = 3000000;
+        if (file[0].size > maxSizeInByte) {
+          invalid400.push('The file size exceeds the maximum size limit of 3 Megabyte');
+        }
 
-      filePath = `public/images/participants/${file[0].filename}`;
-    } else {
-      if (!['png', 'jpeg', 'jpg', 'pdf', 'docx'].includes(file[0].originalname.split('.').pop())) {
-        invalid400.push('Upload only supports file types [png, jpeg, and jpg]');
-      }
+        filePath = `public/images/participants/${file[0].filename}`;
+      } else {
+        if (!['png', 'jpeg', 'jpg', 'pdf', 'docx'].includes(file[0].originalname.split('.').pop())) {
+          invalid400.push('Upload only supports file types [png, jpeg, and jpg]');
+        }
 
-      let format = 'images';
-      if (['pdf', 'docx'].includes(file[0].originalname.split('.').pop())) {
-        format = 'documents';
-      }
+        let format = 'images';
+        if (['pdf', 'docx'].includes(file[0].originalname.split('.').pop())) {
+          format = 'documents';
+        }
 
-      const maxSizeInByte = 3000000;
-      if (file[0].size > maxSizeInByte) {
-        invalid400.push('The file size exceeds the maximum size limit of 3 Megabyte');
-      }
+        const maxSizeInByte = 3000000;
+        if (file[0].size > maxSizeInByte) {
+          invalid400.push('The file size exceeds the maximum size limit of 3 Megabyte');
+        }
 
-      if (file[0].fieldname === 'identityFile') {
-        identityFilePath = `private/${format}/identitys/${file[0].filename}`;
+        if (file[0].fieldname === 'identityFile') {
+          identityFilePath = `private/${format}/identitys/${file[0].filename}`;
+        }
+        if (file[0].fieldname === 'baptismFile') {
+          baptismFilePath = `private/${format}/baptisms/${file[0].filename}`;
+        }
+        if (file[0].fieldname === 'referenceFile') {
+          referenceFilePath = `private/${format}/references/${file[0].filename}`;
+        }
       }
-      if (file[0].fieldname === 'baptismFile') {
-        baptismFilePath = `private/${format}/baptisms/${file[0].filename}`;
-      }
-      if (file[0].fieldname === 'referenceFile') {
-        referenceFilePath = `private/${format}/references/${file[0].filename}`;
-      }
-    }
-  });
+    });
+  }
 
   if (id) {
     // check identity number duplicate

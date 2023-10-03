@@ -24,6 +24,7 @@ module.exports = (sequelize, DataTypes) => {
       USR_User.belongsTo(models.PAR_Participant, { foreignKey: 'participantId', as: 'participant' });
 
       USR_User.hasMany(models.USR_PIC, { foreignKey: 'userId', as: 'PIC' });
+      USR_User.hasMany(models.SYS_Notification, { foreignKey: 'userId', as: 'notifications' });
     }
   }
   USR_User.init(

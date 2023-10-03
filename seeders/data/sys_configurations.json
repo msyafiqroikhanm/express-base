@@ -53,5 +53,10 @@
     "categoryId": 1,
     "name": "Event Start",
     "value": "2023-10-30"
+  },
+  {
+    "categoryId": 1,
+    "name": "Client URL",
+    "value": ""
   }
 ]
