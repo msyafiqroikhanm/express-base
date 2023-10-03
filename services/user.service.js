@@ -34,6 +34,7 @@ const selectAllUsers = async () => {
         model: PAR_Participant,
         as: 'participant',
         attributes: ['name', 'identityNo', 'gender', 'birthDate', 'phoneNbr', 'address', 'file'],
+        required: true,
         include: [
           { model: PAR_Contingent, as: 'contingent', attributes: ['name'] },
           { model: REF_ParticipantType, as: 'participantType', attributes: ['name'] },
@@ -77,6 +78,7 @@ const selectDetailUser = async (id) => {
         model: PAR_Participant,
         as: 'participant',
         attributes: ['name', 'identityNo', 'gender', 'birthDate', 'phoneNbr', 'address', 'file'],
+        required: true,
         include: [
           { model: PAR_Contingent, as: 'contingent', attributes: ['name'] },
           { model: REF_ParticipantType, as: 'participantType', attributes: ['name'] },
@@ -344,6 +346,7 @@ const selectUser = async (query) => {
         model: PAR_Participant,
         as: 'participant',
         attributes: ['name'],
+        required: true,
       },
       {
         model: USR_PIC,
