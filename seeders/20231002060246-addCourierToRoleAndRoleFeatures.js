@@ -18,18 +18,18 @@ module.exports = {
           updatedAt: new Date(),
         },
       ]);
+    } else {
+      const courierRoleFeatures = JSON.parse(
+        fs.readFileSync('./seeders/data/usr_rolefeatures_courier.json'),
+      );
+      const responses = courierRoleFeatures.map((element) => ({
+        roleId: courierRoleInstance.id,
+        featureId: element.featureId,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      }));
+      await queryInterface.bulkInsert('USR_RoleFeatures', responses);
     }
-
-    const courierRoleFeatures = JSON.parse(
-      fs.readFileSync('./seeders/data/usr_rolefeatures_courier.json'),
-    );
-    const responses = courierRoleFeatures.map((element) => ({
-      roleId: courierRoleInstance.id,
-      featureId: element.featureId,
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    }));
-    await queryInterface.bulkInsert('USR_RoleFeatures', responses);
   },
 
   async down(queryInterface, Sequelize) {
