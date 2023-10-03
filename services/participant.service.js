@@ -675,7 +675,7 @@ const trackingParticipant = async (form) => {
   // check participant id validity
   const qrInstance = await QRM_QR.findOne({
     where: { code: form.qrCode },
-    include: { model: PAR_Participant, as: 'participantQr' },
+    include: { model: PAR_Participant, as: 'participantQr', required: true },
   });
 
   if (!qrInstance) {

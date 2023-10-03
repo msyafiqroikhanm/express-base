@@ -59,7 +59,7 @@ const selectBroadcast = async (id) => {
     return {
       success: false,
       code: 404,
-      message: ['Broadcast Type Data Not Found'],
+      message: ['Broadcast Data Not Found'],
     };
   }
 
@@ -280,7 +280,7 @@ const updateBroadcast = async (form, id) => {
     return {
       success: false,
       code: 404,
-      message: ['Broadcast Type Data Not Found'],
+      message: ['Broadcast Data Not Found'],
     };
   }
   if (broadcastInstance.status !== 'Scheduled') {
@@ -322,7 +322,7 @@ const deleteBroadcast = async (id) => {
     return {
       success: false,
       code: 404,
-      message: ['Broadcast Type Data Not Found'],
+      message: ['Broadcast Data Not Found'],
     };
   }
   if (broadcastInstance.status !== 'Scheduled') {
