@@ -13,12 +13,14 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       TPT_Driver.belongsTo(models.TPT_Vendor, { foreignKey: 'vendorId', as: 'vendor' });
+      TPT_Driver.belongsTo(models.USR_User, { foreignKey: 'userId', as: 'user' });
 
       TPT_Driver.hasMany(models.TPT_VehicleSchedule, { foreignKey: 'driverId', as: 'schedules' });
     }
   }
   TPT_Driver.init({
     vendorId: DataTypes.INTEGER,
+    userId: DataTypes.INTEGER,
     name: DataTypes.STRING,
     phoneNbr: DataTypes.STRING,
     email: DataTypes.STRING,

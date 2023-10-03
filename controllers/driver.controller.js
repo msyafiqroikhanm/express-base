@@ -91,7 +91,7 @@ class DriverController {
         where.driverId = req.user.limitation.access.driverId;
       }
 
-      const inputs = await validateDriverInputs(req.body, where);
+      const inputs = await validateDriverInputs(req.body, where, null, req.params.id);
       if (!inputs.isValid && inputs.code === 400) {
         return ResponseFormatter.error400(res, 'Bad Request', inputs.message);
       }
@@ -99,7 +99,7 @@ class DriverController {
         return ResponseFormatter.error404(res, 'Data Not Found', inputs.message);
       }
 
-      const data = await updateDriver(inputs.form, req.params.id);
+      const data = await updateDriver(inputs.form, req.params.id, where);
       if (!data.success && data.code === 404) {
         return ResponseFormatter.error404(res, 'Data Not Found', data.message);
       }
