@@ -162,6 +162,19 @@ const validateDriverInputs = async (form, where, file, id) => {
     if (!driverInstance) {
       invalid404.push('Driver Data Not Found');
     }
+
+    const duplicatePhoneNbr = await PAR_Participant.findOne({
+      where: { phoneNbr: form.phoneNbr, id: { [Op.ne]: driverInstance?.user?.participantId } },
+    });
+    if (duplicatePhoneNbr) {
+      invalid400.push('Phone Number Already Exist / Taken');
+    }
+    const duplicateEmail = await USR_User.findOne({
+      where: { phoneNbr: form.phoneNbr, id: { [Op.ne]: driverInstance?.user?.id } },
+    });
+    if (duplicateEmail) {
+      invalid400.push('Email Already Exist / Taken');
+    }
   }
 
   if (invalid400.length > 0) {

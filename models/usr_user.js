@@ -42,7 +42,6 @@ module.exports = (sequelize, DataTypes) => {
       participantId: DataTypes.INTEGER,
       username: {
         type: DataTypes.STRING,
-        unique: true,
       },
       password: DataTypes.STRING,
       email: DataTypes.STRING,
