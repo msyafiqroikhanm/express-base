@@ -31,6 +31,7 @@ const {
 } = require('../models');
 const { createQR } = require('./qr.service');
 const deleteFile = require('../helpers/deleteFile.helper');
+const { createInvalidImportLog } = require('../helpers/importLog.helper');
 
 const calculateAge = (dateOfBirth, dateNow) => {
   const dob = new Date(dateOfBirth);
@@ -713,11 +714,10 @@ const createParticipantViaImport = async (file) => {
   const identityTypes = await REF_IdentityType.findAll({ attributes: ['id', 'name'] });
   const contignets = await PAR_Contingent.findAll({ attributes: ['id', 'name'] });
   const existingParticipants = await PAR_Participant.findAll({
-    attributes: ['identityTypeId', 'identityNo', 'phoneNbr', 'email'],
+    attributes: ['identityTypeId', 'identityNo', 'phoneNbr'],
   });
 
   const existPhoneNbr = existingParticipants.map((participant) => participant.phoneNbr);
-  const existEmail = existingParticipants.map((participant) => participant.email);
   const existIdentity = existingParticipants.map(
     (participant) => `${participant.identityTypeId}-${participant.identityNo}`,
   );
@@ -749,9 +749,11 @@ const createParticipantViaImport = async (file) => {
     };
   });
 
-  const invalidData = [];
+  const invalidRow = {};
+  const validParticipants = [];
   await Promise.all(
     participants.map(async (participant, index) => {
+      const invalidData = [];
       // check if participant have duplicate data with phoneNbr, email, identityNo
       if (existPhoneNbr.includes(participant.phoneNbr)) {
         invalidData.push(
@@ -759,7 +761,6 @@ const createParticipantViaImport = async (file) => {
             participant.name
           } at row ${index + 1}`,
         );
-        return;
       }
       if (existIdentity.includes(`${participant.identityTypeId}-${participant.identityNo}`)) {
         invalidData.push(
@@ -767,33 +768,53 @@ const createParticipantViaImport = async (file) => {
             participant.identityTypeId
           } for committee ${participant.name} at row ${index + 1}`,
         );
-        return;
       }
 
       // validate participant inputs
       const inputs = await validateParticipantInputs(participant);
       if (!inputs.isValid && inputs.code === 404) {
         invalidData.push(`${inputs.message} at row ${index + 1}`);
-        return;
       }
       if (!inputs.isValid && inputs.code === 400) {
         invalidData.push(`${inputs.message} at row ${index + 1}`);
-        return;
       }
 
       // create participant and
-      // register new participant email, phoneNbr, and identityNo To Exist Array
-      await createParticipant(inputs.form);
-      existEmail.push(participant.email);
-      existPhoneNbr.push(participant.phoneNbr);
-      existIdentity.push(participant.identityNo);
+      // register new participant phoneNbr, and identityNo To Exist Array
+      if (invalidData.length === 0) {
+        // register new committee phoneNbr, and identityNo To Exist Array
+        validParticipants.push(inputs.form);
+        existPhoneNbr.push(participant.phoneNbr);
+        existIdentity.push(participant.identityNo);
+      } else {
+        invalidRow[index + 1] = invalidData;
+      }
     }),
   );
+
+  if (Object.keys(invalidRow).length > 0) {
+    const invalidData = `Total Invalid Row = ${Object.keys(invalidRow).length}\nRow = ${JSON.stringify(invalidRow, null, 2)}`;
+    const logFile = await createInvalidImportLog(invalidData);
+    console.log(logFile);
+    return {
+      success: false,
+      code: 400,
+      message: 'Excel Data Invalid',
+      content: {
+        totalInvalidData: Object.keys(invalidRow).length, invalidRow, url: logFile.url,
+      },
+      filePath: logFile.filePath,
+    };
+  }
+
+  validParticipants.forEach(async (participant) => {
+    await createParticipant(participant);
+  });
 
   return {
     success: true,
     message: 'Praticipant Successfully Created In Bulk Via Import',
-    content: invalidData,
+    content: [],
   };
 };
 
@@ -979,11 +1000,10 @@ const createCommitteeViaImport = async (file) => {
   const committeeTypes = await REF_CommitteeType.findAll({ attributes: ['id', 'name'] });
 
   const existingParticipants = await PAR_Participant.findAll({
-    attributes: ['identityTypeId', 'identityNo', 'phoneNbr', 'email'],
+    attributes: ['identityTypeId', 'identityNo', 'phoneNbr'],
   });
 
   const existPhoneNbr = existingParticipants.map((participant) => participant.phoneNbr);
-  const existEmail = existingParticipants.map((participant) => participant.email);
   const existIdentity = existingParticipants.map(
     (participant) => `${participant.identityTypeId}-${participant.identityNo}`,
   );
@@ -1011,16 +1031,17 @@ const createCommitteeViaImport = async (file) => {
     };
   });
 
-  const invalidData = [];
+  const invalidRow = {};
+  const validParticipants = [];
   await Promise.all(
     participants.map(async (participant, index) => {
+      const invalidData = [];
       if (existPhoneNbr.includes(participant.phoneNbr)) {
         invalidData.push(
           `Duplicate phone number ${participant.phoneNbr} for committee ${
             participant.name
           } at row ${index + 1}`,
         );
-        return;
       }
       if (existIdentity.includes(`${participant.identityTypeId}-${participant.identityNo}`)) {
         invalidData.push(
@@ -1028,33 +1049,48 @@ const createCommitteeViaImport = async (file) => {
             participant.identityTypeId
           } for committee ${participant.name} at row ${index + 1}`,
         );
-        return;
       }
 
       // validate participant inputs
       const inputs = await validateCommitteeInputs(participant);
-      if (!inputs.isValid && inputs.code === 404) {
+      if (!inputs.isValid) {
         invalidData.push(`${inputs.message} at row ${index + 1}`);
-        return;
-      }
-      if (!inputs.isValid && inputs.code === 400) {
-        invalidData.push(`${inputs.message} at row ${index + 1}`);
-        return;
       }
 
-      // create committee and
-      // register new committee email, phoneNbr, and identityNo To Exist Array
-      await createComittee(inputs.form);
-      existEmail.push(participant.email);
-      existPhoneNbr.push(participant.phoneNbr);
-      existIdentity.push(participant.identityNo);
+      if (invalidData.length === 0) {
+        // register new committee phoneNbr, and identityNo To Exist Array
+        validParticipants.push(inputs.form);
+        existPhoneNbr.push(participant.phoneNbr);
+        existIdentity.push(participant.identityNo);
+      } else {
+        invalidRow[index + 1] = invalidData;
+      }
     }),
   );
+
+  if (Object.keys(invalidRow).length > 0) {
+    const invalidData = `Total Invalid Row = ${Object.keys(invalidRow).length}\nRow = ${JSON.stringify(invalidRow, null, 2)}`;
+    const logFile = await createInvalidImportLog(invalidData);
+    console.log(logFile);
+    return {
+      success: false,
+      code: 400,
+      message: 'Excel Data Invalid',
+      content: {
+        totalInvalidData: Object.keys(invalidRow).length, invalidRow, url: logFile.url,
+      },
+      filePath: logFile.filePath,
+    };
+  }
+
+  validParticipants.forEach(async (participant) => {
+    await createComittee(participant);
+  });
 
   return {
     success: true,
     message: 'Praticipant Committee Successfully Created In Bulk Via Import',
-    content: invalidData,
+    content: [],
   };
 };
 

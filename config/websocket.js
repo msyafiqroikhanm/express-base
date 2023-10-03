@@ -32,7 +32,7 @@ const initializeSocketIO = async (server) => {
       try {
         if (notifications?.length > 0) {
           await SYS_Notification.update(
-            { read: false },
+            { read: true },
             {
               where: {
                 id: { [Op.in]: notifications },
