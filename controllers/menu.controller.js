@@ -21,6 +21,12 @@ class MenuController {
       if (req.query?.date) {
         where.date = req.query.date;
       }
+      if (req.query?.menuTypeId) {
+        where.menuTypeId = req.query.menuTypeId;
+      }
+      if (req.query?.foodTypeId) {
+        where.foodTypeId = req.query.foodTypeId;
+      }
       const data = await selectAllMenus(where);
 
       return ResponseFormatter.success200(res, data.message, data.content);
