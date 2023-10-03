@@ -58,7 +58,7 @@ router.post(
     check('menuId', "menuId attribute can't be empty").isInt(),
     check('kitchenId', "kitchenId attribute can't be empty").isInt(),
     check('date', 'date attribute must use format (YYYY-MM-YY)').isDate(),
-    check('quantityTarget', "quantityTarget attribute can't be empty").isInt(),
+    // check('quantityTarget', "quantityTarget attribute can't be empty").isInt(),
   ],
   ValidateMiddleware.result,
   Authentication.fnb,
