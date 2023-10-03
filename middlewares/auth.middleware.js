@@ -34,8 +34,8 @@ class AuthMiddleware {
 
         // check user access
         if (requiredFeatures) {
-          const authorized = req.user.Role.USR_Features.some(
-            (feature) => requiredFeatures.includes(feature.id),
+          const authorized = req.user.Role.USR_Features.some((feature) =>
+            requiredFeatures.includes(feature.id),
           );
 
           if (!authorized) {
@@ -94,28 +94,28 @@ class AuthMiddleware {
 
       const limitation = { isAdmin: true, access: {} };
       if (req.user.Role.id !== rolesLib.superAdmin) {
-        if (!req.user.PIC) {
-          return ResponseFormatter.error401(res, "You Don't Have Access To This Service");
-        }
+        if (req.user.PIC.length) {
+          const picTypes = await picTypeHelper().then((type) => [type.pic_kitchen]);
+          const picKitchen = req.user.PIC.filter((pic) => pic.typeId === picTypes[0]);
 
-        const picTypes = await picTypeHelper().then((type) => [type.pic_kitchen]);
-        const picKitchen = req.user.PIC.filter((pic) => pic.typeId === picTypes[0]);
+          // console.log(JSON.stringify(picKitchen, null, 2));
+          // * Need More Investigation for user is PIC for not this module
 
-        // * Need More Investigation for user is PIC for not this module
+          // limitation.isAdmin = false;
+          limitation.access.picId = picKitchen[0].dataValues.id;
 
-        limitation.isAdmin = false;
-        limitation.access.picId = picKitchen[0].dataValues.id;
+          const kitchenLimitation = await FNB_Kitchen.findAll({
+            where: { picId: limitation.access.picId },
+            attributes: ['id'],
+            raw: true,
+          });
 
-        const kitchenLimitation = await FNB_Kitchen.findAll({
-          where: { picId: limitation.access.picId },
-          attributes: ['id'],
-          raw: true,
-        });
+          const kitchens = kitchenLimitation.map((element) => element.id);
 
-        const kitchens = kitchenLimitation.map((element) => element.id);
-
-        if (kitchenLimitation.length > 0) {
-          limitation.access.kitchen = kitchens;
+          if (kitchenLimitation.length > 0) {
+            limitation.isAdmin = false;
+            limitation.access.kitchen = kitchens;
+          }
         }
       }
       req.user.limitation = limitation;
