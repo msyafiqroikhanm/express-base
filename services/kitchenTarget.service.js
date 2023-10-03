@@ -130,15 +130,20 @@ const updateKitchenTarget = async (where, form) => {
   if (!kitchenTargetInstance) {
     errorMessages.push('Data Kitchen Target Not Found');
   }
+  // console.log(JSON.stringify(kitchenTargetInstance, null, 2));
 
-  const menuInstance = await FNB_Menu.findOne({ where: { id: form.menuId } });
-  if (!menuInstance) {
-    errorMessages.push('Menu Data Not Found');
+  if (form.menuId) {
+    const menuInstance = await FNB_Menu.findOne({ where: { id: form.menuId } });
+    if (!menuInstance) {
+      errorMessages.push('Menu Data Not Found');
+    }
   }
 
-  const kitchenInstance = await FNB_Kitchen.findOne({ where: { id: form.kitchenId } });
-  if (!kitchenInstance) {
-    errorMessages.push('Kitchen Data Not Found');
+  if (form.kitchenId) {
+    const kitchenInstance = await FNB_Kitchen.findOne({ where: { id: form.kitchenId } });
+    if (!kitchenInstance) {
+      errorMessages.push('Kitchen Data Not Found');
+    }
   }
 
   if (errorMessages.length > 0) {
