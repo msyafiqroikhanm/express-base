@@ -76,8 +76,8 @@ const generateCalendarEvents = async (where) => {
     new Set(await data.map((element) => new Date(element.start).toISOString().split('T')[0])),
   );
 
-  const response = {};
-  const responseCalendar = {};
+  const response = [];
+  const responseCalendar = [];
   for (let i = 0; i < dateUnique.length; i += 1) {
     const start = dateUnique[i];
 
@@ -103,12 +103,12 @@ const generateCalendarEvents = async (where) => {
       },
     });
 
-    const responseEvents = [];
-    const responseEventsCalendar = [];
+    // const responseEvents = [];
+    // const responseEventsCalendar = [];
     for (let j = 0; j < events.length; j += 1) {
       const event = events[j];
 
-      responseEventsCalendar.push({
+      responseCalendar.push({
         id: event.id,
         startAt: event.start,
         endAt: event.end,
@@ -120,12 +120,10 @@ const generateCalendarEvents = async (where) => {
         // eventLocation: event.event.location.name,
       });
       // console.log(JSON.stringify(event, null, 2));
-      responseEvents.push(event);
+      response.push(event);
     }
-    responseCalendar[`${start}`] = responseEventsCalendar;
-    response[`${start}`] = responseEvents;
-    // response[`${start}`] = {};
-    // response.push({ [`${start}`]: events });
+    // responseCalendar[`${start}`] = responseEventsCalendar;
+    // response[`${start}`] = responseEvents;
   }
   // console.log(JSON.stringify(dateUnique, null, 2));
 
