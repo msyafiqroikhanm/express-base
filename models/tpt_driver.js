@@ -16,6 +16,8 @@ module.exports = (sequelize, DataTypes) => {
       TPT_Driver.belongsTo(models.USR_User, { foreignKey: 'userId', as: 'user' });
 
       TPT_Driver.hasMany(models.TPT_VehicleSchedule, { foreignKey: 'driverId', as: 'schedules' });
+
+      TPT_Driver.hasOne(models.TPT_DriverTracking, { foreignKey: 'driverId', as: 'tracking' });
     }
   }
   TPT_Driver.init({

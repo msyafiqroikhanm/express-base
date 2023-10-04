@@ -1,7 +1,7 @@
 /* eslint-disable no-param-reassign */
 const { Op } = require('sequelize');
 const {
-  TPT_Driver, TPT_Vendor, TPT_VehicleSchedule, USR_User, PAR_Participant,
+  TPT_Driver, TPT_Vendor, TPT_VehicleSchedule, USR_User, PAR_Participant, TPT_DriverTracking,
 } = require('../models');
 const { validateCommitteeInputs, createComittee, deleteParticipant } = require('./participant.service');
 const { validateUserInputs, createUser } = require('./user.service');
@@ -223,6 +223,14 @@ const createDriver = async (form) => {
     phoneNbr: form.phoneNbr,
     email: form.email,
     isAvailable: true,
+  });
+
+  await TPT_DriverTracking.create({
+    driverId: driverInstance.id,
+    latitude: null,
+    longtitude: null,
+    accuracy: null,
+    time: new Date(),
   });
 
   return {
