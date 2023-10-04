@@ -17,7 +17,8 @@ module.exports = (sequelize, DataTypes) => {
       TPT_Vehicle.belongsTo(models.QRM_QR, { foreignKey: 'qrId', as: 'qr' });
 
       TPT_Vehicle.hasMany(models.TPT_VehicleSchedule, { foreignKey: 'vehicleId', as: 'schedules' });
-      TPT_Vehicle.hasMany(models.TPT_VehicleTracking, { foreignKey: 'vehicleId', as: 'trackings' });
+
+      TPT_Vehicle.hasOne(models.TPT_VehicleTracking, { foreignKey: 'vehicleId', as: 'tracking' });
     }
   }
   TPT_Vehicle.init({

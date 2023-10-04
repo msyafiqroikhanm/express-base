@@ -119,7 +119,7 @@ const generateCalendarEvents = async (where) => {
         // eventCategory: event.event.category.name,
         // eventLocation: event.event.location.name,
       });
-      console.log(JSON.stringify(event, null, 2));
+      // console.log(JSON.stringify(event, null, 2));
       responseEvents.push(event);
     }
     responseCalendar[`${start}`] = responseEventsCalendar;
@@ -127,7 +127,7 @@ const generateCalendarEvents = async (where) => {
     // response[`${start}`] = {};
     // response.push({ [`${start}`]: events });
   }
-  console.log(JSON.stringify(dateUnique, null, 2));
+  // console.log(JSON.stringify(dateUnique, null, 2));
 
   return {
     success: true,

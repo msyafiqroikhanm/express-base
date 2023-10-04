@@ -45,14 +45,11 @@ module.exports = (sequelize, DataTypes) => {
       PAR_Participant.belongsTo(models.REF_CommitteeType, { foreignKey: 'committeeTypeId', as: 'committeeType' });
 
       PAR_Participant.hasMany(models.PAR_GroupMember, { foreignKey: 'participantId' });
-      PAR_Participant.hasMany(models.PAR_ParticipantTracking, {
-        foreignKey: 'participantId',
-        as: 'history',
-      });
       PAR_Participant.hasMany(models.CSM_BroadcastParticipant, { foreignKey: 'participantId' });
       PAR_Participant.hasMany(models.TPT_SchedulePassenger, { foreignKey: 'participantId' });
       PAR_Participant.hasMany(models.ACM_ParticipantLodger, { foreignKey: 'participantId', as: 'lodgers' });
 
+      PAR_Participant.hasOne(models.PAR_ParticipantTracking, { foreignKey: 'participantId', as: 'tracking' });
       PAR_Participant.hasOne(models.USR_User, { foreignKey: 'participantId', as: 'user' });
     }
   }

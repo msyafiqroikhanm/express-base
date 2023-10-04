@@ -139,7 +139,7 @@ const selectParticipant = async (id, where) => {
           ],
         },
       },
-      { model: PAR_ParticipantTracking, as: 'history' },
+      { model: PAR_ParticipantTracking, as: 'tracking' },
       {
         model: ACM_ParticipantLodger,
         as: 'lodgers',
@@ -276,7 +276,7 @@ const searchParticipant = async (where) => {
           ],
         },
       },
-      { model: PAR_ParticipantTracking, as: 'history' },
+      { model: PAR_ParticipantTracking, as: 'tracking' },
       {
         model: ACM_ParticipantLodger,
         as: 'lodgers',
