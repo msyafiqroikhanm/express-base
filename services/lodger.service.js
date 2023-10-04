@@ -62,6 +62,7 @@ const selectAllLodgers = async (where) => {
       {
         model: PAR_Participant,
         as: 'participant',
+        required: true,
         attributes: { exclude: ['createdAt', 'updatedAt'] },
         include: [
           {
@@ -173,6 +174,7 @@ const selectLodger = async (id, where) => {
       {
         model: PAR_Participant,
         as: 'participant',
+        required: true,
         attributes: { exclude: ['createdAt', 'updatedAt'] },
         include: [
           {

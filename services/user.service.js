@@ -34,6 +34,7 @@ const selectAllUsers = async () => {
         model: PAR_Participant,
         as: 'participant',
         attributes: ['name', 'identityNo', 'gender', 'birthDate', 'phoneNbr', 'address', 'file'],
+        required: true,
         include: [
           { model: PAR_Contingent, as: 'contingent', attributes: ['name'] },
           { model: REF_ParticipantType, as: 'participantType', attributes: ['name'] },
@@ -47,10 +48,12 @@ const selectAllUsers = async () => {
     user.dataValues.qrCode = user.Qr?.dataValues.code;
     user.dataValues.role = user.Role?.dataValues.name;
     if (user.participant) {
-      user.participant.dataValues.contingent = user.participant.contingent?.dataValues.name || null;
-      user.participant.dataValues.participantType =
-        user.participant.participantType?.dataValues.name;
-      user.participant.dataValues.identityType = user.participant.identityType?.dataValues.name;
+      user.participant.dataValues.contingent = user.participant.contingent
+        ?.dataValues.name || null;
+      user.participant.dataValues.participantType = user.participant.participantType
+        ?.dataValues.name;
+      user.participant.dataValues.identityType = user.participant.identityType
+        ?.dataValues.name;
     }
     delete user.dataValues.Qr;
     delete user.dataValues.Role;
@@ -75,6 +78,7 @@ const selectDetailUser = async (id) => {
         model: PAR_Participant,
         as: 'participant',
         attributes: ['name', 'identityNo', 'gender', 'birthDate', 'phoneNbr', 'address', 'file'],
+        required: true,
         include: [
           { model: PAR_Contingent, as: 'contingent', attributes: ['name'] },
           { model: REF_ParticipantType, as: 'participantType', attributes: ['name'] },
@@ -92,12 +96,12 @@ const selectDetailUser = async (id) => {
   userInstance.dataValues.role = userInstance.Role?.dataValues.name;
 
   if (userInstance.participant) {
-    userInstance.participant.dataValues.contingent =
-      userInstance.participant.contingent?.dataValues.name || null;
-    userInstance.participant.dataValues.participantType =
-      userInstance.participant.participantType?.dataValues.name;
-    userInstance.participant.dataValues.identityType =
-      userInstance.participant.identityType?.dataValues.name;
+    userInstance.participant.dataValues.contingent = userInstance.participant.contingent
+      ?.dataValues.name || null;
+    userInstance.participant.dataValues.participantType = userInstance.participant.participantType
+      ?.dataValues.name;
+    userInstance.participant.dataValues.identityType = userInstance.participant.identityType
+      ?.dataValues.name;
   }
   delete userInstance.dataValues.Qr;
   delete userInstance.dataValues.Role;
@@ -130,6 +134,8 @@ const validateUserInputs = async (form, id) => {
     if (duplicateUser) {
       invalid400.push('Username already taken');
     }
+    console.log(form.username);
+    console.log(`User = ${JSON.stringify(duplicateUser, null, 2)}`);
     const duplicateEmail = await USR_User.findOne({ where: { email: form.email } });
     if (duplicateEmail) {
       invalid400.push('Email already taken');
@@ -340,6 +346,7 @@ const selectUser = async (query) => {
         model: PAR_Participant,
         as: 'participant',
         attributes: ['name'],
+        required: true,
       },
       {
         model: USR_PIC,

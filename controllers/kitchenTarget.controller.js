@@ -1,3 +1,4 @@
+const { Op } = require('sequelize');
 const ResponseFormatter = require('../helpers/responseFormatter.helper');
 const {
   validateKitchenTargetInputs,
@@ -6,6 +7,7 @@ const {
   selectKitchenTarget,
   updateKitchenTarget,
   deleteKitchenTarget,
+  progressActualKitchenTarget,
 } = require('../services/kitchenTarget.service');
 
 class KitchenTargetController {
@@ -16,7 +18,17 @@ class KitchenTargetController {
       // console.log(JSON.stringify(req.user.limitation, null, 2));
       const where = {};
       if (!req.user.limitation.isAdmin) {
-        where.picId = req.user.limitation.access.picId;
+        where.kitchenId = { [Op.or]: req.user.limitation.access.kitchen };
+      }
+
+      if (req.query?.date) {
+        where.date = req.query.date;
+      }
+      if (req.query?.menuId) {
+        where.menuId = req.query.menuId;
+      }
+      if (req.query?.kitchenId) {
+        where.kitchenId = req.query.kitchenId;
       }
 
       const data = await selectAllKitchenTargets(where);
@@ -33,7 +45,7 @@ class KitchenTargetController {
 
       const where = { id: req.params.id };
       if (!req.user.limitation.isAdmin) {
-        where.picId = req.user.limitation.access.picId;
+        where.kitchenId = { [Op.or]: req.user.limitation.access.kitchen };
       }
 
       const data = await selectKitchenTarget(where);
@@ -75,10 +87,31 @@ class KitchenTargetController {
 
       const where = { id: req.params.id };
       if (!req.user.limitation.isAdmin) {
-        where.picId = req.user.limitation.access.picId;
+        where.kitchenId = { [Op.or]: req.user.limitation.access.kitchen };
       }
 
       const data = await updateKitchenTarget(where, req.body);
+      if (!data.success) {
+        return ResponseFormatter.error404(res, 'Data Not Found', data.message);
+      }
+
+      return ResponseFormatter.success200(res, data.message, data.content);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  static async updateActualKitchenTarget(req, res, next) {
+    try {
+      res.url = `${req.method} ${req.originalUrl}`;
+
+      const where = { id: req.params.id };
+      if (!req.user.limitation.isAdmin) {
+        where.kitchenId = { [Op.or]: req.user.limitation.access.kitchen };
+      }
+
+      console.log(req.body);
+      const data = await progressActualKitchenTarget(where, req.body);
       if (!data.success) {
         return ResponseFormatter.error404(res, 'Data Not Found', data.message);
       }
@@ -95,7 +128,7 @@ class KitchenTargetController {
 
       const where = { id: req.params.id };
       if (!req.user.limitation.isAdmin) {
-        where.picId = req.user.limitation.access.picId;
+        where.kitchenId = { [Op.or]: req.user.limitation.access.kitchen };
       }
 
       const data = await deleteKitchenTarget(where);

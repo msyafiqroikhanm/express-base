@@ -130,15 +130,20 @@ const updateKitchenTarget = async (where, form) => {
   if (!kitchenTargetInstance) {
     errorMessages.push('Data Kitchen Target Not Found');
   }
+  // console.log(JSON.stringify(kitchenTargetInstance, null, 2));
 
-  const menuInstance = await FNB_Menu.findOne({ where: { id: form.menuId } });
-  if (!menuInstance) {
-    errorMessages.push('Menu Data Not Found');
+  if (form.menuId) {
+    const menuInstance = await FNB_Menu.findOne({ where: { id: form.menuId } });
+    if (!menuInstance) {
+      errorMessages.push('Menu Data Not Found');
+    }
   }
 
-  const kitchenInstance = await FNB_Kitchen.findOne({ where: { id: form.kitchenId } });
-  if (!kitchenInstance) {
-    errorMessages.push('Kitchen Data Not Found');
+  if (form.kitchenId) {
+    const kitchenInstance = await FNB_Kitchen.findOne({ where: { id: form.kitchenId } });
+    if (!kitchenInstance) {
+      errorMessages.push('Kitchen Data Not Found');
+    }
   }
 
   if (errorMessages.length > 0) {
@@ -156,6 +161,30 @@ const updateKitchenTarget = async (where, form) => {
   kitchenTargetInstance.quantityActual = form.quantityActual
     ? form.quantityActual
     : kitchenTargetInstance.quantityActual;
+
+  await kitchenTargetInstance.save();
+
+  return {
+    success: true,
+    message: 'Kitchen Target Successfully Updated',
+    content: kitchenTargetInstance,
+  };
+};
+
+const progressActualKitchenTarget = async (where, form) => {
+  // check identity  id validity
+  const errorMessages = [];
+
+  const kitchenTargetInstance = await FNB_KitchenTarget.findOne({ where });
+  if (!kitchenTargetInstance) {
+    errorMessages.push('Data Kitchen Target Not Found');
+  }
+
+  if (errorMessages.length > 0) {
+    return { isValid: false, code: 404, message: errorMessages };
+  }
+  // console.log(JSON.stringify(kitchenTargetInstance, null, 2));
+  kitchenTargetInstance.quantityActual = form.quantityActual;
 
   await kitchenTargetInstance.save();
 
@@ -195,4 +224,5 @@ module.exports = {
   createKitchenTarget,
   updateKitchenTarget,
   deleteKitchenTarget,
+  progressActualKitchenTarget,
 };

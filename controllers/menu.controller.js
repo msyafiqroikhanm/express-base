@@ -15,6 +15,18 @@ class MenuController {
 
       // console.log(JSON.stringify(req.user.limitation, null, 2));
       const where = {};
+      if (req.query?.parentOnly === 'yes') {
+        where.parentMenuId = null;
+      }
+      if (req.query?.date) {
+        where.date = req.query.date;
+      }
+      if (req.query?.menuTypeId) {
+        where.menuTypeId = req.query.menuTypeId;
+      }
+      if (req.query?.foodTypeId) {
+        where.foodTypeId = req.query.foodTypeId;
+      }
       const data = await selectAllMenus(where);
 
       return ResponseFormatter.success200(res, data.message, data.content);

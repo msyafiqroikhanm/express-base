@@ -9,8 +9,8 @@ const { createQR } = require('./qr.service');
 const validateVehicleQuery = async (query) => {
   const parsedQuery = {};
 
-  if (typeof query.available !== 'undefined') {
-    parsedQuery.isAvailable = query.available.toLowerCase() === 'true';
+  if (typeof query.isAvailable !== 'undefined') {
+    parsedQuery.isAvailable = query.isAvailable.toLowerCase() === 'true';
   }
 
   return parsedQuery;
@@ -87,7 +87,7 @@ const selectAllVehicles = async (query, where) => {
   }
 
   const data = await TPT_Vehicle.findAll({
-    where: parsedQuery,
+    where: Object.keys(parsedQuery).length > 0 ? parsedQuery : null,
     include: [
       { model: TPT_Vendor, as: 'vendor', attributes: ['name'] },
       { model: REF_VehicleType, as: 'type', attributes: ['name'] },
