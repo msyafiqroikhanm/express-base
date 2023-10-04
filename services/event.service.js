@@ -1,8 +1,16 @@
 /* eslint-disable no-param-reassign */
 const { Op } = require('sequelize');
 const {
-  ENV_Event, ENV_TimeEvent, REF_EventCategory, USR_PIC, ACM_Location, USR_User, PAR_Participant,
-  REF_GroupStatus, PAR_Group, PAR_Contingent,
+  ENV_Event,
+  ENV_TimeEvent,
+  REF_EventCategory,
+  USR_PIC,
+  ACM_Location,
+  USR_User,
+  PAR_Participant,
+  REF_GroupStatus,
+  PAR_Group,
+  PAR_Contingent,
 } = require('../models');
 
 const selectAllEvents = async (where) => {
@@ -10,7 +18,11 @@ const selectAllEvents = async (where) => {
     where: where.picId ? { id: { [Op.in]: where.events } } : null,
     include: [
       { model: REF_EventCategory, attributes: ['name'], as: 'category' },
-      { model: ACM_Location, as: 'location', attributes: { exclude: ['deletedAt', 'createdAt', 'updatedAt'] } },
+      {
+        model: ACM_Location,
+        as: 'location',
+        attributes: { exclude: ['deletedAt', 'createdAt', 'updatedAt'] },
+      },
       { model: ENV_TimeEvent, attributes: ['name', 'id', 'start', 'end'], as: 'schedules' },
       // {
       //   model: USR_PIC,
@@ -19,24 +31,108 @@ const selectAllEvents = async (where) => {
     ],
   });
 
-  await Promise.all(data.map(async (event) => {
-    event.dataValues.category = event.category?.dataValues.name || null;
-    const pic = await USR_PIC.findOne({
-      where: { id: event.picId },
-      attributes: ['id', 'userId', 'typeId'],
+  await Promise.all(
+    data.map(async (event) => {
+      event.dataValues.category = event.category?.dataValues.name || null;
+      const pic = await USR_PIC.findOne({
+        where: { id: event.picId },
+        attributes: ['id', 'userId', 'typeId'],
+        include: {
+          model: USR_User,
+          as: 'user',
+          attributes: ['id'],
+          include: {
+            model: PAR_Participant,
+            as: 'participant',
+            attributes: ['name', 'phoneNbr', 'email'],
+          },
+        },
+      });
+
+      event.dataValues.pic = pic || null;
+    }),
+  );
+
+  return {
+    success: true,
+    message: 'Succesfully Getting All Events',
+    content: data,
+  };
+};
+
+const generateCalendarEvents = async (where) => {
+  const data = await ENV_TimeEvent.findAll({
+    where,
+    include: {
+      model: ENV_Event,
+      as: 'event',
+      attributes: { exclude: ['createdAt', 'updatedAt'] },
+    },
+    order: [['start', 'ASC']],
+  });
+
+  // const dates = await data.map((element) => new Date(element.start).toISOString().split('T')[0]);
+  const dateUnique = Array.from(
+    new Set(await data.map((element) => new Date(element.start).toISOString().split('T')[0])),
+  );
+
+  const response = {};
+  const responseCalendar = {};
+  for (let i = 0; i < dateUnique.length; i += 1) {
+    const start = dateUnique[i];
+
+    // eslint-disable-next-line no-await-in-loop
+    const events = await ENV_TimeEvent.findAll({
+      where: { start: { [Op.gte]: `${start} 00:00:00`, [Op.lte]: `${start} 23:59:59` } },
       include: {
-        model: USR_User,
-        as: 'user',
-        attributes: ['id'],
-        include: { model: PAR_Participant, as: 'participant', attributes: ['name', 'phoneNbr', 'email'] },
+        model: ENV_Event,
+        as: 'event',
+        attributes: { exclude: ['createdAt', 'updatedAt'] },
+        include: [
+          {
+            model: REF_EventCategory,
+            as: 'category',
+            attributes: { exclude: ['createdAt', 'updatedAt'] },
+          },
+          {
+            model: ACM_Location,
+            as: 'location',
+            attributes: { exclude: ['deletedAt', 'createdAt', 'updatedAt'] },
+          },
+        ],
       },
     });
 
-    event.dataValues.pic = pic || null;
-  }));
+    const responseEvents = [];
+    const responseEventsCalendar = [];
+    for (let j = 0; j < events.length; j += 1) {
+      const event = events[j];
+
+      responseEventsCalendar.push({
+        id: event.id,
+        startAt: event.start,
+        endAt: event.end,
+        timeZoneStartAt: 'Asia/Jakarta',
+        summary: `${event.event.name} - ${event.name} - ${event.event.location.name}`,
+        color: 'blue',
+        // eventTimeName: ,
+        // eventCategory: event.event.category.name,
+        // eventLocation: event.event.location.name,
+      });
+      console.log(JSON.stringify(event, null, 2));
+      responseEvents.push(event);
+    }
+    responseCalendar[`${start}`] = responseEventsCalendar;
+    response[`${start}`] = responseEvents;
+    // response[`${start}`] = {};
+    // response.push({ [`${start}`]: events });
+  }
+  console.log(JSON.stringify(dateUnique, null, 2));
 
   return {
-    success: true, message: 'Succesfully Getting All Events', content: data,
+    success: true,
+    message: 'Succesfully Getting All Events',
+    content: { calendar: responseCalendar, metaData: response },
   };
 };
 
@@ -49,7 +145,11 @@ const selectEvent = async (id, where = {}) => {
     where: { id },
     include: [
       { model: REF_EventCategory, attributes: ['name'], as: 'category' },
-      { model: ACM_Location, as: 'location', attributes: { exclude: ['deletedAt', 'createdAt', 'updatedAt'] } },
+      {
+        model: ACM_Location,
+        as: 'location',
+        attributes: { exclude: ['deletedAt', 'createdAt', 'updatedAt'] },
+      },
       { model: ENV_TimeEvent, attributes: ['name', 'start', 'end'], as: 'schedules' },
     ],
   });
@@ -64,7 +164,11 @@ const selectEvent = async (id, where = {}) => {
       model: USR_User,
       as: 'user',
       attributes: ['id', 'username'],
-      include: { model: PAR_Participant, as: 'participant', attributes: ['name', 'phoneNbr', 'email'] },
+      include: {
+        model: PAR_Participant,
+        as: 'participant',
+        attributes: ['name', 'phoneNbr', 'email'],
+      },
     },
   });
 
@@ -72,14 +176,24 @@ const selectEvent = async (id, where = {}) => {
   eventInstance.dataValues.category = eventInstance.category?.dataValues.name || null;
 
   return {
-    success: true, message: 'Success Getting Event', content: eventInstance,
+    success: true,
+    message: 'Success Getting Event',
+    content: eventInstance,
   };
 };
 
 const validateEventInputs = async (form, id, where = {}) => {
   const {
-    picId, categoryId, locationId, name, schedules, code, minAge, maxAge,
-    maxParticipantPerGroup, maxTotalParticipant,
+    picId,
+    categoryId,
+    locationId,
+    name,
+    schedules,
+    code,
+    minAge,
+    maxAge,
+    maxParticipantPerGroup,
+    maxTotalParticipant,
   } = form;
 
   const invalid400 = [];
@@ -118,7 +232,7 @@ const validateEventInputs = async (form, id, where = {}) => {
 
   // check backdate on time
   const parsedTimes = [];
-  const isbackdate = schedules?.some(((time) => {
+  const isbackdate = schedules?.some((time) => {
     if (time.end && new Date(time.start).getTime() > new Date(time.end).getTime()) {
       return true;
     }
@@ -128,7 +242,7 @@ const validateEventInputs = async (form, id, where = {}) => {
       end: new Date(time.end),
     });
     return false;
-  }));
+  });
   if (isbackdate) {
     invalid400.push('End must be set after Start');
   }
@@ -193,8 +307,16 @@ const validateEventInputs = async (form, id, where = {}) => {
 
 const createEvent = async (form) => {
   const {
-    picId, categoryId, locationId, name, times, code, minAge, maxAge,
-    maxParticipantPerGroup, maxTotalParticipant,
+    picId,
+    categoryId,
+    locationId,
+    name,
+    times,
+    code,
+    minAge,
+    maxAge,
+    maxParticipantPerGroup,
+    maxTotalParticipant,
   } = form;
 
   const eventInstance = await ENV_Event.create({
@@ -219,21 +341,33 @@ const createEvent = async (form) => {
   });
 
   return {
-    success: true, message: 'Event Successfully Created', content: eventInstance,
+    success: true,
+    message: 'Event Successfully Created',
+    content: eventInstance,
   };
 };
 
 const updateEvent = async (id, form) => {
   const {
-    picId, categoryId, locationId, name, times, code, maxAge, minAge,
-    maxParticipantPerGroup, maxTotalParticipant,
+    picId,
+    categoryId,
+    locationId,
+    name,
+    times,
+    code,
+    maxAge,
+    minAge,
+    maxParticipantPerGroup,
+    maxTotalParticipant,
   } = form;
 
   // check event id validity
   const eventInstance = await ENV_Event.findByPk(id);
   if (!eventInstance) {
     return {
-      success: false, code: 404, message: 'Event Data Not Found',
+      success: false,
+      code: 404,
+      message: 'Event Data Not Found',
     };
   }
 
@@ -262,7 +396,9 @@ const updateEvent = async (id, form) => {
   });
 
   return {
-    success: true, message: 'Event Successfully Updated', content: eventInstance,
+    success: true,
+    message: 'Event Successfully Updated',
+    content: eventInstance,
   };
 };
 
@@ -275,7 +411,9 @@ const deleteEvent = async (id, where) => {
   const eventInstance = await ENV_Event.findByPk(id);
   if (!eventInstance) {
     return {
-      success: false, code: 404, message: 'Event Data Not Found',
+      success: false,
+      code: 404,
+      message: 'Event Data Not Found',
     };
   }
 
@@ -376,4 +514,5 @@ module.exports = {
   deleteEvent,
   updateProgressGroup,
   selectAllGroupOfEvent,
+  generateCalendarEvents,
 };

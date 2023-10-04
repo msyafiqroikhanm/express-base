@@ -19,6 +19,18 @@ class FNBScheduleController {
       if (!req.user.limitation.isAdmin) {
         where.kitchenId = { [Op.or]: req.user.limitation.access.kitchen };
       }
+      if (req.query?.statusId) {
+        where.statusId = req.query.statusId;
+      }
+      if (req.query?.courierId) {
+        where.courierId = req.query.courierId;
+      }
+      if (req.query?.locationId) {
+        where.locationId = req.query.locationId;
+      }
+      if (req.query?.kitchenId) {
+        where.kitchenId = req.query.kitchenId;
+      }
 
       const data = await selectAllFnBSchedules(where);
       if (!data.success) {

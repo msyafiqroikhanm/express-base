@@ -1,10 +1,36 @@
 const ResponseFormatter = require('../helpers/responseFormatter.helper');
 const {
-  selectAllEvents, selectEvent, validateEventInputs, createEvent, updateEvent,
-  deleteEvent, selectAllGroupOfEvent, updateProgressGroup,
+  selectAllEvents,
+  selectEvent,
+  validateEventInputs,
+  createEvent,
+  updateEvent,
+  deleteEvent,
+  selectAllGroupOfEvent,
+  updateProgressGroup,
+  generateCalendarEvents,
 } = require('../services/event.service');
 
 class Events {
+  static async getCalendars(req, res, next) {
+    try {
+      res.url = `${req.method} ${req.originalUrl}`;
+
+      // resrict data that is not an admin
+      const where = {};
+      // if (!req.user.limitation.isAdmin && req.user.limitation?.access?.picId) {
+      //   where.picId = req.user.limitation.access.picId;
+      //   where.events = req.user.limitation.access.events;
+      // }
+
+      const data = await generateCalendarEvents(where);
+
+      return ResponseFormatter.success200(res, data.message, data.content);
+    } catch (error) {
+      next(error);
+    }
+  }
+
   static async getAll(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
