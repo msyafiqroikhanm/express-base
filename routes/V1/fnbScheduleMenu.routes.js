@@ -62,7 +62,7 @@ router.post(
   },
   [
     check('scheduleId', "scheduleId attribute can't be empty").notEmpty(),
-    check('menuId', "menuId attribute can't be empty").notEmpty(),
+    check('kitchenTargetId', "kitchenTargetId attribute can't be empty").notEmpty(),
     check('quantity', "quantity attribute can't be empty").notEmpty(),
   ],
   ValidateMiddleware.result,

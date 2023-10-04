@@ -7,11 +7,43 @@ const {
   FNB_Schedule,
   FNB_ScheduleMenu,
   FNB_Menu,
+  FNB_KitchenTarget,
+  REF_MenuType,
+  REF_FoodType,
 } = require('../models');
 
 const selectAllFnBScheduleMenus = async (where) => {
   const fnbScheduleMenuInstances = await FNB_ScheduleMenu.findAll({
     include: [
+      {
+        model: FNB_KitchenTarget,
+        as: 'kitchenTarget',
+        attributes: { exclude: ['createdAt', 'updatedAt'] },
+        include: [
+          {
+            model: FNB_Kitchen,
+            as: 'kitchen',
+            attributes: { exclude: ['createdAt', 'updatedAt'] },
+          },
+          {
+            model: FNB_Menu,
+            as: 'menu',
+            attributes: { exclude: ['createdAt', 'updatedAt'] },
+            include: [
+              {
+                model: REF_MenuType,
+                as: 'menuType',
+                attributes: { exclude: ['createdAt', 'updatedAt'] },
+              },
+              {
+                model: REF_FoodType,
+                as: 'foodType',
+                attributes: { exclude: ['createdAt', 'updatedAt'] },
+              },
+            ],
+          },
+        ],
+      },
       {
         model: FNB_Schedule,
         as: 'schedule',
@@ -46,11 +78,6 @@ const selectAllFnBScheduleMenus = async (where) => {
             attributes: { exclude: ['createdAt', 'updatedAt'] },
           },
         ],
-      },
-      {
-        model: FNB_Menu,
-        as: 'menu',
-        attributes: { exclude: ['createdAt', 'updatedAt'] },
       },
     ],
   });
@@ -67,6 +94,35 @@ const selectFnBScheduleMenu = async (id, where) => {
     where: { id },
     include: [
       {
+        model: FNB_KitchenTarget,
+        as: 'kitchenTarget',
+        attributes: { exclude: ['createdAt', 'updatedAt'] },
+        include: [
+          {
+            model: FNB_Kitchen,
+            as: 'kitchen',
+            attributes: { exclude: ['createdAt', 'updatedAt'] },
+          },
+          {
+            model: FNB_Menu,
+            as: 'menu',
+            attributes: { exclude: ['createdAt', 'updatedAt'] },
+            include: [
+              {
+                model: REF_MenuType,
+                as: 'menuType',
+                attributes: { exclude: ['createdAt', 'updatedAt'] },
+              },
+              {
+                model: REF_FoodType,
+                as: 'foodType',
+                attributes: { exclude: ['createdAt', 'updatedAt'] },
+              },
+            ],
+          },
+        ],
+      },
+      {
         model: FNB_Schedule,
         as: 'schedule',
         where,
@@ -100,11 +156,6 @@ const selectFnBScheduleMenu = async (id, where) => {
             attributes: { exclude: ['createdAt', 'updatedAt'] },
           },
         ],
-      },
-      {
-        model: FNB_Menu,
-        as: 'menu',
-        attributes: { exclude: ['createdAt', 'updatedAt'] },
       },
     ],
   });
@@ -145,10 +196,10 @@ const validateFnBScheduleMenuInputs = async (form, limitation = null) => {
     }
   }
 
-  //* check menuId validity
-  const menuInstance = await FNB_Menu.findByPk(form.menuId);
-  if (!menuInstance) {
-    invalid404.push('Menu Data Not Found');
+  //* check kitchenTargetId validity
+  const kitchenTargetInstance = await FNB_KitchenTarget.findByPk(form.kitchenTargetId);
+  if (!kitchenTargetInstance) {
+    invalid404.push('Kitchen Target Data Not Found');
   }
 
   if (invalid400.length > 0) {
@@ -170,7 +221,7 @@ const validateFnBScheduleMenuInputs = async (form, limitation = null) => {
     isValid: true,
     form: {
       scheduleId: form.scheduleId,
-      menuId: form.menuId,
+      kitchenTargetId: form.kitchenTargetId,
       quantity: form.quantity,
     },
   };
@@ -241,7 +292,9 @@ const updateFnBScheduleMenu = async (form, where) => {
   fnbScheduleMenuInstance.scheduleId = form.scheduleId
     ? form.scheduleId
     : fnbScheduleMenuInstance.scheduleId;
-  fnbScheduleMenuInstance.menuId = form.menuId ? form.menuId : fnbScheduleMenuInstance.menuId;
+  fnbScheduleMenuInstance.kitchenTargetId = form.kitchenTargetId
+    ? form.kitchenTargetId
+    : fnbScheduleMenuInstance.kitchenTargetId;
   fnbScheduleMenuInstance.quantity = form.quantity
     ? form.quantity
     : fnbScheduleMenuInstance.quantity;

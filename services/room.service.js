@@ -7,6 +7,8 @@ const {
   ACM_RoomBedType,
   PAR_Participant,
   REF_LodgerStatus,
+  REF_ParticipantType,
+  PAR_Contingent,
 } = require('../models');
 
 const selectAllRooms = async (where) => {
@@ -92,7 +94,20 @@ const selectRoom = async (where) => {
           {
             model: PAR_Participant,
             as: 'participant',
+            required: true,
             attributes: ['name', 'phoneNbr', 'email'],
+            include: [
+              {
+                model: REF_ParticipantType,
+                as: 'participantType',
+                attributes: ['id', 'name'],
+              },
+              {
+                model: PAR_Contingent,
+                as: 'contingent',
+                attributes: ['id', 'name'],
+              },
+            ],
           },
           {
             model: REF_LodgerStatus,

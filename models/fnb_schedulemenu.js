@@ -12,13 +12,16 @@ module.exports = (sequelize, DataTypes) => {
     static associate(models) {
       // define association here
       FNB_ScheduleMenu.belongsTo(models.FNB_Schedule, { foreignKey: 'scheduleId', as: 'schedule' });
-      FNB_ScheduleMenu.belongsTo(models.FNB_Menu, { foreignKey: 'menuId', as: 'menu' });
+      FNB_ScheduleMenu.belongsTo(models.FNB_KitchenTarget, {
+        foreignKey: 'kitchenTargetId',
+        as: 'kitchenTarget',
+      });
     }
   }
   FNB_ScheduleMenu.init(
     {
       scheduleId: DataTypes.INTEGER,
-      menuId: DataTypes.INTEGER,
+      kitchenTargetId: DataTypes.INTEGER,
       quantity: DataTypes.INTEGER,
       isValid: DataTypes.BOOLEAN,
       note: DataTypes.TEXT,
