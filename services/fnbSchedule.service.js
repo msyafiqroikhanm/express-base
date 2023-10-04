@@ -206,13 +206,14 @@ const validateFnBScheduleInputs = async (form, limitation = null) => {
   }
 
   //* check courierId validity
-  const courierId = await FNB_Courier.findByPk(form.courierId);
-  if (!courierId) {
+  const courierInstance = await FNB_Courier.findByPk(form.courierId);
+  if (!courierInstance) {
     invalid404.push('Courier Data Not Found');
   }
-  if (!courierId.isAvailable) {
+  if (!courierInstance?.isAvailable) {
     invalid400.push('Courier is not Available');
   }
+  console.log(JSON.stringify(courierInstance, null, 2));
 
   if (invalid400.length > 0) {
     return {
