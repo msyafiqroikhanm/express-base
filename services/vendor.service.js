@@ -1,10 +1,34 @@
+/* eslint-disable no-param-reassign */
 const { Op } = require('sequelize');
-const { TPT_Vendor, USR_PIC } = require('../models');
+const {
+  TPT_Vendor, USR_PIC, USR_User, PAR_Participant,
+} = require('../models');
 
 const selectAllVendors = async (where) => {
   const data = await TPT_Vendor.findAll({
     where: where.picId ? { id: { [Op.in]: where.vendors } } : null,
   });
+
+  await Promise.all(
+    data.forEach(async (vendor) => {
+      const pic = await USR_PIC.findOne({
+        where: { id: vendor.picId },
+        attributes: ['id', 'userId', 'typeId'],
+        include: {
+          model: USR_User,
+          as: 'user',
+          attributes: ['id'],
+          include: {
+            model: PAR_Participant,
+            as: 'participant',
+            attributes: ['name', 'phoneNbr', 'email'],
+          },
+        },
+      });
+
+      vendor.dataValues.pic = pic || null;
+    }),
+  );
 
   return {
     success: true,
@@ -32,6 +56,23 @@ const selectVendor = async (id, where) => {
       message: ['Vendor Data Not Found'],
     };
   }
+
+  const pic = await USR_PIC.findOne({
+    where: { id: vendorInstance.picId },
+    attributes: ['id', 'userId', 'typeId'],
+    include: {
+      model: USR_User,
+      as: 'user',
+      attributes: ['id', 'username'],
+      include: {
+        model: PAR_Participant,
+        as: 'participant',
+        attributes: ['name', 'phoneNbr', 'email'],
+      },
+    },
+  });
+
+  vendorInstance.dataValues.pic = pic || null;
 
   return {
     success: true,
