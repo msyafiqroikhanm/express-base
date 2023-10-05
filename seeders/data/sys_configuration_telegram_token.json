@@ -1,0 +1,17 @@
+[
+  {
+  "categoryId": 7,
+  "name": "Telegram Token",
+  "value": "6599555001:AAExhEUhoIvxw2pLgMKG-xe8z7GfRmG0ckU"
+  },
+  {
+  "categoryId": 7,
+  "name": "Telegram Menu Keyword",
+  "value": "Main Menu"
+  },
+  {
+  "categoryId": 7,
+  "name": "Telegram Converstation Limit Hours",
+  "value": "2"
+  }
+]
