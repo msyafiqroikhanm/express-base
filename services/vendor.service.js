@@ -8,23 +8,27 @@ const selectAllVendors = async (where) => {
   const data = await TPT_Vendor.findAll({
     where: where.picId ? { id: { [Op.in]: where.vendors } } : null,
   });
+  console.log(JSON.stringify(data, null, 2));
 
   await Promise.all(
-    data.forEach(async (vendor) => {
-      const pic = await USR_PIC.findOne({
-        where: { id: vendor.picId },
-        attributes: ['id', 'userId', 'typeId'],
-        include: {
-          model: USR_User,
-          as: 'user',
-          attributes: ['id'],
+    data.map(async (vendor) => {
+      let pic = null;
+      if (vendor.picId) {
+        pic = await USR_PIC.findOne({
+          where: { id: vendor.picId },
+          attributes: ['id', 'userId', 'typeId'],
           include: {
-            model: PAR_Participant,
-            as: 'participant',
-            attributes: ['name', 'phoneNbr', 'email'],
+            model: USR_User,
+            as: 'user',
+            attributes: ['id'],
+            include: {
+              model: PAR_Participant,
+              as: 'participant',
+              attributes: ['name', 'phoneNbr', 'email'],
+            },
           },
-        },
-      });
+        });
+      }
 
       vendor.dataValues.pic = pic || null;
     }),
