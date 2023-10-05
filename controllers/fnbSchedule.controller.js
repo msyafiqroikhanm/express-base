@@ -15,10 +15,9 @@ class FNBScheduleController {
       res.url = `${req.method} ${req.originalUrl}`;
 
       // resrict data that is not an admin
+      // console.log(JSON.stringify(req.user.limitation));
+
       const where = {};
-      if (!req.user.limitation.isAdmin) {
-        where.kitchenId = { [Op.or]: req.user.limitation.access.kitchen };
-      }
       if (req.query?.statusId) {
         where.statusId = req.query.statusId;
       }
@@ -30,6 +29,19 @@ class FNBScheduleController {
       }
       if (req.query?.kitchenId) {
         where.kitchenId = req.query.kitchenId;
+      }
+
+      if (!req.user.limitation.isAdmin) {
+        // console.log(Boolean(req.user.limitation.access.location));
+        if (req.user.limitation.access.kitchen) {
+          where.kitchenId = { [Op.or]: req.user.limitation.access.kitchen };
+        }
+        if (req.user.limitation.access.location) {
+          where.locationId = { [Op.or]: req.user.limitation.access.location };
+        }
+        if (req.user.limitation.access.courierId) {
+          where.courierId = req.user.limitation.access.courierId;
+        }
       }
 
       const data = await selectAllFnBSchedules(where);
@@ -50,7 +62,16 @@ class FNBScheduleController {
       // resrict data that is not an admin
       const where = { id: req.params.id };
       if (!req.user.limitation.isAdmin) {
-        where.kitchenId = { [Op.or]: req.user.limitation.access.kitchen };
+        // console.log(Boolean(req.user.limitation.access.location));
+        if (req.user.limitation.access.kitchen) {
+          where.kitchenId = { [Op.or]: req.user.limitation.access.kitchen };
+        }
+        if (req.user.limitation.access.location) {
+          where.locationId = { [Op.or]: req.user.limitation.access.location };
+        }
+        if (req.user.limitation.access.courierId) {
+          where.courierId = req.user.limitation.access.courierId;
+        }
       }
 
       const data = await selectFnBSchedule(req.params.id, where);
@@ -100,9 +121,17 @@ class FNBScheduleController {
       // resrict data that is not an admin
       const where = { id: req.params.id };
       if (!req.user.limitation.isAdmin) {
-        where.kitchenId = { [Op.or]: req.user.limitation.access.kitchen };
+        // console.log(Boolean(req.user.limitation.access.location));
+        if (req.user.limitation.access.kitchen) {
+          where.kitchenId = { [Op.or]: req.user.limitation.access.kitchen };
+        }
+        if (req.user.limitation.access.location) {
+          where.locationId = { [Op.or]: req.user.limitation.access.location };
+        }
+        if (req.user.limitation.access.courierId) {
+          where.courierId = req.user.limitation.access.courierId;
+        }
       }
-
       const data = await updateFnBSchedule(req.body, where);
       if (!data.success && data.code === 404) {
         return ResponseFormatter.error404(res, 'Data Not Found', data.message);
@@ -124,7 +153,10 @@ class FNBScheduleController {
       // resrict data that is not an admin
       const where = { id: req.params.id };
       if (!req.user.limitation.isAdmin) {
-        where.kitchenId = { [Op.or]: req.user.limitation.access.kitchen };
+        // console.log(Boolean(req.user.limitation.access.location));
+        if (req.user.limitation.access.kitchen) {
+          where.kitchenId = { [Op.or]: req.user.limitation.access.kitchen };
+        }
       }
 
       const data = await deleteFnbSchedule(where);
