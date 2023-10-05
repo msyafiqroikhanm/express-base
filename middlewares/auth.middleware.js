@@ -7,6 +7,7 @@ const {
   TPT_Driver,
   TPT_Vendor,
   ENV_Event,
+  FNB_Courier,
 } = require('../models');
 const picTypeHelper = require('../helpers/pictype.helper');
 const ResponseFormatter = require('../helpers/responseFormatter.helper');
@@ -61,7 +62,7 @@ class AuthMiddleware {
           const picTypes = await picTypeHelper().then((type) => [type.pic_location]);
           const picLocation = req.user.PIC.filter((pic) => pic.typeId === picTypes[0]);
 
-          console.log(JSON.stringify(picLocation, null, 2));
+          // console.log(JSON.stringify(picLocation, null, 2));
           // * Need More Investigation for user is PIC for not this module
 
           // limitation.isAdmin = false;
@@ -93,6 +94,9 @@ class AuthMiddleware {
       res.url = `${req.method} ${req.originalUrl}`;
 
       const limitation = { isAdmin: true, access: {} };
+      console.log(JSON.stringify(req.user.Role, null, 2));
+      console.log(req.user.Role.name === 'Courier');
+      console.log(Boolean(JSON.stringify(req.user.Role.name, null, 2) === 'Courier'));
       if (req.user.Role.id !== rolesLib.superAdmin) {
         if (req.user.PIC.length) {
           const picTypes = await picTypeHelper().then((type) => [type.pic_kitchen]);
@@ -101,21 +105,54 @@ class AuthMiddleware {
           // console.log(JSON.stringify(picKitchen, null, 2));
           // * Need More Investigation for user is PIC for not this module
 
-          // limitation.isAdmin = false;
-          limitation.access.picId = picKitchen[0].dataValues.id;
+          if (picKitchen.length) {
+            // limitation.isAdmin = false;
+            limitation.access.picId = picKitchen[0].dataValues.id;
 
-          const kitchenLimitation = await FNB_Kitchen.findAll({
-            where: { picId: limitation.access.picId },
-            attributes: ['id'],
-            raw: true,
-          });
+            const kitchenLimitation = await FNB_Kitchen.findAll({
+              where: { picId: limitation.access.picId },
+              attributes: ['id'],
+              raw: true,
+            });
 
-          const kitchens = kitchenLimitation.map((element) => element.id);
+            const kitchens = kitchenLimitation.map((element) => element.id);
 
-          if (kitchenLimitation.length > 0) {
-            limitation.isAdmin = false;
-            limitation.access.kitchen = kitchens;
+            if (kitchenLimitation.length > 0) {
+              limitation.isAdmin = false;
+              limitation.access.kitchen = kitchens;
+            }
           }
+
+          //* FOR PIC LOCATION
+          const picLocTypes = await picTypeHelper().then((type) => [type.pic_location]);
+          const picLocation = req.user.PIC.filter((pic) => pic.typeId === picLocTypes[0]);
+
+          // console.log(JSON.stringify(picLocation, null, 2));
+          // * Need More Investigation for user is PIC for not this module
+
+          if (picLocation.length) {
+            // limitation.isAdmin = false;
+            limitation.access.picId = picLocation[0].dataValues.id;
+
+            const locationLimitation = await ACM_Location.findAll({
+              where: { picId: limitation.access.picId },
+              attributes: ['id'],
+              raw: true,
+            });
+
+            const locations = locationLimitation.map((element) => element.id);
+
+            if (locationLimitation.length > 0) {
+              limitation.isAdmin = false;
+              limitation.access.location = locations;
+            }
+          }
+        }
+        if (req.user.Role.name === 'Courier') {
+          // console.log(req.user.id);
+          const courierInstance = await FNB_Courier.findOne({ where: { userId: req.user.id } });
+          limitation.isAdmin = false;
+          limitation.access.courierId = courierInstance.id;
         }
       }
       req.user.limitation = limitation;

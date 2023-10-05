@@ -14,7 +14,6 @@ const {
   FNB_ScheduleMenu,
 } = require('../models');
 const { createQR } = require('./qr.service');
-const foodScheduleStatus = require('../helpers/foodScheduleStatus.helper');
 
 const selectAllFnBSchedules = async (where) => {
   const fnbScheduleInstances = await FNB_Schedule.findAll({
@@ -205,6 +204,12 @@ const validateFnBScheduleInputs = async (form, limitation = null) => {
     invalid404.push('Location Data Not Found');
   }
 
+  //* check statusId validity
+  const statusInstance = await REF_FoodScheduleStatus.findByPk(form.statusId);
+  if (!statusInstance) {
+    invalid404.push('Status Data Not Found');
+  }
+
   //* check courierId validity
   const courierInstance = await FNB_Courier.findByPk(form.courierId);
   if (!courierInstance) {
@@ -213,7 +218,7 @@ const validateFnBScheduleInputs = async (form, limitation = null) => {
   if (!courierInstance?.isAvailable) {
     invalid400.push('Courier is not Available');
   }
-  console.log(JSON.stringify(courierInstance, null, 2));
+  // console.log(JSON.stringify(courierInstance, null, 2));
 
   if (invalid400.length > 0) {
     return {
@@ -242,8 +247,8 @@ const validateFnBScheduleInputs = async (form, limitation = null) => {
     },
   );
 
-  //* Generate Status Id
-  const statuses = await foodScheduleStatus().then((status) => [status.proses_penjemputan]);
+  // //* Generate Status Id
+  // const statuses = await foodScheduleStatus().then((status) => [status.proses_penjemputan]);
 
   return {
     isValid: true,
@@ -254,7 +259,7 @@ const validateFnBScheduleInputs = async (form, limitation = null) => {
       locationId: form.locationId,
       kitchenId: form.kitchenId,
       courierId: form.courierId,
-      statusId: statuses[0],
+      statusId: form.statusId,
       name: form.name,
       pickUpTime: form.pickUpTime,
       vehiclePlateNo: form.vehiclePlatNo,
