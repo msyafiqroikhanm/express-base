@@ -56,6 +56,7 @@ router.post(
     check('locationId', "locationId attribute can't be empty").notEmpty(),
     check('kitchenId', "kitchenId attribute can't be empty").notEmpty(),
     check('courierId', "courierId attribute can't be empty").notEmpty(),
+    check('statusId', "statusId attribute can't be empty").notEmpty(),
     check('name', "name attribute can't be empty").notEmpty(),
     check('pickUpTime', "pickUpTime attribute can't be empty").notEmpty(),
     // check('dropOffTime', "dropOffTime attribute can't be empty").notEmpty(),
