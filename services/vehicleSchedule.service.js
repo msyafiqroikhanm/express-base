@@ -265,6 +265,13 @@ const progressVehicleSchedule = async (form, id, where = {}) => {
       message: ['Vehicle Schedule Data Not Found'],
     };
   }
+  if (scheduleInstance.driverId === null || scheduleInstance.vehicleId === null) {
+    return {
+      success: false,
+      code: 400,
+      message: ['Transportation Schedule Without Driver Or Vehicle, Status Can\'t Be Progressed'],
+    };
+  }
 
   if (where.vendors?.length > 0 && scheduleInstance) {
     const vehicleInstance = await TPT_Vehicle.findOne({
