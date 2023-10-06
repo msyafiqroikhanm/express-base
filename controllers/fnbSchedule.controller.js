@@ -7,6 +7,7 @@ const {
   selectFnBSchedule,
   updateFnBSchedule,
   deleteFnbSchedule,
+  updateProgressFnBSchedule,
 } = require('../services/fnbSchedule.service');
 
 class FNBScheduleController {
@@ -133,6 +134,38 @@ class FNBScheduleController {
         }
       }
       const data = await updateFnBSchedule(req.body, where);
+      if (!data.success && data.code === 404) {
+        return ResponseFormatter.error404(res, 'Data Not Found', data.message);
+      }
+      if (!data.isValid && data.code === 400) {
+        return ResponseFormatter.error400(res, 'Bad Request', data.message);
+      }
+
+      return ResponseFormatter.success200(res, data.message, data.content);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  static async updateProgress(req, res, next) {
+    try {
+      res.url = `${req.method} ${req.originalUrl}`;
+
+      // resrict data that is not an admin
+      const where = { id: req.params.id };
+      if (!req.user.limitation.isAdmin) {
+        // console.log(Boolean(req.user.limitation.access.location));
+        if (req.user.limitation.access.kitchen) {
+          where.kitchenId = { [Op.or]: req.user.limitation.access.kitchen };
+        }
+        if (req.user.limitation.access.location) {
+          where.locationId = { [Op.or]: req.user.limitation.access.location };
+        }
+        if (req.user.limitation.access.courierId) {
+          where.courierId = req.user.limitation.access.courierId;
+        }
+      }
+      const data = await updateProgressFnBSchedule(req.body, where);
       if (!data.success && data.code === 404) {
         return ResponseFormatter.error404(res, 'Data Not Found', data.message);
       }
