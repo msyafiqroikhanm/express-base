@@ -180,7 +180,7 @@ const validateDriverInputs = async (form, where, file, id) => {
       invalid400.push('Phone Number Already Exist / Taken');
     }
     const duplicateEmail = await USR_User.findOne({
-      where: { phoneNbr: form.phoneNbr, id: { [Op.ne]: driverInstance?.user?.id } },
+      where: { email: form.email, id: { [Op.ne]: driverInstance?.user?.id } },
     });
     if (duplicateEmail) {
       invalid400.push('Email Already Exist / Taken');
@@ -262,13 +262,13 @@ const updateDriver = async (form, id, where) => {
   // updating committee / participant
   await PAR_Participant.update(
     { email: form.email, phoneNbr: form.phoneNbr, name: form.name },
-    { where: { id: form.committee } },
+    { where: { id: form.committee || null } },
   );
 
   // updating user
   await USR_User.update(
-    { email: form.email, phoneNbr: form.phoneNbr },
-    { where: { id: form.user } },
+    { email: form.email },
+    { where: { id: form.user || null } },
   );
 
   return {
