@@ -659,7 +659,6 @@ const updateParticipant = async (id, form, where) => {
   // check if participant doesn't change the files but changing phone number
   if ((participantInstance.phoneNbr !== form.phoneNbr)
       || (participantInstance.name !== form.name)) {
-    console.log('HEREEEEEEEEEEEEEEEE');
     if (participantInstance.file && !form.file) {
       participantInstance.file = await renameParticipantFile(
         participantInstance.file,
