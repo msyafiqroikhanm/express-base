@@ -294,8 +294,8 @@ const deleteDriver = async (id, where) => {
   const { name } = driverInstance.dataValues;
 
   await driverInstance.destroy();
-  await PAR_Participant.destroy({ where: { id: driverInstance.user?.participantId } });
-  await USR_User.destroy({ where: { id: driverInstance.user?.id } });
+  await PAR_Participant.destroy({ where: { id: driverInstance.user?.participantId || null } });
+  await USR_User.destroy({ where: { id: driverInstance.user?.id || null } });
 
   await TPT_VehicleSchedule.update(
     { driverId: null },
