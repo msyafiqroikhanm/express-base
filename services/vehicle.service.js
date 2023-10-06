@@ -96,8 +96,8 @@ const selectAllVehicles = async (query, where) => {
   });
 
   data.forEach((vehicle) => {
-    vehicle.dataValues.vendor = vehicle.vendor.dataValues.name;
-    vehicle.dataValues.type = vehicle.type.dataValues.name;
+    vehicle.dataValues.vendor = vehicle.vendor?.dataValues.name || null;
+    vehicle.dataValues.type = vehicle.type?.dataValues.name || null;
   });
 
   return {
@@ -124,8 +124,8 @@ const selectVehicle = async (id, where) => {
     };
   }
 
-  vehicleInstance.dataValues.vendor = vehicleInstance.vendor.dataValues.name;
-  vehicleInstance.dataValues.type = vehicleInstance.type.dataValues.name;
+  vehicleInstance.dataValues.vendor = vehicleInstance.vendor?.dataValues.name || null;
+  vehicleInstance.dataValues.type = vehicleInstance.type?.dataValues.name || null;
 
   return {
     success: true,
