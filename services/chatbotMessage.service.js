@@ -1,6 +1,6 @@
 const {
   CSM_Conversation, CSM_BroadcastParticipant, CSM_FAQ, CSM_ChatbotResponse, REF_ChatBotResponseType,
-  SYS_Configuration, REF_FAQType,
+  SYS_Configuration,
 } = require('../models');
 const { metaSendMessage } = require('./whatsapp.integration.service');
 
@@ -150,24 +150,20 @@ const sendMenu = async (content) => {
 
   let data;
 
-  const menuType = await REF_FAQType.findAll({ attributes: ['id', 'name'] });
-
   let mainMenu = true;
   if (content.messages[0].type === 'interactive') {
-    menuType.forEach(async (menu) => {
-      if (content.messages[0].interactive.list_reply.id.includes(`Main-${menu.id}`)) {
-        const title = content.messages[0].interactive.list_reply.id;
-        mainMenu = false;
-        const menus = await CSM_FAQ.findAll({ where: { parentFAQId: menu.id } });
+    if (content.messages[0].interactive.list_reply.id.includes('Main')) {
+      const title = content.messages[0].interactive.list_reply.id;
+      mainMenu = false;
+      const menus = await CSM_FAQ.findAll({ where: { parentFAQId: title.split('-')[1] } });
 
-        const menuList = menus.map((choice) => ({ id: `Sub-${choice.id}-${choice.title}`, menu: choice.title }));
-        data = await botData(from, 'Choose Information', `Choose ${title.split('-')[2]} Information You Wish To Know`, menuList);
+      const menuList = menus.map((choice) => ({ id: `Sub-${choice.id}-${choice.title}`, menu: choice.title }));
+      data = await botData(from, 'Choose Information', `Choose ${title.split('-')[2]} Information You Wish To Know`, menuList);
 
-        const token = await SYS_Configuration.findOne({ where: { name: 'Whatsapp Access Token' } });
-        await metaSendMessage(data, phone_number_id, token.value);
-        return null;
-      }
-    });
+      const token = await SYS_Configuration.findOne({ where: { name: 'Whatsapp Access Token' } });
+      await metaSendMessage(data, phone_number_id, token.value);
+      return null;
+    }
 
     if (content.messages[0].interactive.list_reply.id.includes('Sub')) {
       const title = content.messages[0].interactive.list_reply.id;

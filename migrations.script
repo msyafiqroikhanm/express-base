@@ -72,3 +72,4 @@ sequelize model:generate --name REF_CommitteeType --attributes name:string
 sequelize model:generate --name ACM_RoomBedType --attributes locationId:integer,name:string,deletedAt:date
 sequelize model:generate --name SYS_Notification --attributes userId:integer,typeId:integer,relatedDataId:intiger,url:text,message:text,isRead:boolean
 sequelize model:generate --name TPT_DriverTracking --attributes driverId:integer, latitude:string, longtitude:string, accuracy:string, time:date
+sequelize model:generate --name CSM_TelegramConversation --attributes chatId:string, name:string, timeStamp:date
