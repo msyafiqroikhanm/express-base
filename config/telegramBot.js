@@ -3,6 +3,10 @@ const { SYS_Configuration } = require('../models');
 const { telegramChatBotMessageEntry, telegramMenuEntry } = require('../services/telegramBot.service');
 
 const initializeTelegramBot = async () => {
+  if (['local', 'development'].includes(process.env.NODE_ENV.toLowerCase())) {
+    return true;
+  }
+
   const TELEGRAM_TOKEN = await SYS_Configuration.findOne({
     where: { name: 'Telegram Token' }, attributes: ['value'],
   });
