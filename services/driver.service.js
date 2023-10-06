@@ -25,7 +25,7 @@ const selectAllDrivers = async (where = {}) => {
   });
 
   data.forEach((driver) => {
-    driver.dataValues.vendor = driver.vendor.dataValues.name;
+    driver.dataValues.vendor = driver.vendor?.dataValues.name || null;
   });
 
   return {
@@ -56,7 +56,7 @@ const selectDriver = async (id, where) => {
     };
   }
 
-  driverInstance.dataValues.vendor = driverInstance.vendor.dataValues.name;
+  driverInstance.dataValues.vendor = driverInstance.vendor?.dataValues.name || null;
 
   return {
     success: true,
