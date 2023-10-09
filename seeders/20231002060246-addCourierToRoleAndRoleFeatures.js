@@ -8,28 +8,23 @@ const { USR_Role } = require('../models');
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    const courierRoleInstance = await USR_Role.findOne({ where: { name: 'Courier' } });
+    let courierRoleInstance = await USR_Role.findOne({ where: { name: 'Courier' } });
     if (!courierRoleInstance) {
-      await queryInterface.bulkInsert('USR_Roles', [
-        {
-          templateId: 1,
-          name: 'Courier',
-          createdAt: new Date(),
-          updatedAt: new Date(),
-        },
-      ]);
-    } else {
-      const courierRoleFeatures = JSON.parse(
-        fs.readFileSync('./seeders/data/usr_rolefeatures_courier.json'),
-      );
-      const responses = courierRoleFeatures.map((element) => ({
-        roleId: courierRoleInstance.id,
-        featureId: element.featureId,
-        createdAt: new Date(),
-        updatedAt: new Date(),
-      }));
-      await queryInterface.bulkInsert('USR_RoleFeatures', responses);
+      courierRoleInstance = await USR_Role.create({
+        templateId: 1,
+        name: 'Courier',
+      });
     }
+    const courierRoleFeatures = JSON.parse(
+      fs.readFileSync('./seeders/data/usr_rolefeatures_courier.json'),
+    );
+    const responses = courierRoleFeatures.map((element) => ({
+      roleId: courierRoleInstance.id,
+      featureId: element.featureId,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    }));
+    await queryInterface.bulkInsert('USR_RoleFeatures', responses);
   },
 
   async down(queryInterface, Sequelize) {

@@ -12,6 +12,7 @@ const {
   PAR_Group,
   PAR_Contingent,
 } = require('../models');
+const { parsingEventContingents } = require('../helpers/parsing.helper');
 
 const selectAllEvents = async (where) => {
   const data = await ENV_Event.findAll({
@@ -149,11 +150,34 @@ const selectEvent = async (id, where = {}) => {
         attributes: { exclude: ['deletedAt', 'createdAt', 'updatedAt'] },
       },
       { model: ENV_TimeEvent, attributes: ['name', 'start', 'end'], as: 'schedules' },
+      {
+        model: PAR_Group,
+        attributes: ['contingentId'],
+        include: [
+          { model: PAR_Contingent, attributes: ['name'], as: 'contingent' },
+          {
+            model: PAR_Participant,
+            attributes: ['id', 'name'],
+            through: {
+              attributes: [],
+            },
+          },
+        ],
+      },
     ],
   });
   if (!eventInstance) {
     return { success: false, code: 404, message: ['Event Data Not Found'] };
   }
+
+  // parse contingent / group that participate in the event
+  let contingents = [];
+  if (eventInstance.PAR_Groups?.length > 0) {
+    contingents = parsingEventContingents(eventInstance.PAR_Groups);
+  }
+
+  delete eventInstance.dataValues.PAR_Groups;
+  eventInstance.dataValues.contingents = contingents;
 
   const pic = await USR_PIC.findOne({
     where: { id: eventInstance.picId },
