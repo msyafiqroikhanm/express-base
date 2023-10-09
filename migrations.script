@@ -74,3 +74,4 @@ sequelize model:generate --name SYS_Notification --attributes userId:integer,typ
 sequelize model:generate --name TPT_DriverTracking --attributes driverId:integer, latitude:string, longtitude:string, accuracy:string, time:date
 sequelize model:generate --name CSM_TelegramConversation --attributes chatId:string, name:string, timeStamp:date
 sequelize model:generate --name FNB_Feedback --attributes eventName:string, date:date, deliciousness:integer, combination:integer, suitability:integer, arrangement:integer, appearance:integer, cleanliness:integer, aroma:integer, freshness:integer, name:string, contingent:string
+sequelize model:generate --name TPT_ArrivalDepartureInformation --attributes contingentId:integer, locationId:integer, name:string, type:enum, transportation:text, otherLocation:text, totalParticipant:integer, time:date
