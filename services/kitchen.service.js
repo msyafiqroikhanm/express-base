@@ -1,9 +1,39 @@
-const { FNB_Kitchen, USR_PIC, FNB_Schedule, FNB_KitchenTarget } = require('../models');
+const {
+  FNB_Kitchen,
+  USR_PIC,
+  FNB_Schedule,
+  FNB_KitchenTarget,
+  USR_User,
+  PAR_Participant,
+} = require('../models');
 
 const selectAllKitchens = async (where) => {
   const kitchens = await FNB_Kitchen.findAll({
     where,
   });
+
+  await Promise.all(
+    kitchens.map(async (location) => {
+      const pic = await USR_PIC.findOne({
+        where: { id: location.picId },
+        attributes: { exclude: ['createdAt', 'updatedAt'] },
+        include: {
+          model: USR_User,
+          as: 'user',
+          attributes: ['id'],
+          include: {
+            model: PAR_Participant,
+            as: 'participant',
+            attributes: ['name', 'phoneNbr', 'email'],
+          },
+        },
+      });
+
+      // console.log(JSON.stringify(pic.user, null, 2));
+      // eslint-disable-next-line no-param-reassign
+      location.dataValues.pic = pic?.user.participant || null;
+    }),
+  );
 
   return {
     success: true,
@@ -16,6 +46,23 @@ const selectKitchen = async (where) => {
   const kitchenInstance = await FNB_Kitchen.findOne({
     where,
   });
+
+  const pic = await USR_PIC.findOne({
+    where: { id: kitchenInstance.picId },
+    attributes: { exclude: ['createdAt', 'updatedAt'] },
+    include: {
+      model: USR_User,
+      as: 'user',
+      attributes: ['id'],
+      include: {
+        model: PAR_Participant,
+        as: 'participant',
+        attributes: ['name', 'phoneNbr', 'email'],
+      },
+    },
+  });
+  kitchenInstance.dataValues.pic = pic?.user.participant;
+
   if (!kitchenInstance) {
     return {
       success: false,
