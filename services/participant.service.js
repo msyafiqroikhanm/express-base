@@ -694,7 +694,7 @@ const updateParticipant = async (id, form, where) => {
     participantInstance.referenceFile = form.referenceFile || participantInstance.referenceFile;
   }
 
-  participantInstance.contingetId = form.contingent?.id || null;
+  participantInstance.contingentId = form.contingent?.id || null;
   participantInstance.typeId = form.participantType?.id || null;
   participantInstance.identityTypeId = form.identityType?.id || null;
   participantInstance.name = form.name;
