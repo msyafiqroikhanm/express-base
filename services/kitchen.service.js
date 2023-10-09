@@ -80,7 +80,8 @@ const selectKitchen = async (where) => {
 const validateKitchenInputs = async (form) => {
   const errorMessages = [];
 
-  const picInstance = await USR_PIC.findOne({ where: { id: form.picId } });
+  const picKitchenType = 4;
+  const picInstance = await USR_PIC.findOne({ where: { id: form.picId, typeId: picKitchenType } });
   if (!picInstance) {
     errorMessages.push('PIC Data Not Found');
   }
