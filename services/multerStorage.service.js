@@ -1,6 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 const multer = require('multer');
+const slug = require('slugify');
 
 let target;
 let folder;
@@ -53,7 +54,21 @@ const imageStorage = multer.diskStorage({
   },
   filename: (req, file, cb) => {
     if (target) {
-      cb(null, `${target}-${Date.now()}${path.extname(file.originalname).toLowerCase()}`);
+      if (target === 'committee') {
+        const slugedName = slug(req.body.name, {
+          replacement: '-',
+          lower: true,
+          strict: true,
+        });
+        const slugedPhoneNbr = slug(req.body.phoneNbr, {
+          replacement: '',
+          lower: true,
+          strict: true,
+        });
+        cb(null, `${target}-${slugedName}-${slugedPhoneNbr}-${Date.now()}${path.extname(file.originalname).toLowerCase()}`);
+      } else {
+        cb(null, `${target}-${Date.now()}${path.extname(file.originalname).toLowerCase()}`);
+      }
     } else {
       cb(null, `${Date.now()}${path.extname(file.originalname).toLowerCase()}`);
     }
@@ -190,9 +205,29 @@ const participantStorage = multer.diskStorage({
   },
   filename: (req, file, cb) => {
     if (target) {
-      cb(null, `${target}-${Date.now()}${path.extname(file.originalname).toLowerCase()}`);
+      const slugedName = slug(req.body.name, {
+        replacement: '-',
+        lower: true,
+        strict: true,
+      });
+      const slugedPhoneNbr = slug(req.body.phoneNbr, {
+        replacement: '',
+        lower: true,
+        strict: true,
+      });
+      cb(null, `${target}-${slugedName}-${slugedPhoneNbr}-${Date.now()}${path.extname(file.originalname).toLowerCase()}`);
     } else {
-      cb(null, `${Date.now()}${path.extname(file.originalname).toLowerCase()}`);
+      const slugedName = slug(req.body.name, {
+        replacement: '-',
+        lower: true,
+        strict: true,
+      });
+      const slugedPhoneNbr = slug(req.body.phoneNbr, {
+        replacement: '',
+        lower: true,
+        strict: true,
+      });
+      cb(null, `${slugedName}-${slugedPhoneNbr}-${Date.now()}${path.extname(file.originalname).toLowerCase()}`);
     }
   },
 });

@@ -3,6 +3,7 @@ const fs = require('fs/promises');
 const fsn = require('fs');
 const { relative, join } = require('path');
 const { Op } = require('sequelize');
+const slug = require('slugify');
 const XLSX = require('xlsx');
 const {
   PAR_Participant,
@@ -49,6 +50,36 @@ const calculateAge = (dateOfBirth, dateNow) => {
   }
 
   return age;
+};
+
+const renameParticipantFile = async (filename, participantName, participantPhoneNbr) => {
+  // create array of old filename
+  const splitedFileName = filename.split('-');
+
+  // create slugify version of name and phoneNbr
+  const slugedName = slug(participantName, {
+    replacement: '-',
+    lower: true,
+    strict: true,
+  });
+  const slugedPhoneNbr = slug(participantPhoneNbr, {
+    replacement: '',
+    lower: true,
+    strict: true,
+  });
+
+  // assigned slugged name and phone nbr to original filename array
+  splitedFileName[splitedFileName.length - 2] = slugedPhoneNbr;
+  splitedFileName.splice(1, splitedFileName.length - 3, slugedName);
+  const newFileName = splitedFileName.join('-');
+
+  // rename old file with new filename
+  fsn.rename(
+    join(__dirname, relative(__dirname, filename)),
+    join(__dirname, relative(__dirname, newFileName)),
+    (err) => console.log(err),
+  );
+  return newFileName;
 };
 
 const selectAllParticipant = async (query, where) => {
@@ -436,7 +467,7 @@ const validateParticipantInputs = async (form, files, id, where) => {
         filePath = `public/images/participants/${file[0].filename}`;
       } else {
         if (!['png', 'jpeg', 'jpg', 'pdf', 'docx'].includes(file[0].originalname.split('.').pop())) {
-          invalid400.push('Upload only supports file types [png, jpeg, and jpg]');
+          invalid400.push('Upload only supports file types [png, jpeg, jpg, pdf, and docx]');
         }
 
         let format = 'images';
@@ -625,6 +656,44 @@ const updateParticipant = async (id, form, where) => {
     await deleteFile(relative(__dirname, participantInstance.referenceFile));
   }
 
+  // check if participant doesn't change the files but changing phone number
+  if ((participantInstance.phoneNbr !== form.phoneNbr)
+      || (participantInstance.name !== form.name)) {
+    if (participantInstance.file && !form.file) {
+      participantInstance.file = await renameParticipantFile(
+        participantInstance.file,
+        form.name,
+        form.phoneNbr,
+      );
+    }
+    if (participantInstance.identityFile && !form.identityFile) {
+      participantInstance.identityFile = await renameParticipantFile(
+        participantInstance.identityFile,
+        form.name,
+        form.phoneNbr,
+      );
+    }
+    if (participantInstance.baptismFile && !form.baptismFile) {
+      participantInstance.baptismFile = await renameParticipantFile(
+        participantInstance.baptismFile,
+        form.name,
+        form.phoneNbr,
+      );
+    }
+    if (participantInstance.referenceFile && !form.referenceFile) {
+      participantInstance.referenceFile = await renameParticipantFile(
+        participantInstance.referenceFile,
+        form.name,
+        form.phoneNbr,
+      );
+    }
+  } else {
+    participantInstance.file = form.file || participantInstance.file;
+    participantInstance.identityFile = form.identityFile || participantInstance.identityFile;
+    participantInstance.baptismFile = form.baptismFile || participantInstance.baptismFile;
+    participantInstance.referenceFile = form.referenceFile || participantInstance.referenceFile;
+  }
+
   participantInstance.contingetId = form.contingent?.id || null;
   participantInstance.typeId = form.participantType?.id || null;
   participantInstance.identityTypeId = form.identityType?.id || null;
@@ -635,10 +704,7 @@ const updateParticipant = async (id, form, where) => {
   participantInstance.phoneNbr = form.phoneNbr;
   participantInstance.email = form.email;
   participantInstance.address = form.address;
-  participantInstance.file = form.file || participantInstance.file;
-  participantInstance.identityFile = form.identityFile || participantInstance.identityFile;
-  participantInstance.baptismFile = form.baptismFile || participantInstance.baptismFile;
-  participantInstance.referenceFile = form.referenceFile || participantInstance.referenceFile;
+
   await participantInstance.save();
 
   return {
@@ -968,16 +1034,30 @@ const updateCommittee = async (id, form) => {
     await deleteFile(relative(__dirname, participantInstance.file));
   }
 
+  // check if participant doesn't change the files but changing phone number
+  if ((participantInstance.phoneNbr !== form.phoneNbr)
+      || (participantInstance.name !== form.name)) {
+    if (participantInstance.file && !form.file) {
+      participantInstance.file = await renameParticipantFile(
+        participantInstance.file,
+        form.name,
+        form.phoneNbr,
+      );
+    }
+  } else {
+    participantInstance.file = form.file || participantInstance.file;
+  }
+
   participantInstance.committeeTypeId = form.committeeType.id;
   participantInstance.identityTypeId = form.identityType.id;
   participantInstance.name = form.name;
   participantInstance.gender = form.gender;
   participantInstance.birthDate = form.birthDate;
-  participantInstance.identityNo = form.identityNo.id;
-  participantInstance.phoneNbr = form.phoneNbr.id;
+  participantInstance.identityNo = form.identityNo;
+  participantInstance.phoneNbr = form.phoneNbr;
   participantInstance.email = form.email;
   participantInstance.address = form.address;
-  participantInstance.file = form.file || participantInstance.file;
+
   await participantInstance.save();
 
   return {

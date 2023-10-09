@@ -384,6 +384,52 @@ const updateFnBSchedule = async (form, where) => {
   };
 };
 
+const updateProgressFnBSchedule = async (form, where) => {
+  const invalid400 = [];
+  const invalid404 = [];
+
+  const formUpdateScheduleInstance = {};
+
+  const fnbScheduleInstance = await FNB_Schedule.findOne({ where });
+  if (!fnbScheduleInstance) {
+    return {
+      success: false,
+      code: 404,
+      message: 'FnB Schedule Data Not Found',
+    };
+  }
+
+  //* check kitchenId validity
+  const statusId = await REF_FoodScheduleStatus.findByPk(form.statusId);
+  if (!statusId) {
+    invalid404.push('FNB Schedule Status Data Not Found');
+  }
+
+  if (invalid400.length > 0) {
+    return {
+      isValid: false,
+      code: 400,
+      message: invalid400,
+    };
+  }
+  if (invalid404.length > 0) {
+    return {
+      isValid: false,
+      code: 404,
+      message: invalid404,
+    };
+  }
+
+  formUpdateScheduleInstance.statusId = form.statusId;
+
+  await FNB_Schedule.update(formUpdateScheduleInstance, { where: { id: fnbScheduleInstance.id } });
+  return {
+    success: true,
+    message: 'Progress FnB Schedule Successfully Updated',
+    content: fnbScheduleInstance,
+  };
+};
+
 const deleteFnbSchedule = async (id, where) => {
   const fnbScheduleInstance = await FNB_Schedule.findOne({ where });
   if (!fnbScheduleInstance) {
@@ -416,5 +462,6 @@ module.exports = {
   validateFnBScheduleInputs,
   createFnBSchedule,
   updateFnBSchedule,
+  updateProgressFnBSchedule,
   deleteFnbSchedule,
 };

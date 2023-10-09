@@ -174,14 +174,7 @@ router.post(
     check('email', "Email attribute can't be empty").isEmail(),
     check('address', "Address attribute can't be empty").notEmpty(),
   ],
-  async (req, res, next) => {
-    ValidateMiddleware.resultWithMultipleMandatoryFile(
-      req,
-      res,
-      next,
-      ['baptismFile', 'identityFile', 'participantImage', 'referenceFile'],
-    );
-  },
+  ValidateMiddleware.result,
   Authentication.participant,
   ParticipantController.create,
 );

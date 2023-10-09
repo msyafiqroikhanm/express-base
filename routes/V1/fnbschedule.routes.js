@@ -5,6 +5,22 @@ const ValidateMiddleware = require('../../middlewares/validate.middleware');
 const Authentication = require('../../middlewares/auth.middleware');
 const FNBScheduleController = require('../../controllers/fnbSchedule.controller');
 
+router.patch(
+  '/:id/progress-statuses',
+  async (req, res, next) => {
+    Authentication.authenticate(
+      req,
+      res,
+      next,
+      await features().then((feature) => [feature.update_fnb_schedule]),
+    );
+  },
+  [check('statusId', "statusId attribute can't be empty").notEmpty()],
+  ValidateMiddleware.result,
+  Authentication.fnb,
+  FNBScheduleController.updateProgress,
+);
+
 router.get(
   '/',
   async (req, res, next) => {

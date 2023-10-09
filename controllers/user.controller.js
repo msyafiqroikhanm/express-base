@@ -2,6 +2,7 @@ const ResponseFormatter = require('../helpers/responseFormatter.helper');
 const {
   selectAllUsers, createUser, validateUserInputs, updateUser,
   deleteUser, validatePasswordInputs, updateUserPassword, selectDetailUser,
+  validatePublicRegisterUserInputs,
 } = require('../services/user.service');
 
 class User {
@@ -108,6 +109,25 @@ class User {
       }
 
       return ResponseFormatter.success200(res, data.message, data.content);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  static async registerPublic(req, res, next) {
+    try {
+      res.url = `${req.method} ${req.originalUrl}`;
+
+      const inputs = await validatePublicRegisterUserInputs(req.body);
+      if (!inputs.isValid && inputs.code === 404) {
+        return ResponseFormatter.error404(res, 'Data Not Found', inputs.message);
+      }
+      if (!inputs.isValid && inputs.code === 400) {
+        return ResponseFormatter.error400(res, 'Bad Request', inputs.message);
+      }
+
+      const data = await createUser(inputs.form);
+      return ResponseFormatter.success201(res, data.message, data.content);
     } catch (error) {
       next(error);
     }

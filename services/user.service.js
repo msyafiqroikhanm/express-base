@@ -376,6 +376,70 @@ const updateUserLogin = async (where, form) => {
   await USR_User.update(form, { where });
 };
 
+const validatePublicRegisterUserInputs = async (form) => {
+  const invalid404 = [];
+  const invalid400 = [];
+
+  const roleInstance = await USR_Role.findOne({ where: { name: 'Participant' } });
+
+  if ((form.phoneNbr && form.identityNo) || (!form.phoneNbr && !form.identityNo)) {
+    invalid400.push('Required Either Phone Number Or Identity Number');
+  } else if ((form.identityType && !form.identityNo) || (!form.identityType && form.identityNo)) {
+    invalid400.push('Identity Type Atrribute Required Identity No Attribute, And Vice Versa');
+  }
+
+  let participantInstance = null;
+  if (form.phoneNbr) {
+    participantInstance = await PAR_Participant.findOne({
+      where: {
+        phoneNbr: form.phoneNbr,
+        contingentId: { [Op.ne]: null },
+      },
+    });
+  } else if (form.identityType && form.identityNo) {
+    participantInstance = await PAR_Participant.findOne({
+      where: {
+        identityTypeId: form.identityType || null,
+        identityNo: form.identityNo,
+        contingentId: { [Op.ne]: null },
+      },
+    });
+  }
+  if (!participantInstance) {
+    invalid404.push('Participant Doesn\'t Exist In Database / System');
+  }
+
+  if (form.password !== form.rePassword) {
+    invalid400.push('Password and New Verify-Password Do Not Match');
+  }
+
+  if (invalid400.length > 0) {
+    return {
+      isValid: false,
+      code: 400,
+      message: invalid400,
+    };
+  }
+  if (invalid404.length > 0) {
+    return {
+      isValid: false,
+      code: 404,
+      message: invalid404,
+    };
+  }
+
+  return {
+    isValid: true,
+    form: {
+      roleId: roleInstance.id,
+      participantId: participantInstance.id,
+      username: form.username,
+      password: form.password,
+      email: form.email,
+    },
+  };
+};
+
 module.exports = {
   validateUserInputs,
   validatePasswordInputs,
@@ -387,4 +451,5 @@ module.exports = {
   deleteUser,
   updateUserPassword,
   updateUserLogin,
+  validatePublicRegisterUserInputs,
 };

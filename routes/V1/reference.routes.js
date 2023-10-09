@@ -553,40 +553,11 @@ router.delete(
 
 router.get(
   '/identity-types',
-  async (req, res, next) => {
-    Authentication.authenticate(
-      req,
-      res,
-      next,
-      await features().then((feature) => [
-        feature.view_identity_type,
-        feature.create_identity_type,
-        feature.update_identity_type,
-        feature.delete_identity_type,
-        feature.create_participant,
-        feature.update_participant,
-      ]),
-    );
-  },
   IdentityType.getAll,
 );
 
 router.get(
   '/identity-types/:id',
-  async (req, res, next) => {
-    Authentication.authenticate(
-      req,
-      res,
-      next,
-      await features().then((feature) => [
-        feature.view_identity_type,
-        feature.update_identity_type,
-        feature.delete_identity_type,
-        feature.create_participant,
-        feature.update_participant,
-      ]),
-    );
-  },
   IdentityType.getDetail,
 );
 

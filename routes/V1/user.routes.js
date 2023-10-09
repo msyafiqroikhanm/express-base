@@ -114,4 +114,16 @@ router.put(
   UserController.changePassword,
 );
 
+router.post(
+  '/public',
+  [
+    check('username', "Username attribute can't be empty").notEmpty(),
+    check('password', "Password attribute can't be empty").notEmpty(),
+    check('rePassword', "Verify Password attribute can't be empty").notEmpty(),
+    check('email', "Email attribute can't be empty").notEmpty(),
+  ],
+  ValidateMiddleware.result,
+  UserController.registerPublic,
+);
+
 module.exports = router;
