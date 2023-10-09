@@ -38,6 +38,7 @@ const dashboardRoutes = require('./dashboard.routes');
 const fnbScheduleRoutes = require('./fnbschedule.routes');
 const fnbScheduleMenuRoutes = require('./fnbScheduleMenu.routes');
 const kitchenTargetRoutes = require('./kitchentarget.routes');
+const fnbFeedbackRoutes = require('./fnbfeedback.routes');
 
 router.use('/auth', authRoutes);
 router.use('/config', configRoutes);
@@ -76,6 +77,7 @@ router.use('/menus', menuRoutes);
 router.use('/vehicle-schedules', vehicleScheduleRoutes);
 router.use('/fnb-schedules', fnbScheduleRoutes);
 router.use('/fnb-schedule-menus', fnbScheduleMenuRoutes);
+router.use('/fnb-feedbacks', fnbFeedbackRoutes);
 router.use('/dashboard', dashboardRoutes);
 
 module.exports = router;
