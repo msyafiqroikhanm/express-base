@@ -75,6 +75,38 @@ const parsingUserModules = (userInstance) => {
   return Object.values(outputObject);
 };
 
+const parsingEventContingents = (groups) => {
+  const contingentObject = {};
+
+  groups.forEach((group) => {
+    if (!contingentObject[group.contingentId]) {
+      contingentObject[group.contingentId] = {
+        name: group.contingent.name,
+        participants: group.PAR_Participants?.length > 0 ? group.PAR_Participants : [],
+      };
+    } else {
+      contingentObject[group.contingentId].participants.push(...group.PAR_Participants);
+    }
+  });
+
+  const parsedContingents = Object.keys(contingentObject).map((contingentId) => ({
+    contingentId: Number(contingentId),
+    name: contingentObject[contingentId].name,
+    participants: contingentObject[contingentId].participants,
+  }));
+
+  // Sort the array of objects by the "name" property of the contingent
+  parsedContingents.sort((a, b) => a.name.localeCompare(b.name));
+
+  // Sort the "participants" array inside each contingent by the "name" property
+  parsedContingents.forEach((item) => {
+    item.participants.sort((a, b) => a.name.localeCompare(b.name));
+  });
+
+  return parsedContingents;
+};
+
 module.exports = {
   parsingUserModules,
+  parsingEventContingents,
 };
