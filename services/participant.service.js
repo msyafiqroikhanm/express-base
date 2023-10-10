@@ -244,15 +244,19 @@ const selectParticipant = async (id, where) => {
 
   // parsing participant lodger history
   participantInstance.lodgers.forEach((lodger) => {
-    lodger.room.dataValues.type = lodger.room.type.dataValues.name;
-    lodger.room.dataValues.bed = lodger.room.bed.dataValues.name;
+    if (lodger.room) {
+      lodger.room.dataValues.type = lodger.room.type.dataValues.name;
+      lodger.room.dataValues.bed = lodger.room.bed.dataValues.name;
+    }
   });
 
   // parsing participant events
   participantInstance.groups.forEach((group) => {
-    group.event.dataValues.groupId = group.dataValues.id;
-    group.event.dataValues.category = group.event.category.dataValues.name;
-    participantInstance.dataValues.events.push(group.event);
+    if (group.event) {
+      group.event.dataValues.groupId = group.dataValues.id;
+      group.event.dataValues.category = group.event.category.dataValues.name;
+      participantInstance.dataValues.events.push(group.event);
+    }
     delete group.dataValues.event;
   });
 
