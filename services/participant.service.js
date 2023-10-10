@@ -566,7 +566,7 @@ const validateParticipantInputs = async (form, files, id, where) => {
   };
 };
 
-const createParticipant = async (form) => {
+const createParticipant = async (form, isBulk = false) => {
   // check maximum contingent participant
   const contingentLimit = await SYS_Configuration.findOne({
     where: { name: 'Contingent Limit' },
@@ -581,7 +581,7 @@ const createParticipant = async (form) => {
       where: { typeId: { [Op.ne]: PARTICIPANT_TYPES.Coordinator } },
     },
   });
-  if (contingentInstance.participants.length >= Number(contingentLimit.value)) {
+  if (contingentInstance?.participants?.length >= Number(contingentLimit.value)) {
     return {
       success: false,
       code: 404,
@@ -589,22 +589,25 @@ const createParticipant = async (form) => {
     };
   }
 
+  let qrInstance = null;
   // Qr setup for participant
-  const templateInstance = await QRM_QRTemplate.findOne({
-    where: { name: { [Op.like]: '%participant%' } },
-  });
-  const qrInstance = await createQR(
-    { templateId: templateInstance?.id || 1 },
-    {
-      rawFile: `public/images/qrs/qrs-${Date.now()}.png`,
-      combineFile: `public/images/qrCombines/combines-${Date.now()}.png`,
-    },
-  );
+  if (!isBulk) {
+    const templateInstance = await QRM_QRTemplate.findOne({
+      where: { name: { [Op.like]: '%participant%' } },
+    });
+    qrInstance = await createQR(
+      { templateId: templateInstance?.id || 1 },
+      {
+        rawFile: `public/images/qrs/qrs-${Date.now()}.png`,
+        combineFile: `public/images/qrCombines/combines-${Date.now()}.png`,
+      },
+    );
+  }
 
   // creating participant
   const participantInstance = await PAR_Participant.create({
     contingentId: form.contingent?.id,
-    qrId: qrInstance.content.id,
+    qrId: qrInstance?.content.id || null,
     typeId: form.participantType.id,
     identityTypeId: form.identityType.id,
     name: form.name,
@@ -831,24 +834,24 @@ const createParticipantViaImport = async (file) => {
         invalidData.push(
           `Duplicate phone number ${participant.phoneNbr} for participant ${
             participant.name
-          } at row ${index + 1}`,
+          } at row ${index + 2}`,
         );
       }
       if (existIdentity.includes(`${participant.identityTypeId}-${participant.identityNo}`)) {
         invalidData.push(
           `Duplicate identity number ${participant.identityNo} with type ${
             participant.identityTypeId
-          } for committee ${participant.name} at row ${index + 1}`,
+          } for committee ${participant.name} at row ${index + 2}`,
         );
       }
 
       // validate participant inputs
       const inputs = await validateParticipantInputs(participant);
       if (!inputs.isValid && inputs.code === 404) {
-        invalidData.push(`${inputs.message} at row ${index + 1}`);
+        invalidData.push(`${inputs.message} at row ${index + 2}`);
       }
       if (!inputs.isValid && inputs.code === 400) {
-        invalidData.push(`${inputs.message} at row ${index + 1}`);
+        invalidData.push(`${inputs.message} at row ${index + 2}`);
       }
 
       // create participant and
@@ -859,7 +862,7 @@ const createParticipantViaImport = async (file) => {
         existPhoneNbr.push(participant.phoneNbr);
         existIdentity.push(participant.identityNo);
       } else {
-        invalidRow[index + 1] = invalidData;
+        invalidRow[index + 2] = invalidData;
       }
     }),
   );
@@ -880,7 +883,7 @@ const createParticipantViaImport = async (file) => {
   }
 
   validParticipants.forEach(async (participant) => {
-    await createParticipant(participant);
+    await createParticipant(participant, true);
   });
 
   return {
@@ -1126,21 +1129,21 @@ const createCommitteeViaImport = async (file) => {
         invalidData.push(
           `Duplicate phone number ${participant.phoneNbr} for committee ${
             participant.name
-          } at row ${index + 1}`,
+          } at row ${index + 2}`,
         );
       }
       if (existIdentity.includes(`${participant.identityTypeId}-${participant.identityNo}`)) {
         invalidData.push(
           `Duplicate identity number ${participant.identityNo} with type ${
             participant.identityTypeId
-          } for committee ${participant.name} at row ${index + 1}`,
+          } for committee ${participant.name} at row ${index + 2}`,
         );
       }
 
       // validate participant inputs
       const inputs = await validateCommitteeInputs(participant);
       if (!inputs.isValid) {
-        invalidData.push(`${inputs.message} at row ${index + 1}`);
+        invalidData.push(`${inputs.message} at row ${index + 2}`);
       }
 
       if (invalidData.length === 0) {
@@ -1149,7 +1152,7 @@ const createCommitteeViaImport = async (file) => {
         existPhoneNbr.push(participant.phoneNbr);
         existIdentity.push(participant.identityNo);
       } else {
-        invalidRow[index + 1] = invalidData;
+        invalidRow[index + 2] = invalidData;
       }
     }),
   );
