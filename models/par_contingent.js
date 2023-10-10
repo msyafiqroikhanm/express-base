@@ -16,6 +16,7 @@ module.exports = (sequelize, DataTypes) => {
 
       PAR_Contingent.hasMany(models.PAR_Group, { foreignKey: 'contingentId', as: 'groups' });
       PAR_Contingent.hasMany(models.PAR_Participant, { foreignKey: 'contingentId', as: 'participants' });
+      PAR_Contingent.hasMany(models.TPT_ArrivalDepartureInformation, { foreignKey: 'contingentId', as: 'arrivalDepartures' });
     }
   }
   PAR_Contingent.init({

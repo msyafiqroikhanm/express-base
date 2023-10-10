@@ -19,6 +19,7 @@ module.exports = (sequelize, DataTypes) => {
     {
       picId: DataTypes.INTEGER,
       name: DataTypes.STRING,
+      productionCapacity: DataTypes.INTEGER,
       phoneNbr: DataTypes.STRING,
       longtitude: DataTypes.STRING,
       latitude: DataTypes.STRING,

@@ -32,10 +32,13 @@ module.exports = (sequelize, DataTypes) => {
     vehicleId: DataTypes.INTEGER,
     pickUpId: DataTypes.INTEGER,
     destinationId: DataTypes.INTEGER,
+    pickUpOtherLocation: DataTypes.TEXT,
+    dropOffOtherLocation: DataTypes.TEXT,
     statusId: DataTypes.INTEGER,
     name: DataTypes.STRING,
     pickUpTime: DataTypes.DATE,
     dropOffTime: DataTypes.DATE,
+    description: DataTypes.TEXT,
   }, {
     sequelize,
     modelName: 'TPT_VehicleSchedule',

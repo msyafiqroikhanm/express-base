@@ -23,6 +23,24 @@ router.get(
   Authentication.fnb,
   FNBFeedbackController.summary,
 );
+router.get(
+  '/summaries/contingents',
+  async (req, res, next) => {
+    Authentication.authenticate(
+      req,
+      res,
+      next,
+      await features().then((feature) => [
+        feature.view_fnb_schedule,
+        feature.create_fnb_schedule,
+        feature.update_fnb_schedule,
+        feature.delete_fnb_schedule,
+      ]),
+    );
+  },
+  Authentication.fnb,
+  FNBFeedbackController.summaryContingent,
+);
 
 router.get(
   '/',

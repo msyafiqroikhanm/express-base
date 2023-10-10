@@ -37,9 +37,9 @@ const selectAllVehicleSchedule = async (where = {}) => {
   });
 
   schedules.forEach((schedule) => {
-    schedule.dataValues.vehicle = schedule.vehicle?.dataValues.name;
-    schedule.dataValues.driver = schedule.driver?.dataValues.name;
-    schedule.dataValues.status = schedule.status?.dataValues.name;
+    schedule.dataValues.vehicle = schedule.vehicle?.dataValues.name || null;
+    schedule.dataValues.driver = schedule.driver?.dataValues.name || null;
+    schedule.dataValues.status = schedule.status?.dataValues.name || null;
   });
 
   return {
@@ -100,9 +100,9 @@ const selectVehicleSchedule = async (id, where = {}) => {
     };
   }
 
-  scheduleInstance.dataValues.vehicle = scheduleInstance.vehicle?.dataValues.name;
-  scheduleInstance.dataValues.driver = scheduleInstance.driver?.dataValues.name;
-  scheduleInstance.dataValues.status = scheduleInstance.status?.dataValues.name;
+  scheduleInstance.dataValues.vehicle = scheduleInstance.vehicle?.dataValues.name || null;
+  scheduleInstance.dataValues.driver = scheduleInstance.driver?.dataValues.name || null;
+  scheduleInstance.dataValues.status = scheduleInstance.status?.dataValues.name || null;
 
   const passengers = scheduleInstance.TPT_SchedulePassengers.map((passenger) => (
     {
@@ -144,23 +144,25 @@ const validateVehicleScheduleInputs = async (form) => {
   }
 
   // check destination (location id) validity
-  let destinationInstance = null;
-  if (form.destinationId) {
-    destinationInstance = await ACM_Location.findByPk(form.destinationId);
-    if (!destinationInstance) {
-      invalid404.push('Destination Location Id Not Found');
-    }
+  const destinationInstance = await ACM_Location.findByPk(form.destinationId);
+  if (!destinationInstance) {
+    invalid404.push('Destination Location Id Not Found');
   }
 
-  // check if both destination and otherlocation empty and filled at the same time
-  if ((!destinationInstance && !form.otherLocation)
-      || (destinationInstance && form.otherLocation)) {
-    invalid400.push('Required Either DestinationId Or OtherLocation Attribute');
-  }
+  const otherLocationIntance = await ACM_Location.findOne({ where: { name: 'Other' } });
 
   // check if pick up is the same as destination
-  if (form.pickUpId === form.destinationId) {
+  if (form.pickUpId === form.destinationId
+      && ![Number(form.pickUpId), Number(form.destinationId)].includes(otherLocationIntance.id)) {
     invalid400.push('Pick Up Location Can\'t Be Same As Destination Location');
+  }
+
+  // check only pickup and destination id for "Other" could fill otherLocation attribute
+  if (Number(form.pickUpId) !== otherLocationIntance.id && form.pickUpOtherLocation) {
+    invalid400.push('Pick Up Other Location Could Only Filled When Choosing Other As Pick Up Location');
+  }
+  if (Number(form.destinationId) !== otherLocationIntance.id && form.dropOffOtherLocation) {
+    invalid400.push('Drop Off Other Location Could Only Filled When Choosing Other As Destination Location');
   }
 
   // check to prevent backdate
@@ -198,7 +200,8 @@ const validateVehicleScheduleInputs = async (form) => {
       name: form.name,
       pickUpTime: new Date(form.pickUpTime),
       description: form.description,
-      otherLocation: form.otherLocation,
+      pickUpOtherLocation: form.pickUpOtherLocation,
+      dropOffOtherLocation: form.dropOffOtherLocation,
       passengers: validPassengers,
     },
   };
@@ -208,9 +211,10 @@ const createVehicleSchedule = async (form) => {
   const scheduleInstance = await TPT_VehicleSchedule.create({
     name: form.name,
     statusId: 1,
-    pickUpId: form.pickUp?.id,
+    pickUpId: form.pickUp?.id || null,
     destinationId: form.destination?.id || null,
-    otherLocation: form.otherLocation || null,
+    pickUpOtherLocation: form.pickUpOtherLocation,
+    dropOffOtherLocation: form.dropOffOtherLocation,
     pickUpTime: form.pickUpTime,
     description: form.description,
   });
@@ -239,7 +243,8 @@ const updateVehicleSchedule = async (form, id) => {
   scheduleInstance.name = form.name;
   scheduleInstance.pickUpId = form.pickUp?.id;
   scheduleInstance.destinationId = form.destination?.id || null;
-  scheduleInstance.otherLocation = form.otherLocation || null;
+  scheduleInstance.pickUpOtherLocation = form.pickUpOtherLocation || null;
+  scheduleInstance.dropOffOtherLocation = form.dropOffOtherLocation || null;
   scheduleInstance.pickUpTime = form.pickUpTime;
   scheduleInstance.description = form.description;
   await scheduleInstance.save();

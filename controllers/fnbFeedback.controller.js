@@ -8,7 +8,11 @@ const {
   deleteFnbSchedule,
   updateProgressFnBSchedule,
 } = require('../services/fnbSchedule.service');
-const { summaryFNBFeedback, selectAllFNBFeedback } = require('../services/fnbFeedbacks.service');
+const {
+  summaryFNBFeedback,
+  selectAllFNBFeedback,
+  summaryFNBFeedbackByContingent,
+} = require('../services/fnbFeedbacks.service');
 
 class FNBFeedbackController {
   static async summary(req, res, next) {
@@ -24,6 +28,29 @@ class FNBFeedbackController {
       }
 
       const data = await summaryFNBFeedback(where);
+      if (!data.success) {
+        return ResponseFormatter.error400(res, 'Bad Request', data.message);
+      }
+
+      return ResponseFormatter.success200(res, data.message, data.content);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  static async summaryContingent(req, res, next) {
+    try {
+      res.url = `${req.method} ${req.originalUrl}`;
+
+      // resrict data that is not an admin
+      // console.log(JSON.stringify(req.user.limitation));
+
+      const where = {};
+      if (req.query?.contingent) {
+        where.contingent = { [Op.substring]: req.query.contingent };
+      }
+
+      const data = await summaryFNBFeedbackByContingent(where);
       if (!data.success) {
         return ResponseFormatter.error400(res, 'Bad Request', data.message);
       }
