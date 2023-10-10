@@ -1,3 +1,4 @@
+const { picKitchen } = require('../libraries/picTypes.lib');
 const {
   FNB_Kitchen,
   USR_PIC,
@@ -80,8 +81,7 @@ const selectKitchen = async (where) => {
 const validateKitchenInputs = async (form) => {
   const errorMessages = [];
 
-  const picKitchenType = 4;
-  const picInstance = await USR_PIC.findOne({ where: { id: form.picId, typeId: picKitchenType } });
+  const picInstance = await USR_PIC.findOne({ where: { id: form.picId, typeId: picKitchen } });
   if (!picInstance) {
     errorMessages.push('PIC Data Not Found');
   }
@@ -95,6 +95,7 @@ const validateKitchenInputs = async (form) => {
     form: {
       picId: form.picId,
       name: form.name,
+      productionCapacity: form.productionCapacity,
       address: form.address,
       phoneNbr: form.phoneNbr,
       latitude: form.latitude,
@@ -138,6 +139,9 @@ const updateKitchen = async (where, form) => {
 
   kitchenInstance.picId = form.picId ? form.picId : kitchenInstance.picId;
   kitchenInstance.name = form.name ? form.name : kitchenInstance.name;
+  kitchenInstance.productionCapacity = form.productionCapacity
+    ? form.productionCapacity
+    : kitchenInstance.productionCapacity;
   kitchenInstance.address = form.address ? form.address : kitchenInstance.address;
   kitchenInstance.phoneNbr = form.phoneNbr ? form.phoneNbr : kitchenInstance.phoneNbr;
   kitchenInstance.latitude = form.latitude ? form.latitude : kitchenInstance.latitude;
