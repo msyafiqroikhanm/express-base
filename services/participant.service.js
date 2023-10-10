@@ -33,6 +33,7 @@ const {
 const { createQR } = require('./qr.service');
 const deleteFile = require('../helpers/deleteFile.helper');
 const { createInvalidImportLog } = require('../helpers/importLog.helper');
+const PARTICIPANT_TYPES = require('../libraries/participatType.lib');
 
 const calculateAge = (dateOfBirth, dateNow) => {
   const dob = new Date(dateOfBirth);
@@ -573,7 +574,12 @@ const createParticipant = async (form) => {
   });
   const contingentInstance = await PAR_Contingent.findOne({
     where: { id: form.contingent?.id },
-    include: { model: PAR_Participant, attributes: ['id'], as: 'participants' },
+    include: {
+      model: PAR_Participant,
+      attributes: ['id'],
+      as: 'participants',
+      where: { typeId: { [Op.ne]: PARTICIPANT_TYPES.Coordinator } },
+    },
   });
   if (contingentInstance.participants.length >= Number(contingentLimit.value)) {
     return {
