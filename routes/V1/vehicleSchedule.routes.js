@@ -63,7 +63,7 @@ router.post(
   Authentication.transportation,
   [
     check('pickUpId', "Pick Up Id attribute can't be empty").notEmpty(),
-    // check('destinationId', "Destination Id attribute can't be empty").notEmpty(),
+    check('destinationId', "Destination Id attribute can't be empty").notEmpty(),
     check('name', "Name attribute can't be empty").notEmpty(),
     check('pickUpTime', "Pick Up Time attribute can't be empty").notEmpty(),
     check('passengers', "Passengers attribute can't be empty").isArray(),
@@ -87,7 +87,7 @@ router.put(
   Authentication.transportation,
   [
     check('pickUpId', "Pick Up Id attribute can't be empty").notEmpty(),
-    // check('destinationId', "Destination Id attribute can't be empty").notEmpty(),
+    check('destinationId', "Destination Id attribute can't be empty").notEmpty(),
     check('name', "Name attribute can't be empty").notEmpty(),
     check('pickUpTime', "Pick Up Time attribute can't be empty").notEmpty(),
     check('passengers', "Passengers attribute can't be empty").isArray(),
