@@ -1,9 +1,17 @@
 /* eslint-disable no-param-reassign */
 const { Op } = require('sequelize');
 const {
-  TPT_VehicleSchedule, TPT_Vehicle, TPT_Driver, ACM_Location, PAR_Participant,
-  REF_VehicleScheduleStatus, REF_PassengerStatus, TPT_SchedulePassenger, PAR_Contingent,
-  REF_CommitteeType, REF_ParticipantType,
+  TPT_VehicleSchedule,
+  TPT_Vehicle,
+  TPT_Driver,
+  ACM_Location,
+  PAR_Participant,
+  REF_VehicleScheduleStatus,
+  REF_PassengerStatus,
+  TPT_SchedulePassenger,
+  PAR_Contingent,
+  REF_CommitteeType,
+  REF_ParticipantType,
 } = require('../models');
 
 const selectAllVehicleSchedule = async (where = {}) => {
@@ -24,14 +32,21 @@ const selectAllVehicleSchedule = async (where = {}) => {
         where: where.picId ? { vendorId: { [Op.in]: where.vendors } } : null,
       },
       {
-        model: TPT_Driver, attributes: ['name'], as: 'driver',
+        model: TPT_Driver,
+        attributes: ['name'],
+        as: 'driver',
       },
       { model: REF_VehicleScheduleStatus, attributes: ['name'], as: 'status' },
       {
-        model: ACM_Location, attributes: ['id', 'name', 'address'], as: 'pickUp', required: true,
+        model: ACM_Location,
+        attributes: ['id', 'name', 'address'],
+        as: 'pickUp',
+        required: true,
       },
       {
-        model: ACM_Location, attributes: ['id', 'name', 'address'], as: 'destination',
+        model: ACM_Location,
+        attributes: ['id', 'name', 'address'],
+        as: 'destination',
       },
     ],
   });
@@ -60,14 +75,21 @@ const selectVehicleSchedule = async (id, where = {}) => {
         where: where.vendors ? { id: { [Op.in]: where.vendors } } : null,
       },
       {
-        model: TPT_Driver, attributes: ['name'], as: 'driver',
+        model: TPT_Driver,
+        attributes: ['name'],
+        as: 'driver',
       },
       { model: REF_VehicleScheduleStatus, attributes: ['name'], as: 'status' },
       {
-        model: ACM_Location, attributes: ['id', 'name', 'address'], as: 'pickUp', required: true,
+        model: ACM_Location,
+        attributes: ['id', 'name', 'address'],
+        as: 'pickUp',
+        required: true,
       },
       {
-        model: ACM_Location, attributes: ['id', 'name', 'address'], as: 'destination',
+        model: ACM_Location,
+        attributes: ['id', 'name', 'address'],
+        as: 'destination',
       },
       {
         model: TPT_SchedulePassenger,
@@ -104,21 +126,19 @@ const selectVehicleSchedule = async (id, where = {}) => {
   scheduleInstance.dataValues.driver = scheduleInstance.driver?.dataValues.name || null;
   scheduleInstance.dataValues.status = scheduleInstance.status?.dataValues.name || null;
 
-  const passengers = scheduleInstance.TPT_SchedulePassengers.map((passenger) => (
-    {
-      vehicleScheduleId: passenger.vehicleScheduleId,
-      participantId: passenger.participantId,
-      statusId: passenger.statusId,
-      contingentId: passenger.PAR_Participant.contingentId,
-      typeId: passenger.PAR_Participant.typeId,
-      committeeTypeId: passenger.PAR_Participant.committeeTypeId,
-      name: passenger.PAR_Participant.name,
-      contingent: passenger.PAR_Participant.contingent?.name || null,
-      participantType: passenger.PAR_Participant.participantType?.name || null,
-      committeeType: passenger.PAR_Participant.committeeType?.name || null,
-      status: passenger.status?.name || null,
-    }
-  ));
+  const passengers = scheduleInstance.TPT_SchedulePassengers.map((passenger) => ({
+    vehicleScheduleId: passenger.vehicleScheduleId,
+    participantId: passenger.participantId,
+    statusId: passenger.statusId,
+    contingentId: passenger.PAR_Participant.contingentId,
+    typeId: passenger.PAR_Participant.typeId,
+    committeeTypeId: passenger.PAR_Participant.committeeTypeId,
+    name: passenger.PAR_Participant.name,
+    contingent: passenger.PAR_Participant.contingent?.name || null,
+    participantType: passenger.PAR_Participant.participantType?.name || null,
+    committeeType: passenger.PAR_Participant.committeeType?.name || null,
+    status: passenger.status?.name || null,
+  }));
 
   const passengerList = passengers.map((passenger) => passenger.participantId);
 
@@ -138,36 +158,42 @@ const validateVehicleScheduleInputs = async (form) => {
   const invalid404 = [];
 
   // check up pick up (location id) validity
-  const pickUpInstance = await ACM_Location.findByPk(form.pickUpId);
-  if (!pickUpInstance) {
-    invalid404.push('Pick Up Location Id Not Found');
+  let pickUpInstance;
+  let destinationInstance;
+  if (form.pickUpId && form.destinationId) {
+    pickUpInstance = await ACM_Location.findByPk(form.pickUpId);
+    if (!pickUpInstance) {
+      invalid404.push('Pick Up Location Id Not Found');
+    }
+
+    // check destination (location id) validity
+    destinationInstance = await ACM_Location.findByPk(form.destinationId);
+    if (!destinationInstance) {
+      invalid404.push('Destination Location Id Not Found');
+    }
+
+    // const otherLocationIntance = await ACM_Location.findOne({ where: { name: 'Other' } });
+
+    // check if pick up is the same as destination
+    if (form.pickUpId === form.destinationId) {
+      invalid400.push("Pick Up Location Can't Be Same As Destination Location");
+    }
   }
-
-  // check destination (location id) validity
-  const destinationInstance = await ACM_Location.findByPk(form.destinationId);
-  if (!destinationInstance) {
-    invalid404.push('Destination Location Id Not Found');
-  }
-
-  const otherLocationIntance = await ACM_Location.findOne({ where: { name: 'Other' } });
-
-  // check if pick up is the same as destination
-  if (form.pickUpId === form.destinationId
-      && ![Number(form.pickUpId), Number(form.destinationId)].includes(otherLocationIntance.id)) {
-    invalid400.push('Pick Up Location Can\'t Be Same As Destination Location');
+  if (form.pickUpOtherLocation === form.dropOffOtherLocation) {
+    invalid400.push("Pick Up Other Location Can't Be Same As Destination Other Location");
   }
 
   // check only pickup and destination id for "Other" could fill otherLocation attribute
-  if (Number(form.pickUpId) !== otherLocationIntance.id && form.pickUpOtherLocation) {
-    invalid400.push('Pick Up Other Location Could Only Filled When Choosing Other As Pick Up Location');
+  if (form.pickUpId && form.pickUpOtherLocation) {
+    invalid400.push('Pick Up Other Location Could Only Filled When Pick Up Location is Null');
   }
-  if (Number(form.destinationId) !== otherLocationIntance.id && form.dropOffOtherLocation) {
-    invalid400.push('Drop Off Other Location Could Only Filled When Choosing Other As Destination Location');
+  if (form.destinationId && form.dropOffOtherLocation) {
+    invalid400.push('Drop Off Other Location Could Only Filled When Destination Location is Null');
   }
 
   // check to prevent backdate
   if (new Date().getTime() > new Date(form.pickUpTime).getTime()) {
-    invalid400.push('Can\'t Set Pick Up Time In The Past');
+    invalid400.push("Can't Set Pick Up Time In The Past");
   }
 
   // validate Recipiants / receivers
@@ -274,7 +300,7 @@ const progressVehicleSchedule = async (form, id, where = {}) => {
     return {
       success: false,
       code: 400,
-      message: ['Transportation Schedule Without Driver Or Vehicle, Status Can\'t Be Progressed'],
+      message: ["Transportation Schedule Without Driver Or Vehicle, Status Can't Be Progressed"],
     };
   }
 
@@ -300,25 +326,23 @@ const progressVehicleSchedule = async (form, id, where = {}) => {
     // when a trip is finish change passenger status
     // and set both driver and vehicle became available again
     // and set dropOff Time
-    const passengerStatus = await REF_PassengerStatus.findOne({ where: { name: { [Op.like]: '%Arrived%' } } });
+    const passengerStatus = await REF_PassengerStatus.findOne({
+      where: { name: { [Op.like]: '%Arrived%' } },
+    });
     await TPT_SchedulePassenger.update(
       { statusId: passengerStatus.id },
       { where: { vehicleScheduleId: scheduleInstance.id, statusId: 2 } },
     );
 
-    await TPT_Driver.update(
-      { isAvailable: true },
-      { where: { id: scheduleInstance.driverId } },
-    );
-    await TPT_Vehicle.update(
-      { isAvailable: true },
-      { where: { id: scheduleInstance.vehicleId } },
-    );
+    await TPT_Driver.update({ isAvailable: true }, { where: { id: scheduleInstance.driverId } });
+    await TPT_Vehicle.update({ isAvailable: true }, { where: { id: scheduleInstance.vehicleId } });
 
     scheduleInstance.dropOffTime = new Date();
     await scheduleInstance.save();
   } else if (['Enroute', 'On Proggress'].includes(statusInstance?.name)) {
-    const passengerStatus = await REF_PassengerStatus.findOne({ where: { name: { [Op.like]: '%Enroute%' } } });
+    const passengerStatus = await REF_PassengerStatus.findOne({
+      where: { name: { [Op.like]: '%Enroute%' } },
+    });
     await TPT_SchedulePassenger.update(
       { statusId: passengerStatus.id },
       { where: { vehicleScheduleId: scheduleInstance.id, statusId: 1 } },
@@ -327,7 +351,9 @@ const progressVehicleSchedule = async (form, id, where = {}) => {
 
   return {
     success: true,
-    message: `Vehicle Schedulee Status Of ${scheduleInstance.name} Successully Updated To ${statusInstance?.name || scheduleInstance.status?.name}`,
+    message: `Vehicle Schedulee Status Of ${scheduleInstance.name} Successully Updated To ${
+      statusInstance?.name || scheduleInstance.status?.name
+    }`,
     content: scheduleInstance,
   };
 };
@@ -366,7 +392,8 @@ const validateProvideScheduleInputs = async (form, id, where) => {
 
   const vehicleInstance = await TPT_Vehicle.findOne({
     where: where.vendors
-      ? { id: form.vehicleId, vendorId: { [Op.in]: where.vendors } } : { id: form.vehicleId },
+      ? { id: form.vehicleId, vendorId: { [Op.in]: where.vendors } }
+      : { id: form.vehicleId },
   });
   if (!vehicleInstance) {
     invalid404.push('Vehicle Data Not Found');
@@ -377,7 +404,8 @@ const validateProvideScheduleInputs = async (form, id, where) => {
 
   const driverInstance = await TPT_Driver.findOne({
     where: where.vendors
-      ? { id: form.driverId, vendorId: { [Op.in]: where.vendors } } : { id: form.driverId },
+      ? { id: form.driverId, vendorId: { [Op.in]: where.vendors } }
+      : { id: form.driverId },
   });
   if (!driverInstance) {
     // check if driver exits
@@ -437,7 +465,7 @@ const vendorProvideTransportationSchedule = async (form, id) => {
 
   return {
     success: true,
-    message: 'Vehicle Schedule\'s Driver And Vehicle Successfully Fulfill By The Vendor',
+    message: "Vehicle Schedule's Driver And Vehicle Successfully Fulfill By The Vendor",
     content: scheduleInstance,
   };
 };
@@ -559,21 +587,19 @@ const selectAllPassengersVehicleSchedule = async (id, where = {}) => {
     }
   }
 
-  const passengers = scheduleInstance.TPT_SchedulePassengers.map((passenger) => (
-    {
-      vehicleScheduleId: passenger.vehicleScheduleId,
-      participantId: passenger.participantId,
-      statusId: passenger.statusId,
-      contingentId: passenger.PAR_Participant.contingentId,
-      typeId: passenger.PAR_Participant.typeId,
-      committeeTypeId: passenger.PAR_Participant.committeeTypeId,
-      name: passenger.PAR_Participant.name,
-      contingent: passenger.PAR_Participant.contingent?.name || null,
-      participantType: passenger.PAR_Participant.participantType?.name || null,
-      committeeType: passenger.PAR_Participant.committeeType?.name || null,
-      status: passenger.status?.name || null,
-    }
-  ));
+  const passengers = scheduleInstance.TPT_SchedulePassengers.map((passenger) => ({
+    vehicleScheduleId: passenger.vehicleScheduleId,
+    participantId: passenger.participantId,
+    statusId: passenger.statusId,
+    contingentId: passenger.PAR_Participant.contingentId,
+    typeId: passenger.PAR_Participant.typeId,
+    committeeTypeId: passenger.PAR_Participant.committeeTypeId,
+    name: passenger.PAR_Participant.name,
+    contingent: passenger.PAR_Participant.contingent?.name || null,
+    participantType: passenger.PAR_Participant.participantType?.name || null,
+    committeeType: passenger.PAR_Participant.committeeType?.name || null,
+    status: passenger.status?.name || null,
+  }));
 
   const passengerList = passengers.map((passenger) => passenger.participantId);
 
