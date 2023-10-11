@@ -55,15 +55,13 @@ router.post(
       req,
       res,
       next,
-      await features().then((feature) => [
-        feature.create_vehicle_schedule,
-      ]),
+      await features().then((feature) => [feature.create_vehicle_schedule]),
     );
   },
   Authentication.transportation,
   [
-    check('pickUpId', "Pick Up Id attribute can't be empty").notEmpty(),
-    check('destinationId', "Destination Id attribute can't be empty").notEmpty(),
+    check('pickUpId', 'Pick Up Id attribute must be integer').optional().isInt(),
+    check('destinationId', 'Destination Id attribute must be integer').optional().isInt(),
     check('name', "Name attribute can't be empty").notEmpty(),
     check('pickUpTime', "Pick Up Time attribute can't be empty").notEmpty(),
     check('passengers', "Passengers attribute can't be empty").isArray(),
@@ -79,9 +77,7 @@ router.put(
       req,
       res,
       next,
-      await features().then((feature) => [
-        feature.update_vehicle_schedule,
-      ]),
+      await features().then((feature) => [feature.update_vehicle_schedule]),
     );
   },
   Authentication.transportation,
@@ -103,9 +99,7 @@ router.delete(
       req,
       res,
       next,
-      await features().then((feature) => [
-        feature.delete_vehicle_schedule,
-      ]),
+      await features().then((feature) => [feature.delete_vehicle_schedule]),
     );
   },
   Authentication.transportation,
@@ -119,9 +113,7 @@ router.patch(
       req,
       res,
       next,
-      await features().then((feature) => [
-        feature.progress_vehicle_schedule,
-      ]),
+      await features().then((feature) => [feature.progress_vehicle_schedule]),
     );
   },
   Authentication.transportation,
@@ -135,9 +127,7 @@ router.patch(
       req,
       res,
       next,
-      await features().then((feature) => [
-        feature.provide_vehicle_schedule,
-      ]),
+      await features().then((feature) => [feature.provide_vehicle_schedule]),
     );
   },
   Authentication.transportation,
@@ -156,9 +146,7 @@ router.patch(
       req,
       res,
       next,
-      await features().then((feature) => [
-        feature.absent_vehicle_schedule,
-      ]),
+      await features().then((feature) => [feature.absent_vehicle_schedule]),
     );
   },
   Authentication.transportation,
