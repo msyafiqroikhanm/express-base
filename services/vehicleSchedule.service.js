@@ -41,7 +41,6 @@ const selectAllVehicleSchedule = async (where = {}) => {
         model: ACM_Location,
         attributes: ['id', 'name', 'address'],
         as: 'pickUp',
-        required: true,
       },
       {
         model: ACM_Location,
@@ -84,7 +83,6 @@ const selectVehicleSchedule = async (id, where = {}) => {
         model: ACM_Location,
         attributes: ['id', 'name', 'address'],
         as: 'pickUp',
-        required: true,
       },
       {
         model: ACM_Location,
@@ -179,8 +177,10 @@ const validateVehicleScheduleInputs = async (form) => {
       invalid400.push("Pick Up Location Can't Be Same As Destination Location");
     }
   }
-  if (form.pickUpOtherLocation === form.dropOffOtherLocation) {
-    invalid400.push("Pick Up Other Location Can't Be Same As Destination Other Location");
+  if (form.pickUpOtherLocation && form.dropOffOtherLocation) {
+    if ((form.pickUpOtherLocation === form.dropOffOtherLocation)) {
+      invalid400.push("Pick Up Other Location Can't Be Same As Destination Other Location");
+    }
   }
 
   // check only pickup and destination id for "Other" could fill otherLocation attribute
