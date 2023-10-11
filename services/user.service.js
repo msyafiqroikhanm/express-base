@@ -382,31 +382,39 @@ const validatePublicRegisterUserInputs = async (form) => {
 
   const roleInstance = await USR_Role.findOne({ where: { name: 'Participant' } });
 
-  if ((form.phoneNbr && form.identityNo) || (!form.phoneNbr && !form.identityNo)) {
-    invalid400.push('Required Either Phone Number Or Identity Number');
-  } else if ((form.identityType && !form.identityNo) || (!form.identityType && form.identityNo)) {
-    invalid400.push('Identity Type Atrribute Required Identity No Attribute, And Vice Versa');
-  }
-
-  let participantInstance = null;
-  if (form.phoneNbr) {
-    participantInstance = await PAR_Participant.findOne({
-      where: {
-        phoneNbr: form.phoneNbr,
-        contingentId: { [Op.ne]: null },
-      },
-    });
-  } else if (form.identityType && form.identityNo) {
-    participantInstance = await PAR_Participant.findOne({
-      where: {
-        identityTypeId: form.identityType || null,
-        identityNo: form.identityNo,
-        contingentId: { [Op.ne]: null },
-      },
-    });
-  }
+  const participantInstance = await PAR_Participant.findOne({
+    where: {
+      contingentId: { [Op.ne]: null },
+      [Op.and]: [
+        { phoneNbr: form.phoneNbr },
+        { [Op.and]: [{ identityTypeId: form.identityType || null, identityNo: form.identityNo }] },
+      ],
+    },
+    include: { model: USR_User, as: 'user' },
+  });
+  // if (form.phoneNbr) {
+  //   participantInstance = await PAR_Participant.findOne({
+  //     where: {
+  //       phoneNbr: form.phoneNbr,
+  //       contingentId: { [Op.ne]: null },
+  //     },
+  //   });
+  // } else if (form.identityType && form.identityNo) {
+  //   participantInstance = await PAR_Participant.findOne({
+  //     where: {
+  //       identityTypeId: form.identityType || null,
+  //       identityNo: form.identityNo,
+  //       contingentId: { [Op.ne]: null },
+  //     },
+  //   });
+  // }
   if (!participantInstance) {
     invalid404.push('Participant Doesn\'t Exist In Database / System');
+  }
+
+  // check if participant already has user
+  if (participantInstance?.user) {
+    invalid400.push('User Account Already Exists for Participant');
   }
 
   if (form.password !== form.rePassword) {
