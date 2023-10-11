@@ -78,6 +78,7 @@ router.post(
     );
   },
   [
+    check('parentLocationId', 'parentLocationId attribute must be integer').optional().isInt(),
     check('typeId', 'typeId attribute must be integer').isInt(),
     check('name', "name attribute can't be empty").notEmpty(),
     check('description', "description attribute can't be empty").notEmpty(),
