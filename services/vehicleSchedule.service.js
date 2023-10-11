@@ -270,7 +270,7 @@ const updateVehicleSchedule = async (form, id) => {
   }
 
   scheduleInstance.name = form.name;
-  scheduleInstance.pickUpId = form.pickUp?.id;
+  scheduleInstance.pickUpId = form.pickUp?.id || null;
   scheduleInstance.destinationId = form.destination?.id || null;
   scheduleInstance.pickUpOtherLocation = form.pickUpOtherLocation || null;
   scheduleInstance.dropOffOtherLocation = form.dropOffOtherLocation || null;
