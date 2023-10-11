@@ -155,28 +155,31 @@ const validateVehicleScheduleInputs = async (form) => {
   const invalid400 = [];
   const invalid404 = [];
 
-  // check up pick up (location id) validity
-  let pickUpInstance;
-  let destinationInstance;
-  if (form.pickUpId && form.destinationId) {
+  // check pickup (location id) validity
+  let pickUpInstance = null;
+  if (form.pickUpId) {
     pickUpInstance = await ACM_Location.findByPk(form.pickUpId);
     if (!pickUpInstance) {
       invalid404.push('Pick Up Location Id Not Found');
     }
+  }
 
-    // check destination (location id) validity
+  // check destination (location id) validity
+  let destinationInstance = null;
+  if (form.destinationId) {
     destinationInstance = await ACM_Location.findByPk(form.destinationId);
     if (!destinationInstance) {
       invalid404.push('Destination Location Id Not Found');
     }
+  }
 
-    // const otherLocationIntance = await ACM_Location.findOne({ where: { name: 'Other' } });
-
+  if (form.pickUpId && form.destinationId) {
     // check if pick up is the same as destination
     if (form.pickUpId === form.destinationId) {
       invalid400.push("Pick Up Location Can't Be Same As Destination Location");
     }
   }
+
   if (form.pickUpOtherLocation && form.dropOffOtherLocation) {
     if ((form.pickUpOtherLocation === form.dropOffOtherLocation)) {
       invalid400.push("Pick Up Other Location Can't Be Same As Destination Other Location");
