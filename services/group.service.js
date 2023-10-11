@@ -6,9 +6,9 @@ const {
   PAR_Contingent,
   REF_GroupStatus,
   PAR_Participant,
-  SYS_Configuration,
+  // SYS_Configuration,
 } = require('../models');
-const { calculateAge } = require('./participant.service');
+// const { calculateAge } = require('./participant.service');
 
 const selectAllGroups = async (where) => {
   const groups = await PAR_Group.findAll({
@@ -168,18 +168,21 @@ const validateGroupInputs = async (form, id, limitation = null) => {
       },
     });
     if (validParticipants.length) {
-      const startEvent = await SYS_Configuration.findOne({
-        where: { name: { [Op.substring]: 'Event Start' } },
-      });
+      // * Algorithm to filter by participant age disbled for pesperani
+      // const startEvent = await SYS_Configuration.findOne({
+      //   where: { name: { [Op.substring]: 'Event Start' } },
+      // });
       validParticipants.forEach((participant) => {
-        const age = calculateAge(participant.birthDate, startEvent.value);
-        if (eventInstance?.minAge <= age && eventInstance.maxAge >= age) {
-          formParticipants.push(participant.id);
-        } else {
-          invalid400.push(
-            'Participant on behalf of a does not meet the minimum or maximum age criteria',
-          );
-        }
+        formParticipants.push(participant.id);
+        // * Algorithm to filter by participant age disbled for pesperani
+        // const age = calculateAge(participant.birthDate, startEvent.value);
+        // if (eventInstance?.minAge <= age && eventInstance.maxAge >= age) {
+        //   formParticipants.push(participant.id);
+        // } else {
+        //   invalid400.push(
+        //     'Participant on behalf of a does not meet the minimum or maximum age criteria',
+        //   );
+        // }
       });
     } else {
       invalid404.push('Participants Data Not Found');

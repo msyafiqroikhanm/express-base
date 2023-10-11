@@ -154,7 +154,9 @@ const selectEvent = async (id, where = {}) => {
         model: PAR_Group,
         attributes: ['contingentId'],
         include: [
-          { model: PAR_Contingent, attributes: ['name'], as: 'contingent', required: true },
+          {
+            model: PAR_Contingent, attributes: ['name'], as: 'contingent', required: true,
+          },
           {
             model: PAR_Participant,
             attributes: ['id', 'name'],
