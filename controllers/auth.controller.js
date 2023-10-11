@@ -9,7 +9,7 @@ class AuthController {
       res.url = `${req.method} ${req.originalUrl}`;
 
       const user = await selectUser({
-        email: req.body.user,
+        // email: req.body.user,
         username: req.body.user,
       });
 

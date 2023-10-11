@@ -119,8 +119,11 @@ router.post(
   [
     check('username', "Username attribute can't be empty").notEmpty(),
     check('password', "Password attribute can't be empty").notEmpty(),
-    check('rePassword', "Verify Password attribute can't be empty").notEmpty(),
+    check('rePassword', "Verify password attribute can't be empty").notEmpty(),
     check('email', "Email attribute can't be empty").notEmpty(),
+    check('identityType', "Identity type attribute can't be empty").notEmpty(),
+    check('identityNo', "Identity number attribute can't be empty").notEmpty(),
+    check('phoneNbr', "Phone number attribute can't be empty").notEmpty(),
   ],
   ValidateMiddleware.result,
   UserController.registerPublic,
