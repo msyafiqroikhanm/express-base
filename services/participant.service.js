@@ -669,6 +669,11 @@ const updateParticipant = async (id, form, where) => {
     await deleteFile(relative(__dirname, participantInstance.referenceFile));
   }
 
+  participantInstance.file = form.file || participantInstance.file;
+  participantInstance.identityFile = form.identityFile || participantInstance.identityFile;
+  participantInstance.baptismFile = form.baptismFile || participantInstance.baptismFile;
+  participantInstance.referenceFile = form.referenceFile || participantInstance.referenceFile;
+
   // check if participant doesn't change the files but changing phone number
   if ((participantInstance.phoneNbr !== form.phoneNbr)
       || (participantInstance.name !== form.name)) {
@@ -700,11 +705,6 @@ const updateParticipant = async (id, form, where) => {
         form.phoneNbr,
       );
     }
-  } else {
-    participantInstance.file = form.file || participantInstance.file;
-    participantInstance.identityFile = form.identityFile || participantInstance.identityFile;
-    participantInstance.baptismFile = form.baptismFile || participantInstance.baptismFile;
-    participantInstance.referenceFile = form.referenceFile || participantInstance.referenceFile;
   }
 
   participantInstance.contingentId = form.contingent?.id || null;
@@ -874,7 +874,6 @@ const createParticipantViaImport = async (file) => {
   if (Object.keys(invalidRow).length > 0) {
     const invalidData = `Total Invalid Row = ${Object.keys(invalidRow).length}\nRow = ${JSON.stringify(invalidRow, null, 2)}`;
     const logFile = await createInvalidImportLog(invalidData);
-    console.log(logFile);
     return {
       success: false,
       code: 400,
@@ -1164,7 +1163,6 @@ const createCommitteeViaImport = async (file) => {
   if (Object.keys(invalidRow).length > 0) {
     const invalidData = `Total Invalid Row = ${Object.keys(invalidRow).length}\nRow = ${JSON.stringify(invalidRow, null, 2)}`;
     const logFile = await createInvalidImportLog(invalidData);
-    console.log(logFile);
     return {
       success: false,
       code: 400,
