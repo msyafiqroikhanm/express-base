@@ -15,13 +15,31 @@ class LodgerController {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
 
-      // console.log(JSON.stringify(req.user.limitation, null, 2));
+      console.log(JSON.stringify(req.user, null, 2));
       const where = {};
       if (req.query?.contingentId) {
         where.contingentId = req.query.contingentId;
       }
+      if (req.query?.locationId) {
+        where.locationId = req.query.locationId;
+      }
       if (!req.user.limitation.isAdmin) {
-        where.locationId = { [Op.or]: req.user.limitation.access.location };
+        if (req.query?.locationId) {
+          const filter = req.user.limitation.access.location.includes(Number(req.query.locationId));
+          if (filter) {
+            where.locationId = req.query.locationId;
+          }
+        } else {
+          where.locationId = { [Op.or]: req.user.limitation.access.location };
+        }
+
+        if (req.query?.contingentId) {
+          if (req.user.participant.contingentId === req.query.contingentId) {
+            where.contingentId = req.query.contingentId;
+          }
+        } else {
+          where.contingentId = req.user.participant.contingentId || null;
+        }
       }
       const data = await selectAllLodgers(where);
 
