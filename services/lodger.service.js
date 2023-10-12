@@ -21,7 +21,7 @@ const {
 } = require('../models');
 
 const selectAllLodgers = async (where) => {
-  // console.log(where);
+  console.log(where);
   const lodgerInstance = await ACM_ParticipantLodger.findAll({
     // where,
     include: [

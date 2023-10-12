@@ -56,7 +56,7 @@ class AuthMiddleware {
 
       const limitation = { isAdmin: true, access: {} };
 
-      // console.log(JSON.stringify(req.user.PIC, null, 2));
+      // console.log(JSON.stringify(req.user.Role, null, 2));
       if (req.user.Role.id !== rolesLib.superAdmin) {
         if (req.user.PIC.length) {
           const picTypes = await picTypeHelper().then((type) => [type.pic_location]);
@@ -81,6 +81,9 @@ class AuthMiddleware {
             limitation.access.location = locations;
           }
         }
+      }
+      if (req.user.Role.name === 'Participant Coordinator') {
+        limitation.isAdmin = false;
       }
       req.user.limitation = limitation;
       next();
