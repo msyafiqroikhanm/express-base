@@ -17,6 +17,9 @@ class LodgerController {
 
       // console.log(JSON.stringify(req.user.limitation, null, 2));
       const where = {};
+      if (req.query?.contingentId) {
+        where.contingentId = req.query.contingentId;
+      }
       if (!req.user.limitation.isAdmin) {
         where.locationId = { [Op.or]: req.user.limitation.access.location };
       }

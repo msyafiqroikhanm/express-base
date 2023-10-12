@@ -21,13 +21,14 @@ const {
 } = require('../models');
 
 const selectAllLodgers = async (where) => {
+  console.log(where);
   const lodgerInstance = await ACM_ParticipantLodger.findAll({
     // where,
     include: [
       {
         model: ACM_Room,
         as: 'room',
-        where,
+        where: where?.locationId ? { locationId: where.locationId } : null,
         attributes: { exclude: ['createdAt', 'updatedAt'] },
         include: [
           {
@@ -62,6 +63,7 @@ const selectAllLodgers = async (where) => {
       {
         model: PAR_Participant,
         as: 'participant',
+        where: where?.contingentId ? { contingentId: where.contingentId } : null,
         required: true,
         attributes: { exclude: ['createdAt', 'updatedAt'] },
         include: [
