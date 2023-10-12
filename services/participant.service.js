@@ -86,6 +86,7 @@ const renameParticipantFile = async (filename, participantName, participantPhone
 const selectAllParticipant = async (query, where) => {
   const participants = await PAR_Participant.findAll({
     where: query?.contingentId ? { contingentId: query.contingentId } : null,
+    order: [['name', 'ASC']],
     include: [
       {
         model: PAR_Contingent,
@@ -1191,6 +1192,7 @@ const selectParticipantAllSchedules = async (id, where) => {
     attributes: ['id'],
     include: {
       model: TPT_VehicleSchedule,
+      order: [['pickUpTime', 'ASC']],
       attributes: { exclude: ['createdAt', 'updatedAt', 'driverId'] },
       through: {
         attributes: [],
@@ -1241,6 +1243,7 @@ const selectParticipantAllSchedules = async (id, where) => {
 const selectAllNormalParticipants = async (where = {}) => {
   const participants = await PAR_Participant.findAll({
     where: { contingentId: { [Op.ne]: null } },
+    order: [['name', 'ASC']],
     include: [
       {
         model: PAR_Contingent,
@@ -1280,6 +1283,7 @@ const selectAllNormalParticipants = async (where = {}) => {
 const selectAllCommitteeParticipants = async () => {
   const committees = await PAR_Participant.findAll({
     where: { contingentId: null },
+    order: [['name', 'ASC']],
     include: [
       { model: QRM_QR, as: 'qr' },
       { model: REF_IdentityType, attributes: ['name'], as: 'identityType' },
