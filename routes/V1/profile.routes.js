@@ -1,5 +1,6 @@
 const router = require('express').Router();
 const { check } = require('express-validator');
+const { uploadParticipant } = require('../../services/multerStorage.service');
 const ValidateMiddleware = require('../../middlewares/validate.middleware');
 const ProfileController = require('../../controllers/profile.controller');
 const AuthMiddleware = require('../../middlewares/auth.middleware');
@@ -17,7 +18,7 @@ router.get(
   ProfileController.get,
 );
 
-router.put(
+router.patch(
   '/',
   async (req, res, next) => {
     AuthMiddleware.authenticate(
@@ -27,10 +28,32 @@ router.put(
       null,
     );
   },
+  uploadParticipant.fields([
+    {
+      name: 'participantImage',
+      maxCount: 1,
+    },
+    {
+      name: 'identityFile',
+      maxCount: 1,
+    },
+    {
+      name: 'baptismFile',
+      maxCount: 1,
+    },
+    {
+      name: 'referenceFile',
+      maxCount: 1,
+    },
+  ]),
   [
-    check('roleId', "RoleId attribute can't be empty").notEmpty(),
-    check('participantId', "Participant Id attribute can't be empty").notEmpty(),
-    check('email', "Email attribute can't be empty").notEmpty(),
+    check('name', "name attribute can't be empty").notEmpty(),
+    check('identityTypeId', "Identity type id attribute can't be empty").notEmpty(),
+    check('identityNo', "Identity number attribute can't be empty").notEmpty(),
+    check('gender', "gender attribute can't be empty").notEmpty(),
+    check('birthDate', "Birth date attribute can't be empty").isDate(),
+    check('email', "Email attribute can't be empty").isEmail(),
+    check('phoneNbr', "Phone number attribute can't be empty").notEmpty(),
   ],
   ValidateMiddleware.result,
   ProfileController.update,

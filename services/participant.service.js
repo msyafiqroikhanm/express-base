@@ -1377,4 +1377,5 @@ module.exports = {
   selectAllCommitteeParticipants,
   downloadParticipantSecretFile,
   calculateAge,
+  renameParticipantFile,
 };
