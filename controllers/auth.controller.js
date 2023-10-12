@@ -33,6 +33,7 @@ class AuthController {
         id: user.id,
         name: user.participant.name,
         role: user.Role.name,
+        isAdministrative: user.Role.isAdministrative,
         access_token: `Bearer ${access_token}`,
         PIC: user.PIC,
         modules: user.Role.modules,

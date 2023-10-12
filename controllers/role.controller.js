@@ -43,7 +43,7 @@ class Role {
         return ResponseFormatter.error404(res, 'Data Not Found', inputs.message);
       }
 
-      const data = await createRole(inputs);
+      const data = await createRole(inputs.form);
 
       return ResponseFormatter.success201(res, data.message, data.content);
     } catch (error) {
@@ -63,7 +63,7 @@ class Role {
         return ResponseFormatter.error404(res, 'Data Not Found', inputs.message);
       }
 
-      const data = await updateRole(req.params.id, inputs);
+      const data = await updateRole(req.params.id, inputs.form);
       if (!data.succcess) {
         return ResponseFormatter.error404(res, 'Data Not Found', data.message);
       }

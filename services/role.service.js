@@ -6,7 +6,7 @@ const {
 
 const selectAllRoles = async () => {
   const data = await USR_Role.findAll({
-    attributes: ['id', 'name'],
+    attributes: ['id', 'name', 'isAdministrative'],
     include: [
       {
         model: USR_Feature,
@@ -136,13 +136,21 @@ const validateRoleInputs = async (form, id) => {
   }
 
   return {
-    isValid: true, name: form.name, templateId: Number(form.templateId), features: validFeatures,
+    isValid: true,
+    form: {
+      name: form.name,
+      templateId: Number(form.templateId),
+      features: validFeatures,
+      isAdministrative: form.isAdministrative?.toLowerCase() === 'true',
+    },
   };
 };
 
 const createRole = async (form) => {
   // create new role first
-  const roleInstance = await USR_Role.create({ name: form.name, templateId: form.templateId });
+  const roleInstance = await USR_Role.create({
+    name: form.name, templateId: form.templateId, isAdministrative: form.isAdministrative,
+  });
 
   await roleInstance.addUSR_Features(form.features);
 
@@ -194,6 +202,7 @@ const updateRole = async (id, form) => {
 
   data.name = form.name;
   data.templateId = form.templateId;
+  data.isAdministrative = form.isAdministrative;
   await data.save();
 
   // parse response to rename USR_Features to features and USR_Module to module
