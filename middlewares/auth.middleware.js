@@ -97,9 +97,9 @@ class AuthMiddleware {
       res.url = `${req.method} ${req.originalUrl}`;
 
       const limitation = { isAdmin: true, access: {} };
-      console.log(JSON.stringify(req.user.Role, null, 2));
-      console.log(req.user.Role.name === 'Courier');
-      console.log(Boolean(JSON.stringify(req.user.Role.name, null, 2) === 'Courier'));
+      // console.log(JSON.stringify(req.user.Role, null, 2));
+      // console.log(req.user.Role.name === 'Courier');
+      // console.log(Boolean(JSON.stringify(req.user.Role.name, null, 2) === 'Courier'));
       if (req.user.Role.id !== rolesLib.superAdmin) {
         if (req.user.PIC.length) {
           const picTypes = await picTypeHelper().then((type) => [type.pic_kitchen]);
