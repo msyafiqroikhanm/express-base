@@ -59,6 +59,7 @@ router.post(
   [
     check('name', 'Name attribute can\'t be empty').notEmpty(),
     check('templateId', 'QR Template attribute can\'t be empty').notEmpty(),
+    check('isAdministrative', 'Administrative attribute can\'t be empty').notEmpty(),
     check('features', 'Feature attribute can\'t be empty').notEmpty(),
   ],
   ValidateMiddleware.result,
@@ -80,6 +81,7 @@ router.put(
   [
     check('name', 'Name attribute can\'t be empty').notEmpty(),
     check('templateId', 'QR Template attribute can\'t be empty').notEmpty(),
+    check('isAdministrative', 'Administrative attribute can\'t be empty').notEmpty(),
     check('features', 'Feature attribute can\'t be empty').notEmpty(),
   ],
   ValidateMiddleware.result,
