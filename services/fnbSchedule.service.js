@@ -218,6 +218,12 @@ const validateFnBScheduleInputs = async (form, limitation = null) => {
   if (!courierInstance?.isAvailable) {
     invalid400.push('Courier is not Available');
   }
+
+  if (form.pickUpTime) {
+    if (new Date().getTime() > new Date(form.pickUpTime).getTime()) {
+      invalid400.push("Can't Set Pick Up Time In The Past");
+    }
+  }
   // console.log(JSON.stringify(courierInstance, null, 2));
 
   if (invalid400.length > 0) {
@@ -323,6 +329,26 @@ const updateFnBSchedule = async (form, where) => {
     formUpdateScheduleInstance.picLocationId = locationInstance.picId;
   }
 
+  if (form.pickUpTime) {
+    if (new Date().getTime() > new Date(form.pickUpTime).getTime()) {
+      invalid400.push("Can't Set Pick Up Time In The Past");
+    } else {
+      formUpdateScheduleInstance.pickUpTime = form.pickUpTime;
+    }
+  } else {
+    formUpdateScheduleInstance.pickUpTime = fnbScheduleInstance.pickUpTime;
+  }
+
+  // console.log(form, formUpdateScheduleInstance);
+  if (form.dropOffTime && formUpdateScheduleInstance.pickUpTime) {
+    if (
+      new Date(form.dropOffTime).getTime() <
+      new Date(formUpdateScheduleInstance.pickUpTime).getTime()
+    ) {
+      invalid400.push('Drop Off Time should not be faster than Pick Up Time');
+    }
+  }
+
   //* check courierId validity
   let courierIsUpdate = false;
   let newCourier;
@@ -331,7 +357,7 @@ const updateFnBSchedule = async (form, where) => {
     if (!courierInstance) {
       invalid404.push('Courier Data Not Found');
     }
-    if (!courierInstance.isAvailable) {
+    if (!courierInstance?.isAvailable) {
       invalid400.push('Courier is not available');
     }
 
@@ -360,9 +386,6 @@ const updateFnBSchedule = async (form, where) => {
   formUpdateScheduleInstance.statusId = form.statusId
     ? form.statusId
     : fnbScheduleInstance.statusId;
-  formUpdateScheduleInstance.pickUpTime = form.pickUpTime
-    ? form.pickUpTime
-    : fnbScheduleInstance.pickUpTime;
   formUpdateScheduleInstance.dropOffTime = form.dropOffTime
     ? form.dropOffTime
     : fnbScheduleInstance.dropOffTime;
