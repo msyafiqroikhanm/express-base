@@ -1,6 +1,8 @@
+const { deleteFiles } = require('../helpers/deleteMultipleFile.helper');
 const ResponseFormatter = require('../helpers/responseFormatter.helper');
 const {
-  selectDetailUser, validateUserInputs, updateUser, validatePasswordInputs, updateUserPassword,
+  selectDetailUser, validatePasswordInputs, updateUserPassword, validateProfileInputs,
+  updateUserProfile,
 } = require('../services/user.service');
 
 class ProfileController {
@@ -23,21 +25,37 @@ class ProfileController {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
 
-      const inputs = await validateUserInputs(req.body, req.user.id);
+      const inputs = await validateProfileInputs(req.body, req.user.id, req.files);
       if (!inputs.isValid && inputs.code === 404) {
+        // Delete uploaded files when error happens
+        if (Object.keys(req.files).length > 0) {
+          await deleteFiles(Object.values(req.files));
+        }
         return ResponseFormatter.error404(res, 'Data Not Found', inputs.message);
       }
       if (!inputs.isValid && inputs.code === 400) {
+        // Delete uploaded files when error happens
+        if (Object.keys(req.files).length > 0) {
+          await deleteFiles(Object.values(req.files));
+        }
         return ResponseFormatter.error400(res, 'Bad Request', inputs.message);
       }
 
-      const data = await updateUser(req.user.id, inputs.form);
+      const data = await updateUserProfile(inputs.form, req.user.id);
       if (!data.success && data.code === 404) {
+        // Delete uploaded files when error happens
+        if (Object.keys(req.files).length > 0) {
+          await deleteFiles(Object.values(req.files));
+        }
         return ResponseFormatter.error404(res, 'Data Not Found', data.message);
       }
 
       return ResponseFormatter.success200(res, data.message, data.content);
     } catch (error) {
+      // Delete uploaded files when error happens
+      if (Object.keys(req.files).length > 0) {
+        await deleteFiles(Object.values(req.files));
+      }
       next(error);
     }
   }
