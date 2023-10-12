@@ -1242,7 +1242,7 @@ const selectParticipantAllSchedules = async (id, where) => {
 
 const selectAllNormalParticipants = async (where = {}) => {
   const participants = await PAR_Participant.findAll({
-    where: { contingentId: { [Op.ne]: null } },
+    where: { contingentId: { [Op.ne]: null }, committeeTypeId: null },
     order: [['name', 'ASC']],
     include: [
       {
