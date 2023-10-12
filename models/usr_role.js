@@ -1,8 +1,6 @@
 'use strict';
 
-const {
-  Model,
-} = require('sequelize');
+const { Model } = require('sequelize');
 
 module.exports = (sequelize, DataTypes) => {
   class USR_Role extends Model {
@@ -24,16 +22,20 @@ module.exports = (sequelize, DataTypes) => {
       USR_Role.hasMany(models.USR_User, { foreignKey: 'roleId' });
     }
   }
-  USR_Role.init({
-    templateId: DataTypes.INTEGER,
-    name: {
-      type: DataTypes.STRING,
-      unique: true,
+  USR_Role.init(
+    {
+      templateId: DataTypes.INTEGER,
+      name: {
+        type: DataTypes.STRING,
+        unique: true,
+      },
+      isAdministrative: DataTypes.BOOLEAN,
     },
-  }, {
-    sequelize,
-    modelName: 'USR_Role',
-    paranoid: true,
-  });
+    {
+      sequelize,
+      modelName: 'USR_Role',
+      paranoid: true,
+    },
+  );
   return USR_Role;
 };

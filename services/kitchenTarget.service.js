@@ -86,6 +86,7 @@ const selectKitchenTarget = async (where) => {
 
 const validateKitchenTargetInputs = async (form) => {
   const errorMessages = [];
+  const invalid400 = [];
 
   const menuInstance = await FNB_Menu.findOne({ where: { id: form.menuId } });
   if (!menuInstance) {
@@ -99,6 +100,16 @@ const validateKitchenTargetInputs = async (form) => {
 
   if (errorMessages.length) {
     return { isValid: false, code: 404, message: errorMessages };
+  }
+
+  if (form.quantityTarget && kitchenInstance.productionCapacity) {
+    if (Number(form.quantityTarget) > Number(kitchenInstance.productionCapacity)) {
+      invalid400.push('Quantity Target Cannot Be Greater Than Kitchen Production Capacity');
+    }
+  }
+
+  if (invalid400.length) {
+    return { isValid: false, code: 400, message: invalid400 };
   }
 
   return {
@@ -125,11 +136,16 @@ const createKitchenTarget = async (form) => {
 const updateKitchenTarget = async (where, form) => {
   // check identity  id validity
   const errorMessages = [];
+  const invalid400 = [];
 
   const kitchenTargetInstance = await FNB_KitchenTarget.findOne({ where });
   if (!kitchenTargetInstance) {
     errorMessages.push('Data Kitchen Target Not Found');
   }
+
+  let kitchenInstance = await FNB_Kitchen.findOne({
+    where: { id: kitchenTargetInstance.kitchenId },
+  });
   // console.log(JSON.stringify(kitchenTargetInstance, null, 2));
 
   if (form.menuId) {
@@ -140,14 +156,24 @@ const updateKitchenTarget = async (where, form) => {
   }
 
   if (form.kitchenId) {
-    const kitchenInstance = await FNB_Kitchen.findOne({ where: { id: form.kitchenId } });
+    kitchenInstance = await FNB_Kitchen.findOne({ where: { id: form.kitchenId } });
     if (!kitchenInstance) {
       errorMessages.push('Kitchen Data Not Found');
     }
   }
 
   if (errorMessages.length > 0) {
-    return { isValid: false, code: 404, message: errorMessages };
+    return { success: false, code: 404, message: errorMessages };
+  }
+
+  if (form.quantityTarget && kitchenInstance.productionCapacity) {
+    if (Number(form.quantityTarget) > Number(kitchenInstance.productionCapacity)) {
+      invalid400.push('Quantity Target Cannot Be Greater Than Kitchen Production Capacity');
+    }
+  }
+
+  if (invalid400.length) {
+    return { success: false, code: 400, message: invalid400 };
   }
 
   kitchenTargetInstance.menuId = form.menuId ? form.menuId : kitchenTargetInstance.menuId;

@@ -73,6 +73,10 @@ class KitchenTargetController {
         return ResponseFormatter.error404(res, 'Data Not Found', inputs.message);
       }
 
+      if (!inputs.isValid && inputs.code === 400) {
+        return ResponseFormatter.error400(res, 'Bad Request', inputs.message);
+      }
+
       const data = await createKitchenTarget(inputs.form);
 
       return ResponseFormatter.success201(res, data.message, data.content);
@@ -91,8 +95,11 @@ class KitchenTargetController {
       }
 
       const data = await updateKitchenTarget(where, req.body);
-      if (!data.success) {
+      if (!data.success && data.code === 404) {
         return ResponseFormatter.error404(res, 'Data Not Found', data.message);
+      }
+      if (!data.success && data.code === 400) {
+        return ResponseFormatter.error400(res, 'Bad Request', data.message);
       }
 
       return ResponseFormatter.success200(res, data.message, data.content);
@@ -110,7 +117,7 @@ class KitchenTargetController {
         where.kitchenId = { [Op.or]: req.user.limitation.access.kitchen };
       }
 
-      console.log(req.body);
+      // console.log(req.body);
       const data = await progressActualKitchenTarget(where, req.body);
       if (!data.success) {
         return ResponseFormatter.error404(res, 'Data Not Found', data.message);
