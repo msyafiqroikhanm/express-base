@@ -334,7 +334,7 @@ const selectUser = async (query) => {
     include: [
       {
         model: USR_Role,
-        attributes: ['name'],
+        attributes: ['name', 'isAdministrative'],
         as: 'Role',
         include: {
           model: USR_Feature,
