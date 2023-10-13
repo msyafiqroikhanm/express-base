@@ -73,6 +73,7 @@ const validateVehicleInputs = async (form, where, id) => {
       vehiclePlateNo,
       name,
       capacity: Number(capacity),
+      isAvailable: typeof form.isAvailable !== 'undefined' ? form.isAvailable : null,
     },
   };
 };
@@ -148,7 +149,7 @@ const createVehicle = async (form) => {
     vehiclePlateNo: form.vehiclePlateNo,
     name: form.name,
     capacity: form.capacity,
-    isAvailable: true,
+    isAvailable: typeof form.isAvailable !== 'object' ? form.isAvailable === 'true' : true,
   });
 
   return {
@@ -176,6 +177,7 @@ const updateVehicle = async (form, id, where) => {
   vehicleInstance.vehiclePlateNo = form.vehiclePlateNo;
   vehicleInstance.name = form.name;
   vehicleInstance.capacity = form.capacity;
+  vehicleInstance.isAvailable = typeof form.isAvailable !== 'object' ? form.isAvailable === 'true' : true;
   await vehicleInstance.save();
 
   return {
