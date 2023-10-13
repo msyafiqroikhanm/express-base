@@ -44,8 +44,8 @@ const calculateAge = (dateOfBirth, dateNow) => {
 
   // Check if the birthday for this year has already occurred
   if (
-    currentDate.getMonth() < dob.getMonth()
-    || (currentDate.getMonth() === dob.getMonth() && currentDate.getDate() < dob.getDate())
+    currentDate.getMonth() < dob.getMonth() ||
+    (currentDate.getMonth() === dob.getMonth() && currentDate.getDate() < dob.getDate())
   ) {
     return age - 1;
   }
@@ -123,6 +123,10 @@ const selectAllParticipant = async (query, where) => {
     participant.dataValues.participantType = participant.participantType?.dataValues.name;
     participant.dataValues.committeeType = participant.committeeType?.dataValues.name;
     participant.dataValues.age = calculateAge(participant.birthDate, startEvent.value);
+    participant.dataValues.validPhoneNbr = participant.dataValues.phoneNbr
+      .replace(/^0/g, '62')
+      .match(/[0-9]/g || [])
+      .join('');
 
     // separating bettween normal participant and committee participant
     if ((participant.contingent && participant.participantType) || !participant.committeeTypeId) {
@@ -238,10 +242,14 @@ const selectParticipant = async (id, where) => {
 
   participantInstance.dataValues.events = [];
   participantInstance.dataValues.transportationSchedules = [];
-  participantInstance.dataValues.profileFilename = participantInstance.dataValues.file?.split('/').pop() || null;
-  participantInstance.dataValues.identityFilename = participantInstance.dataValues.identityFile?.split('/').pop() || null;
-  participantInstance.dataValues.baptismFilename = participantInstance.dataValues.baptismFile?.split('/').pop() || null;
-  participantInstance.dataValues.referenceFilename = participantInstance.dataValues.referenceFile?.split('/').pop() || null;
+  participantInstance.dataValues.profileFilename =
+    participantInstance.dataValues.file?.split('/').pop() || null;
+  participantInstance.dataValues.identityFilename =
+    participantInstance.dataValues.identityFile?.split('/').pop() || null;
+  participantInstance.dataValues.baptismFilename =
+    participantInstance.dataValues.baptismFile?.split('/').pop() || null;
+  participantInstance.dataValues.referenceFilename =
+    participantInstance.dataValues.referenceFile?.split('/').pop() || null;
 
   // parsing participant lodger history
   participantInstance.lodgers.forEach((lodger) => {
@@ -472,7 +480,9 @@ const validateParticipantInputs = async (form, files, id, where) => {
 
         filePath = `public/images/participants/${file[0].filename}`;
       } else {
-        if (!['png', 'jpeg', 'jpg', 'pdf', 'docx'].includes(file[0].originalname.split('.').pop())) {
+        if (
+          !['png', 'jpeg', 'jpg', 'pdf', 'docx'].includes(file[0].originalname.split('.').pop())
+        ) {
           invalid400.push('Upload only supports file types [png, jpeg, jpg, pdf, and docx]');
         }
 
@@ -676,8 +686,7 @@ const updateParticipant = async (id, form, where) => {
   participantInstance.referenceFile = form.referenceFile || participantInstance.referenceFile;
 
   // check if participant doesn't change the files but changing phone number
-  if ((participantInstance.phoneNbr !== form.phoneNbr)
-      || (participantInstance.name !== form.name)) {
+  if (participantInstance.phoneNbr !== form.phoneNbr || participantInstance.name !== form.name) {
     if (participantInstance.file && !form.file) {
       participantInstance.file = await renameParticipantFile(
         participantInstance.file,
@@ -873,14 +882,18 @@ const createParticipantViaImport = async (file) => {
   );
 
   if (Object.keys(invalidRow).length > 0) {
-    const invalidData = `Total Invalid Row = ${Object.keys(invalidRow).length}\nRow = ${JSON.stringify(invalidRow, null, 2)}`;
+    const invalidData = `Total Invalid Row = ${
+      Object.keys(invalidRow).length
+    }\nRow = ${JSON.stringify(invalidRow, null, 2)}`;
     const logFile = await createInvalidImportLog(invalidData);
     return {
       success: false,
       code: 400,
       message: 'Excel Data Invalid',
       content: {
-        totalInvalidData: Object.keys(invalidRow).length, invalidRow, url: logFile.url,
+        totalInvalidData: Object.keys(invalidRow).length,
+        invalidRow,
+        url: logFile.url,
       },
       filePath: logFile.filePath,
     };
@@ -1048,8 +1061,7 @@ const updateCommittee = async (id, form) => {
   }
 
   // check if participant doesn't change the files but changing phone number
-  if ((participantInstance.phoneNbr !== form.phoneNbr)
-      || (participantInstance.name !== form.name)) {
+  if (participantInstance.phoneNbr !== form.phoneNbr || participantInstance.name !== form.name) {
     if (participantInstance.file && !form.file) {
       participantInstance.file = await renameParticipantFile(
         participantInstance.file,
@@ -1162,14 +1174,18 @@ const createCommitteeViaImport = async (file) => {
   );
 
   if (Object.keys(invalidRow).length > 0) {
-    const invalidData = `Total Invalid Row = ${Object.keys(invalidRow).length}\nRow = ${JSON.stringify(invalidRow, null, 2)}`;
+    const invalidData = `Total Invalid Row = ${
+      Object.keys(invalidRow).length
+    }\nRow = ${JSON.stringify(invalidRow, null, 2)}`;
     const logFile = await createInvalidImportLog(invalidData);
     return {
       success: false,
       code: 400,
       message: 'Excel Data Invalid',
       content: {
-        totalInvalidData: Object.keys(invalidRow).length, invalidRow, url: logFile.url,
+        totalInvalidData: Object.keys(invalidRow).length,
+        invalidRow,
+        url: logFile.url,
       },
       filePath: logFile.filePath,
     };

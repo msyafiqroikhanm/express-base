@@ -4,22 +4,24 @@ const { relative } = require('path');
 const { Op } = require('sequelize');
 const cron = require('node-schedule');
 const {
-  CSM_Broadcast, CSM_BroadcastTemplate, PAR_Participant, PAR_Contingent, REF_Region,
-  CSM_BroadcastParticipant, REF_MetaTemplateLanguage, REF_TemplateHeaderType,
+  CSM_Broadcast,
+  CSM_BroadcastTemplate,
+  PAR_Participant,
+  PAR_Contingent,
+  REF_Region,
+  CSM_BroadcastParticipant,
+  REF_MetaTemplateLanguage,
+  REF_TemplateHeaderType,
   SYS_Configuration,
 } = require('../models');
-const {
-  formatWhatsappMessage, metaSendMessage,
-} = require('./whatsapp.integration.service');
+const { formatWhatsappMessage, metaSendMessage } = require('./whatsapp.integration.service');
 const deleteFile = require('../helpers/deleteFile.helper');
 
 const setTimeoutPromise = util.promisify(setTimeout);
 
 const selectAllBroadcasts = async () => {
   const data = await CSM_Broadcast.findAll({
-    include: [
-      { model: CSM_BroadcastTemplate, attributes: ['name'], as: 'template' },
-    ],
+    include: [{ model: CSM_BroadcastTemplate, attributes: ['name'], as: 'template' }],
   });
 
   // parsed content data
@@ -92,9 +94,7 @@ const validateBroadcastInputs = async (form, file) => {
   }
 
   const templateInstance = await CSM_BroadcastTemplate.findByPk(form.templateId, {
-    include: [
-      { model: REF_TemplateHeaderType, as: 'headerType', attributes: ['name'] },
-    ],
+    include: [{ model: REF_TemplateHeaderType, as: 'headerType', attributes: ['name'] }],
   });
   if (!templateInstance) {
     invalid404.push('Broadcast Template Data Not Found');
@@ -107,7 +107,9 @@ const validateBroadcastInputs = async (form, file) => {
   let headerFile = null;
   if (['IMAGE', 'VIDEO', 'DOCUMENT'].includes(templateInstance?.headerType.name)) {
     if (!file) {
-      invalid400.push(`Broadcast Using Template With Header ${templateInstance?.headerType.name} Required File`);
+      invalid400.push(
+        `Broadcast Using Template With Header ${templateInstance?.headerType.name} Required File`,
+      );
     }
     if (['jpeg', 'png', 'jpg'].includes(file.originalname.split('.')[1])) {
       headerFile = `public/images/broadcasts/${file.filename}`;
@@ -116,25 +118,36 @@ const validateBroadcastInputs = async (form, file) => {
     } else if (['pdf', 'docx', 'xlsx'].includes(file.originalname.split('.')[1])) {
       headerFile = `public/documents/broadcasts/${file.filename}`;
     }
-  } else if (templateInstance?.headerType.name === 'TEXT' && templateInstance?.headerVariableExample) {
+  } else if (
+    templateInstance?.headerType.name === 'TEXT' &&
+    templateInstance?.headerVariableExample
+  ) {
     if (!form.headerText) {
-      invalid400.push('Broadcast Using Template With Header Type Text And Header Variable, Required Header Text');
+      invalid400.push(
+        'Broadcast Using Template With Header Type Text And Header Variable, Required Header Text',
+      );
     }
   }
 
   // * Validate Message
   if (templateInstance?.messageVariableNumber > 1) {
     if (templateInstance?.messageVariableNumber !== form.messageParameters?.length) {
-      invalid400.push(`Message Parameters Required ${templateInstance?.messageVariableNumber} For Chosen Broadcast Template`);
+      invalid400.push(
+        `Message Parameters Required ${templateInstance?.messageVariableNumber} For Chosen Broadcast Template`,
+      );
     }
   } else if (form.messageParameters) {
     invalid400.push('Broadcast Template With Static Message Cannot Have Paramters');
   }
 
   // * Validate Button
-  if (templateInstance?.button?.length > 0
-      && form.buttonParameters?.length !== templateInstance?.button?.length) {
-    invalid400.push(`Button Parameters Required ${templateInstance?.button?.length} For Chosen Broadcast Template`);
+  if (
+    templateInstance?.button?.length > 0 &&
+    form.buttonParameters?.length !== templateInstance?.button?.length
+  ) {
+    invalid400.push(
+      `Button Parameters Required ${templateInstance?.button?.length} For Chosen Broadcast Template`,
+    );
   }
 
   // validate Recipiants / receivers
@@ -215,7 +228,9 @@ const scheduleBroadcast = async (broadcastId) => {
   });
 
   const BASE_URL = await SYS_Configuration.findOne({ where: { name: 'Base URL' } });
-  const WhatsappAccessToken = await SYS_Configuration.findOne({ where: { name: 'Whatsapp Access Token' } });
+  const WhatsappAccessToken = await SYS_Configuration.findOne({
+    where: { name: 'Whatsapp Access Token' },
+  });
   const WhatsappPhoneId = await SYS_Configuration.findOne({ where: { name: 'Whatsapp Phone Id' } });
 
   const components = formatWhatsappMessage(broadcastInstance, BASE_URL.value);
@@ -236,7 +251,10 @@ const scheduleBroadcast = async (broadcastId) => {
         const messageData = {
           messaging_product: 'whatsapp',
           recipient_type: 'individual',
-          to: receiver.PAR_Participant.phoneNbr.replace('+', ''),
+          to: receiver.PAR_Participant.phoneNbr
+            .replace(/^0/g, '62')
+            .match(/[0-9]/g || [])
+            .join(''),
           type: 'template',
           template: {
             name: broadcastInstance.template.name,
@@ -254,7 +272,7 @@ const scheduleBroadcast = async (broadcastId) => {
         );
 
         if (metaResponse.status === 200) {
-        // set message status as success
+          // set message status as success
           receiver.meta_id = metaResponse.data.messages[0].id;
           await receiver.save();
         }
