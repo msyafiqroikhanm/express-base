@@ -211,6 +211,7 @@ const validateDriverInputs = async (form, where, file, id) => {
       name,
       phoneNbr,
       email,
+      isAvailable: typeof form.isAvailable !== 'undefined' ? form.isAvailable : null,
     },
   };
 };
@@ -222,7 +223,7 @@ const createDriver = async (form) => {
     name: form.name,
     phoneNbr: form.phoneNbr,
     email: form.email,
-    isAvailable: true,
+    isAvailable: typeof form.isAvailable !== 'object' ? form.isAvailable === 'true' : true,
   });
 
   await TPT_DriverTracking.create({
@@ -253,10 +254,13 @@ const updateDriver = async (form, id, where) => {
     };
   }
 
+  console.log(JSON.stringify(form, null, 2));
+
   driverInstance.vendorId = form.vendor.id;
   driverInstance.name = form.name;
   driverInstance.phoneNbr = form.phoneNbr;
   driverInstance.email = form.email;
+  driverInstance.isAvailable = typeof form.isAvailable !== 'object' ? form.isAvailable === 'true' : true;
   await driverInstance.save();
 
   // updating committee / participant
