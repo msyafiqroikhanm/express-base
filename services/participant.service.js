@@ -570,7 +570,10 @@ const validateParticipantInputs = async (form, files, id, where) => {
       gender,
       birthDate: new Date(birthDate),
       identityNo,
-      phoneNbr,
+      phoneNbr: phoneNbr
+        .replace(/^0/g, '62')
+        .match(/[0-9]/g || [])
+        .join(''),
       email,
       address,
       file: filePath,
