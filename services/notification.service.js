@@ -283,8 +283,6 @@ const createNotifications = async (io, type, relatedDataId, messageVariable) => 
           where: { picId: { [Op.in]: pics } }, attributes: ['id', 'picId'],
         });
 
-        console.log(dataType);
-
         if (dataType === 'vehicle') {
           // * related to table lodger
           const vehicleInstance = await TPT_Vehicle.findOne({ where: { id: relatedDataId }, attributes: ['id', 'vendorId'] });
@@ -303,11 +301,36 @@ const createNotifications = async (io, type, relatedDataId, messageVariable) => 
             where: { id: relatedDataId }, attributes: ['id', 'vendorId'],
           });
 
-          console.log(JSON.stringify(vendors, null, 2));
-          console.log(JSON.stringify(driverInstance, null, 2));
-
           if (vendors.some((vendor) => vendor.id === driverInstance.vendorId)) {
-            console.log(`sending notification to user ${user} message ${message}`);
+            await SYS_Notification.create({
+              typeId: notificationTypeId,
+              userId: user,
+            }).then(
+              await sendNotification(io, user, `${BASE_URL.value}${dataUrl}${relatedDataId}`, message),
+            );
+          }
+        } else if (dataType === 'vehicle-schedule') {
+          // * related to table vehicle schedule
+          const scheduleInstance = await TPT_VehicleSchedule.findOne({
+            where: { id: relatedDataId }, attributes: ['id', 'driverId', 'vehicleId'],
+          });
+
+          let vendorId = null;
+          if (scheduleInstance?.driverId) {
+            const driverInstance = await TPT_Driver.findOne({
+              where: { id: scheduleInstance.driverId }, attributes: ['id', 'vendorId'],
+            });
+
+            vendorId = driverInstance.vendorId;
+          } else if (scheduleInstance?.vehicleId) {
+            const vehicleInstance = await TPT_Vehicle.findOne({
+              where: { id: scheduleInstance.vehicleId }, attributes: ['id', 'vendorId'],
+            });
+
+            vendorId = vehicleInstance.vendorId;
+          }
+
+          if (vendors.some((vendor) => vendor.id === vendorId)) {
             await SYS_Notification.create({
               typeId: notificationTypeId,
               userId: user,
@@ -318,7 +341,33 @@ const createNotifications = async (io, type, relatedDataId, messageVariable) => 
         }
       });
     } else if (notification.limitation?.toLowerCase() === 'driver') {
-      //
+      // check if user that will recieve notification
+      // belongs to the same event as the related data
+      notification.users.map(async (user) => {
+        const userInstance = await USR_User.findOne({
+          where: { id: user },
+          attributes: ['id', 'participantId'],
+          include: {
+            model: TPT_Driver, attributes: ['id'], as: 'driver',
+          },
+        });
+
+        if (dataType === 'vehicle-schedule') {
+          // * related to table vehicle schedule
+          const scheduleInstance = await TPT_VehicleSchedule.findOne({
+            where: { id: relatedDataId }, attributes: ['id', 'driverId'],
+          });
+
+          if (scheduleInstance?.driverId === userInstance?.driver?.id) {
+            await SYS_Notification.create({
+              typeId: notificationTypeId,
+              userId: user,
+            }).then(
+              await sendNotification(io, user, `${BASE_URL.value}${dataUrl}${relatedDataId}`, message),
+            );
+          }
+        }
+      });
     } else if (notification.limitation?.toLowerCase() === 'kitchen') {
       //
     } else if (notification.limitation?.toLowerCase() === 'courier') {

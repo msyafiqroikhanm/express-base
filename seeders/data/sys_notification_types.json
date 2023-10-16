@@ -154,5 +154,11 @@
     "url": "/v1/broadcasts/",
     "relatedTable": "Broadcast",
     "messageFormat": "Broadcast has been successfully sent at {{1}}"
+  },
+  {
+    "name": "Transportation Schedule Assigned",
+    "url": "/v1/vehicle-schedules/",
+    "relatedTable": "Vehicle-Schedule",
+    "messageFormat": "Driver and vehicle have been assign to transportation schedule {{1}} for pick up at {{2}}"
   }
 ]

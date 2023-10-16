@@ -407,7 +407,7 @@ const validateProvideScheduleInputs = async (form, id, where) => {
   });
   if (!vehicleInstance) {
     invalid404.push('Vehicle Data Not Found');
-  } else if (scheduleInstance.vehicleId !== vehicleInstance.id && !vehicleInstance.isAvailable) {
+  } else if (scheduleInstance?.vehicleId !== vehicleInstance.id && !vehicleInstance.isAvailable) {
     // check when with different vehicle data, is the vehicle available
     invalid400.push('Vehicle Is Not Available');
   }
@@ -420,7 +420,7 @@ const validateProvideScheduleInputs = async (form, id, where) => {
   if (!driverInstance) {
     // check if driver exits
     invalid404.push('Driver Data Not Found');
-  } else if (scheduleInstance.driverId !== driverInstance.id && !driverInstance.isAvailable) {
+  } else if (scheduleInstance?.driverId !== driverInstance.id && !driverInstance.isAvailable) {
     // check when with different driver data, is the driver available
     invalid400.push('Driver Is Not Available');
   }

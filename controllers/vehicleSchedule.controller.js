@@ -149,6 +149,14 @@ class VehicleScheduleController {
 
       const data = await vendorProvideTransportationSchedule(inputs.form, req.params.id);
 
+      const io = req.app.get('socketIo');
+      await createNotifications(
+        io,
+        'Transportation Schedule Assigned',
+        data.content.id,
+        [data.content.name, data.content.pickUpTime],
+      );
+
       return ResponseFormatter.success200(res, data.message, data.content);
     } catch (error) {
       next(error);
