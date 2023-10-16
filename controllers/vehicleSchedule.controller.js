@@ -1,4 +1,5 @@
 const ResponseFormatter = require('../helpers/responseFormatter.helper');
+const { createNotifications } = require('../services/notification.service');
 const {
   selectAllVehicleSchedule, selectVehicleSchedule, validateVehicleScheduleInputs,
   createVehicleSchedule,
@@ -72,6 +73,14 @@ class VehicleScheduleController {
       }
 
       const data = await createVehicleSchedule(inputs.form);
+
+      const io = req.app.get('socketIo');
+      await createNotifications(
+        io,
+        'Transportation Schedule Created',
+        data.content.id,
+        [data.content.name, data.content.pickUpTime],
+      );
 
       return ResponseFormatter.success201(res, data.message, data.content);
     } catch (error) {
@@ -192,9 +201,20 @@ class VehicleScheduleController {
       }
 
       const data = await progressVehicleSchedule(req.body, req.params.id, where);
+      if (!data.success && data.code === 400) {
+        return ResponseFormatter.error404(res, 'Bad Request', data.message);
+      }
       if (!data.success && data.code === 404) {
         return ResponseFormatter.error404(res, 'Data Not Found', data.message);
       }
+
+      const io = req.app.get('socketIo');
+      await createNotifications(
+        io,
+        'Transportation Schedule Progress',
+        data.content.id,
+        [data.content.name, data.content.status, data.content.updatedAt],
+      );
 
       return ResponseFormatter.success200(res, data.message, data.content);
     } catch (error) {

@@ -292,6 +292,7 @@ const progressVehicleSchedule = async (form, id, where = {}) => {
     where: where.driverId ? { id, driverId: where.driverId } : { id },
     include: { model: REF_VehicleScheduleStatus, attributes: ['name'], as: 'status' },
   });
+
   if (!scheduleInstance) {
     return {
       success: false,
@@ -324,6 +325,12 @@ const progressVehicleSchedule = async (form, id, where = {}) => {
 
   scheduleInstance.statusId = statusInstance?.id || scheduleInstance.statusId;
   await scheduleInstance.save();
+  if (!scheduleInstance) {
+    const status = await REF_VehicleScheduleStatus.findByPk(scheduleInstance.statusId);
+    scheduleInstance.status = status.dataValues.name;
+  } else {
+    scheduleInstance.status = statusInstance.dataValues.name;
+  }
 
   if (['Completed', 'Done', 'Finish', 'Arrived'].includes(statusInstance?.name)) {
     // when a trip is finish change passenger status
