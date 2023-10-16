@@ -1,3 +1,4 @@
+const { Op } = require('sequelize');
 const {
   REF_ConfigurationCategory,
   SYS_Configuration,
@@ -1362,7 +1363,20 @@ const createRoomType = async (form) => {
   if (!locationInstance) {
     return {
       success: false,
+      code: 404,
       message: ['Location Data Not Found'],
+    };
+  }
+
+  //* Unique Check
+  const roomType = await REF_RoomType.findOne({
+    where: { locationId: locationInstance.id, name: { [Op.substring]: form.name } },
+  });
+  if (roomType) {
+    return {
+      success: false,
+      code: 400,
+      message: ['Room Type Already Exists'],
     };
   }
   const typeInstance = await REF_RoomType.create({ name: form.name, locationId: form.locationId });
@@ -1477,9 +1491,23 @@ const createBedType = async (form) => {
   if (!locationInstance) {
     return {
       success: false,
+      code: 404,
       message: ['Location Data Not Found'],
     };
   }
+
+  //* Unique By Name and Location Check
+  const bedType = await ACM_RoomBedType.findOne({
+    where: { locationId: locationInstance.id, name: { [Op.substring]: form.name } },
+  });
+  if (bedType) {
+    return {
+      success: false,
+      code: 400,
+      message: ['Bed Type Already Exists'],
+    };
+  }
+
   const typeInstance = await ACM_RoomBedType.create({
     name: form.name,
     locationId: form.locationId,

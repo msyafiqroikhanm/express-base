@@ -662,8 +662,12 @@ class RoomType {
       }
 
       const data = await roomType.createRoomType(req.body);
-      if (!data.success) {
+      if (!data.success && data.code === 404) {
         return ResponseFormatter.error404(res, 'Data Not Found', data.message);
+      }
+
+      if (!data.success && data.code === 400) {
+        return ResponseFormatter.error400(res, 'Bad Request', data.message);
       }
 
       return ResponseFormatter.success201(res, data.message, data.content);
@@ -767,8 +771,12 @@ class BedType {
       }
 
       const data = await bedType.createBedType(req.body);
-      if (!data.success) {
+      if (!data.success && data.code === 404) {
         return ResponseFormatter.error404(res, 'Data Not Found', data.message);
+      }
+
+      if (!data.success && data.code === 400) {
+        return ResponseFormatter.error400(res, 'Bad Request', data.message);
       }
       return ResponseFormatter.success201(res, data.message, data.content);
     } catch (error) {
