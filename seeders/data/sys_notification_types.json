@@ -1,0 +1,158 @@
+[
+  {
+    "name": "Participant Created",
+    "url": "/v1/participants/",
+    "relatedTable": "Participant",
+    "messageFormat": "Participant {{1}} has been added to the conference system"
+  },
+  {
+    "name": "Committee Created",
+    "url": "/v1/participants/",
+    "relatedTable": "Participant",
+    "messageFormat": "Committee {{1}} has been added to the conference system"
+  },
+  {
+    "name": "Contingent Created",
+    "url": "/v1/contingets/",
+    "relatedTable": "Contingent",
+    "messageFormat": "Contingent {{1}} has been added to the conference system"
+  },
+  {
+    "name": "Group Created",
+    "url": "/v1/groups/",
+    "relatedTable": "Group",
+    "messageFormat": "Group {{1}} has been added to the conference system"
+  },
+  {
+    "name": "Location Created",
+    "url": "/v1/locations/",
+    "relatedTable": "Location",
+    "messageFormat": "Location {{1}} has been added to the conference system"
+  },
+  {
+    "name": "Facility Created",
+    "url": "/v1/facilities/",
+    "relatedTable": "Facility",
+    "messageFormat": "Facility {{1}} has been added to location {{2}}"
+  },
+  {
+    "name": "Room Created",
+    "url": "/v1/rooms/",
+    "relatedTable": "Room",
+    "messageFormat": "Room {{1}} has been added to location {{2}}"
+  },
+  {
+    "name": "Lodger Created",
+    "url": "/v1/lodgers/",
+    "relatedTable": "Lodger",
+    "messageFormat": "Lodger reservation in {{1}} have been created at location {{2}}"
+  },
+  {
+    "name": "Event Created",
+    "url": "/v1/events/",
+    "relatedTable": "Event",
+    "messageFormat": "Event {{1}} has been added to the conference system"
+  },
+  {
+    "name": "Vendor Created",
+    "url": "/v1/vendors/",
+    "relatedTable": "Vendor",
+    "messageFormat": "Vendor {{1}} has been added to the conference system"
+  },
+  {
+    "name": "Vehicle Created",
+    "url": "/v1/vehicles/",
+    "relatedTable": "Vehicle",
+    "messageFormat": "Vehcile {{1}} has been added for vendor {{2}}"
+  },
+  {
+    "name": "Transportation Schedule Created",
+    "url": "/v1/vehicle-schedules/",
+    "relatedTable": "Vehicle-Schedule",
+    "messageFormat": "Transportation schedule {{1}} have been scheduled at {{2}}"
+  },
+  {
+    "name": "Driver Created",
+    "url": "/v1/drivers/",
+    "relatedTable": "Driver",
+    "messageFormat": "Driver {{1}} has been added for vendor {{2}}"
+  },
+  {
+    "name": "Menu Created",
+    "url": "/v1/menus/",
+    "relatedTable": "Menu",
+    "messageFormat": "Menu {{1}} has been added to the conference system"
+  },
+  {
+    "name": "Courier Created",
+    "url": "/v1/couriers/",
+    "relatedTable": "Courier",
+    "messageFormat": "Courier {{1}} has been added to the conference system"
+  },
+  {
+    "name": "Kitchen Created",
+    "url": "/v1/kitchens/",
+    "relatedTable": "Kitchen",
+    "messageFormat": "Kitchen {{1}} has been added to the conference system"
+  },
+  {
+    "name": "Kitchen Target Created",
+    "url": "/v1/kitchen-targets/",
+    "relatedTable": "Kitchen-Target",
+    "messageFormat": "Target {{1}} has been added for kitchen {{2}}"
+  },
+  {
+    "name": "Kitchen Target Updated",
+    "url": "/v1/kitchen-targets/",
+    "relatedTable": "Kitchen-Target",
+    "messageFormat": "Target {{1}} has been updated for kitchen {{2}}"
+  },
+  {
+    "name": "Feedback Created",
+    "url": "/v1/feedbacks/",
+    "relatedTable": "Feedback",
+    "messageFormat": "New feedback has been created by {{1}}"
+  },
+  {
+    "name": "Check In",
+    "url": "/v1/lodgers/",
+    "relatedTable": "Lodger",
+    "messageFormat": "Participant {{1}} has been check in at {{2}} for lodger {{3}}"
+  },
+  {
+    "name": "Check Out",
+    "url": "/v1/lodgers/",
+    "relatedTable": "Lodger",
+    "messageFormat": "Participant {{1}} has been check out at {{2}} for lodger {{3}}"
+  },
+  {
+    "name": "Group Progress",
+    "url": "/v1/groups/",
+    "relatedTable": "Group",
+    "messageFormat": "Group {{1}} status has been updated to {{2}}"
+  },
+  {
+    "name": "Transportation Schedule Progress",
+    "url": "/v1/vehicle-schedules/",
+    "relatedTable": "Vehicle-Schedule",
+    "messageFormat": "Vehicle schedule {{1}} status has been updated to {{2}} at {{3}}"
+  },
+  {
+    "name": "FNB Delivery Schedule Created",
+    "url": "/v1/fnb-schedules/",
+    "relatedTable": "FNB-Schedule",
+    "messageFormat": "Food delivery schedule {{1}} have been scheduled at {{2}} form kitchen {{3}} to location {{4}}"
+  },
+  {
+    "name": "FNB Delivery Schedule Progress",
+    "url": "/v1/fnb-schedules/",
+    "relatedTable": "FNB-Schedule",
+    "messageFormat": "Food delivery schedule {{1}} status has been updated to {{2}} at {{3}}"
+  },
+  {
+    "name": "Broadcast Progress",
+    "url": "/v1/broadcasts/",
+    "relatedTable": "Broadcast",
+    "messageFormat": "Broadcast has been successfully sent at {{1}}"
+  }
+]

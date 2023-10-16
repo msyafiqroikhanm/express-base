@@ -15,11 +15,17 @@ module.exports = (sequelize, DataTypes) => {
         foreignKey: 'roleId',
         otherKey: 'featureId',
       });
+      USR_Role.belongsToMany(models.SYS_NotificationType, {
+        through: 'SYS_RoleNotificationSubscription',
+        foreignKey: 'roleId',
+        otherKey: 'typeId',
+      });
 
       USR_Role.belongsTo(models.QRM_QRTemplate, { foreignKey: 'templateId', as: 'template' });
 
       USR_Role.hasMany(models.USR_RoleFeature, { foreignKey: 'roleId' });
       USR_Role.hasMany(models.USR_User, { foreignKey: 'roleId' });
+      USR_Role.hasMany(models.SYS_RoleNotificationSubscription, { foreignKey: 'roleId' });
     }
   }
   USR_Role.init(
