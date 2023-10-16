@@ -393,6 +393,7 @@ router.get(
         feature.delete_group_status,
         feature.create_group,
         feature.update_group,
+        feature.progress_group,
       ]),
     );
   },

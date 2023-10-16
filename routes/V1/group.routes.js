@@ -17,6 +17,7 @@ router.get(
         feature.create_group,
         feature.update_group,
         feature.delete_group,
+        feature.progress_group,
       ]),
     );
   },
@@ -35,6 +36,7 @@ router.get(
         feature.view_group,
         feature.update_group,
         feature.delete_group,
+        feature.progress_group,
       ]),
     );
   },
@@ -100,6 +102,25 @@ router.delete(
   },
   Authentication.participant,
   GroupController.delete,
+);
+
+router.patch(
+  '/:id/progress',
+  async (req, res, next) => {
+    Authentication.authenticate(
+      req,
+      res,
+      next,
+      await features().then((feature) => [
+        feature.progress_group,
+      ]),
+    );
+  },
+  [
+    check('statusId', 'Status attribute can\'t be empty').notEmpty(),
+  ],
+  ValidateMiddleware.result,
+  GroupController.progress,
 );
 
 module.exports = router;

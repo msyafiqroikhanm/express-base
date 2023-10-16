@@ -3,7 +3,7 @@ const { Op } = require('sequelize');
 const {
   SYS_Notification, SYS_NotificationType, USR_Role, USR_User, SYS_Configuration,
   PAR_Participant, PAR_Group, ACM_ParticipantLodger, TPT_VehicleSchedule, USR_PIC,
-  ACM_Location, REF_PICType, ACM_Room, FNB_Schedule,
+  ACM_Location, REF_PICType, ACM_Room, FNB_Schedule, ENV_Event,
 } = require('../models');
 
 const selectAllNotification = async (id) => {
@@ -165,8 +165,6 @@ const createNotifications = async (io, type, relatedDataId, messageVariable) => 
           },
         });
 
-        console.log(JSON.stringify(userInstance, null, 2));
-
         let pics = userInstance?.PIC?.map((pic) => {
           if (pic?.REF_PICType.name?.includes('Location')) {
             return pic.id;
@@ -180,9 +178,6 @@ const createNotifications = async (io, type, relatedDataId, messageVariable) => 
           where: { picId: { [Op.in]: pics } }, attributes: ['id', 'picId'],
         });
 
-        console.log(JSON.stringify(pics, null, 2));
-        console.log(JSON.stringify(locationInstance, null, 2));
-
         if (dataType === 'lodger') {
           // * related to table lodger
           const lodgerInstance = await ACM_ParticipantLodger.findOne({
@@ -192,9 +187,6 @@ const createNotifications = async (io, type, relatedDataId, messageVariable) => 
               model: ACM_Room, attributes: ['locationId'], as: 'room', required: true,
             },
           });
-
-          console.log(JSON.stringify(lodgerInstance, null, 2));
-          console.log('-------------------------------------------------------');
 
           if (locationInstance.some(
             (location) => location.id === lodgerInstance?.room?.locationId,
@@ -228,10 +220,42 @@ const createNotifications = async (io, type, relatedDataId, messageVariable) => 
       notification.users.map(async (user) => {
         const userInstance = await USR_User.findOne({
           where: { id: user },
+          attributes: ['id', 'participantId'],
           include: {
             model: USR_PIC, attributes: ['id', 'typeId'], as: 'PIC', include: { model: REF_PICType, attributes: ['name'] },
           },
         });
+
+        let pics = userInstance?.PIC?.map((pic) => {
+          if (pic?.REF_PICType.name?.includes('Event')) {
+            return pic.id;
+          }
+          return null;
+        });
+
+        pics = pics.filter((pic) => pic !== null);
+
+        const events = await ENV_Event.findAll({
+          where: { picId: { [Op.in]: pics } }, attributes: ['id', 'picId'],
+        });
+
+        if (dataType === 'group') {
+          // * related to table lodger
+          const groupInstance = await PAR_Group.findOne({
+            where: { id: relatedDataId }, attributes: ['id', 'eventId'],
+          });
+
+          if (events.some(
+            (event) => event.id === groupInstance?.eventId,
+          )) {
+            await SYS_Notification.create({
+              typeId: notificationTypeId,
+              userId: user,
+            }).then(
+              await sendNotification(io, user, `${BASE_URL.value}${dataUrl}${relatedDataId}`, message),
+            );
+          }
+        }
       });
     } else if (notification.limitation?.toLowerCase() === 'vendor') {
       //
