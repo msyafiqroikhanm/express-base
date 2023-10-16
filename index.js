@@ -9,8 +9,7 @@ const port = process.env.PORT || 3000;
 require('dotenv').config();
 
 const server = http.createServer(app);
-const io = initializeSocketIO(server); // initialize websocket
-app.set('socketIo', io);
+initializeSocketIO(server).then((io) => app.set('socketIo', io)); // initialize websocket
 
 initializeTelegramBot(); // initialize telegram chat bot
 
