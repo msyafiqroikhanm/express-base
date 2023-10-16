@@ -10,6 +10,7 @@ const {
   updateProgressGroup,
   generateCalendarEvents,
 } = require('../services/event.service');
+const { createNotifications } = require('../services/notification.service');
 
 class Events {
   static async getCalendars(req, res, next) {
@@ -92,6 +93,14 @@ class Events {
       }
 
       const data = await createEvent(inputs.form);
+
+      const io = req.app.get('socketIo');
+      await createNotifications(
+        io,
+        'Event Created',
+        data.content.id,
+        [data.content.name],
+      );
 
       return ResponseFormatter.success201(res, data.message, data.content);
     } catch (error) {
