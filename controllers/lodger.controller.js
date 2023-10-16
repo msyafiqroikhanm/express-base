@@ -9,6 +9,7 @@ const {
   deleteLodger,
   selectAllParticipantLodger,
 } = require('../services/lodger.service');
+const { createNotifications } = require('../services/notification.service');
 
 class LodgerController {
   static async getAll(req, res, next) {
@@ -110,6 +111,15 @@ class LodgerController {
 
       console.log(inputs.form);
       const data = await createLodger(inputs.form);
+
+      const io = req.app.get('socketIo');
+      await createNotifications(
+        io,
+        'Lodger Created',
+        data.content.id,
+        [data.content.reservationIn, data.content.location],
+      );
+
       return ResponseFormatter.success201(res, data.message, data.content);
     } catch (error) {
       next(error);

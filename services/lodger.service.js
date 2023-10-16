@@ -226,6 +226,15 @@ const createLodger = async (form) => {
   const lodgerInstance = await ACM_ParticipantLodger.create(form.lodger);
   const roomInstance = await ACM_Room.findByPk(form.lodger.roomId);
 
+  let locationInstance;
+  if (roomInstance) {
+    locationInstance = await ACM_Location.findOne({
+      where: { id: roomInstance.locationId }, attributes: ['name'],
+    });
+  }
+
+  lodgerInstance.location = locationInstance ? locationInstance.name : '';
+
   await ACM_Room.update(form.room, { where: { id: roomInstance.id } });
 
   return {
