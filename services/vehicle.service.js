@@ -152,6 +152,8 @@ const createVehicle = async (form) => {
     isAvailable: typeof form.isAvailable !== 'object' ? form.isAvailable === 'true' : true,
   });
 
+  vehicleInstance.vendor = form.vendor.dataValues.name;
+
   return {
     success: true,
     message: 'Vehicle Successfully Created',

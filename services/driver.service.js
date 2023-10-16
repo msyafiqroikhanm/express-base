@@ -226,6 +226,8 @@ const createDriver = async (form) => {
     isAvailable: typeof form.isAvailable !== 'object' ? form.isAvailable === 'true' : true,
   });
 
+  driverInstance.vendor = form.vendor.name;
+
   await TPT_DriverTracking.create({
     driverId: driverInstance.id,
     latitude: null,
@@ -253,8 +255,6 @@ const updateDriver = async (form, id, where) => {
       message: ['Driver Data Not Found'],
     };
   }
-
-  console.log(JSON.stringify(form, null, 2));
 
   driverInstance.vendorId = form.vendor.id;
   driverInstance.name = form.name;

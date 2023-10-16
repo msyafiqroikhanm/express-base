@@ -1,4 +1,5 @@
 const ResponseFormatter = require('../helpers/responseFormatter.helper');
+const { createNotifications } = require('../services/notification.service');
 const {
   selectAllVehicles, validateVehicleQuery, selectVehicle, validateVehicleInputs,
   createVehicle, updateVehicle, deleteVehicle, selectVehicleSchedules,
@@ -75,6 +76,14 @@ class VehicleController {
       }
 
       const data = await createVehicle(inputs.form);
+
+      const io = req.app.get('socketIo');
+      await createNotifications(
+        io,
+        'Vehicle Created',
+        data.content.id,
+        [data.content.name, data.content.vendor],
+      );
 
       return ResponseFormatter.success201(res, data.message, data.content);
     } catch (error) {

@@ -3,7 +3,8 @@ const { Op } = require('sequelize');
 const {
   SYS_Notification, SYS_NotificationType, USR_Role, USR_User, SYS_Configuration,
   PAR_Participant, PAR_Group, ACM_ParticipantLodger, TPT_VehicleSchedule, USR_PIC,
-  ACM_Location, REF_PICType, ACM_Room, FNB_Schedule, ENV_Event,
+  ACM_Location, REF_PICType, ACM_Room, FNB_Schedule, ENV_Event, TPT_Vendor, TPT_Vehicle,
+  TPT_Driver,
 } = require('../models');
 
 const selectAllNotification = async (id) => {
@@ -258,7 +259,64 @@ const createNotifications = async (io, type, relatedDataId, messageVariable) => 
         }
       });
     } else if (notification.limitation?.toLowerCase() === 'vendor') {
-      //
+      // check if user that will recieve notification
+      // belongs to the same event as the related data
+      notification.users.map(async (user) => {
+        const userInstance = await USR_User.findOne({
+          where: { id: user },
+          attributes: ['id', 'participantId'],
+          include: {
+            model: USR_PIC, attributes: ['id', 'typeId'], as: 'PIC', include: { model: REF_PICType, attributes: ['name'] },
+          },
+        });
+
+        let pics = userInstance?.PIC?.map((pic) => {
+          if (pic?.REF_PICType.name?.includes('Transportation')) {
+            return pic.id;
+          }
+          return null;
+        });
+
+        pics = pics.filter((pic) => pic !== null);
+
+        const vendors = await TPT_Vendor.findAll({
+          where: { picId: { [Op.in]: pics } }, attributes: ['id', 'picId'],
+        });
+
+        console.log(dataType);
+
+        if (dataType === 'vehicle') {
+          // * related to table lodger
+          const vehicleInstance = await TPT_Vehicle.findOne({ where: { id: relatedDataId }, attributes: ['id', 'vendorId'] });
+
+          if (vendors.some((vendor) => vendor.id === vehicleInstance.vendorId)) {
+            await SYS_Notification.create({
+              typeId: notificationTypeId,
+              userId: user,
+            }).then(
+              await sendNotification(io, user, `${BASE_URL.value}${dataUrl}${relatedDataId}`, message),
+            );
+          }
+        } else if (dataType === 'driver') {
+          // * related to table driver
+          const driverInstance = await TPT_Driver.findOne({
+            where: { id: relatedDataId }, attributes: ['id', 'vendorId'],
+          });
+
+          console.log(JSON.stringify(vendors, null, 2));
+          console.log(JSON.stringify(driverInstance, null, 2));
+
+          if (vendors.some((vendor) => vendor.id === driverInstance.vendorId)) {
+            console.log(`sending notification to user ${user} message ${message}`);
+            await SYS_Notification.create({
+              typeId: notificationTypeId,
+              userId: user,
+            }).then(
+              await sendNotification(io, user, `${BASE_URL.value}${dataUrl}${relatedDataId}`, message),
+            );
+          }
+        }
+      });
     } else if (notification.limitation?.toLowerCase() === 'driver') {
       //
     } else if (notification.limitation?.toLowerCase() === 'kitchen') {

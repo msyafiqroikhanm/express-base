@@ -2,6 +2,7 @@ const ResponseFormatter = require('../helpers/responseFormatter.helper');
 const {
   selectAllDrivers, selectDriver, updateDriver, deleteDriver, validateDriverInputs, createDriver,
 } = require('../services/driver.service');
+const { createNotifications } = require('../services/notification.service');
 
 class DriverController {
   static async getAll(req, res, next) {
@@ -72,6 +73,14 @@ class DriverController {
       }
 
       const data = await createDriver(inputs.form);
+
+      const io = req.app.get('socketIo');
+      await createNotifications(
+        io,
+        'Driver Created',
+        data.content.id,
+        [data.content.name, data.content.vendor],
+      );
 
       return ResponseFormatter.success201(res, data.message, data.content);
     } catch (error) {
