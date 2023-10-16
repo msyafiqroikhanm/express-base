@@ -63,7 +63,7 @@
     "name": "Vehicle Created",
     "url": "/v1/vehicles/",
     "relatedTable": "Vehicle",
-    "messageFormat": "Vehcile {{1}} has been added for vendor {{2}}"
+    "messageFormat": "Vehicle {{1}} has been added for vendor {{2}}"
   },
   {
     "name": "Transportation Schedule Created",
