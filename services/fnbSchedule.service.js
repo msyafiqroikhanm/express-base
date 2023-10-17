@@ -14,6 +14,7 @@ const {
   FNB_ScheduleMenu,
 } = require('../models');
 const { createQR } = require('./qr.service');
+const { selesai, selesaiDenganKomplen } = require('../libraries/fnbScheduleStatuses.lib');
 
 const selectAllFnBSchedules = async (where) => {
   const fnbScheduleInstances = await FNB_Schedule.findAll({
@@ -431,7 +432,7 @@ const updateProgressFnBSchedule = async (form, where) => {
   }
 
   //* check kitchenId validity
-  const statusId = await REF_FoodScheduleStatus.findByPk(form.statusId);
+  const statusId = await REF_FoodScheduleStatus.findOne({ where: { id: form.statusId } });
   if (!statusId) {
     invalid404.push('FNB Schedule Status Data Not Found');
   }
@@ -451,6 +452,16 @@ const updateProgressFnBSchedule = async (form, where) => {
       code: 404,
       message: invalid404,
     };
+  }
+
+  if (Number(form.statusId) === selesai || Number(form.statusId) === selesaiDenganKomplen) {
+    console.log({ test: 'test' });
+    const courierInstance = await FNB_Courier.findOne({
+      where: { id: fnbScheduleInstance.courierId },
+    });
+    console.log(JSON.stringify(courierInstance));
+    courierInstance.isAvailable = true;
+    await courierInstance.save();
   }
 
   formUpdateScheduleInstance.statusId = form.statusId;
