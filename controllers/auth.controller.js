@@ -31,6 +31,7 @@ class AuthController {
       const message = 'Berhasil Login';
       return ResponseFormatter.success200(res, message, {
         id: user.id,
+        participantId: user.participant.id,
         name: user.participant.name,
         role: user.Role.name,
         isAdministrative: user.Role.isAdministrative,

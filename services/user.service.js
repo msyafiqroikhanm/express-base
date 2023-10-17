@@ -352,7 +352,7 @@ const selectUser = async (query) => {
       {
         model: PAR_Participant,
         as: 'participant',
-        attributes: ['name'],
+        attributes: ['id', 'name'],
         required: true,
       },
       {
