@@ -8,11 +8,14 @@ const cors = require('cors');
 const passport = require('passport');
 const errorHandling = require('./helpers/errorHandling.helper');
 const routes = require('./routes/index.routes');
+require('dotenv').config();
 
-// Authentication middleware
-require('./config/passport');
-
-app.use(passport.initialize());
+// Authentication middleware with passportjs
+if (process.env.NODE_ENV !== 'test') {
+  // eslint-disable-next-line global-require
+  require('./config/passport');
+  app.use(passport.initialize());
+}
 
 app.use(
   morgan('common', {

@@ -165,6 +165,7 @@
   { "role": "PIC Kitchen", "subscriptions": 
     [
       { "typeId": 17, "limitation": "Kitchen" },
+      { "typeId": 18, "limitation": "Kitchen" },
       { "typeId": 24, "limitation":  "Kitchen"},
       { "typeId": 25, "limitation":  "Kitchen"}
     ]

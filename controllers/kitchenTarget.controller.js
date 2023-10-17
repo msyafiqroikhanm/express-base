@@ -9,6 +9,7 @@ const {
   deleteKitchenTarget,
   progressActualKitchenTarget,
 } = require('../services/kitchenTarget.service');
+const { createNotifications } = require('../services/notification.service');
 
 class KitchenTargetController {
   static async getAll(req, res, next) {
@@ -79,6 +80,16 @@ class KitchenTargetController {
 
       const data = await createKitchenTarget(inputs.form);
 
+      console.log(JSON.stringify(data.content, null, 2));
+
+      const io = req.app.get('socketIo');
+      await createNotifications(
+        io,
+        'Kitchen Target Created',
+        data.content.id,
+        [`menu ${data.content.menu} for ${data.content.quantityTarget} pax`, data.content.kitchen],
+      );
+
       return ResponseFormatter.success201(res, data.message, data.content);
     } catch (error) {
       next(error);
@@ -122,6 +133,14 @@ class KitchenTargetController {
       if (!data.success) {
         return ResponseFormatter.error404(res, 'Data Not Found', data.message);
       }
+
+      const io = req.app.get('socketIo');
+      await createNotifications(
+        io,
+        'Kitchen Target Updated',
+        data.content.id,
+        [data.content.kitchen, `${data.content.quantityActual} pax for menu ${data.content.menu}`],
+      );
 
       return ResponseFormatter.success200(res, data.message, data.content);
     } catch (error) {
