@@ -208,7 +208,12 @@ class VehicleScheduleController {
         where.driverId = req.user.limitation.access.driverId;
       }
 
-      const data = await progressVehicleSchedule(req.body, req.params.id, where);
+      const data = await progressVehicleSchedule(
+        req.body,
+        req.params.id,
+        where,
+        req.user.limitation.isAdmin,
+      );
       if (!data.success && data.code === 400) {
         return ResponseFormatter.error404(res, 'Bad Request', data.message);
       }
