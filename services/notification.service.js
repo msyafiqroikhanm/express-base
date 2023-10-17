@@ -35,6 +35,13 @@ const proccessNotificationData = async (typeName) => {
     },
   });
 
+  if (!notificationTypeInstance) {
+    console.log(`Notification Not Found For Type ${typeName}`);
+    return {
+      error: true,
+    };
+  }
+
   // make group of user by the same limitation
   const outputArray = [];
   notificationTypeInstance?.USR_Roles.forEach((role) => {
@@ -69,8 +76,12 @@ const sendNotification = async (io, userId, completeUrl, message) => {
 
 const createNotifications = async (io, type, relatedDataId, messageVariable) => {
   const {
-    notifications, notificationTypeId, dataType, BASE_URL, dataUrl, messageFormat,
+    notifications, notificationTypeId, dataType, BASE_URL, dataUrl, messageFormat, error,
   } = await proccessNotificationData(type);
+
+  if (error) {
+    return;
+  }
 
   let message = messageFormat;
   messageVariable.forEach((variable, index) => {
