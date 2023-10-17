@@ -14,8 +14,12 @@ initializeSocketIO(server).then((io) => app.set('socketIo', io)); // initialize 
 initializeTelegramBot(); // initialize telegram chat bot
 
 server.listen(port, async () => {
-  await db.sequelize.authenticate();
-  console.log(`${process.env.APP_NAME} running on  url: ${process.env.BASE_URL}, environment: ${process.env.NODE_ENV.toUpperCase()}`);
+  // await db.sequelize.authenticate();
+  console.log(
+    `${process.env.APP_NAME} running on  url: ${
+      process.env.BASE_URL
+    }, environment: ${process.env.NODE_ENV.toUpperCase()}`,
+  );
 
   if (process.env.NODE_ENV === 'production') {
     await metaBroadcastSynchronize();

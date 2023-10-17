@@ -10,11 +10,10 @@ module.exports = {
     timezone: '+07:00', // for writing to database
   },
   test: {
-    username: process.env.DEV_DB_USERNAME,
-    password: process.env.DEV_DB_PASSWORD,
-    database: process.env.DEV_DB_NAME,
-    host: process.env.DEV_DB_HOST,
-    dialect: process.env.DEV_DB_DIALECT,
+    username: process.env.TEST_DB_USERNAME,
+    password: process.env.TEST_DB_PASSWORD,
+    database: process.env.TEST_DB_NAME,
+    dialect: process.env.TEST_DB_DIALECT,
     timezone: '+07:00', // for writing to database
   },
   development: {
