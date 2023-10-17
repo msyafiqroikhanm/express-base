@@ -1,6 +1,7 @@
 const { Op } = require('sequelize');
 const {
-  PAR_Participant, REF_Region, PAR_Contingent, ENV_Event, PAR_Group,
+  PAR_Participant, REF_Region, PAR_Contingent, ENV_Event, PAR_Group, TPT_Vehicle,
+  TPT_Driver, TPT_Vendor, TPT_VehicleSchedule,
 } = require('../models');
 
 const participantDasboard = async (limitation = null) => {
@@ -74,12 +75,61 @@ const participantDasboard = async (limitation = null) => {
   };
 };
 
+const transportationDashboard = async (limitation = null) => {
+  // vendor
+  const vendors = await TPT_Vendor.findAll({
+    attributes: ['name'],
+    include: [
+      { model: TPT_Driver, as: 'drivers', attributes: ['id'] },
+      { model: TPT_Vehicle, as: 'vehicles', attributes: ['id'] },
+    ],
+  });
+  const vendor = vendors.map((data) => ({
+    name: data.name, vehicles: data.vehicles.length, drivers: data.drivers.length,
+  }));
+
+  // vehicle
+  const totalVehicle = await TPT_Vehicle.count({ include: { model: TPT_Vendor, as: 'vendor', required: true } });
+  const totalAvailableVehicle = await TPT_Vehicle.count({ where: { isAvailable: true }, include: { model: TPT_Vendor, as: 'vendor', required: true } });
+
+  // driver
+  const totalDriver = await TPT_Driver.count({ include: { model: TPT_Vendor, as: 'vendor', required: true } });
+  const totalAvailableDriver = await TPT_Driver.count({ where: { isAvailable: true }, include: { model: TPT_Vendor, as: 'vendor', required: true } });
+
+  // schedules
+  const todaySchedules = await TPT_VehicleSchedule.count({
+    where: {
+      pickUpTime: {
+        [Op.gte]: new Date().setHours(0, 0, 0, 0),
+        [Op.lte]: new Date().setHours(23, 59, 59, 999),
+      },
+    },
+  });
+
+  return {
+    vendor,
+    vehicle: {
+      totalVehicle,
+      totalAvailableVehicle,
+    },
+    driver: {
+      totalDriver,
+      totalAvailableDriver,
+    },
+    todaySchedules,
+  };
+};
+
 const selectDashboard = async (limitation, models = []) => {
   const dashboard = [];
 
   if (models.includes('Participant Management')) {
     const participant = await participantDasboard(limitation?.contingent || null);
     dashboard.push({ participant });
+  }
+  if (models.includes('Transportation Management')) {
+    const transportation = await transportationDashboard(limitation?.vendor || null);
+    dashboard.push({ transportation });
   }
   return {
     success: true,
