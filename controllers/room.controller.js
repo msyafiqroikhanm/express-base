@@ -8,6 +8,7 @@ const {
   updateRoom,
   deleteRoom,
 } = require('../services/room.service');
+const { createNotifications } = require('../services/notification.service');
 
 class RoomController {
   static async getAll(req, res, next) {
@@ -82,6 +83,14 @@ class RoomController {
       }
 
       const data = await createRoom(inputs.form);
+
+      const io = req.app.get('socketIo');
+      await createNotifications(
+        io,
+        'Room Created',
+        data.content.id,
+        [data.content.name, data.content.location],
+      );
       return ResponseFormatter.success201(res, data.message, data.content);
     } catch (error) {
       next(error);

@@ -372,10 +372,17 @@ const checkinLodger = async (id, form) => {
     return { isValid: false, code: 400, message: errorMessages };
   }
 
+  const participantInstance = await PAR_Participant.findOne({
+    where: { id: lodgerInstance?.participantId },
+    attributes: ['name'],
+  });
+
   lodgerInstance.checkIn = form.checkinTime;
   lodgerInstance.statusId = checkedIn;
 
   await lodgerInstance.save();
+
+  lodgerInstance.participant = participantInstance?.name || null;
 
   return {
     success: true,
@@ -397,6 +404,10 @@ const checkoutLodger = async (id, form) => {
 
   const errorMessages = [];
 
+  if (!lodgerInstance.checkIn) {
+    errorMessages.push('You Cannot Check Out Before Check In');
+  }
+
   if (
     new Date(form.checkoutTime).getTime() <
     new Date(`${lodgerInstance.reservationIn} 00:00:00`).getTime()
@@ -408,10 +419,17 @@ const checkoutLodger = async (id, form) => {
     return { isValid: false, code: 400, message: errorMessages };
   }
 
+  const participantInstance = await PAR_Participant.findOne({
+    where: { id: lodgerInstance?.participantId },
+    attributes: ['name'],
+  });
+
   lodgerInstance.checkout = form.checkoutTime;
   lodgerInstance.statusId = checkedOut;
 
   await lodgerInstance.save();
+
+  lodgerInstance.participant = participantInstance?.name || null;
 
   return {
     success: true,

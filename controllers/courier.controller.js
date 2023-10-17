@@ -9,6 +9,7 @@ const {
   updateCourier,
   deleteCourier,
 } = require('../services/courier.service');
+const { createNotifications } = require('../services/notification.service');
 
 class CourierController {
   static async getAll(req, res, next) {
@@ -60,9 +61,16 @@ class CourierController {
         }
         return ResponseFormatter.error400(res, 'Bad Request', inputs.message);
       }
-      console.log(inputs);
 
       const data = await createCourier(inputs.form);
+
+      const io = req.app.get('socketIo');
+      await createNotifications(
+        io,
+        'Courier Created',
+        data.content.id,
+        [data.content.name],
+      );
       return ResponseFormatter.success201(res, data.message, data.content);
     } catch (error) {
       next(error);

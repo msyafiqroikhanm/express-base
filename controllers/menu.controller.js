@@ -7,6 +7,7 @@ const {
   updateMenu,
   deleteMenu,
 } = require('../services/menu.service');
+const { createNotifications } = require('../services/notification.service');
 
 class MenuController {
   static async getAll(req, res, next) {
@@ -62,6 +63,14 @@ class MenuController {
       }
 
       const data = await createMenu(inputs.form);
+
+      const io = req.app.get('socketIo');
+      await createNotifications(
+        io,
+        'Menu Created',
+        data.content.id,
+        [data.content.name],
+      );
 
       return ResponseFormatter.success201(res, data.message, data.content);
     } catch (error) {

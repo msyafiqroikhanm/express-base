@@ -35,6 +35,13 @@ const proccessNotificationData = async (typeName) => {
     },
   });
 
+  if (!notificationTypeInstance) {
+    console.log(`Notification Not Found For Type ${typeName}`);
+    return {
+      error: true,
+    };
+  }
+
   // make group of user by the same limitation
   const outputArray = [];
   notificationTypeInstance?.USR_Roles.forEach((role) => {
@@ -69,16 +76,17 @@ const sendNotification = async (io, userId, completeUrl, message) => {
 
 const createNotifications = async (io, type, relatedDataId, messageVariable) => {
   const {
-    notifications, notificationTypeId, dataType, BASE_URL, dataUrl, messageFormat,
+    notifications, notificationTypeId, dataType, BASE_URL, dataUrl, messageFormat, error,
   } = await proccessNotificationData(type);
+
+  if (error) {
+    return;
+  }
 
   let message = messageFormat;
   messageVariable.forEach((variable, index) => {
     message = message.replace(`{{${index + 1}}}`, variable);
   });
-
-  console.log(dataType);
-  console.log(notifications);
 
   await Promise.all(notifications.map(async (notification) => {
     if (notification.limitation?.toLowerCase() === 'contingent') {
@@ -398,11 +406,6 @@ const createNotifications = async (io, type, relatedDataId, messageVariable) => 
 
         if (dataType === 'kitchen-target') {
           const targetInstance = await FNB_KitchenTarget.findOne({ where: { id: relatedDataId }, attributes: ['id', 'kitchenId'] });
-
-          console.log(JSON.stringify(userInstance, null, 2));
-          console.log(JSON.stringify(kitchens, null, 2));
-          console.log(JSON.stringify(targetInstance, null, 2));
-          console.log('-----------------------------------');
 
           if (kitchens.some((kitchen) => kitchen.id === targetInstance.kitchenId)) {
             await SYS_Notification.create({

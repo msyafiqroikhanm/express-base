@@ -80,8 +80,6 @@ class KitchenTargetController {
 
       const data = await createKitchenTarget(inputs.form);
 
-      console.log(JSON.stringify(data.content, null, 2));
-
       const io = req.app.get('socketIo');
       await createNotifications(
         io,

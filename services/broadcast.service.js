@@ -16,6 +16,7 @@ const {
 } = require('../models');
 const { formatWhatsappMessage, metaSendMessage } = require('./whatsapp.integration.service');
 const deleteFile = require('../helpers/deleteFile.helper');
+const { createNotifications } = require('./notification.service');
 
 const setTimeoutPromise = util.promisify(setTimeout);
 
@@ -96,6 +97,8 @@ const validateBroadcastInputs = async (form, file) => {
   const templateInstance = await CSM_BroadcastTemplate.findByPk(form.templateId, {
     include: [{ model: REF_TemplateHeaderType, as: 'headerType', attributes: ['name'] }],
   });
+
+  console.log(JSON.stringify(templateInstance, null, 2));
   if (!templateInstance) {
     invalid404.push('Broadcast Template Data Not Found');
   }
@@ -119,8 +122,7 @@ const validateBroadcastInputs = async (form, file) => {
       headerFile = `public/documents/broadcasts/${file.filename}`;
     }
   } else if (
-    templateInstance?.headerType.name === 'TEXT' &&
-    templateInstance?.headerVariableExample
+    templateInstance?.headerType.name === 'TEXT' && templateInstance?.headerVariableExample
   ) {
     if (!form.headerText) {
       invalid400.push(
@@ -142,8 +144,8 @@ const validateBroadcastInputs = async (form, file) => {
 
   // * Validate Button
   if (
-    templateInstance?.button?.length > 0 &&
-    form.buttonParameters?.length !== templateInstance?.button?.length
+    templateInstance?.button?.length > 0
+    && form.buttonParameters?.length !== templateInstance?.button?.length
   ) {
     invalid400.push(
       `Button Parameters Required ${templateInstance?.button?.length} For Chosen Broadcast Template`,
@@ -210,7 +212,7 @@ const createBroadcast = async (form) => {
   };
 };
 
-const scheduleBroadcast = async (broadcastId) => {
+const scheduleBroadcast = async (broadcastId, io) => {
   const receivers = await CSM_BroadcastParticipant.findAll({
     where: { broadcastId },
     include: {
@@ -288,6 +290,8 @@ const scheduleBroadcast = async (broadcastId) => {
 
     broadcastInstance.status = 'Sent';
     await broadcastInstance.save();
+
+    await createNotifications(io, 'Broadcast Progress', broadcastInstance.id, [new Date()]);
     cron.cancelJob(`${broadcastInstance.id}`);
   });
 };
