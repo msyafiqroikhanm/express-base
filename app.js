@@ -9,7 +9,8 @@ const passport = require('passport');
 const errorHandling = require('./helpers/errorHandling.helper');
 const routes = require('./routes/index.routes');
 
-// Authentication middleware
+// Authentication middleware with passportjs
+
 require('./config/passport');
 
 app.use(passport.initialize());
