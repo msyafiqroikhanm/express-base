@@ -27,6 +27,7 @@ module.exports = (sequelize, DataTypes) => {
       USR_User.hasMany(models.SYS_Notification, { foreignKey: 'userId', as: 'notifications' });
 
       USR_User.hasOne(models.TPT_Driver, { foreignKey: 'userId', as: 'driver' });
+      USR_User.hasOne(models.FNB_Courier, { foreignKey: 'userId', as: 'courier' });
     }
   }
   USR_User.init(

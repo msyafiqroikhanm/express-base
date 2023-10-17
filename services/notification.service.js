@@ -4,7 +4,7 @@ const {
   SYS_Notification, SYS_NotificationType, USR_Role, USR_User, SYS_Configuration,
   PAR_Participant, PAR_Group, ACM_ParticipantLodger, TPT_VehicleSchedule, USR_PIC,
   ACM_Location, REF_PICType, ACM_Room, FNB_Schedule, ENV_Event, TPT_Vendor, TPT_Vehicle,
-  TPT_Driver,
+  TPT_Driver, FNB_Kitchen, FNB_KitchenTarget, FNB_Courier,
 } = require('../models');
 
 const selectAllNotification = async (id) => {
@@ -76,6 +76,9 @@ const createNotifications = async (io, type, relatedDataId, messageVariable) => 
   messageVariable.forEach((variable, index) => {
     message = message.replace(`{{${index + 1}}}`, variable);
   });
+
+  console.log(dataType);
+  console.log(notifications);
 
   await Promise.all(notifications.map(async (notification) => {
     if (notification.limitation?.toLowerCase() === 'contingent') {
@@ -369,9 +372,87 @@ const createNotifications = async (io, type, relatedDataId, messageVariable) => 
         }
       });
     } else if (notification.limitation?.toLowerCase() === 'kitchen') {
-      //
+      // check if user that will recieve notification
+      // belongs to the same event as the related data
+      notification.users.map(async (user) => {
+        const userInstance = await USR_User.findOne({
+          where: { id: user },
+          attributes: ['id', 'participantId'],
+          include: {
+            model: USR_PIC, attributes: ['id', 'typeId'], as: 'PIC', include: { model: REF_PICType, attributes: ['name'] },
+          },
+        });
+
+        let pics = userInstance?.PIC?.map((pic) => {
+          if (pic?.REF_PICType.name?.includes('Kitchen')) {
+            return pic.id;
+          }
+          return null;
+        });
+
+        pics = pics.filter((pic) => pic !== null);
+
+        const kitchens = await FNB_Kitchen.findAll({
+          where: { picId: { [Op.in]: pics } }, attributes: ['id', 'picId'],
+        });
+
+        if (dataType === 'kitchen-target') {
+          const targetInstance = await FNB_KitchenTarget.findOne({ where: { id: relatedDataId }, attributes: ['id', 'kitchenId'] });
+
+          console.log(JSON.stringify(userInstance, null, 2));
+          console.log(JSON.stringify(kitchens, null, 2));
+          console.log(JSON.stringify(targetInstance, null, 2));
+          console.log('-----------------------------------');
+
+          if (kitchens.some((kitchen) => kitchen.id === targetInstance.kitchenId)) {
+            await SYS_Notification.create({
+              typeId: notificationTypeId,
+              userId: user,
+            }).then(
+              await sendNotification(io, user, `${BASE_URL.value}${dataUrl}${relatedDataId}`, message),
+            );
+          }
+        } else if (dataType === 'fnb-schedule') {
+          const scheduleInstance = await FNB_Schedule.findOne({ where: { id: relatedDataId }, attributes: ['id', 'kitchenId'] });
+
+          if (kitchens.some((kitchen) => kitchen.id === scheduleInstance.kitchenId)) {
+            await SYS_Notification.create({
+              typeId: notificationTypeId,
+              userId: user,
+            }).then(
+              await sendNotification(io, user, `${BASE_URL.value}${dataUrl}${relatedDataId}`, message),
+            );
+          }
+        }
+      });
     } else if (notification.limitation?.toLowerCase() === 'courier') {
-      //
+      // check if user that will recieve notification
+      // belongs to the same event as the related data
+      notification.users.map(async (user) => {
+        const userInstance = await USR_User.findOne({
+          where: { id: user },
+          attributes: ['id', 'participantId'],
+          include: {
+            model: FNB_Courier, attributes: ['id'], as: 'courier',
+          },
+        });
+
+        if (dataType === 'fnb-schedule') {
+          // * related to table fnb schedule
+          const scheduleInstance = await FNB_Schedule.findOne({
+            where: { id: relatedDataId }, attributes: ['id', 'courierId'],
+          });
+
+          if (scheduleInstance?.courierId === userInstance?.courier?.id) {
+            await SYS_Notification.create({
+              typeId: notificationTypeId,
+              userId: user,
+            }).then(
+              await sendNotification(io, user, `${BASE_URL.value}${dataUrl}${relatedDataId}`, message),
+            );
+          }
+        }
+      });
     } else {
       notification.users.map(async (user) => {
         await SYS_Notification.create({

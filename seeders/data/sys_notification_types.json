@@ -105,7 +105,7 @@
     "name": "Kitchen Target Updated",
     "url": "/v1/kitchen-targets/",
     "relatedTable": "Kitchen-Target",
-    "messageFormat": "Target {{1}} has been updated for kitchen {{2}}"
+    "messageFormat": "Target for kitchen {{1}} has been created {{2}}"
   },
   {
     "name": "Feedback Created",
