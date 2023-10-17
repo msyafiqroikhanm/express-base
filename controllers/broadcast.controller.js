@@ -57,7 +57,8 @@ class BroadcastController {
 
       const data = await createBroadcast(inputs.form);
 
-      await scheduleBroadcast(data.content.id);
+      const io = req.app.get('socketIo');
+      await scheduleBroadcast(data.content.id, io);
 
       return ResponseFormatter.success201(res, data.message, data.content);
     } catch (error) {
