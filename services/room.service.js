@@ -136,6 +136,9 @@ const selectRoom = async (where) => {
 const createRoom = async (form) => {
   const room = await ACM_Room.create(form);
 
+  const locationInstance = await ACM_Location.findOne({ where: { id: form.locationId }, attributes: ['name'] });
+  room.location = locationInstance.dataValues.name;
+
   return {
     success: true,
     message: 'Room Successfully Created',

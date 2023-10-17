@@ -77,9 +77,6 @@ const createNotifications = async (io, type, relatedDataId, messageVariable) => 
     message = message.replace(`{{${index + 1}}}`, variable);
   });
 
-  console.log(dataType);
-  console.log(notifications);
-
   await Promise.all(notifications.map(async (notification) => {
     if (notification.limitation?.toLowerCase() === 'contingent') {
       // check if user that will recieve notification
@@ -398,11 +395,6 @@ const createNotifications = async (io, type, relatedDataId, messageVariable) => 
 
         if (dataType === 'kitchen-target') {
           const targetInstance = await FNB_KitchenTarget.findOne({ where: { id: relatedDataId }, attributes: ['id', 'kitchenId'] });
-
-          console.log(JSON.stringify(userInstance, null, 2));
-          console.log(JSON.stringify(kitchens, null, 2));
-          console.log(JSON.stringify(targetInstance, null, 2));
-          console.log('-----------------------------------');
 
           if (kitchens.some((kitchen) => kitchen.id === targetInstance.kitchenId)) {
             await SYS_Notification.create({

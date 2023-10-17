@@ -156,6 +156,13 @@ class LodgerController {
         return ResponseFormatter.error400(res, 'Bad Request', data.message);
       }
 
+      const io = req.app.get('socketIo');
+      await createNotifications(io, 'Check In', data.content.id, [
+        data.content.participant,
+        data.content.checkIn,
+        data.content.id,
+      ]);
+
       return ResponseFormatter.success200(res, data.message, data.content);
     } catch (error) {
       next(error);
@@ -173,6 +180,13 @@ class LodgerController {
       if (!data.success && data.code === 400) {
         return ResponseFormatter.error400(res, 'Bad Request', data.message);
       }
+
+      const io = req.app.get('socketIo');
+      await createNotifications(io, 'Check Out', data.content.id, [
+        data.content.participant,
+        data.content.checkOut,
+        data.content.id,
+      ]);
 
       return ResponseFormatter.success200(res, data.message, data.content);
     } catch (error) {

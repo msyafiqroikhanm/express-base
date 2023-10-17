@@ -362,8 +362,7 @@ const checkinLodger = async (id, form) => {
   const errorMessages = [];
 
   if (
-    new Date(form.checkinTime).getTime() <
-    new Date(`${lodgerInstance.reservationIn} 00:00:00`).getTime()
+    new Date(form.checkinTime).getTime() < new Date(`${lodgerInstance.reservationIn} 00:00:00`).getTime()
   ) {
     errorMessages.push('You are not allowed to check in before the reservation schedule');
   }
@@ -372,10 +371,16 @@ const checkinLodger = async (id, form) => {
     return { isValid: false, code: 400, message: errorMessages };
   }
 
+  const participantInstance = await PAR_Participant.findOne({
+    where: { id: lodgerInstance?.participantId }, attributes: ['name'],
+  });
+
   lodgerInstance.checkIn = form.checkinTime;
   lodgerInstance.statusId = checkedIn;
 
   await lodgerInstance.save();
+
+  lodgerInstance.participant = participantInstance?.name || null;
 
   return {
     success: true,
@@ -398,8 +403,7 @@ const checkoutLodger = async (id, form) => {
   const errorMessages = [];
 
   if (
-    new Date(form.checkoutTime).getTime() <
-    new Date(`${lodgerInstance.reservationIn} 00:00:00`).getTime()
+    new Date(form.checkoutTime).getTime() < new Date(`${lodgerInstance.reservationIn} 00:00:00`).getTime()
   ) {
     errorMessages.push('You are not allowed to check out before the reservation schedule');
   }
@@ -408,10 +412,16 @@ const checkoutLodger = async (id, form) => {
     return { isValid: false, code: 400, message: errorMessages };
   }
 
+  const participantInstance = await PAR_Participant.findOne({
+    where: { id: lodgerInstance?.participantId }, attributes: ['name'],
+  });
+
   lodgerInstance.checkout = form.checkoutTime;
   lodgerInstance.statusId = checkedOut;
 
   await lodgerInstance.save();
+
+  lodgerInstance.participant = participantInstance?.name || null;
 
   return {
     success: true,

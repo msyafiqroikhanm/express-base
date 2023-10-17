@@ -8,6 +8,7 @@ const {
   updateFacility,
   deleteFacility,
 } = require('../services/facility.service');
+const { createNotifications } = require('../services/notification.service');
 
 class FacilityController {
   static async getAll(req, res, next) {
@@ -68,6 +69,14 @@ class FacilityController {
       }
 
       const data = await createFacility(inputs.form);
+
+      const io = req.app.get('socketIo');
+      await createNotifications(
+        io,
+        'Facility Created',
+        data.content.id,
+        [data.content.name, data.content.location],
+      );
       return ResponseFormatter.success201(res, data.message, data.content);
     } catch (error) {
       next(error);

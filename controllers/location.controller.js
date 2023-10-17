@@ -8,6 +8,7 @@ const {
   deleteLocation,
   findCoordinate,
 } = require('../services/location.service');
+const { createNotifications } = require('../services/notification.service');
 
 class LocationController {
   static async getAll(req, res, next) {
@@ -66,6 +67,14 @@ class LocationController {
       }
 
       const data = await createLocation(inputs.form);
+
+      const io = req.app.get('socketIo');
+      await createNotifications(
+        io,
+        'Location Created',
+        data.content.id,
+        [data.content.name],
+      );
 
       return ResponseFormatter.success201(res, data.message, data.content);
     } catch (error) {

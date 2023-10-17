@@ -3,6 +3,7 @@ const {
   selectAllContingents, selectContingent, validateContingentInput,
   createContingent, updateContingent, deleteContingent,
 } = require('../services/continget.service');
+const { createNotifications } = require('../services/notification.service');
 
 class Contingent {
   static async getAll(req, res, next) {
@@ -60,6 +61,14 @@ class Contingent {
       if (!data.success) {
         return ResponseFormatter.error400(res, 'Bad Request', data.message);
       }
+
+      const io = req.app.get('socketIo');
+      await createNotifications(
+        io,
+        'Contingent Created',
+        data.content.id,
+        [data.content.name],
+      );
 
       return ResponseFormatter.success201(res, data.message, data.content);
     } catch (error) {

@@ -47,6 +47,9 @@ const selectFacility = async (where) => {
 const createFacility = async (form) => {
   const facilityInstance = await ACM_Facility.create(form);
 
+  const locationInstance = await ACM_Location.findOne({ where: { id: form.locationId }, attributes: ['name'] });
+  facilityInstance.location = locationInstance.dataValues.name;
+
   return {
     success: true,
     message: 'Facility Successfully Created',
