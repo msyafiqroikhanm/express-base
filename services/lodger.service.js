@@ -1,5 +1,6 @@
 /* eslint-disable no-param-reassign */
 const lodgerHelper = require('../helpers/lodgerStatus.helper');
+const { checkedIn, checkedOut } = require('../libraries/lodgerStatuses.lib');
 const {
   REF_IdentityType,
   REF_LodgerStatus,
@@ -21,7 +22,7 @@ const {
 } = require('../models');
 
 const selectAllLodgers = async (where) => {
-  console.log(where);
+  // console.log(where);
   const lodgerInstance = await ACM_ParticipantLodger.findAll({
     // where,
     include: [
@@ -226,6 +227,16 @@ const createLodger = async (form) => {
   const lodgerInstance = await ACM_ParticipantLodger.create(form.lodger);
   const roomInstance = await ACM_Room.findByPk(form.lodger.roomId);
 
+  let locationInstance;
+  if (roomInstance) {
+    locationInstance = await ACM_Location.findOne({
+      where: { id: roomInstance.locationId },
+      attributes: ['name'],
+    });
+  }
+
+  lodgerInstance.location = locationInstance ? locationInstance.name : '';
+
   await ACM_Room.update(form.room, { where: { id: roomInstance.id } });
 
   return {
@@ -337,6 +348,78 @@ const updateLodger = async (id, form) => {
   };
 };
 
+const checkinLodger = async (id, form) => {
+  // check identity type id validity
+  const lodgerInstance = await ACM_ParticipantLodger.findByPk(id);
+  if (!lodgerInstance) {
+    return {
+      success: false,
+      code: 404,
+      message: 'Participant Lodger Data Not Found',
+    };
+  }
+
+  const errorMessages = [];
+
+  if (
+    new Date(form.checkinTime).getTime() <
+    new Date(`${lodgerInstance.reservationIn} 00:00:00`).getTime()
+  ) {
+    errorMessages.push('You are not allowed to check in before the reservation schedule');
+  }
+
+  if (errorMessages.length > 0) {
+    return { isValid: false, code: 400, message: errorMessages };
+  }
+
+  lodgerInstance.checkIn = form.checkinTime;
+  lodgerInstance.statusId = checkedIn;
+
+  await lodgerInstance.save();
+
+  return {
+    success: true,
+    message: 'Participant Lodger Successfully Checkin',
+    content: lodgerInstance,
+  };
+};
+
+const checkoutLodger = async (id, form) => {
+  // check identity type id validity
+  const lodgerInstance = await ACM_ParticipantLodger.findByPk(id);
+  if (!lodgerInstance) {
+    return {
+      success: false,
+      code: 404,
+      message: 'Participant Lodger Data Not Found',
+    };
+  }
+
+  const errorMessages = [];
+
+  if (
+    new Date(form.checkoutTime).getTime() <
+    new Date(`${lodgerInstance.reservationIn} 00:00:00`).getTime()
+  ) {
+    errorMessages.push('You are not allowed to check out before the reservation schedule');
+  }
+
+  if (errorMessages.length > 0) {
+    return { isValid: false, code: 400, message: errorMessages };
+  }
+
+  lodgerInstance.checkout = form.checkoutTime;
+  lodgerInstance.statusId = checkedOut;
+
+  await lodgerInstance.save();
+
+  return {
+    success: true,
+    message: 'Participant Lodger Successfully Check Out',
+    content: lodgerInstance,
+  };
+};
+
 const deleteLodger = async (id) => {
   const lodgerInstance = await ACM_ParticipantLodger.findByPk(id);
   if (!lodgerInstance) {
@@ -422,4 +505,6 @@ module.exports = {
   updateLodger,
   deleteLodger,
   selectAllParticipantLodger,
+  checkinLodger,
+  checkoutLodger,
 };

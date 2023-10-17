@@ -77,6 +77,9 @@ class RoomController {
       if (!inputs.isValid && inputs.code === 404) {
         return ResponseFormatter.error404(res, 'Data Not Found', inputs.message);
       }
+      if (!inputs.isValid && inputs.code === 400) {
+        return ResponseFormatter.error400(res, 'Bad Request', inputs.message);
+      }
 
       const data = await createRoom(inputs.form);
       return ResponseFormatter.success201(res, data.message, data.content);

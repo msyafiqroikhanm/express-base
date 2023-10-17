@@ -292,6 +292,7 @@ const progressVehicleSchedule = async (form, id, where = {}) => {
     where: where.driverId ? { id, driverId: where.driverId } : { id },
     include: { model: REF_VehicleScheduleStatus, attributes: ['name'], as: 'status' },
   });
+
   if (!scheduleInstance) {
     return {
       success: false,
@@ -324,6 +325,12 @@ const progressVehicleSchedule = async (form, id, where = {}) => {
 
   scheduleInstance.statusId = statusInstance?.id || scheduleInstance.statusId;
   await scheduleInstance.save();
+  if (!scheduleInstance) {
+    const status = await REF_VehicleScheduleStatus.findByPk(scheduleInstance.statusId);
+    scheduleInstance.status = status.dataValues.name;
+  } else {
+    scheduleInstance.status = statusInstance.dataValues.name;
+  }
 
   if (['Completed', 'Done', 'Finish', 'Arrived'].includes(statusInstance?.name)) {
     // when a trip is finish change passenger status
@@ -400,7 +407,7 @@ const validateProvideScheduleInputs = async (form, id, where) => {
   });
   if (!vehicleInstance) {
     invalid404.push('Vehicle Data Not Found');
-  } else if (scheduleInstance.vehicleId !== vehicleInstance.id && !vehicleInstance.isAvailable) {
+  } else if (scheduleInstance?.vehicleId !== vehicleInstance.id && !vehicleInstance.isAvailable) {
     // check when with different vehicle data, is the vehicle available
     invalid400.push('Vehicle Is Not Available');
   }
@@ -413,7 +420,7 @@ const validateProvideScheduleInputs = async (form, id, where) => {
   if (!driverInstance) {
     // check if driver exits
     invalid404.push('Driver Data Not Found');
-  } else if (scheduleInstance.driverId !== driverInstance.id && !driverInstance.isAvailable) {
+  } else if (scheduleInstance?.driverId !== driverInstance.id && !driverInstance.isAvailable) {
     // check when with different driver data, is the driver available
     invalid400.push('Driver Is Not Available');
   }

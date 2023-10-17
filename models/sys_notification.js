@@ -12,12 +12,13 @@ module.exports = (sequelize, DataTypes) => {
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
+      SYS_Notification.belongsTo(models.SYS_NotificationType, { foreignKey: 'typeId', as: 'type' });
       SYS_Notification.belongsTo(models.USR_User, { foreignKey: 'userId', as: 'user' });
     }
   }
   SYS_Notification.init({
-    userId: DataTypes.INTEGER,
     typeId: DataTypes.INTEGER,
+    userId: DataTypes.INTEGER,
     relatedDataId: DataTypes.INTEGER,
     url: DataTypes.TEXT,
     message: DataTypes.TEXT,

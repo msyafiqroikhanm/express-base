@@ -1,3 +1,4 @@
+const { Op } = require('sequelize');
 const {
   ACM_Location,
   ACM_Room,
@@ -238,41 +239,56 @@ const deleteRoom = async (where) => {
 };
 
 const validateRoomInputs = async (form, where) => {
-  const errorMessages = [];
+  const invalid404 = [];
+  const invalid400 = [];
 
   const locationInstance = await ACM_Location.findOne({ where });
   if (!locationInstance) {
-    errorMessages.push('Location Data Not Found');
+    invalid404.push('Location Data Not Found');
+  }
+  if (invalid404.length > 0) {
+    return { isValid: false, code: 404, message: invalid404 };
+  }
+
+  //* Unique Name and Location Checking
+  const roomInstanceCheck = await ACM_Room.findOne({
+    where: { locationId: locationInstance.id, name: { [Op.substring]: form.name } },
+  });
+  if (roomInstanceCheck) {
+    invalid400.push('Room Data Already Exists');
   }
 
   const typeInstance = await REF_RoomType.findByPk(form.typeId);
   if (!typeInstance) {
-    errorMessages.push('Room Type Data Not Found');
+    invalid404.push('Room Type Data Not Found');
   }
   if (locationInstance && typeInstance) {
     if (typeInstance.locationId !== locationInstance.id) {
-      errorMessages.push('Prohibited To Fill Room Type From Other Location');
+      invalid404.push('Prohibited To Fill Room Type From Other Location');
     }
   }
 
   const bedInstance = await ACM_RoomBedType.findByPk(form.bedId);
   if (!bedInstance) {
-    errorMessages.push('Bed Type Data Not Found');
+    invalid404.push('Bed Type Data Not Found');
   }
 
   if (locationInstance && bedInstance) {
     if (bedInstance.locationId !== locationInstance.id) {
-      errorMessages.push('Prohibited To Fill Bed Type From Other Location');
+      invalid404.push('Prohibited To Fill Bed Type From Other Location');
     }
   }
 
   // const statusInstance = await REF_RoomStatus.findByPk(form.statusId);
   // if (!statusInstance) {
-  //   errorMessages.push('Room Status Data Not Found');
+  //   invalid404.push('Room Status Data Not Found');
   // }
 
-  if (errorMessages.length > 0) {
-    return { isValid: false, code: 404, message: errorMessages };
+  if (invalid404.length > 0) {
+    return { isValid: false, code: 404, message: invalid404 };
+  }
+  if (invalid400.length > 0) {
+    return { isValid: false, code: 400, message: invalid400 };
   }
 
   return {

@@ -276,6 +276,14 @@ const validateFnBScheduleInputs = async (form, limitation = null) => {
 const createFnBSchedule = async (form) => {
   const fnbScheduleInstance = await FNB_Schedule.create(form);
 
+  if (fnbScheduleInstance) {
+    const locationInstance = await ACM_Location.findByPk(form.locationId, { attributes: ['name'] });
+    const kitchenInstance = await FNB_Kitchen.findByPk(form.kitchenId, { attributes: ['name'] });
+
+    fnbScheduleInstance.location = locationInstance.dataValues.name;
+    fnbScheduleInstance.kitchen = kitchenInstance.dataValues.name;
+  }
+
   await FNB_Courier.update({ isAvailable: false }, { where: { id: form.courierId } });
 
   return {
@@ -342,8 +350,8 @@ const updateFnBSchedule = async (form, where) => {
   // console.log(form, formUpdateScheduleInstance);
   if (form.dropOffTime && formUpdateScheduleInstance.pickUpTime) {
     if (
-      new Date(form.dropOffTime).getTime() <
-      new Date(formUpdateScheduleInstance.pickUpTime).getTime()
+      new Date(form.dropOffTime).getTime()
+      < new Date(formUpdateScheduleInstance.pickUpTime).getTime()
     ) {
       invalid400.push('Drop Off Time should not be faster than Pick Up Time');
     }
@@ -427,6 +435,8 @@ const updateProgressFnBSchedule = async (form, where) => {
   if (!statusId) {
     invalid404.push('FNB Schedule Status Data Not Found');
   }
+
+  fnbScheduleInstance.status = statusId.dataValues.name;
 
   if (invalid400.length > 0) {
     return {

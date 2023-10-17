@@ -1,4 +1,5 @@
 const ResponseFormatter = require('../helpers/responseFormatter.helper');
+const { createNotifications } = require('../services/notification.service');
 const {
   selectAllVendors, selectVendor, deleteVendor, updateVendor, createVendor, validateVendorInputs,
 } = require('../services/vendor.service');
@@ -62,6 +63,14 @@ class VendorController {
       }
 
       const data = await createVendor(inputs.form);
+
+      const io = req.app.get('socketIo');
+      await createNotifications(
+        io,
+        'Vendor Created',
+        data.content.id,
+        [data.content.name],
+      );
 
       return ResponseFormatter.success201(res, data.message, data.content);
     } catch (error) {

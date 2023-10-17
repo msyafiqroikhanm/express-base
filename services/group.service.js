@@ -133,9 +133,9 @@ const validateGroupInputs = async (form, id, limitation = null) => {
   }
 
   // assingning participant that already regirestered to the event
-  const registeredParticipants = eventInstance.PAR_Groups
+  const registeredParticipants = eventInstance?.PAR_Groups
     .flatMap((group) => group.PAR_Participants)
-    .map((participant) => ({ id: participant.id, name: participant.name }));
+    .map((participant) => ({ id: participant.id, name: participant.name })) || [];
 
   // check contingentId validity
   const contingentInstance = await PAR_Contingent.findByPk(contingentId);
@@ -159,7 +159,7 @@ const validateGroupInputs = async (form, id, limitation = null) => {
 
   let validParticipants;
 
-  if (form.participants.length <= eventInstance.maxParticipantPerGroup) {
+  if (form.participants.length <= eventInstance?.maxParticipantPerGroup) {
     // validate Recipiants / receivers
     validParticipants = await PAR_Participant.findAll({
       where: {
@@ -210,35 +210,35 @@ const validateGroupInputs = async (form, id, limitation = null) => {
 
     const oldParticipants = groupInstance?.PAR_Participants.map((participant) => participant.id);
 
-    const filteredRegisteredParticipants = registeredParticipants.filter(
+    const filteredRegisteredParticipants = registeredParticipants?.filter(
       (participant) => !oldParticipants.includes(participant.id),
     );
 
-    filteredRegisteredParticipants.forEach((participant) => {
+    filteredRegisteredParticipants?.forEach((participant) => {
       if (formParticipants.includes(participant.id)) {
         invalid400.push(`Participant ${participant.name} Already Registered`);
       }
     });
   } else {
-    registeredParticipants.forEach((participant) => {
+    registeredParticipants?.forEach((participant) => {
       if (formParticipants.includes(participant.id)) {
         invalid400.push(`Participant ${participant.name} Already Registered`);
       }
     });
   }
 
-  if (invalid400.length > 0) {
-    return {
-      isValid: false,
-      code: 400,
-      message: invalid400,
-    };
-  }
   if (invalid404.length > 0) {
     return {
       isValid: false,
       code: 404,
       message: invalid404,
+    };
+  }
+  if (invalid400.length > 0) {
+    return {
+      isValid: false,
+      code: 400,
+      message: invalid400,
     };
   }
 
@@ -335,6 +335,62 @@ const deleteGroup = async (id, where) => {
   };
 };
 
+const validateGroupProgressInputs = async (form, id) => {
+  const invalid400 = [];
+  const invalid404 = [];
+
+  const groupInstance = await PAR_Group.findOne({
+    where: { id }, attributes: ['id'],
+  });
+  if (!groupInstance) {
+    invalid404.push('Group Data Not Found');
+  }
+
+  const statusInstance = await REF_GroupStatus.findOne({ where: { id: form.statusId }, attributes: ['id', 'name'] });
+  if (!statusInstance) {
+    invalid404.push('Status Data Not Found');
+  }
+
+  if (invalid400.length > 0) {
+    return {
+      isValid: false,
+      code: 400,
+      message: invalid400,
+    };
+  }
+  if (invalid404.length > 0) {
+    return {
+      isValid: false,
+      code: 404,
+      message: invalid404,
+    };
+  }
+
+  return {
+    isValid: true,
+    form: {
+      status: statusInstance || null,
+    },
+  };
+};
+
+const updateGroupProgress = async (form, id) => {
+  const groupInstance = await PAR_Group.findOne({
+    where: { id }, attributes: ['id', 'statusId'],
+  });
+
+  groupInstance.statusId = form.status?.id || groupInstance.statusId;
+  await groupInstance.save();
+
+  groupInstance.status = form.status?.name || null;
+
+  return {
+    success: true,
+    message: 'Group Status Successfully Progressed / Updated',
+    content: groupInstance,
+  };
+};
+
 module.exports = {
   selectAllGroups,
   selectGroup,
@@ -342,4 +398,6 @@ module.exports = {
   createGroup,
   updateGroup,
   deleteGroup,
+  validateGroupProgressInputs,
+  updateGroupProgress,
 };

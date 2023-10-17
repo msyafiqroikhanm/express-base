@@ -22,6 +22,7 @@ const {
   downloadParticipantSecretFile,
 } = require('../services/participant.service');
 const { deleteFiles } = require('../helpers/deleteMultipleFile.helper');
+const { createNotifications } = require('../services/notification.service');
 
 class Participant {
   static async getAll(req, res, next) {
@@ -139,6 +140,14 @@ class Participant {
         }
         return ResponseFormatter.error400(res, 'Bad Request', data.message);
       }
+
+      const io = req.app.get('socketIo');
+      await createNotifications(
+        io,
+        'Participant Created',
+        data.content.id,
+        [data.content.name],
+      );
 
       return ResponseFormatter.success201(res, data.message, data.content);
     } catch (error) {

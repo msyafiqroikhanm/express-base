@@ -6,7 +6,10 @@ const {
   createGroup,
   updateGroup,
   deleteGroup,
+  validateGroupProgressInputs,
+  updateGroupProgress,
 } = require('../services/group.service');
+const { createNotifications } = require('../services/notification.service');
 
 class ParticipantGroup {
   static async getAll(req, res, next) {
@@ -74,6 +77,14 @@ class ParticipantGroup {
         return ResponseFormatter.error400(res, 'Bad Request', data.message);
       }
 
+      const io = req.app.get('socketIo');
+      await createNotifications(
+        io,
+        'Group Created',
+        data.content.id,
+        [data.content.name],
+      );
+
       return ResponseFormatter.success201(res, data.message, data.content);
     } catch (error) {
       next(error);
@@ -123,6 +134,34 @@ class ParticipantGroup {
       if (!data.success && data.code === 404) {
         return ResponseFormatter.error404(res, 'Data Not Found', data.message);
       }
+
+      return ResponseFormatter.success200(res, data.message, data.content);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  static async progress(req, res, next) {
+    try {
+      res.url = `${req.method} ${req.originalUrl}`;
+
+      const inputs = await validateGroupProgressInputs(req.body, req.params.id);
+      if (!inputs.isValid && inputs.code === 400) {
+        return ResponseFormatter.error400(res, 'Bad Request', inputs.message);
+      }
+      if (!inputs.isValid && inputs.code === 404) {
+        return ResponseFormatter.error404(res, 'Data Not Found', inputs.message);
+      }
+
+      const data = await updateGroupProgress(inputs.form, req.params.id);
+
+      const io = req.app.get('socketIo');
+      await createNotifications(
+        io,
+        'Group Progress',
+        data.content.id,
+        [data.content.name || data.content.id, data.content.status],
+      );
 
       return ResponseFormatter.success200(res, data.message, data.content);
     } catch (error) {

@@ -1,0 +1,177 @@
+[
+  { "role": "Super User", "subscriptions": 
+    [
+      { "typeId": 1, "limitation": null },
+      { "typeId": 2, "limitation": null },
+      { "typeId": 3, "limitation": null },
+      { "typeId": 4, "limitation": null },
+      { "typeId": 5, "limitation": null },
+      { "typeId": 6, "limitation": null },
+      { "typeId": 7, "limitation": null },
+      { "typeId": 8, "limitation": null },
+      { "typeId": 9, "limitation": null },
+      { "typeId": 10, "limitation": null },
+      { "typeId": 11, "limitation": null },
+      { "typeId": 12, "limitation": null },
+      { "typeId": 13, "limitation": null },
+      { "typeId": 14, "limitation": null },
+      { "typeId": 15, "limitation": null },
+      { "typeId": 16, "limitation": null },
+      { "typeId": 17, "limitation": null },
+      { "typeId": 18, "limitation": null },
+      { "typeId": 19, "limitation": null },
+      { "typeId": 20, "limitation": null },
+      { "typeId": 21, "limitation": null },
+      { "typeId": 22, "limitation": null },
+      { "typeId": 23, "limitation": null },
+      { "typeId": 24, "limitation": null },
+      { "typeId": 25, "limitation": null },
+      { "typeId": 26, "limitation": null },
+      { "typeId": 27, "limitation": null }
+    ]
+  },
+  { "role": "Admin Pesperani", "subscriptions": 
+    [
+      { "typeId": 1, "limitation": null },
+      { "typeId": 2, "limitation": null },
+      { "typeId": 3, "limitation": null },
+      { "typeId": 4, "limitation": null },
+      { "typeId": 5, "limitation": null },
+      { "typeId": 6, "limitation": null },
+      { "typeId": 7, "limitation": null },
+      { "typeId": 8, "limitation": null },
+      { "typeId": 9, "limitation": null },
+      { "typeId": 10, "limitation": null },
+      { "typeId": 11, "limitation": null },
+      { "typeId": 12, "limitation": null },
+      { "typeId": 13, "limitation": null },
+      { "typeId": 14, "limitation": null },
+      { "typeId": 15, "limitation": null },
+      { "typeId": 16, "limitation": null },
+      { "typeId": 17, "limitation": null },
+      { "typeId": 18, "limitation": null },
+      { "typeId": 19, "limitation": null },
+      { "typeId": 20, "limitation": null },
+      { "typeId": 21, "limitation": null },
+      { "typeId": 22, "limitation": null },
+      { "typeId": 23, "limitation": null },
+      { "typeId": 24, "limitation": null },
+      { "typeId": 25, "limitation": null },
+      { "typeId": 26, "limitation": null },
+      { "typeId": 27, "limitation": null }
+    ]
+  },
+  { "role": "Admin Participant", "subscriptions": 
+    [
+      { "typeId": 1, "limitation": null },
+      { "typeId": 2, "limitation": null },
+      { "typeId": 3, "limitation": null },
+      { "typeId": 4, "limitation": null }
+    ]
+  },
+  { "role": "Participant Coordinator", "subscriptions": 
+    [
+      { "typeId": 1, "limitation": "Contingent" },
+      { "typeId": 4, "limitation": "Contingent" },
+      { "typeId": 8, "limitation": "Contingent" },
+      { "typeId": 20, "limitation": "Contingent" },
+      { "typeId": 21, "limitation": "Contingent" },
+      { "typeId": 22, "limitation": "Contingent" },
+      { "typeId": 12, "limitation": "Contingent" },
+      { "typeId": 23, "limitation": "Contingent" }
+    ]
+  },
+  { "role": "Admin Accomodation", "subscriptions": 
+    [
+      { "typeId": 5, "limitation": null },
+      { "typeId": 6, "limitation": null },
+      { "typeId": 7, "limitation": null },
+      { "typeId": 8, "limitation": null },
+      { "typeId": 20, "limitation": null },
+      { "typeId": 21, "limitation": null }
+    ]
+  },
+  { "role": "PIC Hotel", "subscriptions": 
+    [
+      { "typeId": 8, "limitation": "Location" },
+      { "typeId": 20, "limitation": "Location" },
+      { "typeId": 21, "limitation": "Location" },
+      { "typeId": 24, "limitation": "Location" },
+      { "typeId": 25, "limitation": "Location" }
+    ]
+  },
+  { "role": "Admin Event", "subscriptions": 
+    [
+      { "typeId": 4, "limitation": null },
+      { "typeId": 9, "limitation": null },
+      { "typeId": 22, "limitation": null }
+    ]
+  },
+  { "role": "PIC Event", "subscriptions": 
+    [
+      { "typeId": 4, "limitation": "Event" },
+      { "typeId": 22, "limitation": "Event" }
+    ]
+  },
+  { "role": "Admin Transportation", "subscriptions": 
+    [
+      { "typeId": 10, "limitation": null },
+      { "typeId": 11, "limitation": null },
+      { "typeId": 12, "limitation": null },
+      { "typeId": 13, "limitation": null },
+      { "typeId": 23, "limitation": null },
+      { "typeId": 27, "limitation": null }
+    ]
+  },
+  { "role": "PIC Transportation", "subscriptions": 
+    [
+      { "typeId": 10, "limitation": "Vendor" },
+      { "typeId": 11, "limitation": "Vendor" },
+      { "typeId": 12, "limitation": null },
+      { "typeId": 13, "limitation": "Vendor" },
+      { "typeId": 23, "limitation": "Vendor" },
+      { "typeId": 27, "limitation": "Vendor" }
+    ]
+  },
+  { "role": "Driver", "subscriptions": 
+    [
+      { "typeId": 12, "limitation": "Driver" },
+      { "typeId": 23, "limitation": "Driver" },
+      { "typeId": 27, "limitation": "Driver" }
+    ]
+  },
+  { "role": "Admin FnB", "subscriptions": 
+    [
+      { "typeId": 14, "limitation": null },
+      { "typeId": 15, "limitation": null },
+      { "typeId": 16, "limitation": null },
+      { "typeId": 17, "limitation": null },
+      { "typeId": 18, "limitation": null },
+      { "typeId": 24, "limitation": null },
+      { "typeId": 25, "limitation": null }
+    ]
+  },
+  { "role": "Admin FnB", "subscriptions": 
+    [
+      { "typeId": 14, "limitation": null },
+      { "typeId": 15, "limitation": null },
+      { "typeId": 16, "limitation": null },
+      { "typeId": 17, "limitation": null },
+      { "typeId": 18, "limitation": null },
+      { "typeId": 24, "limitation": null },
+      { "typeId": 25, "limitation": null }
+    ]
+  },
+  { "role": "PIC Kitchen", "subscriptions": 
+    [
+      { "typeId": 17, "limitation": "Kitchen" },
+      { "typeId": 24, "limitation":  "Kitchen"},
+      { "typeId": 25, "limitation":  "Kitchen"}
+    ]
+  },
+  { "role": "Courier", "subscriptions": 
+    [
+      { "typeId": 24, "limitation": "Courier" }
+    ]
+  }
+]

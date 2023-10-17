@@ -8,14 +8,17 @@ const {
   updateLodger,
   deleteLodger,
   selectAllParticipantLodger,
+  checkinLodger,
+  checkoutLodger,
 } = require('../services/lodger.service');
+const { createNotifications } = require('../services/notification.service');
 
 class LodgerController {
   static async getAll(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
 
-      console.log(JSON.stringify(req.user, null, 2));
+      // console.log(JSON.stringify(req.user, null, 2));
       const where = {};
       if (req.query?.contingentId) {
         where.contingentId = req.query.contingentId;
@@ -110,6 +113,13 @@ class LodgerController {
 
       console.log(inputs.form);
       const data = await createLodger(inputs.form);
+
+      const io = req.app.get('socketIo');
+      await createNotifications(io, 'Lodger Created', data.content.id, [
+        data.content.reservationIn,
+        data.content.location,
+      ]);
+
       return ResponseFormatter.success201(res, data.message, data.content);
     } catch (error) {
       next(error);
@@ -121,8 +131,47 @@ class LodgerController {
       res.url = `${req.method} ${req.originalUrl}`;
 
       const data = await updateLodger(req.params.id, req.body);
-      if (!data.success) {
+      if (!data.success && data.code === 404) {
         return ResponseFormatter.error404(res, 'Data Not Found', data.message);
+      }
+      if (!data.success && data.code === 400) {
+        return ResponseFormatter.error400(res, 'Bad Request', data.message);
+      }
+
+      return ResponseFormatter.success200(res, data.message, data.content);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  static async checkin(req, res, next) {
+    try {
+      res.url = `${req.method} ${req.originalUrl}`;
+
+      const data = await checkinLodger(req.params.id, req.body);
+      if (!data.success && data.code === 404) {
+        return ResponseFormatter.error404(res, 'Data Not Found', data.message);
+      }
+      if (!data.success && data.code === 400) {
+        return ResponseFormatter.error400(res, 'Bad Request', data.message);
+      }
+
+      return ResponseFormatter.success200(res, data.message, data.content);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  static async checkout(req, res, next) {
+    try {
+      res.url = `${req.method} ${req.originalUrl}`;
+
+      const data = await checkoutLodger(req.params.id, req.body);
+      if (!data.success && data.code === 404) {
+        return ResponseFormatter.error404(res, 'Data Not Found', data.message);
+      }
+      if (!data.success && data.code === 400) {
+        return ResponseFormatter.error400(res, 'Bad Request', data.message);
       }
 
       return ResponseFormatter.success200(res, data.message, data.content);

@@ -95,6 +95,38 @@ router.put(
   LodgerController.update,
 );
 
+router.patch(
+  '/:id/checkin',
+  async (req, res, next) => {
+    Authentication.authenticate(
+      req,
+      res,
+      next,
+      await features().then((feature) => [feature.update_lodger]),
+    );
+  },
+  [check('checkinTime', 'checkinTime attribute cant be empty').notEmpty()],
+  ValidateMiddleware.result,
+  Authentication.accomodation,
+  LodgerController.checkin,
+);
+
+router.patch(
+  '/:id/checkout',
+  async (req, res, next) => {
+    Authentication.authenticate(
+      req,
+      res,
+      next,
+      await features().then((feature) => [feature.update_lodger]),
+    );
+  },
+  [check('checkoutTime', 'checkoutTime attribute cant be empty').notEmpty()],
+  ValidateMiddleware.result,
+  Authentication.accomodation,
+  LodgerController.checkout,
+);
+
 router.delete(
   '/:id',
   async (req, res, next) => {

@@ -9,6 +9,7 @@ const {
   deleteFnbSchedule,
   updateProgressFnBSchedule,
 } = require('../services/fnbSchedule.service');
+const { createNotifications } = require('../services/notification.service');
 
 class FNBScheduleController {
   static async getAll(req, res, next) {
@@ -109,6 +110,14 @@ class FNBScheduleController {
         return ResponseFormatter.error400(res, 'Bad Request', data.message);
       }
 
+      const io = req.app.get('socketIo');
+      await createNotifications(
+        io,
+        'FNB Delivery Schedule Created',
+        data.content.id,
+        [data.content.name, data.content.pickUpTime, data.content.kitchen, data.content.location],
+      );
+
       return ResponseFormatter.success201(res, data.message, data.content);
     } catch (error) {
       next(error);
@@ -172,6 +181,14 @@ class FNBScheduleController {
       if (!data.isValid && data.code === 400) {
         return ResponseFormatter.error400(res, 'Bad Request', data.message);
       }
+
+      const io = req.app.get('socketIo');
+      await createNotifications(
+        io,
+        'FNB Delivery Schedule Progress',
+        data.content.id,
+        [data.content.name, data.content.status, data.content.updatedAt],
+      );
 
       return ResponseFormatter.success200(res, data.message, data.content);
     } catch (error) {
