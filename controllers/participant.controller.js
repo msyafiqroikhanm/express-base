@@ -439,6 +439,11 @@ class Participant {
       if (!req.user?.limitation.isAdmin) {
         where.contingentId = req.user.limitation.access.contingentId;
       }
+      if (!req.user?.limitation.isAdmin
+          && req.user?.Role.name?.toLowerCase() === 'pic participant'
+          && req.user.participantId !== req.params.id) {
+        return ResponseFormatter.error401(res, "Can't Access File That Belongs To Another Participant");
+      }
 
       const data = await downloadParticipantSecretFile(req.params.id, req.params.file, where);
       if (!data.success && data.code === 400) {
@@ -448,7 +453,6 @@ class Participant {
         return ResponseFormatter.error404(res, 'Data Not Found', data.message);
       }
 
-      // res.setHeader('Content-Disposition', `attachment; filename="${data.filename}"`);
       res.setHeader('Access-Control-Expose-Headers', 'filename');
       res.setHeader('filename', data.filename);
 

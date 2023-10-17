@@ -287,11 +287,26 @@ const updateVehicleSchedule = async (form, id) => {
   };
 };
 
-const progressVehicleSchedule = async (form, id, where = {}) => {
+const progressVehicleSchedule = async (form, id, where = {}, isAdmin = false) => {
   const scheduleInstance = await TPT_VehicleSchedule.findOne({
     where: where.driverId ? { id, driverId: where.driverId } : { id },
     include: { model: REF_VehicleScheduleStatus, attributes: ['name'], as: 'status' },
   });
+
+  // check old status is complete for user non admin
+  if (!isAdmin) {
+    const oldStatus = await REF_VehicleScheduleStatus.findOne(
+      { where: { id: scheduleInstance.statusId }, attributes: ['name'] },
+    );
+
+    if (oldStatus?.name === 'Completed') {
+      return {
+        success: false,
+        code: 400,
+        message: ["Completed Transportation Schedule Can't Change It Status"],
+      };
+    }
+  }
 
   if (!scheduleInstance) {
     return {
