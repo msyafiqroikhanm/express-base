@@ -8,12 +8,13 @@ const cors = require('cors');
 const passport = require('passport');
 const errorHandling = require('./helpers/errorHandling.helper');
 const routes = require('./routes/index.routes');
+require('./config/passport');
+require('dotenv').config();
 
 // Authentication middleware with passportjs
-
-require('./config/passport');
-
-app.use(passport.initialize());
+if (process.env.NODE_ENV !== 'test') {
+  app.use(passport.initialize());
+}
 
 app.use(
   morgan('common', {
