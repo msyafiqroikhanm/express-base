@@ -20,10 +20,11 @@ class VehicleScheduleController {
 
       // resrict data that is not an admin
       const where = {};
+
       if (!req.user.limitation.isAdmin && req.user.limitation?.access?.picId) {
         where.picId = req.user.limitation.access.picId;
         where.vendors = req.user.limitation.access.vendors;
-      } else if (!req.user.limitation.isAdmin && req.user.limitation?.access?.driver) {
+      } else if (!req.user.limitation.isAdmin && req.user.limitation?.access?.driverId) {
         where.driverId = req.user.limitation.access.driverId;
       }
       where.query = req.query?.type || null;
