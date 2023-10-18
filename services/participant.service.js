@@ -798,6 +798,11 @@ const createParticipantViaImport = async (file) => {
     };
   }
 
+  const contingentLimit = await SYS_Configuration.findOne({
+    where: { name: 'Contingent Limit' },
+    attributes: ['value'],
+  });
+
   const participantTypes = await REF_ParticipantType.findAll({ attributes: ['id', 'name'] });
   const identityTypes = await REF_IdentityType.findAll({ attributes: ['id', 'name'] });
   const contignets = await PAR_Contingent.findAll({ attributes: ['id', 'name'] });
@@ -839,46 +844,59 @@ const createParticipantViaImport = async (file) => {
 
   const invalidRow = {};
   const validParticipants = [];
-  await Promise.all(
-    participants.map(async (participant, index) => {
-      const invalidData = [];
-      // check if participant have duplicate data with phoneNbr, email, identityNo
-      if (existPhoneNbr.includes(participant.phoneNbr)) {
-        invalidData.push(
-          `Duplicate phone number ${participant.phoneNbr} for participant ${
-            participant.name
-          } at row ${index + 2}`,
-        );
-      }
-      if (existIdentity.includes(`${participant.identityTypeId}-${participant.identityNo}`)) {
-        invalidData.push(
-          `Duplicate identity number ${participant.identityNo} with type ${
-            participant.identityTypeId
-          } for committee ${participant.name} at row ${index + 2}`,
-        );
-      }
+  for (let index = 0; index < participants.length; index += 1) {
+    //
+    const invalidData = [];
+    // check if participant have duplicate data with phoneNbr, email, identityNo
+    if (existPhoneNbr.includes(participants[index].phoneNbr)) {
+      invalidData.push(
+        `Duplicate phone number ${participants[index].phoneNbr} for participant ${
+          participants[index].name
+        } at row ${index + 2}`,
+      );
+    }
+    if (existIdentity.includes(`${participants[index].identityTypeId}-${participants[index].identityNo}`)) {
+      invalidData.push(
+        `Duplicate identity number ${participants[index].identityNo} with type ${
+          participants[index].identityTypeId
+        } for committee ${participants[index].name} at row ${index + 2}`,
+      );
+    }
 
-      // validate participant inputs
-      const inputs = await validateParticipantInputs(participant);
-      if (!inputs.isValid && inputs.code === 404) {
-        invalidData.push(`${inputs.message} at row ${index + 2}`);
-      }
-      if (!inputs.isValid && inputs.code === 400) {
-        invalidData.push(`${inputs.message} at row ${index + 2}`);
-      }
+    // eslint-disable-next-line no-await-in-loop
+    const contingentCount = await PAR_Participant.count({
+      where: {
+        contingentId: participants[index].contingentId,
+        typeId: { [Op.ne]: PARTICIPANT_TYPES.Coordinator },
+      },
+    });
+    if (contingentCount >= Number(contingentLimit.value)) {
+      invalidData.push(
+        `Contingent ${participants[index].contingentId} reach it's maximum of ${Number(contingentLimit.value)} participants at row ${index + 2}`,
+      );
+    }
 
-      // create participant and
-      // register new participant phoneNbr, and identityNo To Exist Array
-      if (invalidData.length === 0) {
-        // register new committee phoneNbr, and identityNo To Exist Array
-        validParticipants.push(inputs.form);
-        existPhoneNbr.push(participant.phoneNbr);
-        existIdentity.push(participant.identityNo);
-      } else {
-        invalidRow[index + 2] = invalidData;
-      }
-    }),
-  );
+    // validate participant inputs
+    // eslint-disable-next-line no-await-in-loop
+    const inputs = await validateParticipantInputs(participants[index]);
+    if (!inputs.isValid && inputs.code === 404) {
+      invalidData.push(`${inputs.message} at row ${index + 2}`);
+    }
+    if (!inputs.isValid && inputs.code === 400) {
+      invalidData.push(`${inputs.message} at row ${index + 2}`);
+    }
+
+    // create participant and
+    // register new participant phoneNbr, and identityNo To Exist Array
+    if (invalidData.length === 0) {
+      // register new committee phoneNbr, and identityNo To Exist Array
+      validParticipants.push(participants[index]);
+      existPhoneNbr.push(participants[index].phoneNbr);
+      existIdentity.push(`${participants[index].identityTypeId}-${participants[index].identityNo}`);
+    } else {
+      invalidRow[index + 2] = invalidData;
+    }
+  }
 
   if (Object.keys(invalidRow).length > 0) {
     const invalidData = `Total Invalid Row = ${
@@ -897,10 +915,7 @@ const createParticipantViaImport = async (file) => {
       filePath: logFile.filePath,
     };
   }
-
-  validParticipants.forEach(async (participant) => {
-    await createParticipant(participant, true);
-  });
+  await PAR_Participant.bulkCreate(validParticipants);
 
   return {
     success: true,

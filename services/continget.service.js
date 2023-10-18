@@ -7,6 +7,7 @@ const {
 const selectAllContingents = async (where) => {
   const contingents = await PAR_Contingent.findAll({
     where,
+    order: [['name', 'ASC']],
     include: [
       {
         model: REF_Region,
