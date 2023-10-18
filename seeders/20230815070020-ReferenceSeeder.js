@@ -378,11 +378,11 @@ module.exports = {
       truncate: true,
       restartIdentity: true,
     });
-    await queryInterface.bulkDelete('REF_FoodType', null, {
+    await queryInterface.bulkDelete('REF_FoodTypes', null, {
       truncate: true,
       restartIdentity: true,
     });
-    await queryInterface.bulkDelete('REF_MenuType', null, {
+    await queryInterface.bulkDelete('REF_MenuTypes', null, {
       truncate: true,
       restartIdentity: true,
     });

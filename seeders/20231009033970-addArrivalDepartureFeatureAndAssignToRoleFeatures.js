@@ -76,8 +76,7 @@ module.exports = {
         where: { featureId: { [Op.in]: arrivalDepartureFeatureIds } },
       });
 
-      await USR_Feature.destroy({ where: { moduleId: arrivalDepartureFeatureInstance.id } });
-      await arrivalDepartureFeatureInstance.destroy();
+      await USR_Feature.destroy({ where: { moduleId: arrivalDepartureModule.id } });
     }
   },
 };
