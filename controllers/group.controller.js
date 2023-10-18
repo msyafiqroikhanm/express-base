@@ -16,8 +16,19 @@ class ParticipantGroup {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
 
-      // resrict data that is not an admin
       const where = {};
+      //* Filtering
+      if (req.query?.statusId) {
+        where.statusId = req.query.statusId;
+      }
+      if (req.query?.contingentId) {
+        where.contingentId = req.query.contingentId;
+      }
+      if (req.query?.eventId) {
+        where.eventId = req.query.eventId;
+      }
+
+      // resrict data that is not an admin
       if (!req.user.limitation.isAdmin) {
         where.contingentId = req.user.limitation.access.contingentId;
       }
@@ -78,12 +89,7 @@ class ParticipantGroup {
       }
 
       const io = req.app.get('socketIo');
-      await createNotifications(
-        io,
-        'Group Created',
-        data.content.id,
-        [data.content.name],
-      );
+      await createNotifications(io, 'Group Created', data.content.id, [data.content.name]);
 
       return ResponseFormatter.success201(res, data.message, data.content);
     } catch (error) {
@@ -156,12 +162,10 @@ class ParticipantGroup {
       const data = await updateGroupProgress(inputs.form, req.params.id);
 
       const io = req.app.get('socketIo');
-      await createNotifications(
-        io,
-        'Group Progress',
-        data.content.id,
-        [data.content.name || data.content.id, data.content.status],
-      );
+      await createNotifications(io, 'Group Progress', data.content.id, [
+        data.content.name || data.content.id,
+        data.content.status,
+      ]);
 
       return ResponseFormatter.success200(res, data.message, data.content);
     } catch (error) {
