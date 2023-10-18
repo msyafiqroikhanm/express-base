@@ -3,7 +3,6 @@ const rolesLib = require('../libraries/roles.lib');
 const {
   ACM_Location,
   FNB_Kitchen,
-  PAR_Participant,
   TPT_Driver,
   TPT_Vendor,
   ENV_Event,
@@ -35,8 +34,8 @@ class AuthMiddleware {
 
         // check user access
         if (requiredFeatures) {
-          const authorized = req.user.Role.USR_Features.some((feature) =>
-            requiredFeatures.includes(feature.id),
+          const authorized = req.user.Role.USR_Features.some(
+            (feature) => requiredFeatures.includes(feature.id),
           );
 
           if (!authorized) {
@@ -217,17 +216,15 @@ class AuthMiddleware {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
 
-      const participantInstance = await PAR_Participant.findByPk(req.user?.participantId, {
-        attributes: ['phoneNbr'],
-      });
+      console.log(req.user.id);
 
       const driverInstance = await TPT_Driver.findOne({
-        where: { phoneNbr: participantInstance?.phoneNbr },
+        where: { userId: req.user.id },
       });
 
       const limitation = { isAdmin: true, access: {} };
       if (req.user.Role.id !== rolesLib.superAdmin) {
-        if (req.user.PIC) {
+        if (req.user.PIC?.length > 0) {
           const picTypes = await picTypeHelper().then((type) => [type.pic_transportation]);
           const picTransportation = req.user.PIC.filter((pic) => pic.typeId === picTypes[0]);
 
