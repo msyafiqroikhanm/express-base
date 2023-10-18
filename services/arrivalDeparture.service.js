@@ -151,7 +151,7 @@ const updateArrivalDeparture = async (form, id) => {
   informationInstance.name = form.name;
   informationInstance.type = form.type;
   informationInstance.transportation = form.transportation;
-  informationInstance.otherLocation = form.otherLocation;
+  informationInstance.otherLocation = form.location ? null : form.otherLocation;
   informationInstance.totalParticipant = form.totalParticipant;
   informationInstance.time = form.time;
   await informationInstance.save();

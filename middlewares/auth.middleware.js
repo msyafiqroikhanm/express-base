@@ -55,13 +55,11 @@ class AuthMiddleware {
 
       const limitation = { isAdmin: true, access: {} };
 
-      // console.log(JSON.stringify(req.user.Role, null, 2));
       if (req.user.Role.id !== rolesLib.superAdmin) {
         if (req.user.PIC.length) {
           const picTypes = await picTypeHelper().then((type) => [type.pic_location]);
           const picLocation = req.user.PIC.filter((pic) => pic.typeId === picTypes[0]);
 
-          // console.log(JSON.stringify(picLocation, null, 2));
           // * Need More Investigation for user is PIC for not this module
 
           // limitation.isAdmin = false;
@@ -96,15 +94,11 @@ class AuthMiddleware {
       res.url = `${req.method} ${req.originalUrl}`;
 
       const limitation = { isAdmin: true, access: {} };
-      // console.log(JSON.stringify(req.user.Role, null, 2));
-      // console.log(req.user.Role.name === 'Courier');
-      // console.log(Boolean(JSON.stringify(req.user.Role.name, null, 2) === 'Courier'));
       if (req.user.Role.id !== rolesLib.superAdmin) {
         if (req.user.PIC.length) {
           const picTypes = await picTypeHelper().then((type) => [type.pic_kitchen]);
           const picKitchen = req.user.PIC.filter((pic) => pic.typeId === picTypes[0]);
 
-          // console.log(JSON.stringify(picKitchen, null, 2));
           // * Need More Investigation for user is PIC for not this module
 
           if (picKitchen.length) {
@@ -186,24 +180,54 @@ class AuthMiddleware {
       res.url = `${req.method} ${req.originalUrl}`;
 
       const limitation = { isAdmin: true, access: {} };
-      // * participant
-      if (req.user.participant.contingentId && req.user.Role.id !== rolesLib.superAdmin) {
+      if (req.user.Role.id !== rolesLib.superAdmin) {
         limitation.isAdmin = false;
-        limitation.access.contingent = {
-          contingentId: req.user.participant.contingentId,
-          id: req.user.participant.contingentId,
-        };
+        // * participant
+        if (req.user.participant.contingentId && req.user.Role.id !== rolesLib.superAdmin) {
+          limitation.access.contingent = {
+            contingentId: req.user.participant.contingentId,
+            id: req.user.participant.contingentId,
+          };
+        }
+
+        // * accomodation
+
+        // * transportation
+        limitation.access.transportation = {};
+        const driverInstance = await TPT_Driver.findOne({
+          where: { userId: req.user.id },
+        });
+        if (req.user.PIC?.length > 0) {
+          const picTypes = await picTypeHelper().then((type) => [type.pic_transportation]);
+          const picTransportation = req.user.PIC.filter((pic) => pic.typeId === picTypes[0]);
+
+          // * Need More Investigation for user is PIC for not this module
+          // if (!picTransportation.length) {
+          //   req.user.limitation = limitation;
+          //   next();
+          // }
+
+          if (picTransportation.length > 0) {
+            const vendors = await TPT_Vendor.findAll({
+              where: { picId: picTransportation[0].dataValues.id },
+              attributes: ['id'],
+            });
+
+            const parsedVendors = vendors.map((vendor) => vendor.id);
+
+            limitation.access.transportation.vendors = parsedVendors.length > 0
+              ? parsedVendors : [];
+          }
+        } else if (driverInstance) {
+          limitation.access.transportation.driverId = driverInstance.id;
+        }
+
+        // * fnb
+
+        // * event
+
+        // * customer service
       }
-
-      // * accomodation
-
-      // * transportation
-
-      // * fnb
-
-      // * event
-
-      // * customer service
 
       req.user.limitation = limitation;
       next();
@@ -215,8 +239,6 @@ class AuthMiddleware {
   static async transportation(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
-
-      console.log(req.user.id);
 
       const driverInstance = await TPT_Driver.findOne({
         where: { userId: req.user.id },
@@ -246,6 +268,7 @@ class AuthMiddleware {
 
           limitation.access.vendors = parsedVendors.length > 0 ? parsedVendors : [];
         } else if (driverInstance) {
+          limitation.isAdmin = false;
           limitation.access.driverId = driverInstance.id;
         } else {
           return ResponseFormatter.error401(res, "You Don't Have Access To This Service");
