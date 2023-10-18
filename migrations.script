@@ -77,3 +77,4 @@ sequelize model:generate --name FNB_Feedback --attributes eventName:string, date
 sequelize model:generate --name TPT_ArrivalDepartureInformation --attributes contingentId:integer, locationId:integer, name:string, type:enum, transportation:text, otherLocation:text, totalParticipant:integer, time:date
 sequelize model:generate --name SYS_NotificationType --attributes name:string, url:text
 sequelize model:generate --name SYS_RoleNotificationSubscription --attributes typeId:integer, roleId:integer, limitation:string
+sequelize model:generate --name SequelizeMeta_Seeder --attributes name:string
