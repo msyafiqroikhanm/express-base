@@ -21,7 +21,7 @@ jobs:
           script: |
             cd /home/syafiq/jxb-conference-management
             git pull origin main
-            git status
             npm install 
             npm run migrate
+            npm run seed:sync:linux
             pm2 restart conference-management
