@@ -29,10 +29,12 @@ const selectAllUsers = async () => {
       {
         model: USR_Role,
         as: 'Role',
+        attributes: ['name', 'isAdministrative'],
       },
       {
         model: QRM_QR,
         as: 'Qr',
+        attributes: ['code'],
       },
       {
         model: PAR_Participant,
@@ -49,8 +51,9 @@ const selectAllUsers = async () => {
   });
 
   users.forEach((user) => {
-    user.dataValues.qrCode = user.Qr?.dataValues.code;
-    user.dataValues.role = user.Role?.dataValues.name;
+    user.dataValues.qrCode = user.Qr?.dataValues.code || null;
+    user.dataValues.role = user.Role?.dataValues.name || null;
+    user.dataValues.isAdministrative = user.Role?.dataValues.isAdministrative || null;
     if (user.participant) {
       user.participant.dataValues.contingent = user.participant.contingent
         ?.dataValues.name || null;
@@ -73,10 +76,12 @@ const selectDetailUser = async (id) => {
       {
         model: USR_Role,
         as: 'Role',
+        attributes: ['name', 'isAdministrative'],
       },
       {
         model: QRM_QR,
         as: 'Qr',
+        attributes: ['code'],
       },
       {
         model: PAR_Participant,
@@ -99,6 +104,7 @@ const selectDetailUser = async (id) => {
 
   userInstance.dataValues.qrCode = userInstance.Qr?.dataValues.code || null;
   userInstance.dataValues.role = userInstance.Role?.dataValues.name || null;
+  userInstance.dataValues.isAdministrative = userInstance.Role?.dataValues.isAdministrative || null;
 
   if (userInstance.participant) {
     userInstance.participant.dataValues.contingent = userInstance.participant.contingent
