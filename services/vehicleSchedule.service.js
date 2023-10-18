@@ -221,11 +221,14 @@ const validateVehicleScheduleInputs = async (form) => {
     };
   }
 
+  const statusInstance = await REF_VehicleScheduleStatus.findOne({ where: { name: 'Scheduled' } });
+
   return {
     isValid: true,
     form: {
       pickUp: pickUpInstance,
       destination: destinationInstance,
+      status: statusInstance,
       name: form.name,
       pickUpTime: new Date(form.pickUpTime),
       description: form.description,
@@ -239,7 +242,7 @@ const validateVehicleScheduleInputs = async (form) => {
 const createVehicleSchedule = async (form) => {
   const scheduleInstance = await TPT_VehicleSchedule.create({
     name: form.name,
-    statusId: 1,
+    statusId: form.status?.id || 1,
     pickUpId: form.pickUp?.id || null,
     destinationId: form.destination?.id || null,
     pickUpOtherLocation: form.pickUpOtherLocation,
