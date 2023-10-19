@@ -6,12 +6,10 @@ class DashboardController {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
 
-      const modules = req.user.Role.modules.map((module) => module.parentModule);
-
       // resrict data that is not an admin
       const limitation = req.user.limitation.isAdmin ? null : req.user.limitation.access;
 
-      const data = await selectDashboard(limitation, modules);
+      const data = await selectDashboard(limitation, req.user.limitation.allowedDashboard);
 
       return ResponseFormatter.success200(res, data.message, data.content);
     } catch (error) {
