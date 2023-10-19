@@ -224,7 +224,7 @@ const validateFnBScheduleInputs = async (form, limitation = null, id = null) => 
   }
 
   //* check courierId validity
-  const courierInstance = await FNB_Courier.findOne(form.courierId);
+  const courierInstance = await FNB_Courier.findOne({ where: { id: form.courierId } });
   if (!courierInstance) {
     invalid404.push('Courier Data Not Found');
   }
