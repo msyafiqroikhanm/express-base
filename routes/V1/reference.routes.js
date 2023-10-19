@@ -1727,6 +1727,7 @@ router.get(
         feature.create_passenger_status,
         feature.update_passenger_status,
         feature.delete_passenger_status,
+        feature.absent_vehicle_schedule,
       ]),
     );
   },
@@ -1744,6 +1745,7 @@ router.get(
         feature.view_passenger_status,
         feature.update_passenger_status,
         feature.delete_passenger_status,
+        feature.absent_vehicle_schedule,
       ]),
     );
   },
