@@ -47,6 +47,11 @@ const selectAllFnBSchedules = async (where) => {
         as: 'courier',
         attributes: { exclude: ['createdAt', 'updatedAt'] },
       },
+      {
+        model: REF_FoodScheduleStatus,
+        as: 'status',
+        attributes: ['name'],
+      },
     ],
   });
 
@@ -86,6 +91,7 @@ const selectAllFnBSchedules = async (where) => {
       // eslint-disable-next-line no-param-reassign
       schedule.dataValues.picLocation = picLocation?.user?.participant;
       schedule.dataValues.picKitchen = picKitchen?.user?.participant;
+      schedule.dataValues.status = schedule.status?.dataValues.name || null;
     }),
   );
 
@@ -126,6 +132,11 @@ const selectFnBSchedule = async (id, where) => {
         model: FNB_Courier,
         as: 'courier',
         attributes: { exclude: ['createdAt', 'updatedAt'] },
+      },
+      {
+        model: REF_FoodScheduleStatus,
+        as: 'status',
+        attributes: ['name'],
       },
     ],
   });
@@ -170,6 +181,7 @@ const selectFnBSchedule = async (id, where) => {
 
   fnbScheduleInstance.dataValues.picLocation = picLocation?.user?.participant;
   fnbScheduleInstance.dataValues.picKitchen = picKitchen?.user?.participant;
+  fnbScheduleInstance.dataValues.status = fnbScheduleInstance?.status?.dataValues.name || null;
 
   return {
     success: true,
