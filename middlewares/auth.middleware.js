@@ -123,7 +123,6 @@ class AuthMiddleware {
           const picLocTypes = await picTypeHelper().then((type) => [type.pic_location]);
           const picLocation = req.user.PIC.filter((pic) => pic.typeId === picLocTypes[0]);
 
-          // console.log(JSON.stringify(picLocation, null, 2));
           // * Need More Investigation for user is PIC for not this module
 
           if (picLocation.length) {
@@ -145,7 +144,6 @@ class AuthMiddleware {
           }
         }
         if (req.user.Role.name === 'Courier') {
-          // console.log(req.user.id);
           const courierInstance = await FNB_Courier.findOne({ where: { userId: req.user.id } });
           limitation.isAdmin = false;
           limitation.access.courierId = courierInstance.id;
@@ -179,47 +177,71 @@ class AuthMiddleware {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
 
+      if (!req.user.Role.isAdministrative) {
+        return ResponseFormatter.error401(res, "You Don't Have Access To This Service");
+      }
+
+      const roles = new Set();
+      req.user.Role?.modules.forEach((module) => {
+        if (module.features) {
+          module.features.forEach((feature) => {
+            roles.add(feature.featurename);
+          });
+        }
+        if (module.submodules) {
+          module.submodules.forEach((submodules) => {
+            submodules.features.forEach((feature) => {
+              roles.add(feature.featurename);
+            });
+          });
+        }
+      });
+
       const limitation = { isAdmin: true, access: {} };
       if (req.user.Role.id !== rolesLib.superAdmin) {
         limitation.isAdmin = false;
+        limitation.allowedDashboard = [];
         // * participant
-        if (req.user.participant.contingentId && req.user.Role.id !== rolesLib.superAdmin) {
-          limitation.access.contingent = {
-            contingentId: req.user.participant.contingentId,
-            id: req.user.participant.contingentId,
-          };
+        if (roles.has('Create Participant') && roles.has('Update Participant')) {
+          limitation.allowedDashboard.push('Participant Management');
+          if (req.user.participant.contingentId && req.user.Role.id !== rolesLib.superAdmin) {
+            limitation.access.contingent = {
+              contingentId: req.user.participant.contingentId,
+              id: req.user.participant.contingentId,
+            };
+          }
         }
 
         // * accomodation
 
         // * transportation
-        limitation.access.transportation = {};
-        const driverInstance = await TPT_Driver.findOne({
-          where: { userId: req.user.id },
-        });
-        if (req.user.PIC?.length > 0) {
-          const picTypes = await picTypeHelper().then((type) => [type.pic_transportation]);
-          const picTransportation = req.user.PIC.filter((pic) => pic.typeId === picTypes[0]);
+        if (roles.has('View Vehicle Schedule') && (roles.has('Provide Vehicle Schedule') || roles.has('Absent Vehicle Schedule') || roles.has('Create Vehicle Schedule'))) {
+          limitation.allowedDashboard.push('Transportation Management');
+          limitation.access.transportation = {};
 
-          // * Need More Investigation for user is PIC for not this module
-          // if (!picTransportation.length) {
-          //   req.user.limitation = limitation;
-          //   next();
-          // }
-
-          if (picTransportation.length > 0) {
-            const vendors = await TPT_Vendor.findAll({
-              where: { picId: picTransportation[0].dataValues.id },
-              attributes: ['id'],
-            });
-
+          if (req.user?.Role?.name === 'Admin Transportation') {
+            // case user is admin transportation
+            const vendors = await TPT_Vendor.findAll({ attributes: ['id'] });
             const parsedVendors = vendors.map((vendor) => vendor.id);
-
             limitation.access.transportation.vendors = parsedVendors.length > 0
               ? parsedVendors : [];
+          } else if (req.user.PIC?.length > 0) {
+            // case user is pic transportation for a vendor
+            const picTypes = await picTypeHelper().then((type) => [type.pic_transportation]);
+            const picTransportation = req.user.PIC.filter((pic) => pic.typeId === picTypes[0]);
+
+            if (picTransportation.length > 0) {
+              const vendors = await TPT_Vendor.findAll({
+                where: { picId: picTransportation[0].dataValues.id },
+                attributes: ['id'],
+              });
+
+              const parsedVendors = vendors.map((vendor) => vendor.id);
+
+              limitation.access.transportation.vendors = parsedVendors.length > 0
+                ? parsedVendors : [null];
+            }
           }
-        } else if (driverInstance) {
-          limitation.access.transportation.driverId = driverInstance.id;
         }
 
         // * fnb
@@ -227,6 +249,11 @@ class AuthMiddleware {
         // * event
 
         // * customer service
+      } else {
+        limitation.allowedDashboard = [
+          'Participant Management', 'Accomodation Management', 'Event Management', 'Transportation Management',
+          'FnB Management', 'Customer Service Management',
+        ];
       }
 
       req.user.limitation = limitation;

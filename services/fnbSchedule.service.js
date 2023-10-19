@@ -47,6 +47,11 @@ const selectAllFnBSchedules = async (where) => {
         as: 'courier',
         attributes: { exclude: ['createdAt', 'updatedAt'] },
       },
+      {
+        model: REF_FoodScheduleStatus,
+        as: 'status',
+        attributes: ['name'],
+      },
     ],
   });
 
@@ -86,6 +91,7 @@ const selectAllFnBSchedules = async (where) => {
       // eslint-disable-next-line no-param-reassign
       schedule.dataValues.picLocation = picLocation?.user?.participant;
       schedule.dataValues.picKitchen = picKitchen?.user?.participant;
+      schedule.dataValues.status = schedule.status?.dataValues.name || null;
     }),
   );
 
@@ -126,6 +132,11 @@ const selectFnBSchedule = async (id, where) => {
         model: FNB_Courier,
         as: 'courier',
         attributes: { exclude: ['createdAt', 'updatedAt'] },
+      },
+      {
+        model: REF_FoodScheduleStatus,
+        as: 'status',
+        attributes: ['name'],
       },
     ],
   });
@@ -170,6 +181,7 @@ const selectFnBSchedule = async (id, where) => {
 
   fnbScheduleInstance.dataValues.picLocation = picLocation?.user?.participant;
   fnbScheduleInstance.dataValues.picKitchen = picKitchen?.user?.participant;
+  fnbScheduleInstance.dataValues.status = fnbScheduleInstance?.status?.dataValues.name || null;
 
   return {
     success: true,
@@ -178,7 +190,7 @@ const selectFnBSchedule = async (id, where) => {
   };
 };
 
-const validateFnBScheduleInputs = async (form, limitation = null) => {
+const validateFnBScheduleInputs = async (form, limitation = null, id = null) => {
   const invalid400 = [];
   const invalid404 = [];
 
@@ -212,11 +224,16 @@ const validateFnBScheduleInputs = async (form, limitation = null) => {
   }
 
   //* check courierId validity
-  const courierInstance = await FNB_Courier.findByPk(form.courierId);
+  const courierInstance = await FNB_Courier.findOne(form.courierId);
   if (!courierInstance) {
     invalid404.push('Courier Data Not Found');
   }
-  if (!courierInstance?.isAvailable) {
+  if (id) {
+    const scheduleInstance = await FNB_Schedule.findByPk(id);
+    if (!courierInstance?.isAvailable && scheduleInstance?.courierId !== courierInstance?.id) {
+      invalid400.push('Courier is not Available');
+    }
+  } else if (!courierInstance?.isAvailable) {
     invalid400.push('Courier is not Available');
   }
 
@@ -351,8 +368,7 @@ const updateFnBSchedule = async (form, where) => {
   // console.log(form, formUpdateScheduleInstance);
   if (form.dropOffTime && formUpdateScheduleInstance.pickUpTime) {
     if (
-      new Date(form.dropOffTime).getTime() <
-      new Date(formUpdateScheduleInstance.pickUpTime).getTime()
+      new Date(form.dropOffTime).getTime() < new Date(formUpdateScheduleInstance.pickUpTime).getTime()
     ) {
       invalid400.push('Drop Off Time should not be faster than Pick Up Time');
     }
@@ -366,11 +382,11 @@ const updateFnBSchedule = async (form, where) => {
     if (!courierInstance) {
       invalid404.push('Courier Data Not Found');
     }
-    if (!courierInstance?.isAvailable) {
+    if (!courierInstance?.isAvailable && courierIdOld !== Number(form.courierId)) {
       invalid400.push('Courier is not available');
     }
 
-    courierIsUpdate = true;
+    courierIsUpdate = courierIdOld !== Number(form.courierId);
     newCourier = courierInstance;
   }
 
@@ -390,7 +406,7 @@ const updateFnBSchedule = async (form, where) => {
   }
 
   formUpdateScheduleInstance.courierId = form.courierId
-    ? form.courier
+    ? form.courierId
     : fnbScheduleInstance.courierId;
   formUpdateScheduleInstance.statusId = form.statusId
     ? form.statusId
