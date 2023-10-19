@@ -168,8 +168,8 @@ const selectFnBSchedule = async (id, where) => {
     },
   });
 
-  fnbScheduleInstance.dataValues.picLocation = picLocation.user.participant;
-  fnbScheduleInstance.dataValues.picKitchen = picKitchen.user.participant;
+  fnbScheduleInstance.dataValues.picLocation = picLocation?.user?.participant;
+  fnbScheduleInstance.dataValues.picKitchen = picKitchen?.user?.participant;
 
   return {
     success: true,
