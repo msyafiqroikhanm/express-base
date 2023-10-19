@@ -84,8 +84,8 @@ const selectAllFnBSchedules = async (where) => {
       });
 
       // eslint-disable-next-line no-param-reassign
-      schedule.dataValues.picLocation = picLocation.user.participant;
-      schedule.dataValues.picKitchen = picKitchen.user.participant;
+      schedule.dataValues.picLocation = picLocation?.user?.participant;
+      schedule.dataValues.picKitchen = picKitchen?.user?.participant;
     }),
   );
 
