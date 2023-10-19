@@ -23,6 +23,7 @@ const selectAllVehicleSchedule = async (where = {}) => {
   }
 
   const schedules = await TPT_VehicleSchedule.findAll({
+    order: [['pickUpTime', 'DESC']],
     where: Object.keys(query).length > 0 ? query : null,
     include: [
       {
@@ -571,6 +572,7 @@ const udpatePassengerAbsent = async (form) => {
 
 const selectAllPassengersVehicleSchedule = async (id, where = {}) => {
   const scheduleInstance = await TPT_VehicleSchedule.findOne({
+    order: [[TPT_SchedulePassenger, PAR_Participant, 'name', 'ASC']],
     where: where.driverId ? { id, driverId: where.driverId } : { id },
     include: {
       model: TPT_SchedulePassenger,
