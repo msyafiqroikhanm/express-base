@@ -1,5 +1,5 @@
 /* eslint-disable no-param-reassign */
-const { Op } = require('sequelize');
+const { Op, Transaction } = require('sequelize');
 const {
   FNB_Kitchen,
   PAR_Participant,
@@ -12,6 +12,7 @@ const {
   USR_User,
   REF_FoodScheduleStatus,
   FNB_ScheduleMenu,
+  sequelize,
 } = require('../models');
 const { createQR } = require('./qr.service');
 const { selesai, selesaiDenganKomplen } = require('../libraries/fnbScheduleStatuses.lib');
@@ -367,7 +368,8 @@ const updateFnBSchedule = async (form, where) => {
   // console.log(form, formUpdateScheduleInstance);
   if (form.dropOffTime && formUpdateScheduleInstance.pickUpTime) {
     if (
-      new Date(form.dropOffTime).getTime() < new Date(formUpdateScheduleInstance.pickUpTime).getTime()
+      new Date(form.dropOffTime).getTime() <
+      new Date(formUpdateScheduleInstance.pickUpTime).getTime()
     ) {
       invalid400.push('Drop Off Time should not be faster than Pick Up Time');
     }
@@ -504,12 +506,11 @@ const deleteFnbSchedule = async (where) => {
   // console.log(where);
   // console.log(JSON.stringify(fnbScheduleInstance, null, 2));
 
+  await fnbScheduleInstance.destroy({ where });
+  await FNB_ScheduleMenu.destroy({
+    where: { scheduleId: fnbScheduleInstance.id },
+  });
   await FNB_Courier.update({ isAvailable: true }, { where: { id: fnbScheduleInstance.courierId } });
-  await FNB_ScheduleMenu.update(
-    { scheduleId: null },
-    { where: { scheduleId: fnbScheduleInstance.id } },
-  );
-  await fnbScheduleInstance.destroy();
 
   return {
     success: true,

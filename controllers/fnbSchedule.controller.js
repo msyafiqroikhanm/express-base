@@ -111,12 +111,12 @@ class FNBScheduleController {
       }
 
       const io = req.app.get('socketIo');
-      await createNotifications(
-        io,
-        'FNB Delivery Schedule Created',
-        data.content.id,
-        [data.content.name, data.content.pickUpTime, data.content.kitchen, data.content.location],
-      );
+      await createNotifications(io, 'FNB Delivery Schedule Created', data.content.id, [
+        data.content.name,
+        data.content.pickUpTime,
+        data.content.kitchen,
+        data.content.location,
+      ]);
 
       return ResponseFormatter.success201(res, data.message, data.content);
     } catch (error) {
@@ -183,12 +183,11 @@ class FNBScheduleController {
       }
 
       const io = req.app.get('socketIo');
-      await createNotifications(
-        io,
-        'FNB Delivery Schedule Progress',
-        data.content.id,
-        [data.content.name, data.content.status, data.content.updatedAt],
-      );
+      await createNotifications(io, 'FNB Delivery Schedule Progress', data.content.id, [
+        data.content.name,
+        data.content.status,
+        data.content.updatedAt,
+      ]);
 
       return ResponseFormatter.success200(res, data.message, data.content);
     } catch (error) {
@@ -210,7 +209,7 @@ class FNBScheduleController {
       }
 
       const data = await deleteFnbSchedule(where);
-      if (!data.success && data.code === 404) {
+      if (!data.success) {
         return ResponseFormatter.error404(res, 'Data Not Found', data.message);
       }
 
