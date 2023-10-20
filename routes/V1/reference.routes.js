@@ -2048,6 +2048,8 @@ router.get(
         feature.create_vehicle_type,
         feature.update_vehicle_type,
         feature.delete_vehicle_type,
+        feature.create_vehicle,
+        feature.update_vehicle,
       ]),
     );
   },
@@ -2065,6 +2067,8 @@ router.get(
         feature.view_vehicle_type,
         feature.update_vehicle_type,
         feature.delete_vehicle_type,
+        feature.create_vehicle,
+        feature.update_vehicle,
       ]),
     );
   },
