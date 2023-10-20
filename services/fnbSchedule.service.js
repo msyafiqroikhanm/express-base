@@ -502,8 +502,8 @@ const deleteFnbSchedule = async (where) => {
   }
 
   const { name } = fnbScheduleInstance.dataValues;
-  console.log(where);
-  console.log(JSON.stringify(fnbScheduleInstance, null, 2));
+  // console.log(where);
+  // console.log(JSON.stringify(fnbScheduleInstance, null, 2));
 
   await FNB_Courier.update({ isAvailable: true }, { where: { id: fnbScheduleInstance.courierId } });
   await FNB_ScheduleMenu.update(
