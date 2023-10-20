@@ -17,6 +17,9 @@ class CourierController {
       res.url = `${req.method} ${req.originalUrl}`;
 
       const where = {};
+      if (req.query?.isAvailable) {
+        where.isAvailable = req.query.isAvailable;
+      }
       const data = await selectAllCouriers(where);
 
       return ResponseFormatter.success200(res, data.message, data.content);
@@ -65,12 +68,7 @@ class CourierController {
       const data = await createCourier(inputs.form);
 
       const io = req.app.get('socketIo');
-      await createNotifications(
-        io,
-        'Courier Created',
-        data.content.id,
-        [data.content.name],
-      );
+      await createNotifications(io, 'Courier Created', data.content.id, [data.content.name]);
       return ResponseFormatter.success201(res, data.message, data.content);
     } catch (error) {
       next(error);
