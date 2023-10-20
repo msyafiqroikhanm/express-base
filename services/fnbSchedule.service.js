@@ -472,11 +472,11 @@ const updateProgressFnBSchedule = async (form, where) => {
   }
 
   if (Number(form.statusId) === selesai || Number(form.statusId) === selesaiDenganKomplen) {
-    console.log({ test: 'test' });
+    // console.log({ test: 'test' });
     const courierInstance = await FNB_Courier.findOne({
       where: { id: fnbScheduleInstance.courierId },
     });
-    console.log(JSON.stringify(courierInstance));
+    // console.log(JSON.stringify(courierInstance));
     courierInstance.isAvailable = true;
     await courierInstance.save();
   }
