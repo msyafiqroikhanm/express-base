@@ -135,13 +135,19 @@ const validateRoleInputs = async (form, id) => {
     };
   }
 
+  let isAdministrative;
+  if (typeof form.isAdministrative === 'boolean') {
+    isAdministrative = form.isAdministrative;
+  } else {
+    isAdministrative = form.isAdministrative?.toLowerCase() === 'true';
+  }
   return {
     isValid: true,
     form: {
       name: form.name,
       templateId: Number(form.templateId),
       features: validFeatures,
-      isAdministrative: form.isAdministrative?.toLowerCase() === 'true',
+      isAdministrative,
     },
   };
 };
