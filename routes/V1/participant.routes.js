@@ -23,6 +23,7 @@ router.get(
         feature.create_lodger,
         feature.update_lodger,
         feature.delete_lodger,
+        feature.view_group,
         feature.create_group,
         feature.update_group,
         feature.create_user,
@@ -95,6 +96,9 @@ router.get(
         feature.progress_vehicle_schedule,
         feature.absent_vehicle_schedule,
         feature.fulfill_vehicle_schedule,
+        feature.view_group,
+        feature.create_group,
+        feature.update_group,
       ]),
     );
   },
@@ -148,6 +152,9 @@ router.get(
         feature.create_broadcast,
         feature.update_broadcast,
         feature.create_participant_committe,
+        feature.view_group,
+        feature.create_group,
+        feature.update_group,
       ]),
     );
   },
