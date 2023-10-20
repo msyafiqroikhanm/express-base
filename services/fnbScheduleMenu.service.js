@@ -10,6 +10,7 @@ const {
   FNB_KitchenTarget,
   REF_MenuType,
   REF_FoodType,
+  REF_FoodScheduleStatus,
 } = require('../models');
 
 const selectAllFnBScheduleMenus = async (query, where) => {
@@ -155,6 +156,11 @@ const selectFnBScheduleMenu = async (id, where) => {
             model: FNB_Courier,
             as: 'courier',
             attributes: { exclude: ['createdAt', 'updatedAt'] },
+          },
+          {
+            model: REF_FoodScheduleStatus,
+            as: 'status',
+            attributes: ['id', 'name'],
           },
         ],
       },
