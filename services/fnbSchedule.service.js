@@ -229,7 +229,7 @@ const validateFnBScheduleInputs = async (form, limitation = null, id = null) => 
     courierInstance = await FNB_Courier.findOne({ where: { id: form.courierId } });
     if (!courierInstance) {
       invalid404.push('Courier Data Not Found');
-    } else {
+    } else if (!courierInstance?.isAvailable) {
       invalid400.push('Courier is not Available');
     }
   }
@@ -367,8 +367,7 @@ const updateFnBSchedule = async (form, where) => {
   // console.log(form, formUpdateScheduleInstance);
   if (form.dropOffTime && formUpdateScheduleInstance.pickUpTime) {
     if (
-      new Date(form.dropOffTime).getTime() <
-      new Date(formUpdateScheduleInstance.pickUpTime).getTime()
+      new Date(form.dropOffTime).getTime() < new Date(formUpdateScheduleInstance.pickUpTime).getTime()
     ) {
       invalid400.push('Drop Off Time should not be faster than Pick Up Time');
     }
