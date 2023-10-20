@@ -12,8 +12,9 @@ const {
   REF_FoodType,
 } = require('../models');
 
-const selectAllFnBScheduleMenus = async (where) => {
+const selectAllFnBScheduleMenus = async (query, where) => {
   const fnbScheduleMenuInstances = await FNB_ScheduleMenu.findAll({
+    where: query,
     include: [
       {
         model: FNB_KitchenTarget,

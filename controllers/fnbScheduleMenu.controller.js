@@ -20,7 +20,18 @@ class FNBScheduleMenuController {
         where.kitchenId = { [Op.or]: req.user.limitation.access.kitchen };
       }
 
-      const data = await selectAllFnBScheduleMenus(where);
+      const query = {};
+      if (req.query?.scheduleId) {
+        query.scheduleId = req.query.scheduleId;
+      }
+      if (req.query?.kitchenTargetId) {
+        query.kitchenTargetId = req.query.kitchenTargetId;
+      }
+      if (req.query?.isValid) {
+        query.isValid = req.query.isValid;
+      }
+
+      const data = await selectAllFnBScheduleMenus(query, where);
       if (!data.success) {
         return ResponseFormatter.error400(res, 'Bad Request', data.message);
       }
