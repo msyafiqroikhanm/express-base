@@ -1,3 +1,4 @@
+/* eslint-disable no-await-in-loop */
 /* eslint-disable no-param-reassign */
 const { Op, Transaction } = require('sequelize');
 const {
@@ -12,10 +13,16 @@ const {
   USR_User,
   REF_FoodScheduleStatus,
   FNB_ScheduleMenu,
+  FNB_KitchenTarget,
+  FNB_ScheduleHistory,
   sequelize,
 } = require('../models');
 const { createQR } = require('./qr.service');
-const { selesai, selesaiDenganKomplen } = require('../libraries/fnbScheduleStatuses.lib');
+const {
+  selesai,
+  selesaiDenganKomplen,
+  menungguKurir,
+} = require('../libraries/fnbScheduleStatuses.lib');
 
 const selectAllFnBSchedules = async (where) => {
   const fnbScheduleInstances = await FNB_Schedule.findAll({
@@ -311,6 +318,151 @@ const createFnBSchedule = async (form) => {
   };
 };
 
+const validateFnBScheduleInputsNew = async (form, limitation = null) => {
+  const invalid400 = [];
+  const invalid404 = [];
+
+  //* check kitchenId validity
+  const kitchenInstance = await FNB_Kitchen.findByPk(form.kitchenId);
+  if (!kitchenInstance) {
+    invalid404.push('Kitchen Data Not Found');
+  }
+
+  //* check kitchen limitation
+  if (Object.keys(limitation).length > 0) {
+    if (!limitation.kitchens.includes(Number(kitchenInstance.id))) {
+      return {
+        isValid: false,
+        code: 400,
+        message: ['Prohibited To Create Schedule For Other Kitchen'],
+      };
+    }
+  }
+
+  //* check locationId validity
+  const locationInstance = await ACM_Location.findByPk(form.locationId);
+  if (!locationInstance) {
+    invalid404.push('Location Data Not Found');
+  }
+
+  //* check courierId validity
+  let courierInstance;
+  if (form.courierId) {
+    courierInstance = await FNB_Courier.findOne({ where: { id: form.courierId } });
+    if (!courierInstance) {
+      invalid404.push('Courier Data Not Found');
+    } else if (!courierInstance?.isAvailable) {
+      invalid400.push('Courier is not Available');
+    }
+  }
+
+  if (form.pickUpTime) {
+    if (new Date().getTime() > new Date(form.pickUpTime).getTime()) {
+      invalid400.push("Can't Set Pick Up Time In The Past");
+    }
+  }
+
+  const formItems = [];
+  if (form.items.length) {
+    for (let i = 0; i < form.items.length; i += 1) {
+      const item = form.items[i];
+
+      const kitchenTargetInstance = await FNB_KitchenTarget.findOne({
+        where: { id: item.kitchenTargetId },
+      });
+
+      if (!kitchenTargetInstance) {
+        invalid404.push('Kitchen Target Data Not Found');
+      } else {
+        // console.log(JSON.stringify(kitchenTargetInstance, null, 2));
+        formItems.push({ kitchenTargetId: kitchenTargetInstance.id, quantity: item.quantity });
+      }
+    }
+  }
+
+  // console.log(formItems);
+  // console.log(JSON.stringify(courierInstance, null, 2));
+
+  if (invalid400.length > 0) {
+    return {
+      isValid: false,
+      code: 400,
+      message: invalid400,
+    };
+  }
+  if (invalid404.length > 0) {
+    return {
+      isValid: false,
+      code: 404,
+      message: invalid404,
+    };
+  }
+
+  //* Generate QR
+  const templateInstance = await QRM_QRTemplate.findOne({
+    where: { name: { [Op.like]: '%FNB%' } },
+  });
+  const qrInstance = await createQR(
+    { templateId: templateInstance?.id || 4 },
+    {
+      rawFile: `public/images/qrs/qrs-${Date.now()}.png`,
+      combineFile: `public/images/qrCombines/combines-${Date.now()}.png`,
+    },
+  );
+
+  return {
+    isValid: true,
+    form: {
+      picLocationId: locationInstance.picId,
+      picKitchenId: kitchenInstance.picId,
+      qrId: qrInstance.content.id,
+      locationId: form.locationId,
+      kitchenId: form.kitchenId,
+      courierId: form.courierId,
+      statusId: menungguKurir,
+      name: form.name,
+      pickUpTime: new Date(form.pickUpTime),
+      vehiclePlateNo: form.vehiclePlatNo,
+      // items: formItems,
+    },
+    formItems,
+  };
+};
+
+const createFnBScheduleNew = async (form, items) => {
+  console.log(form, items);
+  //* Create schedule
+  const fnbScheduleInstance = await FNB_Schedule.create(form);
+
+  //* create scheduled item
+  items.forEach((item) => {
+    item.scheduleId = fnbScheduleInstance.id;
+  });
+  await FNB_ScheduleMenu.bulkCreate(items);
+
+  //* create schedule history
+  await FNB_ScheduleHistory.create({ scheduleId: fnbScheduleInstance.id, statusId: form.statusId });
+
+  //* courier dependencies
+  if (form.courierId) {
+    await FNB_Courier.update({ isAvailable: false }, { where: { id: form.courierId } });
+  }
+
+  if (fnbScheduleInstance) {
+    const locationInstance = await ACM_Location.findByPk(form.locationId, { attributes: ['name'] });
+    const kitchenInstance = await FNB_Kitchen.findByPk(form.kitchenId, { attributes: ['name'] });
+
+    fnbScheduleInstance.location = locationInstance.dataValues.name;
+    fnbScheduleInstance.kitchen = kitchenInstance.dataValues.name;
+  }
+
+  return {
+    success: true,
+    message: 'FnB Schedule Successfully Created',
+    content: fnbScheduleInstance,
+  };
+};
+
 const updateFnBSchedule = async (form, where) => {
   const invalid400 = [];
   const invalid404 = [];
@@ -527,4 +679,6 @@ module.exports = {
   updateFnBSchedule,
   updateProgressFnBSchedule,
   deleteFnbSchedule,
+  validateFnBScheduleInputsNew,
+  createFnBScheduleNew,
 };

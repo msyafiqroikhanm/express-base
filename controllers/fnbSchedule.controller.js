@@ -8,6 +8,8 @@ const {
   updateFnBSchedule,
   deleteFnbSchedule,
   updateProgressFnBSchedule,
+  validateFnBScheduleInputsNew,
+  createFnBScheduleNew,
 } = require('../services/fnbSchedule.service');
 const { createNotifications } = require('../services/notification.service');
 
@@ -106,6 +108,44 @@ class FNBScheduleController {
       }
 
       const data = await createFnBSchedule(inputs.form);
+      if (!data.success) {
+        return ResponseFormatter.error400(res, 'Bad Request', data.message);
+      }
+
+      const io = req.app.get('socketIo');
+      await createNotifications(io, 'FNB Delivery Schedule Created', data.content.id, [
+        data.content.name,
+        data.content.pickUpTime,
+        data.content.kitchen,
+        data.content.location,
+      ]);
+
+      return ResponseFormatter.success201(res, data.message, data.content);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  static async createNew(req, res, next) {
+    try {
+      res.url = `${req.method} ${req.originalUrl}`;
+      // return ResponseFormatter.success200(res, 'OKO', { data: res.url });
+
+      // resrict data that is not an admin
+      const limitation = {};
+      if (!req.user.limitation.isAdmin) {
+        limitation.kitchens = req.user.limitation.access.kitchen;
+      }
+
+      const inputs = await validateFnBScheduleInputsNew(req.body, limitation);
+      if (!inputs.isValid && inputs.code === 400) {
+        return ResponseFormatter.error400(res, 'Bad Request', inputs.message);
+      }
+      if (!inputs.isValid && inputs.code === 404) {
+        return ResponseFormatter.error404(res, 'Data Not Found', inputs.message);
+      }
+
+      const data = await createFnBScheduleNew(inputs.form, inputs.formItems);
       if (!data.success) {
         return ResponseFormatter.error400(res, 'Bad Request', data.message);
       }
