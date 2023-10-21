@@ -6,6 +6,10 @@ const {
 const selectAllPICs = async (query) => {
   const pics = await USR_PIC.findAll({
     where: query.typeId ? { typeId: query.typeId } : null,
+    order: [
+      ['user', 'username', 'ASC'],
+      ['typeId', 'ASC'],
+    ],
     attributes: ['id', 'userId', 'typeId'],
     include: [
       {
