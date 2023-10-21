@@ -20,6 +20,7 @@ const {
   selectAllNormalParticipants,
   selectAllCommitteeParticipants,
   downloadParticipantSecretFile,
+  validateDeleteParticipant,
 } = require('../services/participant.service');
 const { deleteFiles } = require('../helpers/deleteMultipleFile.helper');
 const { createNotifications } = require('../services/notification.service');
@@ -242,8 +243,12 @@ class Participant {
         where.contingentId = req.user.limitation.access.contingentId;
       }
 
-      if (req.user.participantId === Number(req.params.id)) {
-        return ResponseFormatter.error400(res, 'Bad Request', 'User / participant can\'t delete themself');
+      const validate = await validateDeleteParticipant(req.user, req.params.id);
+      if (!validate.isValid && validate.code === 400) {
+        return ResponseFormatter.error400(res, 'Bad Request', validate.message);
+      }
+      if (!validate.isValid && validate.code === 404) {
+        return ResponseFormatter.error400(res, 'Data Not Found', validate.message);
       }
 
       const data = await deleteParticipant(where);
