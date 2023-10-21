@@ -56,7 +56,7 @@ router.post(
   [
     check('picId', "PIC Id attribute can't be empty").notEmpty(),
     check('name', "Name attribute can't be empty").notEmpty(),
-    check('phoneNbr', "Phone Number attribute can't be empty").notEmpty(),
+    // check('phoneNbr', "Phone Number attribute can't be empty").notEmpty(),
     // check('email', "Email attribute can't be empty").isEmail(),
     check('address', "Address attribute can't be empty").notEmpty(),
   ],
@@ -78,7 +78,7 @@ router.put(
   [
     check('picId', "PIC Id attribute can't be empty").notEmpty(),
     check('name', "Name attribute can't be empty").notEmpty(),
-    check('phoneNbr', "Phone Number attribute can't be empty").notEmpty(),
+    // check('phoneNbr', "Phone Number attribute can't be empty").notEmpty(),
     // check('email', "Email attribute can't be empty").isEmail(),
     check('address', "Address attribute can't be empty").notEmpty(),
   ],

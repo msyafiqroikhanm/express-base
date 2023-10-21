@@ -106,11 +106,13 @@ const validateVendorInputs = async (form, id) => {
     invalid400.push('Vendor Name Already Taken / Exist');
   }
 
-  const duplicatePhone = await TPT_Vendor.findOne({
-    where: id ? { id: { [Op.ne]: id }, phoneNbr: form.phoneNbr } : { phoneNbr: form.phoneNbr },
-  });
-  if (duplicatePhone) {
-    invalid400.push('Vendor Phone Number Already Taken / Exist');
+  if (form.phoneNbr) {
+    const duplicatePhone = await TPT_Vendor.findOne({
+      where: id ? { id: { [Op.ne]: id }, phoneNbr: form.phoneNbr } : { phoneNbr: form.phoneNbr },
+    });
+    if (duplicatePhone) {
+      invalid400.push('Vendor Phone Number Already Taken / Exist');
+    }
   }
 
   let email = form.email;
@@ -153,7 +155,7 @@ const validateVendorInputs = async (form, id) => {
       pic: picInstance,
       name: form.name,
       address: form.address,
-      phoneNbr: form.phoneNbr,
+      phoneNbr: form.phoneNbr || null,
       email,
     },
   };
