@@ -1,7 +1,9 @@
 /* eslint-disable prefer-destructuring */
 /* eslint-disable no-param-reassign */
 const { Op } = require('sequelize');
-const { TPT_Vendor, USR_PIC, USR_User, PAR_Participant } = require('../models');
+const {
+  TPT_Vendor, USR_PIC, USR_User, PAR_Participant,
+} = require('../models');
 
 const selectAllVendors = async (where) => {
   const data = await TPT_Vendor.findAll({
@@ -126,7 +128,7 @@ const validateVendorInputs = async (form, id) => {
   // }
 
   // check if pic is pic transportation
-  if (picInstance.typeId !== 4) {
+  if (picInstance?.typeId !== 4) {
     invalid400.push('PIC For Transportation Must Be Type PIC Transportation');
   }
 

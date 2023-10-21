@@ -28,14 +28,15 @@ const selectAllVehicleSchedule = async (where = {}) => {
     include: [
       {
         model: TPT_Vehicle,
-        attributes: ['name'],
+        attributes: ['name', 'vendorId'],
         as: 'vehicle',
-        where: where.picId ? { vendorId: { [Op.in]: where.vendors } } : null,
+        required: false,
       },
       {
         model: TPT_Driver,
-        attributes: ['name'],
+        attributes: ['name', 'vendorId'],
         as: 'driver',
+        required: false,
       },
       { model: REF_VehicleScheduleStatus, attributes: ['name'], as: 'status' },
       {
@@ -51,16 +52,30 @@ const selectAllVehicleSchedule = async (where = {}) => {
     ],
   });
 
-  schedules.forEach((schedule) => {
+  let parsedSchedules = schedules.map((schedule) => {
+    if (where.picId) {
+      if ((schedule.driverId == null && schedule.driverId === null)
+           || (where?.vendors?.includes(schedule.driver.vendorId)
+              || where?.vendors?.includes(schedule.vehicle.vendorId))) {
+        schedule.dataValues.vehicle = schedule.vehicle?.dataValues.name || null;
+        schedule.dataValues.driver = schedule.driver?.dataValues.name || null;
+        schedule.dataValues.status = schedule.status?.dataValues.name || null;
+        return schedule;
+      }
+      return null;
+    }
     schedule.dataValues.vehicle = schedule.vehicle?.dataValues.name || null;
     schedule.dataValues.driver = schedule.driver?.dataValues.name || null;
     schedule.dataValues.status = schedule.status?.dataValues.name || null;
+    return schedule;
   });
+
+  parsedSchedules = parsedSchedules.filter((schedule) => schedule !== null);
 
   return {
     success: true,
     message: 'Successfully Getting All Vehicle Schedule',
-    content: schedules,
+    content: parsedSchedules,
   };
 };
 
