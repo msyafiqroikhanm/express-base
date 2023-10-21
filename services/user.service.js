@@ -26,6 +26,7 @@ const deleteFile = require('../helpers/deleteFile.helper');
 const selectAllUsers = async () => {
   const users = await USR_User.findAll({
     attributes: { exclude: ['password', 'createdAt', 'updatedAt', 'deletedAt'] },
+    order: [['username', 'ASC']],
     include: [
       {
         model: USR_Role,
@@ -57,8 +58,8 @@ const selectAllUsers = async () => {
     user.dataValues.isAdministrative = user.Role?.dataValues.isAdministrative || null;
     if (user.participant) {
       user.participant.dataValues.contingent = user.participant.contingent?.dataValues.name || null;
-      user.participant.dataValues.participantType =
-        user.participant.participantType?.dataValues.name;
+      user.participant.dataValues.participantType = user.participant.participantType
+        ?.dataValues.name;
       user.participant.dataValues.identityType = user.participant.identityType?.dataValues.name;
     }
     delete user.dataValues.Qr;
@@ -120,14 +121,14 @@ const selectDetailUser = async (id) => {
   userInstance.dataValues.isAdministrative = userInstance.Role?.dataValues.isAdministrative || null;
 
   if (userInstance.participant) {
-    userInstance.participant.dataValues.contingent =
-      userInstance.participant.contingent?.dataValues.name || null;
-    userInstance.participant.dataValues.participantType =
-      userInstance.participant.participantType?.dataValues.name || null;
-    userInstance.participant.dataValues.committeeType =
-      userInstance.participant.committeeType?.dataValues.name || null;
-    userInstance.participant.dataValues.identityType =
-      userInstance.participant.identityType?.dataValues.name || null;
+    userInstance.participant.dataValues.contingent = userInstance.participant.contingent
+      ?.dataValues.name || null;
+    userInstance.participant.dataValues.participantType = userInstance.participant.participantType
+      ?.dataValues.name || null;
+    userInstance.participant.dataValues.committeeType = userInstance.participant.committeeType
+      ?.dataValues.name || null;
+    userInstance.participant.dataValues.identityType = userInstance.participant.identityType
+      ?.dataValues.name || null;
   }
   delete userInstance.dataValues.Qr;
   delete userInstance.dataValues.Role;
@@ -150,7 +151,7 @@ const validateUserInputs = async (form, id) => {
     invalid404.push('Participant Data Not Found');
   }
 
-  let email = form.email;
+  let { email } = form;
   if (!id) {
     // check if participant already have user account for create user
     if (participantInstance?.user) {
@@ -484,7 +485,9 @@ const validatePublicRegisterUserInputs = async (form) => {
 };
 
 const validateProfileInputs = async (form, id, files) => {
-  const { identityTypeId, name, gender, birthDate, identityNo, email, phoneNbr, address } = form;
+  const {
+    identityTypeId, name, gender, birthDate, identityNo, email, phoneNbr, address,
+  } = form;
 
   const invalid400 = [];
   const invalid404 = [];
