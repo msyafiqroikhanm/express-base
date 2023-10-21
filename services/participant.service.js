@@ -108,7 +108,7 @@ const selectAllParticipant = async (query, where) => {
     ],
   });
 
-  const seperatedParticipant = { committee: [], participant: [] };
+  const seperatedParticipant = { committee: [], participant: [], all: participants };
 
   const startEvent = await SYS_Configuration.findOne({
     where: { name: { [Op.substring]: 'Event Start' } },
