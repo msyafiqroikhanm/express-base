@@ -242,6 +242,10 @@ class Participant {
         where.contingentId = req.user.limitation.access.contingentId;
       }
 
+      if (req.user.participantId === Number(req.params.id)) {
+        return ResponseFormatter.error400(res, 'Bad Request', 'User / participant can\'t delete themself');
+      }
+
       const data = await deleteParticipant(where);
       if (!data.success && data.code === 404) {
         return ResponseFormatter.error404(res, 'Data Not Found', data.message);
