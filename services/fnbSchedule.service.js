@@ -585,6 +585,153 @@ const updateFnBSchedule = async (form, where) => {
   };
 };
 
+const updateFnBScheduleNew = async (form, where) => {
+  const invalid400 = [];
+  const invalid404 = [];
+
+  const formUpdateScheduleInstance = {};
+  const fnbScheduleInstance = await FNB_Schedule.findOne({ where });
+  if (!fnbScheduleInstance) {
+    return {
+      success: false,
+      code: 404,
+      message: 'FnB Schedule Data Not Found',
+    };
+  }
+  const courierIdOld = fnbScheduleInstance.courierId;
+
+  //* check kitchenId validity
+  if (form.kitchenId) {
+    const kitchenInstance = await FNB_Kitchen.findByPk(form.kitchenId);
+    if (!kitchenInstance) {
+      invalid404.push('Kitchen Data Not Found');
+    }
+    formUpdateScheduleInstance.kitchenId = kitchenInstance.id;
+    formUpdateScheduleInstance.picKitchenId = kitchenInstance.picId;
+  }
+
+  //! disable
+  // //* check status validity
+  // if (form.statusId) {
+  //   const statusId = await REF_FoodScheduleStatus.findByPk(form.statusId);
+  //   if (!statusId) {
+  //     invalid404.push('FNB Schedule Status Data Not Found');
+  //   }
+  // }
+
+  //* check locationId validity
+  if (form.locationId) {
+    const locationInstance = await ACM_Location.findByPk(form.locationId);
+    if (!locationInstance) {
+      invalid404.push('Location Data Not Found');
+    }
+    formUpdateScheduleInstance.locationId = locationInstance.id;
+    formUpdateScheduleInstance.picLocationId = locationInstance.picId;
+  }
+
+  if (form.pickUpTime) {
+    if (new Date().getTime() > new Date(form.pickUpTime).getTime()) {
+      invalid400.push("Can't Set Pick Up Time In The Past");
+    } else {
+      formUpdateScheduleInstance.pickUpTime = form.pickUpTime;
+    }
+  } else {
+    formUpdateScheduleInstance.pickUpTime = fnbScheduleInstance.pickUpTime;
+  }
+
+  // console.log(form, formUpdateScheduleInstance);
+  if (form.dropOffTime && formUpdateScheduleInstance.pickUpTime) {
+    if (
+      new Date(form.dropOffTime).getTime() <
+      new Date(formUpdateScheduleInstance.pickUpTime).getTime()
+    ) {
+      invalid400.push('Drop Off Time should not be faster than Pick Up Time');
+    }
+  }
+
+  //* check courierId validity
+  let courierIsUpdate = false;
+  let newCourier;
+  if (form.courierId) {
+    const courierInstance = await FNB_Courier.findByPk(form.courierId);
+    if (!courierInstance) {
+      invalid404.push('Courier Data Not Found');
+    }
+    if (!courierInstance?.isAvailable && courierIdOld !== Number(form.courierId)) {
+      invalid400.push('Courier is not available');
+    }
+
+    courierIsUpdate = courierIdOld !== Number(form.courierId);
+    newCourier = courierInstance;
+  }
+
+  const formItems = [];
+  if (form.items.length) {
+    for (let i = 0; i < form.items.length; i += 1) {
+      const item = form.items[i];
+
+      const kitchenTargetInstance = await FNB_KitchenTarget.findOne({
+        where: { id: item.kitchenTargetId },
+      });
+
+      if (!kitchenTargetInstance) {
+        invalid404.push('Kitchen Target Data Not Found');
+      } else {
+        // console.log(JSON.stringify(kitchenTargetInstance, null, 2));
+        formItems.push({
+          scheduleId: fnbScheduleInstance.id,
+          kitchenTargetId: kitchenTargetInstance.id,
+          quantity: item.quantity,
+        });
+      }
+    }
+  }
+
+  if (invalid400.length > 0) {
+    return {
+      isValid: false,
+      code: 400,
+      message: invalid400,
+    };
+  }
+  if (invalid404.length > 0) {
+    return {
+      isValid: false,
+      code: 404,
+      message: invalid404,
+    };
+  }
+
+  formUpdateScheduleInstance.courierId = form.courierId
+    ? form.courierId
+    : fnbScheduleInstance.courierId;
+  // formUpdateScheduleInstance.statusId = form.statusId
+  //   ? form.statusId
+  //   : fnbScheduleInstance.statusId;
+  formUpdateScheduleInstance.dropOffTime = form.dropOffTime
+    ? form.dropOffTime
+    : fnbScheduleInstance.dropOffTime;
+  formUpdateScheduleInstance.vehiclePlateNo = form.vehiclePlatNo
+    ? form.vehiclePlatNo
+    : fnbScheduleInstance.vehiclePlateNo;
+
+  await FNB_ScheduleMenu.destroy({ where: { scheduleId: fnbScheduleInstance.id } });
+  await FNB_ScheduleMenu.bulkCreate(formItems);
+  // console.log(formUpdateScheduleInstance, formItems);
+  // await FNB_Schedule.update(formUpdateScheduleInstance, { where: { id: fnbScheduleInstance.id } });
+
+  if (courierIsUpdate) {
+    await FNB_Courier.update({ isAvailable: true }, { where: { id: courierIdOld } });
+    await FNB_Courier.update({ isAvailable: false }, { where: { id: newCourier.id } });
+  }
+
+  return {
+    success: true,
+    message: 'FnB Schedule Successfully Updated',
+    content: fnbScheduleInstance,
+  };
+};
+
 const updateProgressFnBSchedule = async (form, where) => {
   const invalid400 = [];
   const invalid404 = [];
@@ -681,4 +828,5 @@ module.exports = {
   deleteFnbSchedule,
   validateFnBScheduleInputsNew,
   createFnBScheduleNew,
+  updateFnBScheduleNew,
 };
