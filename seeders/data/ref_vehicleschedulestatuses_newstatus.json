@@ -1,0 +1,7 @@
+[
+  { "name": "Scheduled"},
+  { "name": "Pick Up Passengers"},
+  { "name": "Enroute"},
+  { "name": "Completed"},
+  { "name": "Cancelled"}
+]

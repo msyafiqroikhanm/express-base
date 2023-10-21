@@ -300,17 +300,17 @@ const progressVehicleSchedule = async (form, id, where = {}, isAdmin = false) =>
     include: { model: REF_VehicleScheduleStatus, attributes: ['name'], as: 'status' },
   });
 
-  // check old status is complete for user non admin
+  // check old status is complete or cancelled for user non admin
   if (!isAdmin) {
     const oldStatus = await REF_VehicleScheduleStatus.findOne(
       { where: { id: scheduleInstance.statusId }, attributes: ['name'] },
     );
 
-    if (oldStatus?.name === 'Completed') {
+    if (['Completed', 'Cancelled'].includes(oldStatus?.name)) {
       return {
         success: false,
         code: 400,
-        message: ["Completed Transportation Schedule Can't Change It Status"],
+        message: ["Completed / Cancelled Transportation Schedule Can't Change It Status"],
       };
     }
   }
@@ -344,10 +344,44 @@ const progressVehicleSchedule = async (form, id, where = {}, isAdmin = false) =>
   }
 
   const statusInstance = await REF_VehicleScheduleStatus.findByPk(form.statusId);
+  const oldStatusInstance = await REF_VehicleScheduleStatus.findByPk(scheduleInstance.statusId);
+
+  if (form.statusId && !statusInstance) {
+    return {
+      success: false,
+      code: 404,
+      message: ['Vehicle Schedule Status Data Not Found'],
+    };
+  }
+
+  const oldStatus = oldStatusInstance?.name || null;
+  const newStatus = statusInstance?.name || null;
+
+  const allowedTransitions = {
+    Scheduled: ['Scheduled', 'Pick Up Passengers', 'Cancelled'],
+    'Pick Up Passengers': ['Pick Up Passengers', 'Enroute', 'Cancelled'],
+    Enroute: ['Enroute', 'Completed', 'Cancelled'],
+  };
+
+  if (oldStatus && newStatus
+      && allowedTransitions[oldStatus]
+      && !allowedTransitions[oldStatus].includes(newStatus)) {
+    return {
+      success: false,
+      code: 400,
+      message: [`Vehicle Schedule With Status ${oldStatus}, could only change to status ${allowedTransitions[oldStatus]}`],
+    };
+  }
+
+  // check if schedule old status is compled or cancelled to other status
+  if (['Completed', 'Cancelled'].includes(oldStatus) && !['Completed', 'Cancelled'].includes(newStatus)) {
+    await TPT_Driver.update({ isAvailable: false }, { where: { id: scheduleInstance.driverId } });
+    await TPT_Vehicle.update({ isAvailable: false }, { where: { id: scheduleInstance.vehicleId } });
+  }
 
   scheduleInstance.statusId = statusInstance?.id || scheduleInstance.statusId;
   await scheduleInstance.save();
-  if (!scheduleInstance) {
+  if (!statusInstance) {
     const status = await REF_VehicleScheduleStatus.findByPk(scheduleInstance.statusId);
     scheduleInstance.status = status.dataValues.name;
   } else {
@@ -379,11 +413,14 @@ const progressVehicleSchedule = async (form, id, where = {}, isAdmin = false) =>
       { statusId: passengerStatus.id },
       { where: { vehicleScheduleId: scheduleInstance.id, statusId: 1 } },
     );
+  } else if (statusInstance?.name === 'Cancelled') {
+    await TPT_Driver.update({ isAvailable: true }, { where: { id: scheduleInstance.driverId } });
+    await TPT_Vehicle.update({ isAvailable: true }, { where: { id: scheduleInstance.vehicleId } });
   }
 
   return {
     success: true,
-    message: `Vehicle Schedulee Status Of ${scheduleInstance.name} Successully Updated To ${
+    message: `Vehicle Schedul]e Status Of ${scheduleInstance.name} Successully Updated To ${
       statusInstance?.name || scheduleInstance.status?.name
     }`,
     content: scheduleInstance,
