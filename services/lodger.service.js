@@ -257,6 +257,7 @@ const updateLodger = async (id, form) => {
   }
 
   const errorMessages = [];
+  const invalid400 = [];
 
   if (form.participantId) {
     const participantInstance = await ACM_Location.findByPk(form.participantId);
@@ -300,6 +301,21 @@ const updateLodger = async (id, form) => {
     return { isValid: false, code: 404, message: errorMessages };
   }
 
+  if (form.reservationOut && form.reservationIn) {
+    if (new Date(form.reservationOut).getTime() < new Date(form.reservationIn).getTime()) {
+      invalid400.push('Reservation out cannot be earlier than reservation in');
+    }
+  } else if (form.reservationOut && !form.reservationIn) {
+    if (
+      new Date(form.reservationOut).getTime() < new Date(lodgerInstance.reservationIn).getTime()
+    ) {
+      invalid400.push('Reservation out cannot be earlier than reservation in');
+    }
+  }
+
+  if (invalid400.length > 0) {
+    return { isValid: false, code: 400, message: invalid400 };
+  }
   // const oldRoom = await ACM_Room.findByPk(lodgerHelper.roomId);
 
   console.log(roomIsUpdate);
@@ -461,32 +477,40 @@ const deleteLodger = async (id) => {
 };
 
 const validateLodgerInputs = async (form) => {
-  const errorMessages = [];
+  const invalid404 = [];
+  const invalid400 = [];
 
   const roomInstance = await ACM_Room.findOne({ where: { id: form.roomId, statusId: 1 } });
   if (!roomInstance) {
-    errorMessages.push('Room Data Not Found');
+    invalid404.push('Room Data Not Found');
   }
   if (roomInstance) {
     if (!(roomInstance.occupied < roomInstance.capacity)) {
-      errorMessages.push('Room is Full');
+      invalid404.push('Room is Full');
     }
   }
 
   const participantInstance = await PAR_Participant.findByPk(form.participantId);
   if (!participantInstance) {
-    errorMessages.push('Participant Data Not Found');
+    invalid404.push('Participant Data Not Found');
   }
 
   const lodgerInstance = await ACM_ParticipantLodger.findOne({
     where: { participantId: form.participantId },
   });
   if (lodgerInstance) {
-    errorMessages.push('Participant Has reserved');
+    invalid404.push('Participant Has reserved');
   }
 
-  if (errorMessages.length > 0) {
-    return { isValid: false, code: 404, message: errorMessages };
+  if (invalid404.length > 0) {
+    return { isValid: false, code: 404, message: invalid404 };
+  }
+
+  if (new Date(form.reservationOut).getTime() < new Date(form.reservationIn).getTime()) {
+    invalid400.push('Reservation out cannot be earlier than reservation in');
+  }
+  if (invalid400.length > 0) {
+    return { isValid: false, code: 400, message: invalid400 };
   }
 
   const formRoom = {
