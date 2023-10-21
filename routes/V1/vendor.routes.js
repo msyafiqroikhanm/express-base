@@ -49,9 +49,7 @@ router.post(
       req,
       res,
       next,
-      await features().then((feature) => [
-        feature.create_vendor,
-      ]),
+      await features().then((feature) => [feature.create_vendor]),
     );
   },
   Authentication.transportation,
@@ -59,7 +57,7 @@ router.post(
     check('picId', "PIC Id attribute can't be empty").notEmpty(),
     check('name', "Name attribute can't be empty").notEmpty(),
     check('phoneNbr', "Phone Number attribute can't be empty").notEmpty(),
-    check('email', "Email attribute can't be empty").isEmail(),
+    // check('email', "Email attribute can't be empty").isEmail(),
     check('address', "Address attribute can't be empty").notEmpty(),
   ],
   ValidateMiddleware.result,
@@ -73,9 +71,7 @@ router.put(
       req,
       res,
       next,
-      await features().then((feature) => [
-        feature.update_vendor,
-      ]),
+      await features().then((feature) => [feature.update_vendor]),
     );
   },
   Authentication.transportation,
@@ -83,7 +79,7 @@ router.put(
     check('picId', "PIC Id attribute can't be empty").notEmpty(),
     check('name', "Name attribute can't be empty").notEmpty(),
     check('phoneNbr', "Phone Number attribute can't be empty").notEmpty(),
-    check('email', "Email attribute can't be empty").isEmail(),
+    // check('email', "Email attribute can't be empty").isEmail(),
     check('address', "Address attribute can't be empty").notEmpty(),
   ],
   ValidateMiddleware.result,
@@ -97,9 +93,7 @@ router.delete(
       req,
       res,
       next,
-      await features().then((feature) => [
-        feature.delete_vendor,
-      ]),
+      await features().then((feature) => [feature.delete_vendor]),
     );
   },
   Authentication.transportation,

@@ -8,12 +8,7 @@ const AuthMiddleware = require('../../middlewares/auth.middleware');
 router.get(
   '/',
   async (req, res, next) => {
-    AuthMiddleware.authenticate(
-      req,
-      res,
-      next,
-      null,
-    );
+    AuthMiddleware.authenticate(req, res, next, null);
   },
   ProfileController.get,
 );
@@ -21,12 +16,7 @@ router.get(
 router.patch(
   '/',
   async (req, res, next) => {
-    AuthMiddleware.authenticate(
-      req,
-      res,
-      next,
-      null,
-    );
+    AuthMiddleware.authenticate(req, res, next, null);
   },
   uploadParticipant.fields([
     {
@@ -52,7 +42,7 @@ router.patch(
     check('identityNo', "Identity number attribute can't be empty").notEmpty(),
     check('gender', "gender attribute can't be empty").notEmpty(),
     check('birthDate', "Birth date attribute can't be empty").isDate(),
-    check('email', "Email attribute can't be empty").isEmail(),
+    // check('email', "Email attribute can't be empty").isEmail(),
     check('phoneNbr', "Phone number attribute can't be empty").notEmpty(),
   ],
   ValidateMiddleware.result,
@@ -62,12 +52,7 @@ router.patch(
 router.put(
   '/change-password',
   async (req, res, next) => {
-    AuthMiddleware.authenticate(
-      req,
-      res,
-      next,
-      null,
-    );
+    AuthMiddleware.authenticate(req, res, next, null);
   },
   [
     check('oldPassword', "Old Password attribute can't be empty").notEmpty(),

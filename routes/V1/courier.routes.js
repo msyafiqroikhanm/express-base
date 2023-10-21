@@ -24,7 +24,7 @@ router.post(
     check('birthDate', "Birth Date attribute can't be empty").isDate(),
     check('identityNo', "Identity Number attribute can't be empty").notEmpty(),
     check('phoneNbr', 'phoneNbr attribute cant be empty').notEmpty(),
-    check('email', "Email attribute can't be empty").isEmail(),
+    // check('email', "Email attribute can't be empty").isEmail(),
     check('address', "Address attribute can't be empty").notEmpty(),
     check('username', "Username attribute can't be empty").notEmpty(),
     check('password', "Password attribute can't be empty").notEmpty(),

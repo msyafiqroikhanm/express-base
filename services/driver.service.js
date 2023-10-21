@@ -1,9 +1,18 @@
 /* eslint-disable no-param-reassign */
 const { Op } = require('sequelize');
 const {
-  TPT_Driver, TPT_Vendor, TPT_VehicleSchedule, USR_User, PAR_Participant, TPT_DriverTracking,
+  TPT_Driver,
+  TPT_Vendor,
+  TPT_VehicleSchedule,
+  USR_User,
+  PAR_Participant,
+  TPT_DriverTracking,
 } = require('../models');
-const { validateCommitteeInputs, createComittee, deleteParticipant } = require('./participant.service');
+const {
+  validateCommitteeInputs,
+  createComittee,
+  deleteParticipant,
+} = require('./participant.service');
 const { validateUserInputs, createUser } = require('./user.service');
 
 const selectAllDrivers = async (where = {}) => {
@@ -21,7 +30,11 @@ const selectAllDrivers = async (where = {}) => {
   const data = await TPT_Driver.findAll({
     // eslint-disable-next-line no-nested-ternary
     where: Object.keys(query).length > 0 ? query : null,
-    include: { model: TPT_Vendor, as: 'vendor', attributes: { exclude: ['createdAt', 'updatedAt', 'deletedAt'] } },
+    include: {
+      model: TPT_Vendor,
+      as: 'vendor',
+      attributes: { exclude: ['createdAt', 'updatedAt', 'deletedAt'] },
+    },
   });
 
   data.forEach((driver) => {
@@ -46,7 +59,11 @@ const selectDriver = async (id, where) => {
 
   const driverInstance = await TPT_Driver.findOne({
     where: where.picId ? { id, vendorId: { [Op.in]: where.vendors } } : { id },
-    include: { model: TPT_Vendor, as: 'vendor', attributes: { exclude: ['createdAt', 'updatedAt', 'deletedAt'] } },
+    include: {
+      model: TPT_Vendor,
+      as: 'vendor',
+      attributes: { exclude: ['createdAt', 'updatedAt', 'deletedAt'] },
+    },
   });
   if (!driverInstance) {
     return {
@@ -66,9 +83,7 @@ const selectDriver = async (id, where) => {
 };
 
 const validateDriverInputs = async (form, where, file, id) => {
-  const {
-    vendorId, name, phoneNbr, email,
-  } = form;
+  const { vendorId, name, phoneNbr, email } = form;
 
   const invalid400 = [];
   const invalid404 = [];
@@ -97,7 +112,7 @@ const validateDriverInputs = async (form, where, file, id) => {
         birthDate: form.birthDate,
         identityNo: form.identityNo,
         phoneNbr: form.phoneNbr,
-        email: form.email,
+        email: form.email ? form.email : null,
         address: form.address,
       },
       file,
@@ -133,7 +148,7 @@ const validateDriverInputs = async (form, where, file, id) => {
         participantId: committeeInstance.content?.id,
         username: form.username,
         password: form.password,
-        email: form.email,
+        email: form.email ? form.email : null,
       },
       null,
     );
@@ -179,12 +194,12 @@ const validateDriverInputs = async (form, where, file, id) => {
     if (duplicatePhoneNbr) {
       invalid400.push('Phone Number Already Exist / Taken');
     }
-    const duplicateEmail = await USR_User.findOne({
-      where: { email: form.email, id: { [Op.ne]: driverInstance?.user?.id } },
-    });
-    if (duplicateEmail) {
-      invalid400.push('Email Already Exist / Taken');
-    }
+    // const duplicateEmail = await USR_User.findOne({
+    //   where: { email: form.email, id: { [Op.ne]: driverInstance?.user?.id } },
+    // });
+    // if (duplicateEmail) {
+    //   invalid400.push('Email Already Exist / Taken');
+    // }
   }
 
   if (invalid400.length > 0) {
@@ -260,7 +275,8 @@ const updateDriver = async (form, id, where) => {
   driverInstance.name = form.name;
   driverInstance.phoneNbr = form.phoneNbr;
   driverInstance.email = form.email;
-  driverInstance.isAvailable = typeof form.isAvailable !== 'object' ? form.isAvailable === 'true' : true;
+  driverInstance.isAvailable =
+    typeof form.isAvailable !== 'object' ? form.isAvailable === 'true' : true;
   await driverInstance.save();
 
   // updating committee / participant
@@ -270,10 +286,7 @@ const updateDriver = async (form, id, where) => {
   );
 
   // updating user
-  await USR_User.update(
-    { email: form.email },
-    { where: { id: form.user || null } },
-  );
+  await USR_User.update({ email: form.email }, { where: { id: form.user || null } });
 
   return {
     success: true,

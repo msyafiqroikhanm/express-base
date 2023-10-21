@@ -1,6 +1,10 @@
 const router = require('express').Router();
 const { check } = require('express-validator');
-const { uploadDocument, uploadImage, uploadParticipant } = require('../../services/multerStorage.service');
+const {
+  uploadDocument,
+  uploadImage,
+  uploadParticipant,
+} = require('../../services/multerStorage.service');
 const features = require('../../helpers/features.helper');
 const ParticipantController = require('../../controllers/participant.controller');
 const ValidateMiddleware = require('../../middlewares/validate.middleware');
@@ -199,7 +203,7 @@ router.post(
     check('birthDate', "Birth Date attribute can't be empty").isDate(),
     check('identityNo', "Identity Number attribute can't be empty").notEmpty(),
     check('phoneNbr', "Phone Number attribute can't be empty").notEmpty(),
-    check('email', "Email attribute can't be empty").isEmail(),
+    // check('email', "Email attribute can't be empty").isEmail(),
   ],
   ValidateMiddleware.result,
   Authentication.participant,
@@ -259,7 +263,7 @@ router.put(
     check('birthDate', "Birth Date attribute can't be empty").isDate(),
     check('identityNo', "Identity Number attribute can't be empty").notEmpty(),
     check('phoneNbr', "Phone Number attribute can't be empty").notEmpty(),
-    check('email', "Email attribute can't be empty").isEmail(),
+    // check('email', "Email attribute can't be empty").isEmail(),
   ],
   ValidateMiddleware.result,
   Authentication.participant,
@@ -334,7 +338,7 @@ router.post(
     check('birthDate', "Birth Date attribute can't be empty").isDate(),
     check('identityNo', "Identity Number attribute can't be empty").notEmpty(),
     check('phoneNbr', "Phone Number attribute can't be empty").notEmpty(),
-    check('email', "Email attribute can't be empty").isEmail(),
+    // check('email', "Email attribute can't be empty").isEmail(),
   ],
   ValidateMiddleware.result,
   ParticipantController.createCommittee,
@@ -359,7 +363,7 @@ router.put(
     check('birthDate', "Birth Date attribute can't be empty").isDate(),
     check('identityNo', "Identity Number attribute can't be empty").notEmpty(),
     check('phoneNbr', "Phone Number attribute can't be empty").notEmpty(),
-    check('email', "Email attribute can't be empty").isEmail(),
+    // check('email', "Email attribute can't be empty").isEmail(),
   ],
   ValidateMiddleware.result,
   ParticipantController.updateCommittee,
