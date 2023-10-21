@@ -11,6 +11,11 @@ const {
 // const { calculateAge } = require('./participant.service');
 
 const selectAllGroups = async (where) => {
+  let events = null;
+  if (where.eventIds) {
+    events = where.eventIds || null;
+    delete where.eventIds;
+  }
   const groups = await PAR_Group.findAll({
     where,
     include: [
@@ -23,6 +28,7 @@ const selectAllGroups = async (where) => {
         model: ENV_Event,
         as: 'event',
         attributes: ['name'],
+        where: events ? { id: { [Op.in]: events } } : null,
       },
       {
         model: REF_GroupStatus,
