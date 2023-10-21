@@ -232,7 +232,8 @@ const validateVehicleScheduleInputs = async (form) => {
       status: statusInstance,
       name: form.name,
       pickUpTime: new Date(form.pickUpTime),
-      description: form.description,
+      descriptionPickUp: form.descriptionPickUp,
+      descriptionDropOff: form.descriptionDropOff,
       pickUpOtherLocation: form.pickUpOtherLocation,
       dropOffOtherLocation: form.dropOffOtherLocation,
       passengers: validPassengers,
@@ -249,7 +250,8 @@ const createVehicleSchedule = async (form) => {
     pickUpOtherLocation: form.pickUpOtherLocation,
     dropOffOtherLocation: form.dropOffOtherLocation,
     pickUpTime: form.pickUpTime,
-    description: form.description,
+    descriptionPickUp: form.descriptionPickUp,
+    descriptionDropOff: form.descriptionDropOff,
   });
 
   await scheduleInstance.addPAR_Participants(form.passengers);
@@ -279,7 +281,8 @@ const updateVehicleSchedule = async (form, id) => {
   scheduleInstance.pickUpOtherLocation = form.pickUpOtherLocation || null;
   scheduleInstance.dropOffOtherLocation = form.dropOffOtherLocation || null;
   scheduleInstance.pickUpTime = form.pickUpTime;
-  scheduleInstance.description = form.description;
+  scheduleInstance.descriptionPickUp = form.descriptionPickUp;
+  scheduleInstance.descriptionDropOff = form.descriptionDropOff;
   await scheduleInstance.save();
 
   await scheduleInstance.setPAR_Participants(form.passengers);
