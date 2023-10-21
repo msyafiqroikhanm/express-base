@@ -50,8 +50,6 @@ class Participant {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
 
-      console.log(req.user.limitation);
-
       // resrict data that is not an admin
       const where = {
         [Op.or]: [
@@ -66,7 +64,6 @@ class Participant {
         where.typeId = req.query.typeId;
       }
 
-      console.log(JSON.stringify(req.user, null, 2));
       if (!req.user.limitation.isAdmin && req.user.Role?.name === 'Participant Coordinator') {
         where.id = req.user.limitation.access.contingentId;
       }
