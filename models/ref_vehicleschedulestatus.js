@@ -13,6 +13,7 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       REF_VehicleScheduleStatus.hasMany(models.TPT_VehicleSchedule, { foreignKey: 'statusId', as: 'schedules' });
+      REF_VehicleScheduleStatus.hasMany(models.TPT_VehicleScheduleHistory, { foreignKey: 'statusId', as: 'histories' });
     }
   }
   REF_VehicleScheduleStatus.init({
