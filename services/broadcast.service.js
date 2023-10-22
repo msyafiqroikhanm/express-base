@@ -138,7 +138,7 @@ const validateBroadcastInputs = async (form, file) => {
         `Message Parameters Required ${templateInstance?.messageVariableNumber} For Chosen Broadcast Template`,
       );
     }
-  } else if (form.messageParameters) {
+  } else if (form.messageParameters?.length) {
     invalid400.push('Broadcast Template With Static Message Cannot Have Paramters');
   }
 
