@@ -64,12 +64,7 @@ class KitchenController {
 
       const data = await createKitchen(inputs.form);
       const io = req.app.get('socketIo');
-      await createNotifications(
-        io,
-        'Kitchen Created',
-        data.content.id,
-        [data.content.name],
-      );
+      await createNotifications(io, 'Kitchen Created', data.content.id, [data.content.name]);
 
       return ResponseFormatter.success201(res, data.message, data.content);
     } catch (error) {
