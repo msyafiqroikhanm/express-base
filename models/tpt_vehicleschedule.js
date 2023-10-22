@@ -25,6 +25,7 @@ module.exports = (sequelize, DataTypes) => {
       TPT_VehicleSchedule.belongsTo(models.ACM_Location, { foreignKey: 'destinationId', as: 'destination' });
 
       TPT_VehicleSchedule.hasMany(models.TPT_SchedulePassenger, { foreignKey: 'vehicleScheduleId' });
+      TPT_VehicleSchedule.hasMany(models.TPT_VehicleScheduleHistory, { foreignKey: 'vehicleScheduleId', as: 'histories' });
     }
   }
   TPT_VehicleSchedule.init({

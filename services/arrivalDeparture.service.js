@@ -1,4 +1,5 @@
 /* eslint-disable no-param-reassign */
+const { Op } = require('sequelize');
 const { TPT_ArrivalDepartureInformation, PAR_Contingent, ACM_Location } = require('../models');
 
 const selectAllArrivalDepartures = async (where) => {
@@ -61,22 +62,10 @@ const validateArrivalDepartureInputs = async (form, where) => {
     invalid404.push('Contingent Data Not Found');
   }
 
-  let locationInstance = null;
-  if (form.locationId) {
-    locationInstance = await ACM_Location.findByPk(form.locationId);
-    if (!locationInstance) {
-      invalid404.push('Location Data Not Found');
-    }
-  }
+  const locationInstance = await ACM_Location.findOne({ where: { name: { [Op.substring]: 'Other' } } });
 
   if (!['Arrival', 'Departure'].includes(form.type)) {
     invalid400.push('Type Option Either Arrival Or Departure');
-  }
-
-  // check if both location id and otherlocation empty and filled at the same time
-  if ((!form.locationId && !form.otherLocation)
-      || (form.locationId && form.otherLocation)) {
-    invalid400.push('Required Either Location Id Or OtherLocation Attribute');
   }
 
   if (Number(form.totalParticipant) <= 0) {
@@ -147,11 +136,10 @@ const updateArrivalDeparture = async (form, id) => {
   }
 
   informationInstance.contingentId = form.contingent?.id || null;
-  informationInstance.locationId = form.location?.id || null;
   informationInstance.name = form.name;
   informationInstance.type = form.type;
   informationInstance.transportation = form.transportation;
-  informationInstance.otherLocation = form.location ? null : form.otherLocation;
+  informationInstance.otherLocation = form.otherLocation;
   informationInstance.totalParticipant = form.totalParticipant;
   informationInstance.time = form.time;
   await informationInstance.save();

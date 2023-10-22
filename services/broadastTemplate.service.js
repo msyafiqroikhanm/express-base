@@ -68,7 +68,7 @@ const validateTemplateInputs = async (form, file) => {
   }
 
   // validate footer
-  if (form.footer && form.message?.length > 60) {
+  if (form.footer && form.footer?.length > 60) {
     invalid400.push('Footer data exceeds the maximum character limit of 60 characters');
   }
 
@@ -325,13 +325,19 @@ const selectAllTemplate = async () => {
         as: 'headerType',
         attributes: ['name'],
       },
+      {
+        model: REF_MetaTemplateLanguage,
+        as: 'language',
+        attributes: ['name'],
+      },
     ],
   });
 
   templates.forEach((template) => {
-    template.dataValues.category = template.category.dataValues.name;
-    template.dataValues.metaCategory = template.metaCategory.dataValues.name;
-    template.dataValues.headerType = template.headerType.dataValues.name;
+    template.dataValues.category = template.category?.dataValues.name || null;
+    template.dataValues.metaCategory = template.metaCategory?.dataValues.name || null;
+    template.dataValues.headerType = template.headerType?.dataValues.name || null;
+    template.dataValues.language = template.language?.dataValues.name || null;
   });
 
   return {
@@ -342,7 +348,31 @@ const selectAllTemplate = async () => {
 };
 
 const selectTemplate = async (id) => {
-  const templateInstance = await CSM_BroadcastTemplate.findByPk(id);
+  const templateInstance = await CSM_BroadcastTemplate.findOne({
+    where: { id },
+    include: [
+      {
+        model: REF_TemplateCategory,
+        as: 'category',
+        attributes: ['name'],
+      },
+      {
+        model: REF_MetaTemplateCategory,
+        as: 'metaCategory',
+        attributes: ['name'],
+      },
+      {
+        model: REF_TemplateHeaderType,
+        as: 'headerType',
+        attributes: ['name'],
+      },
+      {
+        model: REF_MetaTemplateLanguage,
+        as: 'language',
+        attributes: ['name'],
+      },
+    ],
+  });
   if (!templateInstance) {
     return {
       success: false,
@@ -350,6 +380,11 @@ const selectTemplate = async (id) => {
       message: ['Broadcast Template Data Not Found'],
     };
   }
+
+  templateInstance.dataValues.category = templateInstance.category?.dataValues.name || null;
+  templateInstance.dataValues.metaCategory = templateInstance.metaCategory?.dataValues.name || null;
+  templateInstance.dataValues.headerType = templateInstance.headerType?.dataValues.name || null;
+  templateInstance.dataValues.language = templateInstance.language?.dataValues.name || null;
 
   return {
     success: true,
@@ -362,7 +397,7 @@ const createBroadcastTemplate = async (form) => {
   const templateInstance = await CSM_BroadcastTemplate.create({
     categoryId: form.category.id,
     metaCategoryId: form.metaCategory.id,
-    headerTypeId: form.headerType.id,
+    headerTypeId: Number(form.headerType.id),
     languageId: form.language.id,
     metaId: form.metaId,
     metaStatus: form.metaStatus,
