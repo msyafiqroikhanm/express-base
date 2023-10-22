@@ -29,6 +29,11 @@ module.exports = (sequelize, DataTypes) => {
     }
   }
   TPT_VehicleSchedule.init({
+    type: {
+      type: DataTypes.ENUM,
+      values: ['Arrival & Departure', 'Event', 'Tourism'],
+      defaultValue: 'Event',
+    },
     driverId: DataTypes.INTEGER,
     vehicleId: DataTypes.INTEGER,
     pickUpId: DataTypes.INTEGER,
@@ -41,6 +46,7 @@ module.exports = (sequelize, DataTypes) => {
     dropOffTime: DataTypes.DATE,
     descriptionPickUp: DataTypes.TEXT,
     descriptionDropOff: DataTypes.TEXT,
+    totalPassengers: DataTypes.INTEGER,
   }, {
     sequelize,
     modelName: 'TPT_VehicleSchedule',
