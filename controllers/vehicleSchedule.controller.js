@@ -11,6 +11,7 @@ const {
   validatePassengerAbsent,
   udpatePassengerAbsent,
   selectAllPassengersVehicleSchedule,
+  validateProgressVehicleScheduleInputs,
 } = require('../services/vehicleSchedule.service');
 
 class VehicleScheduleController {
@@ -209,8 +210,21 @@ class VehicleScheduleController {
         where.driverId = req.user.limitation.access.driverId;
       }
 
-      const data = await progressVehicleSchedule(
+      const inputs = await validateProgressVehicleScheduleInputs(
         req.body,
+        req.params.id,
+        where,
+        req.user.limitation.isAdmin,
+      );
+      if (!inputs.isValid && inputs.code === 404) {
+        return ResponseFormatter.error404(res, 'Data Not Found', inputs.message);
+      }
+      if (!inputs.isValid && inputs.code === 400) {
+        return ResponseFormatter.error400(res, 'Bad Request', inputs.message);
+      }
+
+      const data = await progressVehicleSchedule(
+        inputs.form,
         req.params.id,
         where,
         req.user.limitation.isAdmin,
