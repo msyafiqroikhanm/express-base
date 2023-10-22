@@ -8,6 +8,9 @@ const {
   updateFnBSchedule,
   deleteFnbSchedule,
   updateProgressFnBSchedule,
+  validateFnBScheduleInputsNew,
+  createFnBScheduleNew,
+  updateFnBScheduleNew,
 } = require('../services/fnbSchedule.service');
 const { createNotifications } = require('../services/notification.service');
 
@@ -124,6 +127,44 @@ class FNBScheduleController {
     }
   }
 
+  static async createNew(req, res, next) {
+    try {
+      res.url = `${req.method} ${req.originalUrl}`;
+      // return ResponseFormatter.success200(res, 'OKO', { data: res.url });
+
+      // resrict data that is not an admin
+      const limitation = {};
+      if (!req.user.limitation.isAdmin) {
+        limitation.kitchens = req.user.limitation.access.kitchen;
+      }
+
+      const inputs = await validateFnBScheduleInputsNew(req.body, limitation);
+      if (!inputs.isValid && inputs.code === 400) {
+        return ResponseFormatter.error400(res, 'Bad Request', inputs.message);
+      }
+      if (!inputs.isValid && inputs.code === 404) {
+        return ResponseFormatter.error404(res, 'Data Not Found', inputs.message);
+      }
+
+      const data = await createFnBScheduleNew(inputs.form, inputs.formItems);
+      if (!data.success) {
+        return ResponseFormatter.error400(res, 'Bad Request', data.message);
+      }
+
+      const io = req.app.get('socketIo');
+      await createNotifications(io, 'FNB Delivery Schedule Created', data.content.id, [
+        data.content.name,
+        data.content.pickUpTime,
+        data.content.kitchen,
+        data.content.location,
+      ]);
+
+      return ResponseFormatter.success201(res, data.message, data.content);
+    } catch (error) {
+      next(error);
+    }
+  }
+
   static async update(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
@@ -143,6 +184,38 @@ class FNBScheduleController {
         }
       }
       const data = await updateFnBSchedule(req.body, where);
+      if (!data.success && data.code === 404) {
+        return ResponseFormatter.error404(res, 'Data Not Found', data.message);
+      }
+      if (!data.isValid && data.code === 400) {
+        return ResponseFormatter.error400(res, 'Bad Request', data.message);
+      }
+
+      return ResponseFormatter.success200(res, data.message, data.content);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  static async updateNew(req, res, next) {
+    try {
+      res.url = `${req.method} ${req.originalUrl}`;
+
+      // resrict data that is not an admin
+      const where = { id: req.params.id };
+      if (!req.user.limitation.isAdmin) {
+        // console.log(Boolean(req.user.limitation.access.location));
+        if (req.user.limitation.access.kitchen) {
+          where.kitchenId = { [Op.or]: req.user.limitation.access.kitchen };
+        }
+        if (req.user.limitation.access.location) {
+          where.locationId = { [Op.or]: req.user.limitation.access.location };
+        }
+        if (req.user.limitation.access.courierId) {
+          where.courierId = req.user.limitation.access.courierId;
+        }
+      }
+      const data = await updateFnBScheduleNew(req.body, where);
       if (!data.success && data.code === 404) {
         return ResponseFormatter.error404(res, 'Data Not Found', data.message);
       }

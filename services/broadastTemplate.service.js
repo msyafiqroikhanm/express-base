@@ -6,7 +6,7 @@ const {
 } = require('../models');
 const { metaMediaHandler } = require('./whatsapp.integration.service');
 
-const validateTemplateInputs = async (form, file) => {
+const validateTemplateInputs = async (form, file, id) => {
   const invalid400 = [];
   const invalid404 = [];
 
@@ -19,7 +19,9 @@ const validateTemplateInputs = async (form, file) => {
 
   // check name duplication
   if (form.name) {
-    const duplicateName = await CSM_BroadcastTemplate.findOne({ where: { name: slug(form.name, '_').toLowerCase() } });
+    const duplicateName = await CSM_BroadcastTemplate.findOne({
+      where: id ? { id, name: slug(form.name, '_').toLowerCase() } : { name: slug(form.name, '_').toLowerCase() },
+    });
     if (duplicateName) {
       invalid400.push(`Template With Name ${form.name} Already Exist`);
     }

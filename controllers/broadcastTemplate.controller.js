@@ -75,7 +75,7 @@ class BroadcastTemplateController {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
 
-      const inputs = await validateTemplateInputs(req.body, req.file);
+      const inputs = await validateTemplateInputs(req.body, req.file, req.params.id);
       if (!inputs.isValid && inputs.code === 400) {
         return ResponseFormatter.error400(res, 'Bad Request', inputs.message);
       }

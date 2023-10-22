@@ -15,7 +15,10 @@ router.patch(
       await features().then((feature) => [feature.update_fnb_schedule]),
     );
   },
-  [check('statusId', "statusId attribute can't be empty").notEmpty()],
+  [
+    check('statusId', "statusId attribute can't be empty").isInt(),
+    check('items', "items attribute can't be empty").optional().isArray(),
+  ],
   ValidateMiddleware.result,
   Authentication.fnb,
   FNBScheduleController.updateProgress,
@@ -83,6 +86,32 @@ router.post(
   FNBScheduleController.create,
 );
 
+router.post(
+  '/v2',
+  async (req, res, next) => {
+    Authentication.authenticate(
+      req,
+      res,
+      next,
+      await features().then((feature) => [feature.create_fnb_schedule]),
+    );
+  },
+  [
+    check('locationId', "locationId attribute can't be empty").notEmpty(),
+    check('kitchenId', "kitchenId attribute can't be empty").notEmpty(),
+    check('courierId', "courierId attribute can't be empty").notEmpty(),
+    // check('statusId', "statusId attribute can't be empty").notEmpty(),
+    check('name', "name attribute can't be empty").notEmpty(),
+    check('pickUpTime', 'pickUpTime attribute must with format (yyyy-mm-dd H:i:s)').isISO8601(),
+    // check('dropOffTime', "dropOffTime attribute can't be empty").notEmpty(),
+    check('vehiclePlatNo', "vehiclePlateNo attribute can't be empty").notEmpty(),
+    check('items', 'items attribute must be array').isArray(),
+  ],
+  ValidateMiddleware.result,
+  Authentication.fnb,
+  FNBScheduleController.createNew,
+);
+
 router.put(
   '/:id',
   async (req, res, next) => {
@@ -95,6 +124,32 @@ router.put(
   },
   Authentication.fnb,
   FNBScheduleController.update,
+);
+
+router.put(
+  '/:id/v2',
+  async (req, res, next) => {
+    Authentication.authenticate(
+      req,
+      res,
+      next,
+      await features().then((feature) => [feature.update_fnb_schedule]),
+    );
+  },
+  [
+    check('locationId', "locationId attribute can't be empty").notEmpty(),
+    check('kitchenId', "kitchenId attribute can't be empty").notEmpty(),
+    check('courierId', "courierId attribute can't be empty").notEmpty(),
+    // check('statusId', "statusId attribute can't be empty").notEmpty(),
+    check('name', "name attribute can't be empty").notEmpty(),
+    check('pickUpTime', 'pickUpTime attribute must with format (yyyy-mm-dd H:i:s)').isISO8601(),
+    // check('dropOffTime', "dropOffTime attribute can't be empty").notEmpty(),
+    check('vehiclePlatNo', "vehiclePlateNo attribute can't be empty").notEmpty(),
+    check('items', 'items attribute must be array').isArray(),
+  ],
+  ValidateMiddleware.result,
+  Authentication.fnb,
+  FNBScheduleController.updateNew,
 );
 
 router.delete(
