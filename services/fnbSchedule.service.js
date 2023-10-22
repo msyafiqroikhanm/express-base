@@ -1,6 +1,6 @@
 /* eslint-disable no-await-in-loop */
 /* eslint-disable no-param-reassign */
-const { Op, Transaction } = require('sequelize');
+const { Op, Transaction, fn } = require('sequelize');
 const {
   FNB_Kitchen,
   PAR_Participant,
@@ -814,6 +814,7 @@ const deleteFnbSchedule = async (where) => {
   await FNB_ScheduleMenu.destroy({
     where: { scheduleId: fnbScheduleInstance.id },
   });
+  await FNB_ScheduleHistory.destroy({ where: { scheduleId: fnbScheduleInstance.id } });
   await FNB_Courier.update({ isAvailable: true }, { where: { id: fnbScheduleInstance.courierId } });
 
   return {
