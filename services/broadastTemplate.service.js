@@ -1,5 +1,6 @@
 /* eslint-disable no-param-reassign */
 const slug = require('slugify');
+const { Op } = require('sequelize');
 const {
   CSM_BroadcastTemplate, REF_TemplateCategory, REF_MetaTemplateCategory, REF_TemplateHeaderType,
   REF_MetaTemplateLanguage,
@@ -20,7 +21,7 @@ const validateTemplateInputs = async (form, file, id) => {
   // check name duplication
   if (form.name) {
     const duplicateName = await CSM_BroadcastTemplate.findOne({
-      where: id ? { id, name: slug(form.name, '_').toLowerCase() } : { name: slug(form.name, '_').toLowerCase() },
+      where: id ? { id: { [Op.ne]: id }, name: slug(form.name, '_').toLowerCase() } : { name: slug(form.name, '_').toLowerCase() },
     });
     if (duplicateName) {
       invalid400.push(`Template With Name ${form.name} Already Exist`);
