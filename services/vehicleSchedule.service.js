@@ -56,9 +56,9 @@ const selectAllVehicleSchedule = async (where = {}) => {
   let parsedSchedules = schedules.map((schedule) => {
     if (where.picId) {
       if (
-        (schedule.driverId == null && schedule.driverId === null) ||
-        where?.vendors?.includes(schedule.driver.vendorId) ||
-        where?.vendors?.includes(schedule.vehicle.vendorId)
+        (schedule.driverId == null && schedule.driverId === null)
+        || where?.vendors?.includes(schedule.driver.vendorId)
+        || where?.vendors?.includes(schedule.vehicle.vendorId)
       ) {
         schedule.dataValues.vehicle = schedule.vehicle?.dataValues.name || null;
         schedule.dataValues.driver = schedule.driver?.dataValues.name || null;
@@ -399,10 +399,10 @@ const validateProgressVehicleScheduleInputs = async (form, id, where = {}, isAdm
   };
 
   if (
-    oldStatus &&
-    newStatus &&
-    allowedTransitions[oldStatus] &&
-    !allowedTransitions[oldStatus].includes(newStatus)
+    oldStatus
+    && newStatus
+    && allowedTransitions[oldStatus]
+    && !allowedTransitions[oldStatus].includes(newStatus)
   ) {
     return {
       isValid: false,
@@ -456,8 +456,8 @@ const progressVehicleSchedule = async (form, id, where = {}) => {
 
   // check if schedule old status is compled or cancelled to other status
   if (
-    ['Completed', 'Cancelled'].includes(oldStatus) &&
-    !['Completed', 'Cancelled'].includes(newStatus)
+    ['Completed', 'Cancelled'].includes(oldStatus)
+    && !['Completed', 'Cancelled'].includes(newStatus)
   ) {
     await TPT_Driver.update({ isAvailable: false }, { where: { id: scheduleInstance.driverId } });
     await TPT_Vehicle.update({ isAvailable: false }, { where: { id: scheduleInstance.vehicleId } });
