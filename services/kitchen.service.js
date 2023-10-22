@@ -62,7 +62,7 @@ const selectKitchen = async (where) => {
       },
     },
   });
-  kitchenInstance.dataValues.pic = pic?.user.participant;
+  kitchenInstance.dataValues.pic = pic?.user.participant || null;
 
   if (!kitchenInstance) {
     return {
@@ -80,10 +80,13 @@ const selectKitchen = async (where) => {
 
 const validateKitchenInputs = async (form) => {
   const errorMessages = [];
+  // console.log(form.picId);
 
-  const picInstance = await USR_PIC.findOne({ where: { id: form.picId, typeId: picKitchen } });
-  if (!picInstance) {
-    errorMessages.push('PIC Data Not Found');
+  if (form.picId) {
+    const picInstance = await USR_PIC.findOne({ where: { id: form.picId, typeId: picKitchen } });
+    if (!picInstance) {
+      errorMessages.push('PIC Data Not Found');
+    }
   }
 
   if (errorMessages.length > 0) {
@@ -93,7 +96,7 @@ const validateKitchenInputs = async (form) => {
   return {
     isValid: true,
     form: {
-      picId: form.picId,
+      picId: form.picId || null,
       name: form.name,
       productionCapacity: form.productionCapacity,
       address: form.address,
