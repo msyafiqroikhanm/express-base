@@ -552,15 +552,9 @@ router.delete(
 
 // * Participant Identity Type
 
-router.get(
-  '/identity-types',
-  IdentityType.getAll,
-);
+router.get('/identity-types', IdentityType.getAll);
 
-router.get(
-  '/identity-types/:id',
-  IdentityType.getDetail,
-);
+router.get('/identity-types/:id', IdentityType.getDetail);
 
 router.post(
   '/identity-types',
@@ -1820,6 +1814,7 @@ router.get(
         feature.create_menu_type,
         feature.update_menu_type,
         feature.delete_menu_type,
+        feature.view_kitchen,
       ]),
     );
   },
@@ -1837,6 +1832,7 @@ router.get(
         feature.view_menu_type,
         feature.update_menu_type,
         feature.delete_menu_type,
+        feature.view_kitchen,
       ]),
     );
   },
@@ -1899,6 +1895,7 @@ router.get(
         feature.create_food_type,
         feature.update_food_type,
         feature.delete_food_type,
+        feature.view_kitchen,
       ]),
     );
   },
@@ -1916,6 +1913,7 @@ router.get(
         feature.view_food_type,
         feature.update_food_type,
         feature.delete_food_type,
+        feature.view_kitchen,
       ]),
     );
   },
