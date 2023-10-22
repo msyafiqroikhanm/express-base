@@ -1,6 +1,8 @@
 module.exports = {
-  menungguKurir: 1,
-  prosesPengiriman: 2,
-  diterima: 3,
-  diterimaDenganKomplen: 4,
+  waitingForCourier: 1,
+  deliveryProcess: 2,
+  deliveryCompleted: 3,
+  receive: 4,
+  receiveWithComplain: 5,
+  canceled: 6,
 };

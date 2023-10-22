@@ -1,0 +1,8 @@
+[
+  { "name": "Waiting for Courier" },
+  { "name": "Delivery Process" },
+  { "name": "Delivery Completed" },
+  { "name": "Recieved" },
+  { "name": "Recieved (With Complain)" },
+  { "name": "Canceled" }
+]

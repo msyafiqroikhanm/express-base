@@ -16,7 +16,7 @@ module.exports = {
 
     //* REF_FoodScheduleStatuses New Status
     const ref_foodschedulestatuses = JSON.parse(
-      fs.readFileSync('./seeders/data/ref_foodschedulestatuses _newstatus.json'),
+      fs.readFileSync('./seeders/data/ref_foodschedulestatuses_newstatus.json'),
     );
     const foodschedulestatuses = ref_foodschedulestatuses.map((element) => ({
       name: element.name,
