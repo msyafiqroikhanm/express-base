@@ -14,6 +14,7 @@ const {
   REF_ParticipantType,
   TPT_VehicleScheduleHistory,
 } = require('../models');
+const passengerStatuses = require('../libraries/passengerStatuses.lib');
 
 const selectAllVehicleSchedule = async (where = {}) => {
   const query = where.driverId ? { driverId: where.driverId } : {};
@@ -478,7 +479,7 @@ const progressVehicleSchedule = async (form, id, where = {}) => {
     });
     await TPT_SchedulePassenger.update(
       { statusId: passengerStatus.id },
-      { where: { vehicleScheduleId: scheduleInstance.id, statusId: 2 } },
+      { where: { vehicleScheduleId: scheduleInstance.id, statusId: 3 } },
     );
 
     await TPT_Driver.update({ isAvailable: true }, { where: { id: scheduleInstance.driverId } });
@@ -492,7 +493,7 @@ const progressVehicleSchedule = async (form, id, where = {}) => {
     });
     await TPT_SchedulePassenger.update(
       { statusId: passengerStatus.id },
-      { where: { vehicleScheduleId: scheduleInstance.id, statusId: 1 } },
+      { where: { vehicleScheduleId: scheduleInstance.id, statusId: 2 } },
     );
   } else if (statusInstance?.name === 'Cancelled') {
     await TPT_Driver.update({ isAvailable: true }, { where: { id: scheduleInstance.driverId } });
@@ -761,6 +762,100 @@ const selectAllPassengersVehicleSchedule = async (id, where = {}) => {
   };
 };
 
+const validatePassengerAttendance = async (form, id, where) => {
+  const invalid400 = [];
+  const invalid404 = [];
+
+  // check schedule id
+  const scheduleInstance = await TPT_VehicleSchedule.findOne({
+    where: where.driverId ? { id, driverId: where.driverId } : { id },
+  });
+  if (!scheduleInstance) {
+    invalid404.push('Vehicle Schedule Data Not Found');
+  }
+
+  if (where.vendors?.length > 0 && scheduleInstance) {
+    const vehicleInstance = await TPT_Vehicle.findOne({
+      where: { id: scheduleInstance.vehicleId, vendorId: { [Op.in]: where.vendors } },
+    });
+    if (!vehicleInstance) {
+      invalid404.push('Vehicle Schedule Data Not Found');
+    }
+  }
+
+  const allPassengers = await TPT_SchedulePassenger.findAll({
+    where: { vehicleScheduleId: id },
+    attributes: ['participantId'],
+  });
+  const passengers = allPassengers.map((passenger) => passenger.participantId);
+
+  // validate participant / passengers
+  const validParticipants = await TPT_SchedulePassenger.findAll({
+    where: {
+      participantId: { [Op.in]: form.passengers },
+      vehicleScheduleId: id,
+    },
+  });
+  const validPassengers = validParticipants.map((participant) => participant.participantId);
+
+  const noShowPassengers = passengers.filter((passenger) => !validPassengers.includes(passenger));
+
+  if (invalid400.length > 0) {
+    return {
+      isValid: false,
+      code: 400,
+      message: invalid400,
+    };
+  }
+  if (invalid404.length > 0) {
+    return {
+      isValid: false,
+      code: 404,
+      message: invalid404,
+    };
+  }
+
+  return {
+    isValid: true,
+    form: {
+      schedule: scheduleInstance,
+      passengers: validPassengers,
+      noShowPassengers,
+    },
+  };
+};
+
+const updatePassengersAttendance = async (form) => {
+  // updating participant who show up / present
+  await TPT_SchedulePassenger.update(
+    { statusId: passengerStatuses.Waiting },
+    {
+      where: {
+        vehicleScheduleId: form.schedule.id,
+        participantId: { [Op.in]: form.passengers },
+        statusId: { [Op.in]: [passengerStatuses.Scheduled, passengerStatuses['No Show']] },
+      },
+    },
+  );
+
+  // updating participant who not show up
+  await TPT_SchedulePassenger.update(
+    { statusId: passengerStatuses['No Show'] },
+    {
+      where: {
+        vehicleScheduleId: form.schedule.id,
+        participantId: { [Op.in]: form.noShowPassengers },
+        statusId: { [Op.in]: [passengerStatuses.Scheduled] },
+      },
+    },
+  );
+
+  return {
+    success: true,
+    message: `Passenger's Status On Schedule ${form.schedule.name} Successfully Updated / Reported`,
+  };
+};
+
 module.exports = {
   selectAllVehicleSchedule,
   selectVehicleSchedule,
@@ -775,4 +870,6 @@ module.exports = {
   validatePassengerAbsent,
   selectAllPassengersVehicleSchedule,
   validateProgressVehicleScheduleInputs,
+  validatePassengerAttendance,
+  updatePassengersAttendance,
 };

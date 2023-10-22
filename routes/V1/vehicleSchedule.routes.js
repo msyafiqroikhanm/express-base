@@ -158,6 +158,24 @@ router.patch(
   VehicleScheduleController.absent,
 );
 
+router.patch(
+  '/:id/attendance',
+  async (req, res, next) => {
+    Authentication.authenticate(
+      req,
+      res,
+      next,
+      await features().then((feature) => [feature.absent_vehicle_schedule]),
+    );
+  },
+  Authentication.transportation,
+  [
+    check('passengers', "Passengers attribute can't be empty").isArray(),
+  ],
+  ValidateMiddleware.result,
+  VehicleScheduleController.attendance,
+);
+
 router.get(
   '/:id/passengers',
   async (req, res, next) => {
