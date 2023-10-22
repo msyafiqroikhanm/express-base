@@ -29,6 +29,8 @@ const {
   REF_EventCategory,
   SYS_Configuration,
   ACM_RoomBedType,
+  USR_User,
+  USR_Role,
 } = require('../models');
 const { createQR } = require('./qr.service');
 const deleteFile = require('../helpers/deleteFile.helper');
@@ -286,11 +288,12 @@ const selectParticipant = async (id, where) => {
 
 const searchParticipant = async (where) => {
   const participantInstance = await PAR_Participant.findAll({
+    order: [['name', 'ASC']],
     where,
     include: [
       {
         model: PAR_Contingent,
-        where: where.id ? { id: where.id } : null,
+        where: where?.id ? { id: where.id } : null,
         as: 'contingent',
         attributes: ['id', 'name'],
         include: { model: REF_Region, as: 'region', attributes: ['id', 'name'] },
@@ -1402,6 +1405,48 @@ const downloadParticipantSecretFile = async (id, file, where) => {
   };
 };
 
+const validateDeleteParticipant = async (user, id) => {
+  if (user.participantId === Number(id)) {
+    return {
+      isValid: false,
+      code: 400,
+      message: "User / participant can't delete themself",
+    };
+  }
+
+  const participantInstance = await PAR_Participant.findOne({
+    attributes: ['id'],
+    where: { id },
+    include: {
+      model: USR_User,
+      as: 'user',
+      attributes: ['roleId'],
+      include: {
+        model: USR_Role, attributes: ['name'], as: 'Role',
+      },
+    },
+  });
+
+  if (!participantInstance) {
+    return {
+      isValid: false,
+      code: 404,
+      message: 'Paricipant Data Not Found',
+    };
+  }
+  if (participantInstance?.user?.roleId === 1 || participantInstance?.user?.Role?.name === 'Super User') {
+    return {
+      isValid: false,
+      code: 400,
+      message: "Super User / Admin Can't Be Deleted",
+    };
+  }
+
+  return {
+    isValid: true,
+  };
+};
+
 module.exports = {
   selectAllParticipant,
   selectParticipant,
@@ -1422,4 +1467,5 @@ module.exports = {
   downloadParticipantSecretFile,
   calculateAge,
   renameParticipantFile,
+  validateDeleteParticipant,
 };

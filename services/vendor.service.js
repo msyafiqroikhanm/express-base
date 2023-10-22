@@ -1,7 +1,9 @@
 /* eslint-disable prefer-destructuring */
 /* eslint-disable no-param-reassign */
 const { Op } = require('sequelize');
-const { TPT_Vendor, USR_PIC, USR_User, PAR_Participant } = require('../models');
+const {
+  TPT_Vendor, USR_PIC, USR_User, PAR_Participant,
+} = require('../models');
 
 const selectAllVendors = async (where) => {
   const data = await TPT_Vendor.findAll({
@@ -104,11 +106,13 @@ const validateVendorInputs = async (form, id) => {
     invalid400.push('Vendor Name Already Taken / Exist');
   }
 
-  const duplicatePhone = await TPT_Vendor.findOne({
-    where: id ? { id: { [Op.ne]: id }, phoneNbr: form.phoneNbr } : { phoneNbr: form.phoneNbr },
-  });
-  if (duplicatePhone) {
-    invalid400.push('Vendor Phone Number Already Taken / Exist');
+  if (form.phoneNbr) {
+    const duplicatePhone = await TPT_Vendor.findOne({
+      where: id ? { id: { [Op.ne]: id }, phoneNbr: form.phoneNbr } : { phoneNbr: form.phoneNbr },
+    });
+    if (duplicatePhone) {
+      invalid400.push('Vendor Phone Number Already Taken / Exist');
+    }
   }
 
   let email = form.email;
@@ -126,7 +130,7 @@ const validateVendorInputs = async (form, id) => {
   // }
 
   // check if pic is pic transportation
-  if (picInstance.typeId !== 4) {
+  if (picInstance?.typeId !== 4) {
     invalid400.push('PIC For Transportation Must Be Type PIC Transportation');
   }
 
@@ -151,7 +155,7 @@ const validateVendorInputs = async (form, id) => {
       pic: picInstance,
       name: form.name,
       address: form.address,
-      phoneNbr: form.phoneNbr,
+      phoneNbr: form.phoneNbr || null,
       email,
     },
   };

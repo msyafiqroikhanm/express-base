@@ -83,12 +83,17 @@ const selectDriver = async (id, where) => {
 };
 
 const validateDriverInputs = async (form, where, file, id) => {
-  const { vendorId, name, phoneNbr, email } = form;
+  const {
+    vendorId, name, phoneNbr, email,
+  } = form;
 
   const invalid400 = [];
   const invalid404 = [];
 
-  if (where.picId && !where.vendors?.includes(vendorId)) {
+  console.log(where.picId);
+  console.log(where);
+
+  if (where.picId && !where.vendors?.includes(Number(vendorId))) {
     invalid404.push('Vendor Data Not Found');
   }
 
@@ -275,8 +280,7 @@ const updateDriver = async (form, id, where) => {
   driverInstance.name = form.name;
   driverInstance.phoneNbr = form.phoneNbr;
   driverInstance.email = form.email;
-  driverInstance.isAvailable =
-    typeof form.isAvailable !== 'object' ? form.isAvailable === 'true' : true;
+  driverInstance.isAvailable = typeof form.isAvailable !== 'object' ? form.isAvailable === 'true' : true;
   await driverInstance.save();
 
   // updating committee / participant
