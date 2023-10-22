@@ -19,6 +19,12 @@ module.exports = (sequelize, DataTypes) => {
         as: 'status',
       });
       FNB_Schedule.belongsTo(models.FNB_Courier, { foreignKey: 'courierId', as: 'courier' });
+      FNB_Schedule.belongsToMany(models.REF_FoodScheduleStatus, {
+        through: 'FNB_ScheduleHistory',
+        foreignKey: 'scheduleId',
+        otherKey: 'statusId',
+        as: 'history',
+      });
     }
   }
   FNB_Schedule.init(

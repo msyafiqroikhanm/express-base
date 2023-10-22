@@ -146,7 +146,13 @@ const selectFnBSchedule = async (id, where) => {
         as: 'status',
         attributes: ['name'],
       },
+      {
+        model: REF_FoodScheduleStatus,
+        as: 'history',
+        through: { attributes: [] },
+      },
     ],
+    order: [[{ model: REF_FoodScheduleStatus, as: 'history' }, 'id', 'DESC']],
   });
 
   if (!fnbScheduleInstance) {
@@ -611,7 +617,7 @@ const updateFnBScheduleNew = async (form, where) => {
   }
 
   //! disable
-  // //* check status validity
+  //* check status validity
   // if (form.statusId) {
   //   const statusId = await REF_FoodScheduleStatus.findByPk(form.statusId);
   //   if (!statusId) {
@@ -677,7 +683,6 @@ const updateFnBScheduleNew = async (form, where) => {
       if (!kitchenTargetInstance) {
         invalid404.push('Kitchen Target Data Not Found');
       } else {
-        // console.log(JSON.stringify(kitchenTargetInstance, null, 2));
         formItems.push({
           scheduleId: fnbScheduleInstance.id,
           kitchenTargetId: kitchenTargetInstance.id,
@@ -718,7 +723,7 @@ const updateFnBScheduleNew = async (form, where) => {
   await FNB_ScheduleMenu.destroy({ where: { scheduleId: fnbScheduleInstance.id } });
   await FNB_ScheduleMenu.bulkCreate(formItems);
   // console.log(formUpdateScheduleInstance, formItems);
-  // await FNB_Schedule.update(formUpdateScheduleInstance, { where: { id: fnbScheduleInstance.id } });
+  await FNB_Schedule.update(formUpdateScheduleInstance, { where: { id: fnbScheduleInstance.id } });
 
   if (courierIsUpdate) {
     await FNB_Courier.update({ isAvailable: true }, { where: { id: courierIdOld } });
