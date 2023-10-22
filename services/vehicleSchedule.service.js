@@ -186,6 +186,13 @@ const validateVehicleScheduleInputs = async (form) => {
   const invalid400 = [];
   const invalid404 = [];
 
+  if (!['Arrival & Departure', 'Event', 'Tourism'].includes(form.type)) {
+    invalid400.push('Invalid Vehicle Schedule Type, Options Are: Arrival & Departure, Event, Tourism');
+  }
+  if (form.type === 'Arrival & Departure' && !form.totalPassengers) {
+    invalid400.push('Vehicle Schedule Type Arrival & Departure Required Total Passengers Attribute');
+  }
+
   // check pickup (location id) validity
   let pickUpInstance = null;
   if (form.pickUpId) {
@@ -257,6 +264,7 @@ const validateVehicleScheduleInputs = async (form) => {
   return {
     isValid: true,
     form: {
+      type: form.type,
       pickUp: pickUpInstance,
       destination: destinationInstance,
       status: statusInstance,
@@ -267,12 +275,15 @@ const validateVehicleScheduleInputs = async (form) => {
       pickUpOtherLocation: form.pickUpOtherLocation,
       dropOffOtherLocation: form.dropOffOtherLocation,
       passengers: validPassengers,
+      totalPassengers: form.type === 'Arrival & Departure'
+        ? Number(form.totalPassengers) : validPassengers.length,
     },
   };
 };
 
 const createVehicleSchedule = async (form) => {
   const scheduleInstance = await TPT_VehicleSchedule.create({
+    type: form.type,
     name: form.name,
     statusId: form.status?.id || 1,
     pickUpId: form.pickUp?.id || null,
@@ -282,6 +293,7 @@ const createVehicleSchedule = async (form) => {
     pickUpTime: form.pickUpTime,
     descriptionPickUp: form.descriptionPickUp,
     descriptionDropOff: form.descriptionDropOff,
+    totalPassengers: form.totalPassengers,
   });
 
   await scheduleInstance.addPAR_Participants(form.passengers);
@@ -311,6 +323,7 @@ const updateVehicleSchedule = async (form, id) => {
     };
   }
 
+  scheduleInstance.type = form.type;
   scheduleInstance.name = form.name;
   scheduleInstance.pickUpId = form.pickUp?.id || null;
   scheduleInstance.destinationId = form.destination?.id || null;
@@ -319,6 +332,7 @@ const updateVehicleSchedule = async (form, id) => {
   scheduleInstance.pickUpTime = form.pickUpTime;
   scheduleInstance.descriptionPickUp = form.descriptionPickUp;
   scheduleInstance.descriptionDropOff = form.descriptionDropOff;
+  scheduleInstance.totalPassengers = form.totalPassengers;
   await scheduleInstance.save();
 
   await scheduleInstance.setPAR_Participants(form.passengers);
