@@ -54,9 +54,11 @@ const selectAllVehicleSchedule = async (where = {}) => {
 
   let parsedSchedules = schedules.map((schedule) => {
     if (where.picId) {
-      if ((schedule.driverId == null && schedule.driverId === null)
-           || (where?.vendors?.includes(schedule.driver.vendorId)
-              || where?.vendors?.includes(schedule.vehicle.vendorId))) {
+      if (
+        (schedule.driverId == null && schedule.driverId === null) ||
+        where?.vendors?.includes(schedule.driver.vendorId) ||
+        where?.vendors?.includes(schedule.vehicle.vendorId)
+      ) {
         schedule.dataValues.vehicle = schedule.vehicle?.dataValues.name || null;
         schedule.dataValues.driver = schedule.driver?.dataValues.name || null;
         schedule.dataValues.status = schedule.status?.dataValues.name || null;
@@ -197,7 +199,7 @@ const validateVehicleScheduleInputs = async (form) => {
   }
 
   if (form.pickUpOtherLocation && form.dropOffOtherLocation) {
-    if ((form.pickUpOtherLocation === form.dropOffOtherLocation)) {
+    if (form.pickUpOtherLocation === form.dropOffOtherLocation) {
       invalid400.push("Pick Up Other Location Can't Be Same As Destination Other Location");
     }
   }
@@ -317,9 +319,10 @@ const progressVehicleSchedule = async (form, id, where = {}, isAdmin = false) =>
 
   // check old status is complete or cancelled for user non admin
   if (!isAdmin) {
-    const oldStatus = await REF_VehicleScheduleStatus.findOne(
-      { where: { id: scheduleInstance.statusId }, attributes: ['name'] },
-    );
+    const oldStatus = await REF_VehicleScheduleStatus.findOne({
+      where: { id: scheduleInstance.statusId },
+      attributes: ['name'],
+    });
 
     if (['Completed', 'Cancelled'].includes(oldStatus?.name)) {
       return {
@@ -378,18 +381,26 @@ const progressVehicleSchedule = async (form, id, where = {}, isAdmin = false) =>
     Enroute: ['Enroute', 'Completed', 'Cancelled'],
   };
 
-  if (oldStatus && newStatus
-      && allowedTransitions[oldStatus]
-      && !allowedTransitions[oldStatus].includes(newStatus)) {
+  if (
+    oldStatus &&
+    newStatus &&
+    allowedTransitions[oldStatus] &&
+    !allowedTransitions[oldStatus].includes(newStatus)
+  ) {
     return {
       success: false,
       code: 400,
-      message: [`Vehicle Schedule With Status ${oldStatus}, could only change to status ${allowedTransitions[oldStatus]}`],
+      message: [
+        `Vehicle Schedule With Status ${oldStatus}, could only change to status ${allowedTransitions[oldStatus]}`,
+      ],
     };
   }
 
   // check if schedule old status is compled or cancelled to other status
-  if (['Completed', 'Cancelled'].includes(oldStatus) && !['Completed', 'Cancelled'].includes(newStatus)) {
+  if (
+    ['Completed', 'Cancelled'].includes(oldStatus) &&
+    !['Completed', 'Cancelled'].includes(newStatus)
+  ) {
     await TPT_Driver.update({ isAvailable: false }, { where: { id: scheduleInstance.driverId } });
     await TPT_Vehicle.update({ isAvailable: false }, { where: { id: scheduleInstance.vehicleId } });
   }

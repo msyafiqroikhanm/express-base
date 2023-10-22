@@ -11,12 +11,21 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
+      FNB_ScheduleHistory.belongsTo(models.REF_FoodScheduleStatus, {
+        foreignKey: 'statusId',
+        as: 'status',
+      });
+      FNB_ScheduleHistory.belongsTo(models.FNB_Schedule, {
+        foreignKey: 'scheduleId',
+        as: 'schedule',
+      });
     }
   }
   FNB_ScheduleHistory.init(
     {
       scheduleId: DataTypes.INTEGER,
       statusId: DataTypes.INTEGER,
+      note: DataTypes.STRING,
     },
     {
       sequelize,

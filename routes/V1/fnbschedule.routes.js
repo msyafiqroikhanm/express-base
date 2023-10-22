@@ -15,7 +15,10 @@ router.patch(
       await features().then((feature) => [feature.update_fnb_schedule]),
     );
   },
-  [check('statusId', "statusId attribute can't be empty").notEmpty()],
+  [
+    check('statusId', "statusId attribute can't be empty").isInt(),
+    check('items', "items attribute can't be empty").optional().isArray(),
+  ],
   ValidateMiddleware.result,
   Authentication.fnb,
   FNBScheduleController.updateProgress,

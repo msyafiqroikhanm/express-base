@@ -1,6 +1,6 @@
 /* eslint-disable no-await-in-loop */
 /* eslint-disable no-param-reassign */
-const { Op, Transaction, fn } = require('sequelize');
+const { Op } = require('sequelize');
 const {
   FNB_Kitchen,
   PAR_Participant,
@@ -15,13 +15,15 @@ const {
   FNB_ScheduleMenu,
   FNB_KitchenTarget,
   FNB_ScheduleHistory,
-  sequelize,
 } = require('../models');
 const { createQR } = require('./qr.service');
 const {
-  selesai,
-  selesaiDenganKomplen,
-  menungguKurir,
+  waitingForCourier,
+  deliveryProcess,
+  deliveryCompleted,
+  received,
+  receivedWithComplain,
+  canceled,
 } = require('../libraries/fnbScheduleStatuses.lib');
 
 const selectAllFnBSchedules = async (where) => {
@@ -147,12 +149,18 @@ const selectFnBSchedule = async (id, where) => {
         attributes: ['name'],
       },
       {
-        model: REF_FoodScheduleStatus,
-        as: 'history',
-        through: { attributes: [] },
+        model: FNB_ScheduleHistory,
+        as: 'histories',
+        attributes: ['id', 'note', 'createdAt'],
+        include: {
+          model: REF_FoodScheduleStatus,
+          as: 'status',
+          attributes: ['name'],
+        },
+        // through: { attributes: [] },
       },
     ],
-    order: [[{ model: REF_FoodScheduleStatus, as: 'history' }, 'id', 'DESC']],
+    order: [[{ model: FNB_ScheduleHistory, as: 'histories' }, 'id', 'DESC']],
   });
 
   if (!fnbScheduleInstance) {
@@ -193,9 +201,18 @@ const selectFnBSchedule = async (id, where) => {
     },
   });
 
+  // console.log(JSON.stringify(fnbScheduleInstance.histories, null, 2));
+
+  await Promise.all(
+    fnbScheduleInstance.histories.map(async (history) => {
+      history.dataValues.status = history.status.name;
+    }),
+  );
+
   fnbScheduleInstance.dataValues.picLocation = picLocation?.user?.participant;
   fnbScheduleInstance.dataValues.picKitchen = picKitchen?.user?.participant;
   fnbScheduleInstance.dataValues.status = fnbScheduleInstance?.status?.dataValues.name || null;
+  // fnbScheduleInstance.fnbScheduleInstance.histories = parsedHistories;
 
   return {
     success: true,
@@ -204,7 +221,7 @@ const selectFnBSchedule = async (id, where) => {
   };
 };
 
-const validateFnBScheduleInputs = async (form, limitation = null, id = null) => {
+const validateFnBScheduleInputs = async (form, limitation = null) => {
   const invalid400 = [];
   const invalid404 = [];
 
@@ -425,7 +442,7 @@ const validateFnBScheduleInputsNew = async (form, limitation = null) => {
       locationId: form.locationId,
       kitchenId: form.kitchenId,
       courierId: form.courierId,
-      statusId: menungguKurir,
+      statusId: waitingForCourier,
       name: form.name,
       pickUpTime: new Date(form.pickUpTime),
       vehiclePlateNo: form.vehiclePlatNo,
@@ -758,15 +775,6 @@ const updateProgressFnBSchedule = async (form, where) => {
     invalid404.push('FNB Schedule Status Data Not Found');
   }
 
-  fnbScheduleInstance.status = statusId.dataValues.name;
-
-  if (invalid400.length > 0) {
-    return {
-      isValid: false,
-      code: 400,
-      message: invalid400,
-    };
-  }
   if (invalid404.length > 0) {
     return {
       isValid: false,
@@ -775,18 +783,101 @@ const updateProgressFnBSchedule = async (form, where) => {
     };
   }
 
-  if (Number(form.statusId) === selesai || Number(form.statusId) === selesaiDenganKomplen) {
-    // console.log({ test: 'test' });
-    const courierInstance = await FNB_Courier.findOne({
-      where: { id: fnbScheduleInstance.courierId },
-    });
-    // console.log(JSON.stringify(courierInstance));
-    courierInstance.isAvailable = true;
-    await courierInstance.save();
+  const allowedProgress = [];
+  switch (Number(fnbScheduleInstance.statusId)) {
+    case waitingForCourier:
+      allowedProgress.push(waitingForCourier);
+      allowedProgress.push(deliveryProcess);
+      allowedProgress.push(canceled);
+      break;
+
+    case deliveryProcess:
+      allowedProgress.push(deliveryProcess);
+      allowedProgress.push(deliveryCompleted);
+      allowedProgress.push(canceled);
+      break;
+
+    case deliveryCompleted:
+      allowedProgress.push(deliveryCompleted);
+      allowedProgress.push(received);
+      allowedProgress.push(canceled);
+      break;
+
+    case received:
+      allowedProgress.push(received);
+      break;
+
+    case receivedWithComplain:
+      allowedProgress.push(received);
+      break;
+
+    case canceled:
+      allowedProgress.push(canceled);
+      allowedProgress.push(deliveryProcess);
+      allowedProgress.push(deliveryCompleted);
+      allowedProgress.push(received);
+      break;
+
+    default:
+      break;
   }
 
+  // check valid progress
+  if (!allowedProgress.includes(Number(form.statusId))) {
+    invalid400.push('Invalid Progress');
+  }
+
+  // require note while status is canceled
+  if (Number(form.statusId) === canceled && !form.note) {
+    invalid400.push('Note That the Reason for Cancelation Must be Filled in');
+  }
+
+  // require items while status is received
+  if (Number(form.statusId) === received && !form.items) {
+    invalid400.push('You Must Check The Items');
+  }
+
+  if (invalid400.length > 0) {
+    return {
+      isValid: false,
+      code: 400,
+      message: invalid400,
+    };
+  }
+
+  if ([canceled, deliveryCompleted].includes(Number(form.statusId))) {
+    // console.log({ test: 'test' });
+    await FNB_Courier.update(
+      { isAvailable: true },
+      { where: { id: fnbScheduleInstance.courierId } },
+    );
+  }
+
+  if ([received, receivedWithComplain].includes(Number(form.statusId)) && form.items.length) {
+    for (let i = 0; i < form.items.length; i += 1) {
+      const item = form.items[i];
+
+      if (!item.isValid) {
+        form.statusId = receivedWithComplain;
+      }
+
+      await FNB_ScheduleMenu.update(
+        { isValid: item.isValid, note: item.note },
+        { where: { id: item.id } },
+      );
+    }
+    console.log(form.items);
+  }
+
+  fnbScheduleInstance.status = statusId.dataValues.name;
   formUpdateScheduleInstance.statusId = form.statusId;
   fnbScheduleInstance.statusId = Number(form.statusId);
+
+  await FNB_ScheduleHistory.create({
+    scheduleId: fnbScheduleInstance.id,
+    statusId: form.statusId,
+    note: form.note ? form.note : null,
+  });
 
   await FNB_Schedule.update(formUpdateScheduleInstance, { where: { id: fnbScheduleInstance.id } });
   return {
