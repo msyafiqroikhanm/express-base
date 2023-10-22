@@ -12,6 +12,8 @@ const {
   udpatePassengerAbsent,
   selectAllPassengersVehicleSchedule,
   validateProgressVehicleScheduleInputs,
+  validatePassengerAttendance,
+  updatePassengersAttendance,
 } = require('../services/vehicleSchedule.service');
 
 class VehicleScheduleController {
@@ -264,6 +266,38 @@ class VehicleScheduleController {
       }
 
       const data = await selectAllPassengersVehicleSchedule(req.params.id, where);
+      if (!data.success && data.code === 404) {
+        return ResponseFormatter.error404(res, 'Data Not Found', data.message);
+      }
+
+      return ResponseFormatter.success200(res, data.message, data.content);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  static async attendance(req, res, next) {
+    try {
+      res.url = `${req.method} ${req.originalUrl}`;
+
+      // resrict data that is not an admin
+      const where = {};
+      if (!req.user.limitation.isAdmin && req.user.limitation?.access?.picId) {
+        where.picId = req.user.limitation.access.picId;
+        where.vendors = req.user.limitation.access.vendors;
+      } else if (!req.user.limitation.isAdmin && req.user.limitation?.access?.driver) {
+        where.driverId = req.user.limitation.access.driverId;
+      }
+
+      const inputs = await validatePassengerAttendance(req.body, req.params.id, where);
+      if (!inputs.isValid && inputs.code === 400) {
+        return ResponseFormatter.error400(res, 'Bad Request', inputs.message);
+      }
+      if (!inputs.isValid && inputs.code === 404) {
+        return ResponseFormatter.error404(res, 'Data Not Found', inputs.message);
+      }
+
+      const data = await updatePassengersAttendance(inputs.form);
       if (!data.success && data.code === 404) {
         return ResponseFormatter.error404(res, 'Data Not Found', data.message);
       }
