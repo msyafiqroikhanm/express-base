@@ -57,6 +57,7 @@ router.post(
   [
     check('contingentId', 'Contingent Id attribute can\'t be empty').notEmpty(),
     check('name', 'Name attribute can\'t be empty').notEmpty(),
+    check('otherLocation', 'Location attribute can\'t be empty').notEmpty(),
     check('type', 'Type attribute can\'t be empty').notEmpty(),
     check('transportation', 'transportation At attribute can\'t be empty').notEmpty(),
     check('totalParticipant', 'totalParticipant At attribute can\'t be empty').notEmpty(),
@@ -82,6 +83,7 @@ router.put(
   [
     check('contingentId', 'Contingent Id attribute can\'t be empty').notEmpty(),
     check('name', 'Name attribute can\'t be empty').notEmpty(),
+    check('otherLocation', 'Location attribute can\'t be empty').notEmpty(),
     check('type', 'Type attribute can\'t be empty').notEmpty(),
     check('transportation', 'transportation At attribute can\'t be empty').notEmpty(),
     check('totalParticipant', 'totalParticipant At attribute can\'t be empty').notEmpty(),
