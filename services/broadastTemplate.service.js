@@ -68,7 +68,7 @@ const validateTemplateInputs = async (form, file) => {
   }
 
   // validate footer
-  if (form.footer && form.message?.length > 60) {
+  if (form.footer && form.footer?.length > 60) {
     invalid400.push('Footer data exceeds the maximum character limit of 60 characters');
   }
 
