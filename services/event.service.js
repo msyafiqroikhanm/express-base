@@ -271,7 +271,7 @@ const validateEventInputs = async (form, id, where = {}) => {
     return false;
   });
   if (isbackdate) {
-    invalid400.push('End must be set after Start');
+    invalid400.push('End Time must be set after Start Time');
   }
 
   // check if pic is pic event

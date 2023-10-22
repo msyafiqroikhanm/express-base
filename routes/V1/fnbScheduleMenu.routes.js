@@ -21,6 +21,10 @@ router.get(
         feature.create_fnb_schedule_menu,
         feature.update_fnb_schedule_menu,
         feature.delete_fnb_schedule_menu,
+        feature.view_kitchen,
+        feature.create_kitchen,
+        feature.update_kitchen,
+        feature.delete_kitchen,
       ]),
     );
   },
@@ -43,6 +47,10 @@ router.get(
         feature.create_fnb_schedule,
         feature.update_fnb_schedule,
         feature.delete_fnb_schedule,
+        feature.view_kitchen,
+        feature.create_kitchen,
+        feature.update_kitchen,
+        feature.delete_kitchen,
       ]),
     );
   },
@@ -57,7 +65,11 @@ router.post(
       req,
       res,
       next,
-      await features().then((feature) => [feature.create_fnb_schedule_menu]),
+      await features().then((feature) => [
+        feature.create_fnb_schedule_menu,
+        feature.update_kitchen,
+        feature.create_fnb_schedule,
+      ]),
     );
   },
   [
@@ -77,7 +89,11 @@ router.put(
       req,
       res,
       next,
-      await features().then((feature) => [feature.update_fnb_schedule_menu]),
+      await features().then((feature) => [
+        feature.update_fnb_schedule_menu,
+        feature.update_kitchen,
+        feature.update_fnb_schedule,
+      ]),
     );
   },
   [check('isValid', 'isValid attribute must be boolean').optional().isBoolean()],
@@ -93,7 +109,11 @@ router.delete(
       req,
       res,
       next,
-      await features().then((feature) => [feature.delete_fnb_schedule_menu]),
+      await features().then((feature) => [
+        feature.delete_fnb_schedule_menu,
+        feature.update_kitchen,
+        feature.delete_fnb_schedule,
+      ]),
     );
   },
   Authentication.fnb,
