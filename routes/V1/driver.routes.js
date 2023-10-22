@@ -53,9 +53,7 @@ router.post(
       req,
       res,
       next,
-      await features().then((feature) => [
-        feature.create_driver,
-      ]),
+      await features().then((feature) => [feature.create_driver]),
     );
   },
   Authentication.transportation,
@@ -70,7 +68,7 @@ router.post(
     check('vendorId', "Vendor Id attribute can't be empty").notEmpty(),
     check('name', "Name attribute can't be empty").notEmpty(),
     check('phoneNbr', "Phone Number attribute can't be empty").notEmpty(),
-    check('email', "Email attribute can't be empty").isEmail(),
+    // check('email', "Email attribute can't be empty").isEmail(),
   ],
   ValidateMiddleware.result,
   DriverController.create,
@@ -83,9 +81,7 @@ router.put(
       req,
       res,
       next,
-      await features().then((feature) => [
-        feature.update_driver,
-      ]),
+      await features().then((feature) => [feature.update_driver]),
     );
   },
   Authentication.transportation,
@@ -93,7 +89,7 @@ router.put(
     check('vendorId', "Vendor Id attribute can't be empty").notEmpty(),
     check('name', "Name attribute can't be empty").notEmpty(),
     check('phoneNbr', "Phone Number attribute can't be empty").notEmpty(),
-    check('email', "Email attribute can't be empty").isEmail(),
+    // check('email', "Email attribute can't be empty").isEmail(),
   ],
   ValidateMiddleware.result,
   DriverController.update,
@@ -106,9 +102,7 @@ router.delete(
       req,
       res,
       next,
-      await features().then((feature) => [
-        feature.delete_driver,
-      ]),
+      await features().then((feature) => [feature.delete_driver]),
     );
   },
   Authentication.transportation,

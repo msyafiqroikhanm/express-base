@@ -109,8 +109,11 @@ class LodgerController {
       if (!inputs.isValid && inputs.code === 404) {
         return ResponseFormatter.error404(res, 'Data Not Found', inputs.message);
       }
+      if (!inputs.isValid && inputs.code === 400) {
+        return ResponseFormatter.error400(res, 'Bad Request', inputs.message);
+      }
 
-      console.log(inputs.form);
+      // console.log(inputs.form);
       const data = await createLodger(inputs.form);
 
       const io = req.app.get('socketIo');

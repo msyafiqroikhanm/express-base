@@ -58,7 +58,7 @@ router.post(
     check('menuId', "menuId attribute can't be empty").isInt(),
     check('kitchenId', "kitchenId attribute can't be empty").isInt(),
     check('date', 'date attribute must use format (YYYY-MM-YY)').isDate(),
-    check('quantityTarget', "quantityTarget attribute can't be empty").optional().isInt(),
+    check('quantityTarget', 'quantityTarget attribute min 1').optional().isInt({ min: 1 }),
   ],
   ValidateMiddleware.result,
   Authentication.fnb,
@@ -75,6 +75,8 @@ router.put(
       await features().then((feature) => [feature.update_kitchen_target]),
     );
   },
+  [check('quantityTarget', 'quantityActual attribute min 1').optional().isInt({ min: 1 })],
+  ValidateMiddleware.result,
   Authentication.fnb,
   KitchenTargetController.update,
 );
@@ -89,7 +91,7 @@ router.patch(
       await features().then((feature) => [feature.update_kitchen_target]),
     );
   },
-  [check('quantityActual', "quantityActual attribute can't be empty").isInt()],
+  [check('quantityActual', 'quantityActual attribute min 1').isInt({ min: 1 })],
   ValidateMiddleware.result,
   Authentication.fnb,
   KitchenTargetController.updateActualKitchenTarget,

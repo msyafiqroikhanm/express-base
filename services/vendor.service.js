@@ -1,3 +1,4 @@
+/* eslint-disable prefer-destructuring */
 /* eslint-disable no-param-reassign */
 const { Op } = require('sequelize');
 const {
@@ -89,7 +90,10 @@ const validateVendorInputs = async (form, id) => {
   const invalid400 = [];
   const invalid404 = [];
 
-  const picInstance = await USR_PIC.findOne({ where: { id: form.picId }, attributes: ['id', 'typeId'] });
+  const picInstance = await USR_PIC.findOne({
+    where: { id: form.picId },
+    attributes: ['id', 'typeId'],
+  });
   if (!picInstance) {
     invalid404.push('PIC Data Not Found');
   }
@@ -102,22 +106,31 @@ const validateVendorInputs = async (form, id) => {
     invalid400.push('Vendor Name Already Taken / Exist');
   }
 
-  const duplicatePhone = await TPT_Vendor.findOne({
-    where: id ? { id: { [Op.ne]: id }, phoneNbr: form.phoneNbr } : { phoneNbr: form.phoneNbr },
-  });
-  if (duplicatePhone) {
-    invalid400.push('Vendor Phone Number Already Taken / Exist');
+  if (form.phoneNbr) {
+    const duplicatePhone = await TPT_Vendor.findOne({
+      where: id ? { id: { [Op.ne]: id }, phoneNbr: form.phoneNbr } : { phoneNbr: form.phoneNbr },
+    });
+    if (duplicatePhone) {
+      invalid400.push('Vendor Phone Number Already Taken / Exist');
+    }
   }
 
-  const duplicateEmail = await TPT_Vendor.findOne({
-    where: id ? { id: { [Op.ne]: id }, email: form.email } : { email: form.email },
-  });
-  if (duplicateEmail) {
-    invalid400.push('Vendor Email Already Taken / Exist');
+  let email = form.email;
+  if (!form.email && id) {
+    const vendorInstance = await TPT_Vendor.findOne({ where: { id } });
+    email = vendorInstance.email;
   }
+
+  //! disable checking duplicate email
+  // const duplicateEmail = await TPT_Vendor.findOne({
+  //   where: id ? { id: { [Op.ne]: id }, email: form.email } : { email: form.email },
+  // });
+  // if (duplicateEmail) {
+  //   invalid400.push('Vendor Email Already Taken / Exist');
+  // }
 
   // check if pic is pic transportation
-  if (picInstance.typeId !== 4) {
+  if (picInstance?.typeId !== 4) {
     invalid400.push('PIC For Transportation Must Be Type PIC Transportation');
   }
 
@@ -142,8 +155,8 @@ const validateVendorInputs = async (form, id) => {
       pic: picInstance,
       name: form.name,
       address: form.address,
-      phoneNbr: form.phoneNbr,
-      email: form.email,
+      phoneNbr: form.phoneNbr || null,
+      email,
     },
   };
 };

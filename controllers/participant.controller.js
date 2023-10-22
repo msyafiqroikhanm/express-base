@@ -20,6 +20,7 @@ const {
   selectAllNormalParticipants,
   selectAllCommitteeParticipants,
   downloadParticipantSecretFile,
+  validateDeleteParticipant,
 } = require('../services/participant.service');
 const { deleteFiles } = require('../helpers/deleteMultipleFile.helper');
 const { createNotifications } = require('../services/notification.service');
@@ -63,9 +64,10 @@ class Participant {
       if (req.query?.typeId) {
         where.typeId = req.query.typeId;
       }
-      // if (!req.user.limitation.isAdmin) {
-      //   where.id = req.user.limitation.access.contingentId;
-      // }
+
+      if (!req.user.limitation.isAdmin && req.user.Role?.name === 'Participant Coordinator') {
+        where.id = req.user.limitation.access.contingentId;
+      }
 
       const data = await searchParticipant(where);
       if (!data.success && data.code === 404) {
@@ -239,6 +241,14 @@ class Participant {
       const where = { id: req.params.id };
       if (!req.user.limitation.isAdmin) {
         where.contingentId = req.user.limitation.access.contingentId;
+      }
+
+      const validate = await validateDeleteParticipant(req.user, req.params.id);
+      if (!validate.isValid && validate.code === 400) {
+        return ResponseFormatter.error400(res, 'Bad Request', validate.message);
+      }
+      if (!validate.isValid && validate.code === 404) {
+        return ResponseFormatter.error400(res, 'Data Not Found', validate.message);
       }
 
       const data = await deleteParticipant(where);

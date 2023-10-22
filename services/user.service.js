@@ -1,3 +1,4 @@
+/* eslint-disable prefer-const */
 /* eslint-disable no-param-reassign */
 const { relative } = require('path');
 const bcrypt = require('bcryptjs');
@@ -25,6 +26,7 @@ const deleteFile = require('../helpers/deleteFile.helper');
 const selectAllUsers = async () => {
   const users = await USR_User.findAll({
     attributes: { exclude: ['password', 'createdAt', 'updatedAt', 'deletedAt'] },
+    order: [['username', 'ASC']],
     include: [
       {
         model: USR_Role,
@@ -55,12 +57,10 @@ const selectAllUsers = async () => {
     user.dataValues.role = user.Role?.dataValues.name || null;
     user.dataValues.isAdministrative = user.Role?.dataValues.isAdministrative || null;
     if (user.participant) {
-      user.participant.dataValues.contingent = user.participant.contingent
-        ?.dataValues.name || null;
+      user.participant.dataValues.contingent = user.participant.contingent?.dataValues.name || null;
       user.participant.dataValues.participantType = user.participant.participantType
         ?.dataValues.name;
-      user.participant.dataValues.identityType = user.participant.identityType
-        ?.dataValues.name;
+      user.participant.dataValues.identityType = user.participant.identityType?.dataValues.name;
     }
     delete user.dataValues.Qr;
     delete user.dataValues.Role;
@@ -86,7 +86,21 @@ const selectDetailUser = async (id) => {
       {
         model: PAR_Participant,
         as: 'participant',
-        attributes: ['name', 'contingentId', 'identityTypeId', 'identityNo', 'gender', 'birthDate', 'email', 'phoneNbr', 'address', 'file', 'identityFile', 'baptismFile', 'referenceFile'],
+        attributes: [
+          'name',
+          'contingentId',
+          'identityTypeId',
+          'identityNo',
+          'gender',
+          'birthDate',
+          'email',
+          'phoneNbr',
+          'address',
+          'file',
+          'identityFile',
+          'baptismFile',
+          'referenceFile',
+        ],
         required: true,
         include: [
           { model: PAR_Contingent, as: 'contingent', attributes: ['name'] },
@@ -137,6 +151,7 @@ const validateUserInputs = async (form, id) => {
     invalid404.push('Participant Data Not Found');
   }
 
+  let { email } = form;
   if (!id) {
     // check if participant already have user account for create user
     if (participantInstance?.user) {
@@ -147,12 +162,14 @@ const validateUserInputs = async (form, id) => {
     if (duplicateUser) {
       invalid400.push('Username already taken');
     }
-    console.log(form.username);
-    console.log(`User = ${JSON.stringify(duplicateUser, null, 2)}`);
-    const duplicateEmail = await USR_User.findOne({ where: { email: form.email } });
-    if (duplicateEmail) {
-      invalid400.push('Email already taken');
-    }
+
+    //! disable duplicate email check
+    // console.log(form.username);
+    // console.log(`User = ${JSON.stringify(duplicateUser, null, 2)}`);
+    // const duplicateEmail = await USR_User.findOne({ where: { email: form.email } });
+    // if (duplicateEmail) {
+    //   invalid400.push('Email already taken');
+    // }
   } else if (participantInstance?.user && id) {
     // when updating user check if participant belongs to user before update (old data)
     if (participantInstance?.user.id !== Number(id)) {
@@ -165,10 +182,16 @@ const validateUserInputs = async (form, id) => {
     if (duplicateUser) {
       invalid400.push('Username already taken');
     }
-    const duplicateEmail = await USR_User.findOne({ where: { email: form.email } });
-    if (duplicateEmail) {
-      invalid400.push('Email already taken');
+
+    if (!form.email) {
+      email = duplicateUser.email;
     }
+
+    //! disable duplicate email check
+    // const duplicateEmail = await USR_User.findOne({ where: { email: form.email } });
+    // if (duplicateEmail) {
+    //   invalid400.push('Email already taken');
+    // }
   }
 
   if (invalid400.length > 0) {
@@ -193,7 +216,7 @@ const validateUserInputs = async (form, id) => {
       participantId: participantInstance.id,
       username: form.username,
       password: form.password,
-      email: form.email,
+      email,
     },
   };
 };
@@ -422,7 +445,7 @@ const validatePublicRegisterUserInputs = async (form) => {
   //   });
   // }
   if (!participantInstance) {
-    invalid404.push('Participant Doesn\'t Exist In Database / System');
+    invalid404.push("Participant Doesn't Exist In Database / System");
   }
 
   // check if participant already has user
@@ -463,14 +486,7 @@ const validatePublicRegisterUserInputs = async (form) => {
 
 const validateProfileInputs = async (form, id, files) => {
   const {
-    identityTypeId,
-    name,
-    gender,
-    birthDate,
-    identityNo,
-    email,
-    phoneNbr,
-    address,
+    identityTypeId, name, gender, birthDate, identityNo, email, phoneNbr, address,
   } = form;
 
   const invalid400 = [];
@@ -500,7 +516,9 @@ const validateProfileInputs = async (form, id, files) => {
 
         filePath = `public/images/participants/${file[0].filename}`;
       } else {
-        if (!['png', 'jpeg', 'jpg', 'pdf', 'docx'].includes(file[0].originalname.split('.').pop())) {
+        if (
+          !['png', 'jpeg', 'jpg', 'pdf', 'docx'].includes(file[0].originalname.split('.').pop())
+        ) {
           invalid400.push('Upload only supports file types [png, jpeg, jpg, pdf, and docx]');
         }
 
@@ -544,8 +562,7 @@ const validateProfileInputs = async (form, id, files) => {
 
   // check phone number duplicate
   const isDuplicatePhoneNbr = await PAR_Participant.findOne({
-    where: userInstance
-      ? { id: { [Op.ne]: userInstance.participantId }, phoneNbr } : { phoneNbr },
+    where: userInstance ? { id: { [Op.ne]: userInstance.participantId }, phoneNbr } : { phoneNbr },
   });
   if (isDuplicatePhoneNbr) {
     invalid400.push(`Phone Number ${phoneNbr} Already Used In System`);
@@ -634,8 +651,7 @@ const updateUserProfile = async (form, id) => {
   participantInstance.referenceFile = form.referenceFile || participantInstance.referenceFile;
 
   // check if participant doesn't change the files but changing phone number
-  if ((participantInstance.phoneNbr !== form.phoneNbr)
-      || (participantInstance.name !== form.name)) {
+  if (participantInstance.phoneNbr !== form.phoneNbr || participantInstance.name !== form.name) {
     if (participantInstance.file && !form.file) {
       participantInstance.file = await renameParticipantFile(
         participantInstance.file,

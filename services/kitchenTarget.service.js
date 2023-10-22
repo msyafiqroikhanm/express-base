@@ -127,7 +127,10 @@ const createKitchenTarget = async (form) => {
   const kitchenTargetInstance = await FNB_KitchenTarget.create(form);
 
   const menuInstance = await FNB_Menu.findOne({ where: { id: form.menuId }, attributes: ['name'] });
-  const kitchenInstance = await FNB_Kitchen.findOne({ where: { id: form.kitchenId }, attributes: ['name'] });
+  const kitchenInstance = await FNB_Kitchen.findOne({
+    where: { id: form.kitchenId },
+    attributes: ['name'],
+  });
 
   kitchenTargetInstance.menu = menuInstance.dataValues.name || null;
   kitchenTargetInstance.kitchen = kitchenInstance.dataValues.name || null;
@@ -216,8 +219,14 @@ const progressActualKitchenTarget = async (where, form) => {
     return { isValid: false, code: 404, message: errorMessages };
   }
 
-  const kitchenInstance = await FNB_Kitchen.findOne({ where: { id: kitchenTargetInstance?.kitchenId }, attributes: ['name'] });
-  const menuInstance = await FNB_Menu.findOne({ where: { id: kitchenTargetInstance?.menuId }, attributes: ['name'] });
+  const kitchenInstance = await FNB_Kitchen.findOne({
+    where: { id: kitchenTargetInstance?.kitchenId },
+    attributes: ['name'],
+  });
+  const menuInstance = await FNB_Menu.findOne({
+    where: { id: kitchenTargetInstance?.menuId },
+    attributes: ['name'],
+  });
 
   kitchenTargetInstance.quantityActual = form.quantityActual;
   kitchenTargetInstance.kitchen = kitchenInstance?.name || null;

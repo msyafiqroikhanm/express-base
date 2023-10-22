@@ -10,6 +10,7 @@ const {
   updateGroupProgress,
 } = require('../services/group.service');
 const { createNotifications } = require('../services/notification.service');
+const { ENV_Event } = require('../models');
 
 class ParticipantGroup {
   static async getAll(req, res, next) {
@@ -31,6 +32,16 @@ class ParticipantGroup {
       // resrict data that is not an admin
       if (!req.user.limitation.isAdmin) {
         where.contingentId = req.user.limitation.access.contingentId;
+      }
+
+      if (req.user?.PIC[0]?.REF_PICType?.name === 'PIC Event') {
+        const events = await ENV_Event.findAll({
+          where: { picId: req.user?.PIC[0]?.id },
+          attributes: ['id'],
+        });
+
+        const eventIds = events.map((event) => event.id);
+        where.eventIds = eventIds;
       }
 
       const data = await selectAllGroups(where);

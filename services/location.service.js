@@ -186,7 +186,18 @@ const deleteLocation = async (where) => {
   if (!Instance) {
     return {
       success: false,
+      code: 404,
       message: 'Location  Data Not Found',
+    };
+  }
+
+  // pic location can't delete the parent location
+  if (Instance.parentLocationId === null && Number(where.picId) === Number(Instance.picId)) {
+    // console.log(JSON.stringify(Instance, null, 2));
+    return {
+      success: false,
+      code: 400,
+      message: 'You Cannot Delete The Parent Location',
     };
   }
 

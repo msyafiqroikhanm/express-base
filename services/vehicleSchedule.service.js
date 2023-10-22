@@ -12,6 +12,7 @@ const {
   PAR_Contingent,
   REF_CommitteeType,
   REF_ParticipantType,
+  TPT_VehicleScheduleHistory,
 } = require('../models');
 
 const selectAllVehicleSchedule = async (where = {}) => {
@@ -28,14 +29,15 @@ const selectAllVehicleSchedule = async (where = {}) => {
     include: [
       {
         model: TPT_Vehicle,
-        attributes: ['name'],
+        attributes: ['name', 'vendorId'],
         as: 'vehicle',
-        where: where.picId ? { vendorId: { [Op.in]: where.vendors } } : null,
+        required: false,
       },
       {
         model: TPT_Driver,
-        attributes: ['name'],
+        attributes: ['name', 'vendorId'],
         as: 'driver',
+        required: false,
       },
       { model: REF_VehicleScheduleStatus, attributes: ['name'], as: 'status' },
       {
@@ -51,22 +53,37 @@ const selectAllVehicleSchedule = async (where = {}) => {
     ],
   });
 
-  schedules.forEach((schedule) => {
+  let parsedSchedules = schedules.map((schedule) => {
+    if (where.picId) {
+      if ((schedule.driverId == null && schedule.driverId === null)
+           || (where?.vendors?.includes(schedule.driver.vendorId)
+              || where?.vendors?.includes(schedule.vehicle.vendorId))) {
+        schedule.dataValues.vehicle = schedule.vehicle?.dataValues.name || null;
+        schedule.dataValues.driver = schedule.driver?.dataValues.name || null;
+        schedule.dataValues.status = schedule.status?.dataValues.name || null;
+        return schedule;
+      }
+      return null;
+    }
     schedule.dataValues.vehicle = schedule.vehicle?.dataValues.name || null;
     schedule.dataValues.driver = schedule.driver?.dataValues.name || null;
     schedule.dataValues.status = schedule.status?.dataValues.name || null;
+    return schedule;
   });
+
+  parsedSchedules = parsedSchedules.filter((schedule) => schedule !== null);
 
   return {
     success: true,
     message: 'Successfully Getting All Vehicle Schedule',
-    content: schedules,
+    content: parsedSchedules,
   };
 };
 
 const selectVehicleSchedule = async (id, where = {}) => {
   const scheduleInstance = await TPT_VehicleSchedule.findOne({
     where: where.driverId ? { id, driverId: where.driverId } : { id },
+    order: [['histories', 'createdAt', 'DESC']],
     include: [
       {
         model: TPT_Vehicle,
@@ -89,6 +106,12 @@ const selectVehicleSchedule = async (id, where = {}) => {
         model: ACM_Location,
         attributes: ['id', 'name', 'address'],
         as: 'destination',
+      },
+      {
+        model: TPT_VehicleScheduleHistory,
+        attributes: { exclude: ['updatedAt'] },
+        as: 'histories',
+        include: { model: REF_VehicleScheduleStatus, attributes: ['name'], as: 'status' },
       },
       {
         model: TPT_SchedulePassenger,
@@ -124,6 +147,10 @@ const selectVehicleSchedule = async (id, where = {}) => {
   scheduleInstance.dataValues.vehicle = scheduleInstance.vehicle?.dataValues.name || null;
   scheduleInstance.dataValues.driver = scheduleInstance.driver?.dataValues.name || null;
   scheduleInstance.dataValues.status = scheduleInstance.status?.dataValues.name || null;
+
+  scheduleInstance.histories?.forEach((history) => {
+    history.dataValues.status = history.status?.dataValues.name || null;
+  });
 
   const passengers = scheduleInstance.TPT_SchedulePassengers.map((passenger) => ({
     vehicleScheduleId: passenger.vehicleScheduleId,
@@ -232,7 +259,8 @@ const validateVehicleScheduleInputs = async (form) => {
       status: statusInstance,
       name: form.name,
       pickUpTime: new Date(form.pickUpTime),
-      description: form.description,
+      descriptionPickUp: form.descriptionPickUp,
+      descriptionDropOff: form.descriptionDropOff,
       pickUpOtherLocation: form.pickUpOtherLocation,
       dropOffOtherLocation: form.dropOffOtherLocation,
       passengers: validPassengers,
@@ -249,10 +277,17 @@ const createVehicleSchedule = async (form) => {
     pickUpOtherLocation: form.pickUpOtherLocation,
     dropOffOtherLocation: form.dropOffOtherLocation,
     pickUpTime: form.pickUpTime,
-    description: form.description,
+    descriptionPickUp: form.descriptionPickUp,
+    descriptionDropOff: form.descriptionDropOff,
   });
 
   await scheduleInstance.addPAR_Participants(form.passengers);
+
+  await TPT_VehicleScheduleHistory.create({
+    vehicleScheduleId: scheduleInstance.id,
+    statusId: form.status?.id || 1,
+    note: null,
+  });
 
   return {
     success: true,
@@ -279,7 +314,8 @@ const updateVehicleSchedule = async (form, id) => {
   scheduleInstance.pickUpOtherLocation = form.pickUpOtherLocation || null;
   scheduleInstance.dropOffOtherLocation = form.dropOffOtherLocation || null;
   scheduleInstance.pickUpTime = form.pickUpTime;
-  scheduleInstance.description = form.description;
+  scheduleInstance.descriptionPickUp = form.descriptionPickUp;
+  scheduleInstance.descriptionDropOff = form.descriptionDropOff;
   await scheduleInstance.save();
 
   await scheduleInstance.setPAR_Participants(form.passengers);
@@ -291,39 +327,39 @@ const updateVehicleSchedule = async (form, id) => {
   };
 };
 
-const progressVehicleSchedule = async (form, id, where = {}, isAdmin = false) => {
+const validateProgressVehicleScheduleInputs = async (form, id, where = {}, isAdmin = false) => {
   const scheduleInstance = await TPT_VehicleSchedule.findOne({
     where: where.driverId ? { id, driverId: where.driverId } : { id },
     include: { model: REF_VehicleScheduleStatus, attributes: ['name'], as: 'status' },
   });
 
-  // check old status is complete for user non admin
+  // check old status is complete or cancelled for user non admin
   if (!isAdmin) {
     const oldStatus = await REF_VehicleScheduleStatus.findOne(
       { where: { id: scheduleInstance.statusId }, attributes: ['name'] },
     );
 
-    if (oldStatus?.name === 'Completed') {
+    if (['Completed', 'Cancelled'].includes(oldStatus?.name)) {
       return {
-        success: false,
+        isValid: false,
         code: 400,
-        message: ["Completed Transportation Schedule Can't Change It Status"],
+        message: ["Completed / Cancelled Vehicle Schedule Can't Change It Status"],
       };
     }
   }
 
   if (!scheduleInstance) {
     return {
-      success: false,
+      isValid: false,
       code: 404,
       message: ['Vehicle Schedule Data Not Found'],
     };
   }
   if (scheduleInstance.driverId === null || scheduleInstance.vehicleId === null) {
     return {
-      success: false,
+      isValid: false,
       code: 400,
-      message: ["Transportation Schedule Without Driver Or Vehicle, Status Can't Be Progressed"],
+      message: ["Vehicle Schedule Without Driver Or Vehicle, Status Can't Be Progressed"],
     };
   }
 
@@ -333,7 +369,7 @@ const progressVehicleSchedule = async (form, id, where = {}, isAdmin = false) =>
     });
     if (!vehicleInstance) {
       return {
-        success: false,
+        isValid: false,
         code: 404,
         message: ['Vehicle Schedule Data Not Found'],
       };
@@ -342,14 +378,85 @@ const progressVehicleSchedule = async (form, id, where = {}, isAdmin = false) =>
 
   const statusInstance = await REF_VehicleScheduleStatus.findByPk(form.statusId);
 
+  if (form.statusId && !statusInstance) {
+    return {
+      isValid: false,
+      code: 404,
+      message: ['Vehicle Schedule Status Data Not Found'],
+    };
+  }
+
+  const oldStatus = scheduleInstance?.status?.dataValues.name || null;
+  const newStatus = statusInstance?.name || null;
+
+  const allowedTransitions = {
+    Scheduled: ['Scheduled', 'Pick Up Passengers', 'Cancelled'],
+    'Pick Up Passengers': ['Pick Up Passengers', 'Enroute', 'Cancelled'],
+    Enroute: ['Enroute', 'Completed', 'Cancelled'],
+  };
+
+  if (oldStatus && newStatus
+      && allowedTransitions[oldStatus]
+      && !allowedTransitions[oldStatus].includes(newStatus)) {
+    return {
+      isValid: false,
+      code: 400,
+      message: [`Vehicle Schedule With Status ${oldStatus}, could only change to status ${allowedTransitions[oldStatus]}`],
+    };
+  }
+
+  if (['Completed', 'Cancelled'].includes(oldStatus) && ['Completed', 'Cancelled'].includes(newStatus)) {
+    return {
+      isValid: false,
+      code: 400,
+      message: [`${oldStatus} Transportation Schedule Can't Change It Status To ${newStatus}`],
+    };
+  }
+
+  // check if newStatus is Canceled and required to have note for cancelation
+  if (newStatus === 'Cancelled' && !form.note) {
+    return {
+      isValid: false,
+      code: 400,
+      message: ['Vehicle Schedule Status Cancelled Required Note For Cancellation'],
+    };
+  }
+
+  return {
+    isValid: true,
+    form: {
+      statusId: form.statusId,
+      note: form.note,
+    },
+  };
+};
+
+const progressVehicleSchedule = async (form, id, where = {}) => {
+  const scheduleInstance = await TPT_VehicleSchedule.findOne({
+    where: where.driverId ? { id, driverId: where.driverId } : { id },
+    include: { model: REF_VehicleScheduleStatus, attributes: ['name'], as: 'status' },
+  });
+
+  const statusInstance = await REF_VehicleScheduleStatus.findByPk(form.statusId);
+
+  const oldStatus = scheduleInstance?.status?.dataValues.name || null;
+  const newStatus = statusInstance?.name || null;
+
   scheduleInstance.statusId = statusInstance?.id || scheduleInstance.statusId;
   await scheduleInstance.save();
-  if (!scheduleInstance) {
-    const status = await REF_VehicleScheduleStatus.findByPk(scheduleInstance.statusId);
-    scheduleInstance.status = status.dataValues.name;
-  } else {
-    scheduleInstance.status = statusInstance.dataValues.name;
+  scheduleInstance.status = newStatus || oldStatus;
+
+  // check if schedule old status is compled or cancelled to other status
+  if (['Completed', 'Cancelled'].includes(oldStatus) && !['Completed', 'Cancelled'].includes(newStatus)) {
+    await TPT_Driver.update({ isAvailable: false }, { where: { id: scheduleInstance.driverId } });
+    await TPT_Vehicle.update({ isAvailable: false }, { where: { id: scheduleInstance.vehicleId } });
   }
+
+  await TPT_VehicleScheduleHistory.create({
+    vehicleScheduleId: scheduleInstance.id,
+    statusId: statusInstance?.id || scheduleInstance.statusId,
+    note: form.note || null,
+  });
 
   if (['Completed', 'Done', 'Finish', 'Arrived'].includes(statusInstance?.name)) {
     // when a trip is finish change passenger status
@@ -376,11 +483,14 @@ const progressVehicleSchedule = async (form, id, where = {}, isAdmin = false) =>
       { statusId: passengerStatus.id },
       { where: { vehicleScheduleId: scheduleInstance.id, statusId: 1 } },
     );
+  } else if (statusInstance?.name === 'Cancelled') {
+    await TPT_Driver.update({ isAvailable: true }, { where: { id: scheduleInstance.driverId } });
+    await TPT_Vehicle.update({ isAvailable: true }, { where: { id: scheduleInstance.vehicleId } });
   }
 
   return {
     success: true,
-    message: `Vehicle Schedulee Status Of ${scheduleInstance.name} Successully Updated To ${
+    message: `Vehicle Schedul]e Status Of ${scheduleInstance.name} Successully Updated To ${
       statusInstance?.name || scheduleInstance.status?.name
     }`,
     content: scheduleInstance,
@@ -653,4 +763,5 @@ module.exports = {
   validateProvideScheduleInputs,
   validatePassengerAbsent,
   selectAllPassengersVehicleSchedule,
+  validateProgressVehicleScheduleInputs,
 };

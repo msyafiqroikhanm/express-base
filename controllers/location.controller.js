@@ -69,12 +69,7 @@ class LocationController {
       const data = await createLocation(inputs.form);
 
       const io = req.app.get('socketIo');
-      await createNotifications(
-        io,
-        'Location Created',
-        data.content.id,
-        [data.content.name],
-      );
+      await createNotifications(io, 'Location Created', data.content.id, [data.content.name]);
 
       return ResponseFormatter.success201(res, data.message, data.content);
     } catch (error) {
@@ -112,8 +107,11 @@ class LocationController {
       }
 
       const data = await deleteLocation(where);
-      if (!data.success) {
+      if (!data.success && data.code === 404) {
         return ResponseFormatter.error404(res, 'Data Not Found', data.message);
+      }
+      if (!data.success && data.code === 400) {
+        return ResponseFormatter.error400(res, 'Bad Request', data.message);
       }
 
       return ResponseFormatter.success200(res, data.message, data.content);
