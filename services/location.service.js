@@ -109,6 +109,24 @@ const selectLocation = async (where) => {
     };
   }
 
+  const pic = await USR_PIC.findOne({
+    where: { id: location.picId },
+    attributes: { exclude: ['createdAt', 'updatedAt'] },
+    include: {
+      model: USR_User,
+      as: 'user',
+      attributes: ['id'],
+      include: {
+        model: PAR_Participant,
+        as: 'participant',
+        attributes: ['name', 'phoneNbr', 'email'],
+      },
+    },
+  });
+
+  // eslint-disable-next-line no-param-reassign
+  location.dataValues.pic = pic?.user.participant || null;
+
   return {
     success: true,
     message: 'Successfully Getting All Location ',

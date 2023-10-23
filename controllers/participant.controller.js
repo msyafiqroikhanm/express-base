@@ -65,11 +65,12 @@ class Participant {
         where.typeId = req.query.typeId;
       }
 
+      let id = null;
       if (!req.user.limitation.isAdmin && req.user.Role?.name === 'Participant Coordinator') {
-        where.id = req.user.limitation.access.contingentId;
+        id = req.user.limitation.access.contingentId;
       }
 
-      const data = await searchParticipant(where);
+      const data = await searchParticipant(where, id);
       if (!data.success && data.code === 404) {
         return ResponseFormatter.error404(res, 'Data Not Found', data.message);
       }
