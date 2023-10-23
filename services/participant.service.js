@@ -286,14 +286,14 @@ const selectParticipant = async (id, where) => {
   };
 };
 
-const searchParticipant = async (where) => {
+const searchParticipant = async (where, id) => {
   const participantInstance = await PAR_Participant.findAll({
     order: [['name', 'ASC']],
     where,
     include: [
       {
         model: PAR_Contingent,
-        where: where?.id ? { id: where.id } : null,
+        where: id ? { id } : null,
         as: 'contingent',
         attributes: ['id', 'name'],
         include: { model: REF_Region, as: 'region', attributes: ['id', 'name'] },
