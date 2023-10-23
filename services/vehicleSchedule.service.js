@@ -92,12 +92,14 @@ const selectVehicleSchedule = async (id, where = {}) => {
         model: TPT_Vehicle,
         attributes: ['name'],
         as: 'vehicle',
-        where: where.vendors ? { id: { [Op.in]: where.vendors } } : null,
+        where: where.vendors ? { vendorId: { [Op.in]: where.vendors } } : null,
+        required: false,
       },
       {
         model: TPT_Driver,
         attributes: ['name'],
         as: 'driver',
+        required: false,
       },
       { model: REF_VehicleScheduleStatus, attributes: ['name'], as: 'status' },
       {
@@ -545,6 +547,8 @@ const validateProvideScheduleInputs = async (form, id, where) => {
   } else if (scheduleInstance?.vehicleId !== vehicleInstance.id && !vehicleInstance.isAvailable) {
     // check when with different vehicle data, is the vehicle available
     invalid400.push('Vehicle Is Not Available');
+  } else if (vehicleInstance.capacity < scheduleInstance.totalPassengers) {
+    invalid400.push('Please select a larger vehicle: The scheduled passengers exceed the vehicle\'s capacity');
   }
 
   const driverInstance = await TPT_Driver.findOne({

@@ -63,7 +63,7 @@ class AuthMiddleware {
           // * Need More Investigation for user is PIC for not this module
 
           // limitation.isAdmin = false;
-          limitation.access.picId = picLocation[0].dataValues.id;
+          limitation.access.picId = picLocation[0]?.dataValues.id;
 
           const locationLimitation = await ACM_Location.findAll({
             where: { picId: limitation.access.picId },
