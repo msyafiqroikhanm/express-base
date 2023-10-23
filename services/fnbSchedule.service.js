@@ -15,6 +15,7 @@ const {
   FNB_ScheduleMenu,
   FNB_KitchenTarget,
   FNB_ScheduleHistory,
+  FNB_Menu,
 } = require('../models');
 const { createQR } = require('./qr.service');
 const {
@@ -159,6 +160,17 @@ const selectFnBSchedule = async (id, where) => {
         },
         // through: { attributes: [] },
       },
+      {
+        model: FNB_ScheduleMenu,
+        as: 'items',
+        attributes: { exclude: ['createdAt', 'updatedAt'] },
+        include: {
+          model: FNB_KitchenTarget,
+          as: 'kitchenTarget',
+          attributes: { exclude: ['createdAt', 'updatedAt'] },
+          include: { model: FNB_Menu, as: 'menu' },
+        },
+      },
     ],
     order: [[{ model: FNB_ScheduleHistory, as: 'histories' }, 'id', 'DESC']],
   });
@@ -206,6 +218,9 @@ const selectFnBSchedule = async (id, where) => {
   await Promise.all(
     fnbScheduleInstance.histories.map(async (history) => {
       history.dataValues.status = history.status.name;
+    }),
+    fnbScheduleInstance.items.map(async (item) => {
+      item.kitchenTarget.dataValues.menu = item.kitchenTarget.menu.name;
     }),
   );
 
