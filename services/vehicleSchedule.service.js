@@ -614,6 +614,9 @@ const validateProvideScheduleInputs = async (form, id, where) => {
 const vendorProvideTransportationSchedule = async (form, id) => {
   const scheduleInstance = await TPT_VehicleSchedule.findOne({ where: { id } });
 
+  const oldDriverId = scheduleInstance.dataValues.driverId;
+  const oldVehicleId = scheduleInstance.dataValues.vehicleId;
+
   scheduleInstance.driverId = form.driver?.id || scheduleInstance.driverId;
   scheduleInstance.vehicleId = form.vehicle?.id || scheduleInstance.vehicleId;
   await scheduleInstance.save();
@@ -621,11 +624,25 @@ const vendorProvideTransportationSchedule = async (form, id) => {
   if (form.driver && form.driver?.isAvailable) {
     form.driver.isAvailable = false;
     await form.driver.save();
+
+    if (oldDriverId && oldDriverId !== form.driver?.id) {
+      await TPT_Driver.update(
+        { isAvailable: true },
+        { where: { id: oldDriverId } },
+      );
+    }
   }
 
   if (form.vehicle && form.vehicle?.isAvailable) {
     form.vehicle.isAvailable = false;
     await form.vehicle.save();
+
+    if (oldVehicleId && oldVehicleId !== form.vehicle?.id) {
+      await TPT_Vehicle.update(
+        { isAvailable: true },
+        { where: { id: oldVehicleId } },
+      );
+    }
   }
 
   return {

@@ -23,7 +23,23 @@ const { parsingUserModules } = require('../helpers/parsing.helper');
 const { renameParticipantFile } = require('./participant.service');
 const deleteFile = require('../helpers/deleteFile.helper');
 
-const selectAllUsers = async () => {
+const selectAllUsers = async (query) => {
+  // parsing query
+  let limitation = null;
+  if (query && query.isCommittee === 'false') {
+    const participantRole = await USR_Role.findOne({
+      where: { name: 'Participant' },
+      attributes: ['id'],
+    });
+    limitation = participantRole?.id;
+  } else if (query && query.isCommittee === 'true') {
+    const participantRole = await USR_Role.findOne({
+      where: { name: 'Participant' },
+      attributes: ['id'],
+    });
+    limitation = { [Op.ne]: participantRole.id };
+  }
+
   const users = await USR_User.findAll({
     attributes: { exclude: ['password', 'createdAt', 'updatedAt', 'deletedAt'] },
     order: [['username', 'ASC']],
@@ -31,7 +47,8 @@ const selectAllUsers = async () => {
       {
         model: USR_Role,
         as: 'Role',
-        attributes: ['name', 'isAdministrative'],
+        attributes: ['id', 'name', 'isAdministrative'],
+        where: limitation ? { id: limitation } : null,
       },
       {
         model: QRM_QR,
@@ -164,8 +181,6 @@ const validateUserInputs = async (form, id) => {
     }
 
     //! disable duplicate email check
-    // console.log(form.username);
-    // console.log(`User = ${JSON.stringify(duplicateUser, null, 2)}`);
     // const duplicateEmail = await USR_User.findOne({ where: { email: form.email } });
     // if (duplicateEmail) {
     //   invalid400.push('Email already taken');
