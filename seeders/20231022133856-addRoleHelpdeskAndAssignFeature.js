@@ -154,9 +154,12 @@ module.exports = {
       attributes: ['id'],
     });
 
-    const existFeatures = helpdeskRole.USR_Features?.map((feature) => feature.id);
+    const existFeatures = helpdeskRole.USR_Features
+      ? helpdeskRole.USR_Features
+      : [].map((feature) => feature.id);
+    // console.log(existFeatures);
     const newNonExistFeatures = newFeatures.filter(
-      (feature) => !existFeatures.includes(feature.id),
+      (feature) => !existFeatures?.includes(feature.id),
     );
 
     const newRoleFeatures = newNonExistFeatures.map((feature) => ({
@@ -164,6 +167,7 @@ module.exports = {
       featureId: feature.id,
     }));
 
+    console.log(newRoleFeatures);
     await USR_RoleFeature.bulkCreate(newRoleFeatures);
     // }
   },
