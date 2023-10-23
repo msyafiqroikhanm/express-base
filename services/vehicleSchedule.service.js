@@ -186,12 +186,7 @@ const validateVehicleScheduleInputs = async (form) => {
   const invalid400 = [];
   const invalid404 = [];
 
-  if (!['Arrival & Departure', 'Event', 'Tourism'].includes(form.type)) {
-    invalid400.push('Invalid Vehicle Schedule Type, Options Are: Arrival & Departure, Event, Tourism');
-  }
-  if (form.type === 'Arrival & Departure' && !form.totalPassengers) {
-    invalid400.push('Vehicle Schedule Type Arrival & Departure Required Total Passengers Attribute');
-  }
+  const passengers = form.passengers || [];
 
   // check pickup (location id) validity
   let pickUpInstance = null;
@@ -240,7 +235,7 @@ const validateVehicleScheduleInputs = async (form) => {
   // validate Recipiants / receivers
   const validPassengers = await PAR_Participant.findAll({
     where: {
-      id: { [Op.in]: form.passengers },
+      id: { [Op.in]: passengers },
     },
   });
 
@@ -275,8 +270,8 @@ const validateVehicleScheduleInputs = async (form) => {
       pickUpOtherLocation: form.pickUpOtherLocation,
       dropOffOtherLocation: form.dropOffOtherLocation,
       passengers: validPassengers,
-      totalPassengers: form.type === 'Arrival & Departure'
-        ? Number(form.totalPassengers) : validPassengers.length,
+      totalPassengers: validPassengers?.length
+        ? validPassengers.length : Number(form.totalPassengers) || 0,
     },
   };
 };
