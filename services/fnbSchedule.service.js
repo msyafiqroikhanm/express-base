@@ -827,6 +827,7 @@ const updateProgressFnBSchedule = async (form, where, limitation = null) => {
       break;
 
     case canceled:
+      allowedProgress.push(waitingForCourier);
       allowedProgress.push(canceled);
       allowedProgress.push(deliveryProcess);
       allowedProgress.push(deliveryCompleted);
