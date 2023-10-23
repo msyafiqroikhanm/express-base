@@ -114,12 +114,24 @@ const validateBroadcastInputs = async (form, file) => {
         `Broadcast Using Template With Header ${templateInstance?.headerType.name} Required File`,
       );
     }
-    if (['jpeg', 'png', 'jpg'].includes(file.originalname.split('.')[1])) {
-      headerFile = `public/images/broadcasts/${file.filename}`;
-    } else if (['mp4', '3gp'].includes(file.originalname.split('.')[1])) {
-      headerFile = `public/videos/broadcasts/${file.filename}`;
-    } else if (['pdf', 'docx', 'xlsx'].includes(file.originalname.split('.')[1])) {
-      headerFile = `public/documents/broadcasts/${file.filename}`;
+
+    if (templateInstance?.headerType.name === 'IMAGE' && !['jpeg', 'jpg', 'png'].includes(file?.originalname.split('.').pop())) {
+      invalid400.push('Header with type IMAGE requires a JPEG, JPG, or PNG file.');
+    }
+
+    if (templateInstance?.headerType.name === 'VIDEO' && file?.originalname.split('.').pop() !== 'mp4') {
+      invalid400.push('Header with type VIDEO requires an MP4 file.');
+    }
+
+    if (templateInstance?.headerType.name === 'DOCUMENT' && file?.originalname.split('.').pop() !== 'pdf') {
+      invalid400.push('Header with type DOCUMENT requires a PDF file.');
+    }
+    if (['jpeg', 'png', 'jpg'].includes(file?.originalname.split('.').pop())) {
+      headerFile = `public/images/broadcasts/${file?.filename}`;
+    } else if (['mp4', '3gp'].includes(file?.originalname.split('.').pop())) {
+      headerFile = `public/videos/broadcasts/${file?.filename}`;
+    } else if (['pdf', 'docx', 'xlsx'].includes(file?.originalname.split('.').pop())) {
+      headerFile = `public/documents/broadcasts/${file?.filename}`;
     }
   } else if (
     templateInstance?.headerType.name === 'TEXT' && templateInstance?.headerVariableExample
@@ -316,7 +328,9 @@ const updateBroadcast = async (form, id) => {
   cron.cancelJob(`${broadcastInstance.id}`);
 
   // delete old file
-  await deleteFile(relative(__dirname, broadcastInstance.headerFile));
+  if (broadcastInstance.headerFile) {
+    await deleteFile(relative(__dirname, broadcastInstance.headerFile));
+  }
 
   broadcastInstance.templateId = form.template.id;
   broadcastInstance.name = form.name;

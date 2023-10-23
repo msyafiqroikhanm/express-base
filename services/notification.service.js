@@ -9,7 +9,7 @@ const {
 
 const selectAllNotification = async (id) => {
   const data = await SYS_Notification.findAll({
-    where: { userId: id, isRead: false },
+    where: { userId: id },
     include: { model: SYS_NotificationType, attributes: ['name'], as: 'type' },
   });
 
@@ -29,7 +29,7 @@ const proccessNotificationData = async (typeName) => {
 
   const notificationTypeInstance = await SYS_NotificationType.findOne({
     where: { name: typeName },
-    attributes: ['url', 'relatedTable', 'messageFormat'],
+    attributes: ['id', 'url', 'relatedTable', 'messageFormat'],
     include: {
       model: USR_Role, attributes: ['id'], include: { model: USR_User, attributes: ['id'] }, through: { attributes: ['limitation'] },
     },
@@ -70,8 +70,8 @@ const proccessNotificationData = async (typeName) => {
   };
 };
 
-const sendNotification = async (io, userId, completeUrl, message) => {
-  io.to(`user-${userId}`).emit('newNotification', { message, url: completeUrl });
+const sendNotification = async (io, userId, notificationId, completeUrl, message) => {
+  io.to(`user-${userId}`).emit('newNotification', { notificationId, message, url: completeUrl });
 };
 
 const createNotifications = async (io, type, relatedDataId, messageVariable) => {
@@ -107,12 +107,15 @@ const createNotifications = async (io, type, relatedDataId, messageVariable) => 
           });
 
           if (userInstance?.participant?.contingentId === participantInstance?.contingentId) {
-            await SYS_Notification.create({
+            const notificationInstance = await SYS_Notification.create({
               typeId: notificationTypeId,
               userId: user,
-            }).then(
-              await sendNotification(io, user, `${BASE_URL.value}${dataUrl}${relatedDataId}`, message),
-            );
+              relatedDataId,
+              url: `${BASE_URL.value}${dataUrl}${relatedDataId}`,
+              message,
+              isRead: false,
+            });
+            await sendNotification(io, user, notificationInstance.id, `${BASE_URL.value}${dataUrl}${relatedDataId}`, message);
           }
         } else if (dataType === 'group') {
           // * related to table group
@@ -121,12 +124,15 @@ const createNotifications = async (io, type, relatedDataId, messageVariable) => 
           });
 
           if (userInstance?.participant?.contingentId === groupInstance?.contingentId) {
-            await SYS_Notification.create({
+            const notificationInstance = await SYS_Notification.create({
               typeId: notificationTypeId,
               userId: user,
-            }).then(
-              await sendNotification(io, user, `${BASE_URL.value}${dataUrl}${relatedDataId}`, message),
-            );
+              relatedDataId,
+              url: `${BASE_URL.value}${dataUrl}${relatedDataId}`,
+              message,
+              isRead: false,
+            });
+            await sendNotification(io, user, notificationInstance.id, `${BASE_URL.value}${dataUrl}${relatedDataId}`, message);
           }
         } else if (dataType === 'lodger') {
           // * related to table lodger
@@ -139,12 +145,15 @@ const createNotifications = async (io, type, relatedDataId, messageVariable) => 
 
           if (userInstance?.participant?.contingentId
               === lodgerInstance?.participant?.contingentId) {
-            await SYS_Notification.create({
+            const notificationInstance = await SYS_Notification.create({
               typeId: notificationTypeId,
               userId: user,
-            }).then(
-              await sendNotification(io, user, `${BASE_URL.value}${dataUrl}${relatedDataId}`, message),
-            );
+              relatedDataId,
+              url: `${BASE_URL.value}${dataUrl}${relatedDataId}`,
+              message,
+              isRead: false,
+            });
+            await sendNotification(io, user, notificationInstance.id, `${BASE_URL.value}${dataUrl}${relatedDataId}`, message);
           }
         } else if (dataType === 'vehicle-schedule') {
           // * related to table vehicle schedule
@@ -156,12 +165,15 @@ const createNotifications = async (io, type, relatedDataId, messageVariable) => 
           if (scheduleInstance?.PAR_Participants?.some(
             (participant) => participant.contingentId === userInstance?.participant?.contingentId,
           )) {
-            await SYS_Notification.create({
+            const notificationInstance = await SYS_Notification.create({
               typeId: notificationTypeId,
               userId: user,
-            }).then(
-              await sendNotification(io, user, `${BASE_URL.value}${dataUrl}${relatedDataId}`, message),
-            );
+              relatedDataId,
+              url: `${BASE_URL.value}${dataUrl}${relatedDataId}`,
+              message,
+              isRead: false,
+            });
+            await sendNotification(io, user, notificationInstance.id, `${BASE_URL.value}${dataUrl}${relatedDataId}`, message);
           }
         }
       });
@@ -203,12 +215,15 @@ const createNotifications = async (io, type, relatedDataId, messageVariable) => 
           if (locationInstance.some(
             (location) => location.id === lodgerInstance?.room?.locationId,
           )) {
-            await SYS_Notification.create({
+            const notificationInstance = await SYS_Notification.create({
               typeId: notificationTypeId,
               userId: user,
-            }).then(
-              await sendNotification(io, user, `${BASE_URL.value}${dataUrl}${relatedDataId}`, message),
-            );
+              relatedDataId,
+              url: `${BASE_URL.value}${dataUrl}${relatedDataId}`,
+              message,
+              isRead: false,
+            });
+            await sendNotification(io, user, notificationInstance.id, `${BASE_URL.value}${dataUrl}${relatedDataId}`, message);
           }
         } else if (dataType === 'fnb-schedule') {
           // * related to table fnb schedule
@@ -217,12 +232,15 @@ const createNotifications = async (io, type, relatedDataId, messageVariable) => 
           if (locationInstance.some(
             (location) => location.id === scheduleInstance?.locationId,
           )) {
-            await SYS_Notification.create({
+            const notificationInstance = await SYS_Notification.create({
               typeId: notificationTypeId,
               userId: user,
-            }).then(
-              await sendNotification(io, user, `${BASE_URL.value}${dataUrl}${relatedDataId}`, message),
-            );
+              relatedDataId,
+              url: `${BASE_URL.value}${dataUrl}${relatedDataId}`,
+              message,
+              isRead: false,
+            });
+            await sendNotification(io, user, notificationInstance.id, `${BASE_URL.value}${dataUrl}${relatedDataId}`, message);
           }
         }
       });
@@ -260,12 +278,15 @@ const createNotifications = async (io, type, relatedDataId, messageVariable) => 
           if (events.some(
             (event) => event.id === groupInstance?.eventId,
           )) {
-            await SYS_Notification.create({
+            const notificationInstance = await SYS_Notification.create({
               typeId: notificationTypeId,
               userId: user,
-            }).then(
-              await sendNotification(io, user, `${BASE_URL.value}${dataUrl}${relatedDataId}`, message),
-            );
+              relatedDataId,
+              url: `${BASE_URL.value}${dataUrl}${relatedDataId}`,
+              message,
+              isRead: false,
+            });
+            await sendNotification(io, user, notificationInstance.id, `${BASE_URL.value}${dataUrl}${relatedDataId}`, message);
           }
         }
       });
@@ -299,12 +320,15 @@ const createNotifications = async (io, type, relatedDataId, messageVariable) => 
           const vehicleInstance = await TPT_Vehicle.findOne({ where: { id: relatedDataId }, attributes: ['id', 'vendorId'] });
 
           if (vendors.some((vendor) => vendor.id === vehicleInstance.vendorId)) {
-            await SYS_Notification.create({
+            const notificationInstance = await SYS_Notification.create({
               typeId: notificationTypeId,
               userId: user,
-            }).then(
-              await sendNotification(io, user, `${BASE_URL.value}${dataUrl}${relatedDataId}`, message),
-            );
+              relatedDataId,
+              url: `${BASE_URL.value}${dataUrl}${relatedDataId}`,
+              message,
+              isRead: false,
+            });
+            await sendNotification(io, user, notificationInstance.id, `${BASE_URL.value}${dataUrl}${relatedDataId}`, message);
           }
         } else if (dataType === 'driver') {
           // * related to table driver
@@ -313,12 +337,15 @@ const createNotifications = async (io, type, relatedDataId, messageVariable) => 
           });
 
           if (vendors.some((vendor) => vendor.id === driverInstance.vendorId)) {
-            await SYS_Notification.create({
+            const notificationInstance = await SYS_Notification.create({
               typeId: notificationTypeId,
               userId: user,
-            }).then(
-              await sendNotification(io, user, `${BASE_URL.value}${dataUrl}${relatedDataId}`, message),
-            );
+              relatedDataId,
+              url: `${BASE_URL.value}${dataUrl}${relatedDataId}`,
+              message,
+              isRead: false,
+            });
+            await sendNotification(io, user, notificationInstance.id, `${BASE_URL.value}${dataUrl}${relatedDataId}`, message);
           }
         } else if (dataType === 'vehicle-schedule') {
           // * related to table vehicle schedule
@@ -342,12 +369,15 @@ const createNotifications = async (io, type, relatedDataId, messageVariable) => 
           }
 
           if (vendors.some((vendor) => vendor.id === vendorId)) {
-            await SYS_Notification.create({
+            const notificationInstance = await SYS_Notification.create({
               typeId: notificationTypeId,
               userId: user,
-            }).then(
-              await sendNotification(io, user, `${BASE_URL.value}${dataUrl}${relatedDataId}`, message),
-            );
+              relatedDataId,
+              url: `${BASE_URL.value}${dataUrl}${relatedDataId}`,
+              message,
+              isRead: false,
+            });
+            await sendNotification(io, user, notificationInstance.id, `${BASE_URL.value}${dataUrl}${relatedDataId}`, message);
           }
         }
       });
@@ -370,12 +400,15 @@ const createNotifications = async (io, type, relatedDataId, messageVariable) => 
           });
 
           if (scheduleInstance?.driverId === userInstance?.driver?.id) {
-            await SYS_Notification.create({
+            const notificationInstance = await SYS_Notification.create({
               typeId: notificationTypeId,
               userId: user,
-            }).then(
-              await sendNotification(io, user, `${BASE_URL.value}${dataUrl}${relatedDataId}`, message),
-            );
+              relatedDataId,
+              url: `${BASE_URL.value}${dataUrl}${relatedDataId}`,
+              message,
+              isRead: false,
+            });
+            await sendNotification(io, user, notificationInstance.id, `${BASE_URL.value}${dataUrl}${relatedDataId}`, message);
           }
         }
       });
@@ -408,23 +441,29 @@ const createNotifications = async (io, type, relatedDataId, messageVariable) => 
           const targetInstance = await FNB_KitchenTarget.findOne({ where: { id: relatedDataId }, attributes: ['id', 'kitchenId'] });
 
           if (kitchens.some((kitchen) => kitchen.id === targetInstance.kitchenId)) {
-            await SYS_Notification.create({
+            const notificationInstance = await SYS_Notification.create({
               typeId: notificationTypeId,
               userId: user,
-            }).then(
-              await sendNotification(io, user, `${BASE_URL.value}${dataUrl}${relatedDataId}`, message),
-            );
+              relatedDataId,
+              url: `${BASE_URL.value}${dataUrl}${relatedDataId}`,
+              message,
+              isRead: false,
+            });
+            await sendNotification(io, user, notificationInstance.id, `${BASE_URL.value}${dataUrl}${relatedDataId}`, message);
           }
         } else if (dataType === 'fnb-schedule') {
           const scheduleInstance = await FNB_Schedule.findOne({ where: { id: relatedDataId }, attributes: ['id', 'kitchenId'] });
 
           if (kitchens.some((kitchen) => kitchen.id === scheduleInstance.kitchenId)) {
-            await SYS_Notification.create({
+            const notificationInstance = await SYS_Notification.create({
               typeId: notificationTypeId,
               userId: user,
-            }).then(
-              await sendNotification(io, user, `${BASE_URL.value}${dataUrl}${relatedDataId}`, message),
-            );
+              relatedDataId,
+              url: `${BASE_URL.value}${dataUrl}${relatedDataId}`,
+              message,
+              isRead: false,
+            });
+            await sendNotification(io, user, notificationInstance.id, `${BASE_URL.value}${dataUrl}${relatedDataId}`, message);
           }
         }
       });
@@ -447,29 +486,54 @@ const createNotifications = async (io, type, relatedDataId, messageVariable) => 
           });
 
           if (scheduleInstance?.courierId === userInstance?.courier?.id) {
-            await SYS_Notification.create({
+            const notificationInstance = await SYS_Notification.create({
               typeId: notificationTypeId,
               userId: user,
-            }).then(
-              await sendNotification(io, user, `${BASE_URL.value}${dataUrl}${relatedDataId}`, message),
-            );
+              relatedDataId,
+              url: `${BASE_URL.value}${dataUrl}${relatedDataId}`,
+              message,
+              isRead: false,
+            });
+            await sendNotification(io, user, notificationInstance.id, `${BASE_URL.value}${dataUrl}${relatedDataId}`, message);
           }
         }
       });
     } else {
       notification.users.map(async (user) => {
-        await SYS_Notification.create({
+        const notificationInstance = await SYS_Notification.create({
           typeId: notificationTypeId,
           userId: user,
-        }).then(
-          await sendNotification(io, user, `${BASE_URL.value}${dataUrl}${relatedDataId}`, message),
-        );
+          relatedDataId,
+          url: `${BASE_URL.value}${dataUrl}${relatedDataId}`,
+          message,
+          isRead: false,
+        });
+        await sendNotification(io, user, notificationInstance.id, `${BASE_URL.value}${dataUrl}${relatedDataId}`, message);
       });
     }
   }));
 };
 
+const updateNotifications = async (id, notifications = []) => {
+  await SYS_Notification.update(
+    { isRead: true },
+    { where: { userId: id, id: { [Op.in]: notifications } } },
+  );
+
+  const content = await SYS_Notification.findAll({
+    where: { userId: id, id: { [Op.in]: notifications } },
+    attributes: ['id', 'isRead'],
+  });
+
+  return {
+    success: true,
+    message: 'Success Updating Notification To Read',
+    content,
+  };
+};
+
 module.exports = {
   selectAllNotification,
   createNotifications,
+  updateNotifications,
 };

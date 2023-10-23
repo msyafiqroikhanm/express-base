@@ -247,6 +247,35 @@ class AuthMiddleware {
         // * fnb
 
         // * event
+        if (roles.has('View Event') && (roles.has('Create Event') || roles.has('Update Event') || roles.has('Delete Event'))) {
+          limitation.allowedDashboard.push('Event Management');
+          limitation.access.event = {};
+
+          if (req.user?.Role?.name === 'Admin Event') {
+            // case user is admin event
+            const events = await ENV_Event.findAll({ attributes: ['id'] });
+            const parsedEvent = events.map((event) => event.id);
+            limitation.access.event.events = parsedEvent.length > 0
+              ? parsedEvent : [];
+          } else if (req.user.PIC?.length > 0) {
+            // case user is pic event
+            const picTypes = await picTypeHelper().then((type) => [type.pic_event]);
+            const picEvent = req.user.PIC.filter((pic) => pic.typeId === picTypes[0]);
+
+            if (picEvent.length) {
+              const eventLimitation = await ENV_Event.findAll({
+                where: { picId: picEvent[0].dataValues.id },
+                attributes: ['id'],
+                raw: true,
+              });
+
+              const events = eventLimitation.map((event) => event.id);
+
+              limitation.access.event.events = events.length > 0
+                ? events : [null];
+            }
+          }
+        }
 
         // * customer service
       } else {

@@ -3,6 +3,7 @@ const { Op } = require('sequelize');
 const {
   PAR_Participant, REF_Region, PAR_Contingent, ENV_Event, PAR_Group, TPT_Vehicle,
   TPT_Driver, TPT_Vendor, TPT_VehicleSchedule, REF_VehicleScheduleStatus, ACM_Location,
+  REF_EventCategory, REF_GroupStatus,
 } = require('../models');
 
 const participantDasboard = async (limitation = null) => {
@@ -118,7 +119,7 @@ const transportationDashboard = async (limitation = {}) => {
       ['statusId', 'ASC'],
       ['pickUpTime', 'DESC'],
     ],
-    attributes: ['name', 'pickUpTime', 'dropOffTime', 'description'],
+    attributes: ['name', 'pickUpTime', 'dropOffTime', 'descriptionPickUp', 'descriptionDropOff'],
     where: {
       pickUpTime: {
         [Op.gte]: new Date().setHours(0, 0, 0, 0),
@@ -208,6 +209,72 @@ const transportationDashboard = async (limitation = {}) => {
   };
 };
 
+const eventDashboard = async (limitation = {}) => {
+  const totalEvent = await ENV_Event.count();
+  const events = await REF_EventCategory.findAll({
+    attributes: ['name'],
+    include: {
+      model: ENV_Event,
+      attributes: ['name', 'code'],
+      as: 'events',
+      where: limitation?.events.length ? { id: { [Op.in]: limitation.events } } : null,
+      include: [
+        {
+          model: ACM_Location, attributes: ['name'], as: 'location', required: true,
+        },
+        {
+          model: PAR_Group,
+          attributes: ['contingentId'],
+          include: [
+            {
+              model: PAR_Contingent, attributes: ['name'], as: 'contingent', required: true,
+            },
+            {
+              model: PAR_Participant,
+              attributes: ['id'],
+              // required: true,
+              through: {
+                attributes: [],
+              },
+            },
+            {
+              model: REF_GroupStatus, attributes: ['name'], as: 'status',
+            },
+          ],
+        },
+      ],
+    },
+  });
+
+  events.forEach((category) => {
+    category?.events.forEach((event) => {
+      let contingents = [];
+      event.dataValues.totalContingent = event.PAR_Groups?.length || 0;
+      let totalParticipants = 0;
+      if (event.PAR_Groups?.length > 0) {
+        contingents = event.PAR_Groups.map((contingent) => {
+          totalParticipants += contingent.PAR_Participants.length;
+          return {
+            name: contingent.contingent.name,
+            participants: contingent.PAR_Participants.length,
+            status: contingent.status?.dataValues.name || null,
+          };
+        });
+      }
+
+      event.dataValues.totalParticipants = totalParticipants;
+      event.dataValues.contingents = contingents;
+      event.dataValues.location = event.location.dataValues.name;
+      delete event.dataValues.PAR_Groups;
+    });
+  });
+
+  return {
+    totalEvent,
+    events,
+  };
+};
+
 const selectDashboard = async (limitation, modules = []) => {
   const dashboard = [];
 
@@ -218,6 +285,10 @@ const selectDashboard = async (limitation, modules = []) => {
   if (modules.includes('Transportation Management')) {
     const transportation = await transportationDashboard(limitation?.transportation || null);
     dashboard.push({ transportation });
+  }
+  if (modules.includes('Event Management')) {
+    const event = await eventDashboard(limitation?.event || null);
+    dashboard.push({ event });
   }
   return {
     success: true,

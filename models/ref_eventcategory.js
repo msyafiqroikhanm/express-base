@@ -12,7 +12,7 @@ module.exports = (sequelize, DataTypes) => {
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
-      REF_EventCategory.hasMany(models.ENV_Event, { foreignKey: 'categoryId', as: 'category' });
+      REF_EventCategory.hasMany(models.ENV_Event, { foreignKey: 'categoryId', as: 'events' });
     }
   }
   REF_EventCategory.init({

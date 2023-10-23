@@ -186,12 +186,7 @@ const validateVehicleScheduleInputs = async (form) => {
   const invalid400 = [];
   const invalid404 = [];
 
-  if (!['Arrival & Departure', 'Event', 'Tourism'].includes(form.type)) {
-    invalid400.push('Invalid Vehicle Schedule Type, Options Are: Arrival & Departure, Event, Tourism');
-  }
-  if (form.type === 'Arrival & Departure' && !form.totalPassengers) {
-    invalid400.push('Vehicle Schedule Type Arrival & Departure Required Total Passengers Attribute');
-  }
+  const passengers = form.passengers || [];
 
   // check pickup (location id) validity
   let pickUpInstance = null;
@@ -240,7 +235,7 @@ const validateVehicleScheduleInputs = async (form) => {
   // validate Recipiants / receivers
   const validPassengers = await PAR_Participant.findAll({
     where: {
-      id: { [Op.in]: form.passengers },
+      id: { [Op.in]: passengers },
     },
   });
 
@@ -275,8 +270,8 @@ const validateVehicleScheduleInputs = async (form) => {
       pickUpOtherLocation: form.pickUpOtherLocation,
       dropOffOtherLocation: form.dropOffOtherLocation,
       passengers: validPassengers,
-      totalPassengers: form.type === 'Arrival & Departure'
-        ? Number(form.totalPassengers) : validPassengers.length,
+      totalPassengers: validPassengers?.length
+        ? validPassengers.length : Number(form.totalPassengers) || 0,
     },
   };
 };
@@ -488,27 +483,12 @@ const progressVehicleSchedule = async (form, id, where = {}) => {
     // when a trip is finish change passenger status
     // and set both driver and vehicle became available again
     // and set dropOff Time
-    const passengerStatus = await REF_PassengerStatus.findOne({
-      where: { name: { [Op.like]: '%Arrived%' } },
-    });
-    await TPT_SchedulePassenger.update(
-      { statusId: passengerStatus.id },
-      { where: { vehicleScheduleId: scheduleInstance.id, statusId: 3 } },
-    );
 
     await TPT_Driver.update({ isAvailable: true }, { where: { id: scheduleInstance.driverId } });
     await TPT_Vehicle.update({ isAvailable: true }, { where: { id: scheduleInstance.vehicleId } });
 
     scheduleInstance.dropOffTime = new Date();
     await scheduleInstance.save();
-  } else if (['Enroute', 'On Proggress'].includes(statusInstance?.name)) {
-    const passengerStatus = await REF_PassengerStatus.findOne({
-      where: { name: { [Op.like]: '%Enroute%' } },
-    });
-    await TPT_SchedulePassenger.update(
-      { statusId: passengerStatus.id },
-      { where: { vehicleScheduleId: scheduleInstance.id, statusId: 2 } },
-    );
   } else if (statusInstance?.name === 'Cancelled') {
     await TPT_Driver.update({ isAvailable: true }, { where: { id: scheduleInstance.driverId } });
     await TPT_Vehicle.update({ isAvailable: true }, { where: { id: scheduleInstance.vehicleId } });
@@ -614,6 +594,9 @@ const validateProvideScheduleInputs = async (form, id, where) => {
 const vendorProvideTransportationSchedule = async (form, id) => {
   const scheduleInstance = await TPT_VehicleSchedule.findOne({ where: { id } });
 
+  const oldDriverId = scheduleInstance.dataValues.driverId;
+  const oldVehicleId = scheduleInstance.dataValues.vehicleId;
+
   scheduleInstance.driverId = form.driver?.id || scheduleInstance.driverId;
   scheduleInstance.vehicleId = form.vehicle?.id || scheduleInstance.vehicleId;
   await scheduleInstance.save();
@@ -621,11 +604,25 @@ const vendorProvideTransportationSchedule = async (form, id) => {
   if (form.driver && form.driver?.isAvailable) {
     form.driver.isAvailable = false;
     await form.driver.save();
+
+    if (oldDriverId && oldDriverId !== form.driver?.id) {
+      await TPT_Driver.update(
+        { isAvailable: true },
+        { where: { id: oldDriverId } },
+      );
+    }
   }
 
   if (form.vehicle && form.vehicle?.isAvailable) {
     form.vehicle.isAvailable = false;
     await form.vehicle.save();
+
+    if (oldVehicleId && oldVehicleId !== form.vehicle?.id) {
+      await TPT_Vehicle.update(
+        { isAvailable: true },
+        { where: { id: oldVehicleId } },
+      );
+    }
   }
 
   return {
@@ -842,24 +839,22 @@ const validatePassengerAttendance = async (form, id, where) => {
 const updatePassengersAttendance = async (form) => {
   // updating participant who show up / present
   await TPT_SchedulePassenger.update(
-    { statusId: passengerStatuses.Waiting },
+    { statusId: passengerStatuses.Present },
     {
       where: {
         vehicleScheduleId: form.schedule.id,
         participantId: { [Op.in]: form.passengers },
-        statusId: { [Op.in]: [passengerStatuses.Scheduled, passengerStatuses['No Show']] },
       },
     },
   );
 
   // updating participant who not show up
   await TPT_SchedulePassenger.update(
-    { statusId: passengerStatuses['No Show'] },
+    { statusId: passengerStatuses.Absent },
     {
       where: {
         vehicleScheduleId: form.schedule.id,
         participantId: { [Op.in]: form.noShowPassengers },
-        statusId: { [Op.in]: [passengerStatuses.Scheduled] },
       },
     },
   );

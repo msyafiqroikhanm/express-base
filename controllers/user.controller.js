@@ -10,7 +10,7 @@ class User {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
 
-      const data = await selectAllUsers();
+      const data = await selectAllUsers(req.query);
 
       return ResponseFormatter.success200(res, data.message, data.content);
     } catch (error) {
