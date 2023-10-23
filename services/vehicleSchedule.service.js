@@ -92,12 +92,14 @@ const selectVehicleSchedule = async (id, where = {}) => {
         model: TPT_Vehicle,
         attributes: ['name'],
         as: 'vehicle',
-        where: where.vendors ? { id: { [Op.in]: where.vendors } } : null,
+        where: where.vendors ? { vendorId: { [Op.in]: where.vendors } } : null,
+        required: false,
       },
       {
         model: TPT_Driver,
         attributes: ['name'],
         as: 'driver',
+        required: false,
       },
       { model: REF_VehicleScheduleStatus, attributes: ['name'], as: 'status' },
       {
