@@ -754,7 +754,7 @@ const updateFnBScheduleNew = async (form, where) => {
   };
 };
 
-const updateProgressFnBSchedule = async (form, where) => {
+const updateProgressFnBSchedule = async (form, where, limitation = null) => {
   const invalid400 = [];
   const invalid404 = [];
 
@@ -816,6 +816,10 @@ const updateProgressFnBSchedule = async (form, where) => {
       allowedProgress.push(deliveryProcess);
       allowedProgress.push(deliveryCompleted);
       allowedProgress.push(received);
+
+      if (!limitation.isAdmin) {
+        invalid400.push('Only Admin Can Change The Status From Canceled');
+      }
       break;
 
     default:
