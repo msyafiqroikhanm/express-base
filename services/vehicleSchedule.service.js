@@ -483,27 +483,12 @@ const progressVehicleSchedule = async (form, id, where = {}) => {
     // when a trip is finish change passenger status
     // and set both driver and vehicle became available again
     // and set dropOff Time
-    const passengerStatus = await REF_PassengerStatus.findOne({
-      where: { name: { [Op.like]: '%Arrived%' } },
-    });
-    await TPT_SchedulePassenger.update(
-      { statusId: passengerStatus.id },
-      { where: { vehicleScheduleId: scheduleInstance.id, statusId: 3 } },
-    );
 
     await TPT_Driver.update({ isAvailable: true }, { where: { id: scheduleInstance.driverId } });
     await TPT_Vehicle.update({ isAvailable: true }, { where: { id: scheduleInstance.vehicleId } });
 
     scheduleInstance.dropOffTime = new Date();
     await scheduleInstance.save();
-  } else if (['Enroute', 'On Proggress'].includes(statusInstance?.name)) {
-    const passengerStatus = await REF_PassengerStatus.findOne({
-      where: { name: { [Op.like]: '%Enroute%' } },
-    });
-    await TPT_SchedulePassenger.update(
-      { statusId: passengerStatus.id },
-      { where: { vehicleScheduleId: scheduleInstance.id, statusId: 2 } },
-    );
   } else if (statusInstance?.name === 'Cancelled') {
     await TPT_Driver.update({ isAvailable: true }, { where: { id: scheduleInstance.driverId } });
     await TPT_Vehicle.update({ isAvailable: true }, { where: { id: scheduleInstance.vehicleId } });
@@ -854,24 +839,22 @@ const validatePassengerAttendance = async (form, id, where) => {
 const updatePassengersAttendance = async (form) => {
   // updating participant who show up / present
   await TPT_SchedulePassenger.update(
-    { statusId: passengerStatuses.Waiting },
+    { statusId: passengerStatuses.Present },
     {
       where: {
         vehicleScheduleId: form.schedule.id,
         participantId: { [Op.in]: form.passengers },
-        statusId: { [Op.in]: [passengerStatuses.Scheduled, passengerStatuses['No Show']] },
       },
     },
   );
 
   // updating participant who not show up
   await TPT_SchedulePassenger.update(
-    { statusId: passengerStatuses['No Show'] },
+    { statusId: passengerStatuses.Absent },
     {
       where: {
         vehicleScheduleId: form.schedule.id,
         participantId: { [Op.in]: form.noShowPassengers },
-        statusId: { [Op.in]: [passengerStatuses.Scheduled] },
       },
     },
   );
