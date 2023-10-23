@@ -31,13 +31,21 @@ const selectAllUsers = async (query) => {
       where: { name: 'Participant' },
       attributes: ['id'],
     });
-    limitation = participantRole?.id;
+    const participantCoordRole = await USR_Role.findOne({
+      where: { name: 'Participant Coordinator' },
+      attributes: ['id'],
+    });
+    limitation = { [Op.in]: [participantRole?.id, participantCoordRole?.id] };
   } else if (query && query.isCommittee === 'true') {
     const participantRole = await USR_Role.findOne({
       where: { name: 'Participant' },
       attributes: ['id'],
     });
-    limitation = { [Op.ne]: participantRole.id };
+    const participantCoordRole = await USR_Role.findOne({
+      where: { name: 'Participant Coordinator' },
+      attributes: ['id'],
+    });
+    limitation = { [Op.notIn]: [participantRole?.id, participantCoordRole?.id] };
   }
 
   const users = await USR_User.findAll({
