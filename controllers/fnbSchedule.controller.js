@@ -247,7 +247,7 @@ class FNBScheduleController {
           where.courierId = req.user.limitation.access.courierId;
         }
       }
-      const data = await updateProgressFnBSchedule(req.body, where);
+      const data = await updateProgressFnBSchedule(req.body, where, req.user.limitation);
       if (!data.success && data.code === 404) {
         return ResponseFormatter.error404(res, 'Data Not Found', data.message);
       }
