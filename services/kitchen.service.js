@@ -130,7 +130,7 @@ const updateKitchen = async (where, form) => {
   }
 
   if (form.picId) {
-    const picInstance = await USR_PIC.findByPk(form.picId);
+    const picInstance = await USR_PIC.findOne({ where: { id: form.picId } });
     if (!picInstance) {
       errorMessages.push('PIC Data Type Not Found');
     }

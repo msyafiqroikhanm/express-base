@@ -73,7 +73,9 @@ const initializeSocketIO = async (server) => {
     // websocket to keep track of driver location of when serving schedule
     socket.on(
       'updateDriverLocation',
-      async ({ scheduleId, driverId, longtitude, latitude, accuracy }) => {
+      async ({
+        scheduleId, driverId, longtitude, latitude, accuracy,
+      }) => {
         try {
           const scheduleInstance = await TPT_VehicleSchedule.findOne({
             where: { id: scheduleId },
@@ -130,7 +132,7 @@ const initializeSocketIO = async (server) => {
       try {
         if (notifications?.length > 0) {
           await SYS_Notification.update(
-            { read: true },
+            { isRead: true },
             {
               where: {
                 id: { [Op.in]: notifications },
