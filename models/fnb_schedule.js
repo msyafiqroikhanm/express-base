@@ -29,6 +29,7 @@ module.exports = (sequelize, DataTypes) => {
         foreignKey: 'scheduleId',
         as: 'histories',
       });
+      FNB_Schedule.hasMany(models.FNB_ScheduleMenu, { foreignKey: 'scheduleId', as: 'items' });
     }
   }
   FNB_Schedule.init(
