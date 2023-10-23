@@ -328,7 +328,9 @@ const updateBroadcast = async (form, id) => {
   cron.cancelJob(`${broadcastInstance.id}`);
 
   // delete old file
-  await deleteFile(relative(__dirname, broadcastInstance.headerFile));
+  if (broadcastInstance.headerFile) {
+    await deleteFile(relative(__dirname, broadcastInstance.headerFile));
+  }
 
   broadcastInstance.templateId = form.template.id;
   broadcastInstance.name = form.name;
