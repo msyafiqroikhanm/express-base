@@ -181,8 +181,6 @@ const validateUserInputs = async (form, id) => {
     }
 
     //! disable duplicate email check
-    // console.log(form.username);
-    // console.log(`User = ${JSON.stringify(duplicateUser, null, 2)}`);
     // const duplicateEmail = await USR_User.findOne({ where: { email: form.email } });
     // if (duplicateEmail) {
     //   invalid400.push('Email already taken');
