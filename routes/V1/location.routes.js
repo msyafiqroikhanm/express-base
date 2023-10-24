@@ -34,6 +34,8 @@ router.get(
         feature.progress_vehicle_schedule,
         feature.absent_vehicle_schedule,
         feature.fulfill_vehicle_schedule,
+        feature.create_fnb_schedule,
+        feature.update_fnb_schedule,
       ]),
     );
   },
@@ -70,6 +72,8 @@ router.get(
         feature.progress_vehicle_schedule,
         feature.absent_vehicle_schedule,
         feature.fulfill_vehicle_schedule,
+        feature.create_fnb_schedule,
+        feature.update_fnb_schedule,
       ]),
     );
   },

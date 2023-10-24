@@ -17,6 +17,10 @@ router.get(
         feature.create_vendor,
         feature.update_vendor,
         feature.delete_vendor,
+        feature.create_driver,
+        feature.update_driver,
+        feature.create_vehicle,
+        feature.update_vehicle,
       ]),
     );
   },
@@ -35,6 +39,10 @@ router.get(
         feature.view_vendor,
         feature.update_vendor,
         feature.delete_vendor,
+        feature.create_driver,
+        feature.update_driver,
+        feature.create_vehicle,
+        feature.update_vehicle,
       ]),
     );
   },
