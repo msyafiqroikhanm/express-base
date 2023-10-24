@@ -326,7 +326,7 @@ class AuthMiddleware {
         } else if (driverInstance) {
           limitation.isAdmin = false;
           limitation.access.driverId = driverInstance.id;
-        } else if (req.user?.Role?.name !== 'Admin Transportation') {
+        } else if (!['Admin Transportation', 'Help Desk'].includes(req.user?.Role?.name)) {
           return ResponseFormatter.error401(res, "You Don't Have Access To This Service");
         }
       }

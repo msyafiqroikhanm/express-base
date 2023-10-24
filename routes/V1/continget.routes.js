@@ -28,6 +28,9 @@ router.get(
         feature.progress_vehicle_schedule,
         feature.absent_vehicle_schedule,
         feature.fulfill_vehicle_schedule,
+        feature.view_lodger,
+        feature.create_lodger,
+        feature.update_lodger,
       ]),
     );
   },
@@ -57,6 +60,9 @@ router.get(
         feature.progress_vehicle_schedule,
         feature.absent_vehicle_schedule,
         feature.fulfill_vehicle_schedule,
+        feature.view_lodger,
+        feature.create_lodger,
+        feature.update_lodger,
       ]),
     );
   },
