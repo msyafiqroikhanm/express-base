@@ -1,9 +1,10 @@
 /* eslint-disable no-param-reassign */
-const { Op } = require('sequelize');
+const { fn, col, Op } = require('sequelize');
 const {
   PAR_Participant, REF_Region, PAR_Contingent, ENV_Event, PAR_Group, TPT_Vehicle,
   TPT_Driver, TPT_Vendor, TPT_VehicleSchedule, REF_VehicleScheduleStatus, ACM_Location,
-  REF_EventCategory, REF_GroupStatus, REF_VehicleType,
+  REF_EventCategory, REF_GroupStatus, REF_VehicleType, CSM_Broadcast, REF_TemplateCategory,
+  CSM_BroadcastTemplate,
 } = require('../models');
 
 const participantDasboard = async (limitation = null) => {
@@ -268,7 +269,7 @@ const eventDashboard = async (limitation = {}) => {
       let totalParticipants = 0;
       if (event.PAR_Groups?.length > 0) {
         contingents = event.PAR_Groups.map((contingent) => {
-          totalParticipants += contingent.PAR_Participants.length;
+          totalParticipants += contingent.PAR_Participants?.length || 0;
           return {
             name: contingent.contingent.name,
             participants: contingent.PAR_Participants.length,
@@ -290,6 +291,44 @@ const eventDashboard = async (limitation = {}) => {
   };
 };
 
+const customerServiceDashboard = async () => {
+  const totalBroadcast = await CSM_Broadcast.count();
+
+  const broadcastByType = await REF_TemplateCategory.findAll({
+    attributes: ['name'],
+    include: {
+      model: CSM_BroadcastTemplate,
+      attributes: ['id'],
+      as: 'templates',
+      include: { model: CSM_Broadcast, attributes: ['id'], as: 'broadcasts' },
+    },
+  });
+  broadcastByType.forEach((type) => {
+    let totalBroadcasts = 0;
+    if (type.templates?.length) {
+      type.templates.forEach((template) => {
+        totalBroadcasts += template.broadcasts?.length || 0;
+      });
+    }
+    type.dataValues.totalBroadcast = totalBroadcasts;
+    delete type.dataValues.templates;
+  });
+
+  const broadcastByStatus = await CSM_Broadcast.findAll({
+    attributes: [
+      'status',
+      [fn('count', col('id')), 'total'],
+    ],
+    group: ['status'],
+  });
+
+  return {
+    totalBroadcast,
+    broadcastByType,
+    broadcastByStatus,
+  };
+};
+
 const selectDashboard = async (limitation, modules = []) => {
   const dashboard = [];
 
@@ -304,6 +343,10 @@ const selectDashboard = async (limitation, modules = []) => {
   if (modules.includes('Event Management')) {
     const event = await eventDashboard(limitation?.event || null);
     dashboard.push({ event });
+  }
+  if (modules.includes('Customer Service Management')) {
+    const customerService = await customerServiceDashboard();
+    dashboard.push({ customerService });
   }
   return {
     success: true,
