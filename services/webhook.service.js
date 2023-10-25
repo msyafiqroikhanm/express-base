@@ -26,12 +26,12 @@ const receiveWebhook = async (form) => {
   const Whatsapp_Status = await SYS_Configuration.findOne({
     where: { name: 'Whatsapp CSM Platform' }, attributes: ['value'],
   });
-  if (!Whatsapp_Status || Whatsapp_Status?.value?.toLowerCase() === 'off') {
-    return true;
-  }
 
   if (form.object) {
     if (form.entry[0].changes[0].field === 'messages') {
+      if (!Whatsapp_Status || Whatsapp_Status?.value?.toLowerCase() === 'off') {
+        return true;
+      }
       await chatBotMessageEntry(form.entry[0].changes[0].value);
       return true;
     }
