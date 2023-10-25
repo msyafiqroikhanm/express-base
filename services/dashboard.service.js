@@ -3,7 +3,7 @@ const { Op } = require('sequelize');
 const {
   PAR_Participant, REF_Region, PAR_Contingent, ENV_Event, PAR_Group, TPT_Vehicle,
   TPT_Driver, TPT_Vendor, TPT_VehicleSchedule, REF_VehicleScheduleStatus, ACM_Location,
-  REF_EventCategory, REF_GroupStatus,
+  REF_EventCategory, REF_GroupStatus, REF_VehicleType,
 } = require('../models');
 
 const participantDasboard = async (limitation = null) => {
@@ -92,6 +92,20 @@ const transportationDashboard = async (limitation = {}) => {
   }));
 
   // vehicle
+  const vehiclePerTypes = await REF_VehicleType.findAll({
+    attributes: ['name'],
+    include: {
+      model: TPT_Vehicle,
+      attributes: ['id'],
+      as: 'vehicles',
+      where: { deletedAt: null },
+      required: false,
+    },
+  });
+  vehiclePerTypes.forEach((type) => {
+    type.dataValues.total = type.vehicles?.length || 0;
+    delete type.dataValues.vehicles;
+  });
   const totalVehicle = await TPT_Vehicle.count({
     where: limitation?.vendors.length > 0 ? { vendorId: { [Op.in]: limitation.vendors } } : null,
     include: { model: TPT_Vendor, as: 'vendor', required: true },
@@ -197,6 +211,7 @@ const transportationDashboard = async (limitation = {}) => {
     vehicle: {
       totalVehicle,
       totalAvailableVehicle,
+      vehiclePerTypes,
     },
     driver: {
       totalDriver,
