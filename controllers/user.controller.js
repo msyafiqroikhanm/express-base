@@ -3,6 +3,7 @@ const {
   selectAllUsers, createUser, validateUserInputs, updateUser,
   deleteUser, validatePasswordInputs, updateUserPassword, selectDetailUser,
   validatePublicRegisterUserInputs,
+  validateResetPassword,
 } = require('../services/user.service');
 
 class User {
@@ -128,6 +129,27 @@ class User {
 
       const data = await createUser(inputs.form);
       return ResponseFormatter.success201(res, data.message, data.content);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  static async resetPassword(req, res, next) {
+    try {
+      res.url = `${req.method} ${req.originalUrl}`;
+
+      const inputs = await validateResetPassword(req.params.id, req.body);
+      if (!inputs.isValid && inputs.code === 400) {
+        return ResponseFormatter.error400(res, 'Bad Request', inputs.message);
+      }
+      if (!inputs.isValid && inputs.code === 404) {
+        return ResponseFormatter.error404(res, 'Data Not Found', inputs.message);
+      }
+
+      const data = await updateUserPassword(inputs.form);
+      if (!data.success) {
+        return ResponseFormatter.error400(res, 'Bad Request', data.message);
+      }
     } catch (error) {
       next(error);
     }
