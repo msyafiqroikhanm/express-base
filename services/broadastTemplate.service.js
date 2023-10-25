@@ -154,6 +154,7 @@ const validateTemplateInputs = async (form, file, id) => {
       headerType: headerTypeInstance,
       language: languageInstance || null,
       name: slug(form.name || '', '_').toLowerCase(),
+      nameAlias: form.nameAlias,
       message: form.message,
       messageVariableNumber: Number(form.messageVariableNumber),
       messageVariableExample: form.messageVariableExample,
@@ -405,6 +406,7 @@ const createBroadcastTemplate = async (form) => {
     metaId: form.metaId,
     metaStatus: form.metaStatus,
     name: form.name,
+    nameAlias: form.nameAlias,
     message: form.message,
     messageVariableNumber: form.messageVariableNumber,
     messageVariableExample: form.messageVariableExample,
@@ -434,6 +436,7 @@ const updateBroadcastTemplate = async (form, id) => {
   templateInstance.categoryId = form.category.id;
   templateInstance.headerTypeId = form.headerType.id;
   templateInstance.metaStatus = form.metaStatus || 'PENDING';
+  templateInstance.nameAlias = form.nameAlias;
   templateInstance.message = form.message;
   templateInstance.messageVariableNumber = form.messageVariableNumber;
   templateInstance.messageVariableExample = form.messageVariableExample;

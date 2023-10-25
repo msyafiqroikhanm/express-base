@@ -27,6 +27,7 @@ module.exports = (sequelize, DataTypes) => {
     languageId: DataTypes.INTEGER,
     metaId: DataTypes.STRING,
     name: DataTypes.STRING,
+    nameAlias: DataTypes.STRING,
     message: DataTypes.TEXT,
     messageVariableNumber: DataTypes.INTEGER,
     messageVariableExample: DataTypes.JSON,
