@@ -13,7 +13,11 @@ router.post(
       req,
       res,
       next,
-      await features().then((feature) => [feature.create_courier]),
+      await features().then((feature) => [
+        feature.create_courier,
+        feature.create_fnb_schedule,
+        feature.update_fnb_schedule,
+      ]),
     );
   },
   uploadImage.single('committeeImage'),
@@ -41,6 +45,8 @@ router.get(
       res,
       next,
       await features().then((feature) => [
+        feature.create_fnb_schedule,
+        feature.update_fnb_schedule,
         feature.view_courier,
         feature.create_courier,
         feature.update_courier,
@@ -59,6 +65,8 @@ router.get(
       res,
       next,
       await features().then((feature) => [
+        feature.create_fnb_schedule,
+        feature.update_fnb_schedule,
         feature.view_courier,
         feature.create_courier,
         feature.update_courier,
@@ -76,7 +84,11 @@ router.put(
       req,
       res,
       next,
-      await features().then((feature) => [feature.update_courier]),
+      await features().then((feature) => [
+        feature.update_courier,
+        feature.create_fnb_schedule,
+        feature.update_fnb_schedule,
+      ]),
     );
   },
   CourierController.update,
@@ -89,7 +101,11 @@ router.delete(
       req,
       res,
       next,
-      await features().then((feature) => [feature.delete_courier]),
+      await features().then((feature) => [
+        feature.delete_courier,
+        feature.create_fnb_schedule,
+        feature.update_fnb_schedule,
+      ]),
     );
   },
   CourierController.delete,
