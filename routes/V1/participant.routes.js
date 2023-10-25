@@ -45,6 +45,9 @@ router.get(
         feature.view_location,
         feature.create_location,
         feature.update_location,
+        feature.view_lodger,
+        feature.create_lodger,
+        feature.update_lodger,
       ]),
     );
   },
@@ -79,6 +82,9 @@ router.get(
         feature.view_location,
         feature.create_location,
         feature.update_location,
+        feature.view_lodger,
+        feature.create_lodger,
+        feature.update_lodger,
       ]),
     );
   },
@@ -112,6 +118,9 @@ router.get(
         feature.view_location,
         feature.create_location,
         feature.update_location,
+        feature.view_lodger,
+        feature.create_lodger,
+        feature.update_lodger,
       ]),
     );
   },
@@ -140,6 +149,9 @@ router.get(
         feature.view_location,
         feature.create_location,
         feature.update_location,
+        feature.view_lodger,
+        feature.create_lodger,
+        feature.update_lodger,
       ]),
     );
   },
@@ -174,6 +186,9 @@ router.get(
         feature.view_location,
         feature.create_location,
         feature.update_location,
+        feature.view_lodger,
+        feature.create_lodger,
+        feature.update_lodger,
       ]),
     );
   },
