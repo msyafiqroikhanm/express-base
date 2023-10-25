@@ -229,10 +229,10 @@ const validateVehicleScheduleInputs = async (form) => {
     invalid400.push('Drop Off Other Location Could Only Filled When Destination Location is Null');
   }
 
-  // check to prevent backdate
-  if (new Date().getTime() > new Date(form.pickUpTime).getTime()) {
-    invalid400.push("Can't Set Pick Up Time In The Past");
-  }
+  // * check to prevent backdate
+  // if (new Date().getTime() > new Date(form.pickUpTime).getTime()) {
+  //   invalid400.push("Can't Set Pick Up Time In The Past");
+  // }
 
   // validate Recipiants / receivers
   const validPassengers = await PAR_Participant.findAll({
