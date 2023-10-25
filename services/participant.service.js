@@ -35,6 +35,7 @@ const {
 const { createQR } = require('./qr.service');
 const deleteFile = require('../helpers/deleteFile.helper');
 const { createInvalidImportLog } = require('../helpers/importLog.helper');
+const { isValidPhone } = require('../helpers/dataValidator.helper');
 const PARTICIPANT_TYPES = require('../libraries/participatType.lib');
 
 const calculateAge = (dateOfBirth, dateNow) => {
@@ -110,7 +111,7 @@ const selectAllParticipant = async (query, where) => {
     ],
   });
 
-  const seperatedParticipant = { committee: [], participant: [], all: participants };
+  const seperatedParticipant = { committee: [], participant: [], all: [] };
 
   const startEvent = await SYS_Configuration.findOne({
     where: { name: { [Op.substring]: 'Event Start' } },
@@ -118,23 +119,49 @@ const selectAllParticipant = async (query, where) => {
 
   // parsed retun data
   participants.forEach((participant) => {
-    if (participant.contingent) {
-      participant.contingent.dataValues.region = participant.contingent.region?.dataValues.name;
-    }
-    participant.dataValues.identityType = participant.identityType?.dataValues.name;
-    participant.dataValues.participantType = participant.participantType?.dataValues.name;
-    participant.dataValues.committeeType = participant.committeeType?.dataValues.name;
-    participant.dataValues.age = calculateAge(participant.birthDate, startEvent.value);
-    participant.dataValues.validPhoneNbr = participant.dataValues.phoneNbr
-      .replace(/^0/g, '62')
-      .match(/[0-9]/g || [])
-      .join('');
+    if (query?.isValidPhoneNbr === 'true') {
+      if (participant.contingent) {
+        participant.contingent.dataValues.region = participant.contingent.region?.dataValues.name;
+      }
+      participant.dataValues.identityType = participant.identityType?.dataValues.name;
+      participant.dataValues.participantType = participant.participantType?.dataValues.name;
+      participant.dataValues.committeeType = participant.committeeType?.dataValues.name;
+      participant.dataValues.age = calculateAge(participant.birthDate, startEvent.value);
+      participant.dataValues.validPhoneNbr = participant.dataValues.phoneNbr
+        .replace(/^0/g, '62')
+        .match(/[0-9]/g || [])
+        .join('');
 
-    // separating bettween normal participant and committee participant
-    if ((participant.contingent && participant.participantType) || !participant.committeeTypeId) {
-      seperatedParticipant.participant.push(participant);
+      if (isValidPhone(participant.dataValues.validPhoneNbr)) {
+        // separating bettween normal participant and committee participant
+        if ((participant.contingent && participant.participantType)
+              || !participant.committeeTypeId) {
+          seperatedParticipant.participant.push(participant);
+        } else {
+          seperatedParticipant.committee.push(participant);
+        }
+        seperatedParticipant.all.push(participant);
+      }
     } else {
-      seperatedParticipant.committee.push(participant);
+      if (participant.contingent) {
+        participant.contingent.dataValues.region = participant.contingent.region?.dataValues.name;
+      }
+      participant.dataValues.identityType = participant.identityType?.dataValues.name;
+      participant.dataValues.participantType = participant.participantType?.dataValues.name;
+      participant.dataValues.committeeType = participant.committeeType?.dataValues.name;
+      participant.dataValues.age = calculateAge(participant.birthDate, startEvent.value);
+      participant.dataValues.validPhoneNbr = participant.dataValues.phoneNbr
+        .replace(/^0/g, '62')
+        .match(/[0-9]/g || [])
+        .join('');
+
+      // separating bettween normal participant and committee participant
+      if ((participant.contingent && participant.participantType) || !participant.committeeTypeId) {
+        seperatedParticipant.participant.push(participant);
+      } else {
+        seperatedParticipant.committee.push(participant);
+      }
+      seperatedParticipant.all.push(participant);
     }
   });
 
