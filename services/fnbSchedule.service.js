@@ -468,7 +468,7 @@ const validateFnBScheduleInputsNew = async (form, limitation = null) => {
 };
 
 const createFnBScheduleNew = async (form, items) => {
-  console.log(form, items);
+  // console.log(form, items);
   //* Create schedule
   const fnbScheduleInstance = await FNB_Schedule.create(form);
 
@@ -807,6 +807,7 @@ const updateProgressFnBSchedule = async (form, where, limitation = null) => {
       break;
 
     case deliveryProcess:
+      allowedProgress.push(received);
       allowedProgress.push(deliveryProcess);
       allowedProgress.push(deliveryCompleted);
       allowedProgress.push(canceled);
