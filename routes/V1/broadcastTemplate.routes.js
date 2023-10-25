@@ -64,6 +64,7 @@ router.post(
     check('headerTypeId', 'Header Type Id attribute can\'t be empty').notEmpty(),
     check('languageId', 'Language Id attribute can\'t be empty').notEmpty(),
     check('name', 'Name attribute can\'t be empty').notEmpty(),
+    check('nameAlias', 'Name description attribute can\'t be empty').notEmpty(),
     check('message', 'Message attribute can\'t be empty').notEmpty(),
     check('messageVariableNumber', 'Message Variable Number attribute must be an integer').isInt(),
     check('messageVariableExample', 'Message Variable Example attribute must be an array').isArray(),
@@ -88,6 +89,7 @@ router.put(
   [
     check('categoryId', 'Category Id attribute can\'t be empty').notEmpty(),
     check('headerTypeId', 'Header Type Id attribute can\'t be empty').notEmpty(),
+    check('nameAlias', 'Name description attribute can\'t be empty').notEmpty(),
     check('message', 'Message attribute can\'t be empty').notEmpty(),
     check('messageVariableNumber', 'Message Variable Number attribute must be an integer').isInt(),
     check('messageVariableExample', 'Message Variable Example attribute must be an array').isArray(),
