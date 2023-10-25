@@ -42,6 +42,9 @@ router.get(
         feature.progress_vehicle_schedule,
         feature.absent_vehicle_schedule,
         feature.fulfill_vehicle_schedule,
+        feature.view_location,
+        feature.create_location,
+        feature.update_location,
       ]),
     );
   },
@@ -73,6 +76,9 @@ router.get(
         feature.create_broadcast,
         feature.update_broadcast,
         feature.create_participant_committe,
+        feature.view_location,
+        feature.create_location,
+        feature.update_location,
       ]),
     );
   },
@@ -103,6 +109,9 @@ router.get(
         feature.view_group,
         feature.create_group,
         feature.update_group,
+        feature.view_location,
+        feature.create_location,
+        feature.update_location,
       ]),
     );
   },
@@ -128,6 +137,9 @@ router.get(
         feature.progress_vehicle_schedule,
         feature.absent_vehicle_schedule,
         feature.fulfill_vehicle_schedule,
+        feature.view_location,
+        feature.create_location,
+        feature.update_location,
       ]),
     );
   },
@@ -159,6 +171,9 @@ router.get(
         feature.view_group,
         feature.create_group,
         feature.update_group,
+        feature.view_location,
+        feature.create_location,
+        feature.update_location,
       ]),
     );
   },

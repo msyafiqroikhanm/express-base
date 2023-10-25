@@ -31,6 +31,9 @@ router.get(
         feature.view_lodger,
         feature.create_lodger,
         feature.update_lodger,
+        feature.view_location,
+        feature.create_location,
+        feature.update_location,
       ]),
     );
   },
@@ -63,6 +66,9 @@ router.get(
         feature.view_lodger,
         feature.create_lodger,
         feature.update_lodger,
+        feature.view_location,
+        feature.create_location,
+        feature.update_location,
       ]),
     );
   },
@@ -77,14 +83,12 @@ router.post(
       req,
       res,
       next,
-      await features().then((feature) => [
-        feature.create_contingent,
-      ]),
+      await features().then((feature) => [feature.create_contingent]),
     );
   },
   [
-    check('regionId', 'Region Id attribute can\'t be empty').notEmpty(),
-    check('name', 'Name attribute can\'t be empty').notEmpty(),
+    check('regionId', "Region Id attribute can't be empty").notEmpty(),
+    check('name', "Name attribute can't be empty").notEmpty(),
   ],
   ValidateMiddleware.result,
   ContingentController.create,
@@ -97,14 +101,12 @@ router.put(
       req,
       res,
       next,
-      await features().then((feature) => [
-        feature.update_contingent,
-      ]),
+      await features().then((feature) => [feature.update_contingent]),
     );
   },
   [
-    check('regionId', 'Region Id attribute can\'t be empty').notEmpty(),
-    check('name', 'Name attribute can\'t be empty').notEmpty(),
+    check('regionId', "Region Id attribute can't be empty").notEmpty(),
+    check('name', "Name attribute can't be empty").notEmpty(),
   ],
   ValidateMiddleware.result,
   ContingentController.update,
@@ -117,9 +119,7 @@ router.delete(
       req,
       res,
       next,
-      await features().then((feature) => [
-        feature.delete_contingent,
-      ]),
+      await features().then((feature) => [feature.delete_contingent]),
     );
   },
   ContingentController.delete,
