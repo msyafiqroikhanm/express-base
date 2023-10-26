@@ -22,12 +22,17 @@ const setTimeoutPromise = util.promisify(setTimeout);
 
 const selectAllBroadcasts = async () => {
   const data = await CSM_Broadcast.findAll({
-    include: [{ model: CSM_BroadcastTemplate, attributes: ['name'], as: 'template' }],
+    include: {
+      model: CSM_BroadcastTemplate,
+      attributes: ['name'],
+      as: 'template',
+      required: true,
+    },
   });
 
   // parsed content data
   data.forEach((broadcast) => {
-    broadcast.dataValues.template = broadcast.template.dataValues.name;
+    broadcast.dataValues.template = broadcast.template?.dataValues.name || null;
   });
 
   return {
@@ -40,7 +45,12 @@ const selectAllBroadcasts = async () => {
 const selectBroadcast = async (id) => {
   const broadcastInstance = await CSM_Broadcast.findByPk(id, {
     include: [
-      { model: CSM_BroadcastTemplate, attributes: ['name'], as: 'template' },
+      {
+        model: CSM_BroadcastTemplate,
+        attributes: ['name'],
+        as: 'template',
+        required: true,
+      },
       {
         model: PAR_Participant,
         as: 'receivers',
@@ -72,7 +82,7 @@ const selectBroadcast = async (id) => {
     receiversList.push(receiver.dataValues.id);
     receiver.dataValues.region = receiver.contingent?.region.dataValues.name;
     receiver.dataValues.contingent = receiver.contingent?.dataValues.name;
-    receiver.dataValues.status = receiver.CSM_BroadcastParticipant.dataValues.status;
+    receiver.dataValues.status = receiver.CSM_BroadcastParticipant?.dataValues.status;
 
     delete receiver.dataValues.CSM_BroadcastParticipant;
   });
