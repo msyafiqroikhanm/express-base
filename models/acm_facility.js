@@ -22,6 +22,7 @@ module.exports = (sequelize, DataTypes) => {
       locationId: DataTypes.INTEGER,
       name: DataTypes.STRING,
       quantity: DataTypes.INTEGER,
+      note: DataTypes.STRING,
       deletedAt: DataTypes.DATE,
     },
     {

@@ -47,7 +47,10 @@ const selectFacility = async (where) => {
 const createFacility = async (form) => {
   const facilityInstance = await ACM_Facility.create(form);
 
-  const locationInstance = await ACM_Location.findOne({ where: { id: form.locationId }, attributes: ['name'] });
+  const locationInstance = await ACM_Location.findOne({
+    where: { id: form.locationId },
+    attributes: ['name'],
+  });
   facilityInstance.location = locationInstance.dataValues.name;
 
   return {
@@ -128,6 +131,7 @@ const validateFacilityInputs = async (form, where) => {
       locationId: form.locationId,
       name: form.name,
       quantity: form.quantity,
+      note: form.note || null,
     },
   };
 };
