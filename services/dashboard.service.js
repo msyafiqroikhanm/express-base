@@ -4,7 +4,7 @@ const {
   PAR_Participant, REF_Region, PAR_Contingent, ENV_Event, PAR_Group, TPT_Vehicle,
   TPT_Driver, TPT_Vendor, TPT_VehicleSchedule, REF_VehicleScheduleStatus, ACM_Location,
   REF_EventCategory, REF_GroupStatus, REF_VehicleType, CSM_Broadcast, REF_TemplateCategory,
-  CSM_BroadcastTemplate,
+  CSM_BroadcastTemplate, REF_LocationType, ACM_Room, ACM_ParticipantLodger,
 } = require('../models');
 
 const participantDasboard = async (limitation = null) => {
@@ -329,6 +329,61 @@ const customerServiceDashboard = async () => {
   };
 };
 
+const accomodationDashboard = async (limitation = {}) => {
+  console.log(limitation);
+  // Location
+  const totalLocation = await ACM_Location.count();
+  const locationByType = await REF_LocationType.findAll({
+    attributes: ['name'],
+    include: { model: ACM_Location, attributes: ['id'] },
+  });
+  locationByType.forEach((type) => {
+    type.dataValues.total = type.ACM_Locations?.length || 0;
+    delete type.dataValues.ACM_Locations;
+  });
+
+  // Room
+  const totalRoom = await ACM_Room.count();
+  const totalAvailableRoom = await ACM_Room.count({ where: { statusId: 1 } });
+
+  // general infomartion per hotel
+  const perHotelInformation = await ACM_Location.findAll({
+    attributes: ['name'],
+    where: limitation?.locations?.length
+      ? { id: { [Op.in]: limitation.locations }, typeId: 2 } : { typeId: 2 },
+    include: {
+      model: ACM_Room,
+      attributes: ['id', 'statusId'],
+      as: 'rooms',
+      include: { model: ACM_ParticipantLodger, attributes: ['id'], as: 'lodger' },
+    },
+  });
+
+  perHotelInformation.forEach((hotel) => {
+    hotel.dataValues.total = hotel.rooms?.length || 0;
+    let totalAvailableRooms = 0;
+    let totalLodgers = 0;
+    hotel.rooms.forEach((room) => {
+      if (room.statusId === 1) {
+        totalAvailableRooms += 1;
+      }
+      totalLodgers += room.lodger?.length || 0;
+    });
+    hotel.dataValues.totalAvailableRoom = totalAvailableRooms;
+    hotel.dataValues.totalOccupiedRoom = hotel.rooms?.length || 0 - totalAvailableRooms;
+    hotel.dataValues.totalLodger = totalLodgers;
+    delete hotel.dataValues.rooms;
+  });
+  return {
+    totalLocation,
+    locationByType,
+    totalRoom,
+    totalAvailableRoom,
+    totalOccupiedRoom: totalRoom - totalAvailableRoom,
+    perHotelInformation,
+  };
+};
+
 const selectDashboard = async (limitation, modules = []) => {
   const dashboard = [];
 
@@ -347,6 +402,10 @@ const selectDashboard = async (limitation, modules = []) => {
   if (modules.includes('Customer Service Management')) {
     const customerService = await customerServiceDashboard();
     dashboard.push({ customerService });
+  }
+  if (modules.includes('Accomodation Management')) {
+    const accomodation = await accomodationDashboard(limitation?.accomodation || null);
+    dashboard.push({ accomodation });
   }
   return {
     success: true,
