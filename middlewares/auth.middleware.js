@@ -213,6 +213,36 @@ class AuthMiddleware {
         }
 
         // * accomodation
+        if (roles.has('Create Location') || roles.has('Create Room') || roles.has('Create Facility') || roles.has('Create Lodger')) {
+          limitation.allowedDashboard.push('Accomodation Management');
+          limitation.access.accomodation = {};
+
+          if (req.user?.Role?.name === 'Admin Accomodation') {
+            // case user is admin transportation
+            const locations = await ACM_Location.findAll({ attributes: ['id'] });
+            const parsedLocation = locations.map((location) => location.id);
+            limitation.access.accomodation.locations = locations.length > 0
+              ? parsedLocation : [];
+          } else if (req.user.PIC?.length > 0) {
+            // case user is pic location for a vendor
+            const picLocTypes = await picTypeHelper().then((type) => [type.pic_location]);
+            const picLocation = req.user.PIC.filter((pic) => pic.typeId === picLocTypes[0]);
+
+            if (picLocation.length > 0) {
+              const locations = await ACM_Location.findAll({
+                where: { picId: picLocation[0].dataValues.id },
+                attributes: ['id'],
+              });
+
+              const parsedLocation = locations.map((location) => location.id);
+
+              limitation.access.accomodation.locations = locations.length > 0
+                ? parsedLocation : [null];
+            }
+          } else {
+            limitation.access.accomodation.locations = [null];
+          }
+        }
 
         // * transportation
         if (roles.has('View Vehicle Schedule') && (roles.has('Provide Vehicle Schedule') || roles.has('Absent Vehicle Schedule') || roles.has('Create Vehicle Schedule'))) {
