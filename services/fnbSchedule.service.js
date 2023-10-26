@@ -30,6 +30,7 @@ const {
 const selectAllFnBSchedules = async (where) => {
   const fnbScheduleInstances = await FNB_Schedule.findAll({
     where,
+    order: [['updatedAt', 'DESC']],
     include: [
       {
         model: ACM_Location,
