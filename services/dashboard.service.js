@@ -330,7 +330,6 @@ const customerServiceDashboard = async () => {
 };
 
 const accomodationDashboard = async (limitation = {}) => {
-  console.log(limitation);
   // Location
   const totalLocation = await ACM_Location.count();
   const locationByType = await REF_LocationType.findAll({
