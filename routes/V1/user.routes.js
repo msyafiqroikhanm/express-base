@@ -136,7 +136,7 @@ router.put(
       req,
       res,
       next,
-      await features().then((feature) => [feature.change_password]),
+      await features().then((feature) => [feature.reset_user_password]),
     );
   },
   [
