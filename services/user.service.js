@@ -377,7 +377,7 @@ const updateUserPassword = async (form) => {
   return {
     success: true,
     message: 'User Password Successfully Updated',
-    content: `User Password ${form.user.name} Successfully Updated`,
+    content: `User Password ${form.user.username} Successfully Updated`,
   };
 };
 

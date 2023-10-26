@@ -138,7 +138,7 @@ class User {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
 
-      const inputs = await validateResetPassword(req.params.id, req.body);
+      const inputs = await validateResetPassword(req.body, req.params.id);
       if (!inputs.isValid && inputs.code === 400) {
         return ResponseFormatter.error400(res, 'Bad Request', inputs.message);
       }
@@ -150,6 +150,8 @@ class User {
       if (!data.success) {
         return ResponseFormatter.error400(res, 'Bad Request', data.message);
       }
+
+      return ResponseFormatter.success200(res, data.message, data.content);
     } catch (error) {
       next(error);
     }

@@ -144,7 +144,7 @@ router.put(
     check('newRePassword', "New Re-Password attribute can't be empty").notEmpty(),
   ],
   ValidateMiddleware.result,
-  UserController.changePassword,
+  UserController.resetPassword,
 );
 
 module.exports = router;
