@@ -154,7 +154,7 @@ const validateTemplateInputs = async (form, file, id) => {
       headerType: headerTypeInstance,
       language: languageInstance || null,
       name: slug(form.name || '', '_').toLowerCase(),
-      nameAlias: form.nameAlias,
+      nameAlias: form.nameAlias || form.name,
       message: form.message,
       messageVariableNumber: Number(form.messageVariableNumber),
       messageVariableExample: form.messageVariableExample,

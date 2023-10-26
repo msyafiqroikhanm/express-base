@@ -14,10 +14,10 @@ module.exports = {
     let resetPassword = await USR_Feature.findOne({ where: { name: 'Reset User Password' } });
     if (!resetPassword) {
       const userModule = await USR_Module.findOne({
-        where: { name: 'User Management' },
+        where: { name: 'User' },
         attributes: ['id'],
       });
-      resetPassword = await USR_Feature.create({ name: 'Reset User Password', moduleId: userModule?.id || 2 });
+      resetPassword = await USR_Feature.create({ name: 'Reset User Password', moduleId: userModule?.id || 16 });
     }
 
     const superRole = await USR_Role.findOne({
