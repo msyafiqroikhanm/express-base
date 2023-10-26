@@ -129,4 +129,22 @@ router.post(
   UserController.registerPublic,
 );
 
+router.put(
+  '/:id/reset-password',
+  async (req, res, next) => {
+    Authentication.authenticate(
+      req,
+      res,
+      next,
+      await features().then((feature) => [feature.reset_user_password]),
+    );
+  },
+  [
+    check('newPassword', "New Password attribute can't be empty").notEmpty(),
+    check('newRePassword', "New Re-Password attribute can't be empty").notEmpty(),
+  ],
+  ValidateMiddleware.result,
+  UserController.resetPassword,
+);
+
 module.exports = router;
