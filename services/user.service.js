@@ -377,7 +377,7 @@ const updateUserPassword = async (form) => {
   return {
     success: true,
     message: 'User Password Successfully Updated',
-    content: `User Password ${form.user.name} Successfully Updated`,
+    content: `User Password ${form.user.username} Successfully Updated`,
   };
 };
 
@@ -724,6 +724,44 @@ const updateUserProfile = async (form, id) => {
   };
 };
 
+const validateResetPassword = async (form, id) => {
+  // check validity of user id
+  const invalid404 = [];
+  const invalid400 = [];
+  const userInstance = await USR_User.findOne({ where: { id } });
+  if (!userInstance) {
+    invalid404.push('User Data Not Found');
+  }
+
+  if (form.newPassword !== form.newRePassword) {
+    invalid400.push('New Password and New Re-Password Do Not Match');
+  }
+
+  if (invalid400.length > 0) {
+    return {
+      isValid: false,
+      code: 400,
+      message: invalid400,
+    };
+  }
+  if (invalid404.length > 0) {
+    return {
+      isValid: false,
+      code: 404,
+      message: invalid404,
+    };
+  }
+
+  return {
+    isValid: true,
+    form: {
+      user: userInstance,
+      newPassword: form.newPassword,
+      newRePassword: form.newRePassword,
+    },
+  };
+};
+
 module.exports = {
   validateUserInputs,
   validatePasswordInputs,
@@ -738,4 +776,5 @@ module.exports = {
   validatePublicRegisterUserInputs,
   validateProfileInputs,
   updateUserProfile,
+  validateResetPassword,
 };

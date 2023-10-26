@@ -278,6 +278,9 @@ class AuthMiddleware {
         }
 
         // * customer service
+        if (roles.has('View Broadcast Template') || (roles.has('View Broadcast'))) {
+          limitation.allowedDashboard.push('Customer Service Management');
+        }
       } else {
         limitation.allowedDashboard = [
           'Participant Management', 'Accomodation Management', 'Event Management', 'Transportation Management',
