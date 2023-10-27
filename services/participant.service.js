@@ -546,6 +546,13 @@ const validateParticipantInputs = async (form, files, id, where) => {
     invalid404.push('Contingent Data Not Found');
   }
 
+  const duplicateParticipant = await PAR_Participant.findOne({
+    where: { contingentId, name },
+  });
+  if (duplicateParticipant) {
+    invalid400.push(`Participant With Name ${name} From Contingent ${contingentInstance?.name || contingentId} Already Exist`);
+  }
+
   if (where?.id && where.id !== Number(contingentId)) {
     return {
       isValid: false,
