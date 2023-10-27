@@ -1,7 +1,9 @@
 'use strict';
+
 const {
-  Model
+  Model,
 } = require('sequelize');
+
 module.exports = (sequelize, DataTypes) => {
   class FNB_Feedback extends Model {
     /**
@@ -25,7 +27,7 @@ module.exports = (sequelize, DataTypes) => {
     aroma: DataTypes.INTEGER,
     freshness: DataTypes.INTEGER,
     name: DataTypes.STRING,
-    contingent: DataTypes.STRING
+    contingent: DataTypes.STRING,
   }, {
     sequelize,
     modelName: 'FNB_Feedback',

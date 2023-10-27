@@ -30,6 +30,7 @@ const {
 const selectAllFnBSchedules = async (where) => {
   const fnbScheduleInstances = await FNB_Schedule.findAll({
     where,
+    order: [['updatedAt', 'DESC']],
     include: [
       {
         model: ACM_Location,
@@ -280,11 +281,11 @@ const validateFnBScheduleInputs = async (form, limitation = null) => {
     }
   }
 
-  if (form.pickUpTime) {
-    if (new Date().getTime() > new Date(form.pickUpTime).getTime()) {
-      invalid400.push("Can't Set Pick Up Time In The Past");
-    }
-  }
+  // if (form.pickUpTime) {
+  //   if (new Date().getTime() > new Date(form.pickUpTime).getTime()) {
+  //     invalid400.push("Can't Set Pick Up Time In The Past");
+  //   }
+  // }
   // console.log(JSON.stringify(courierInstance, null, 2));
 
   if (invalid400.length > 0) {
@@ -394,11 +395,11 @@ const validateFnBScheduleInputsNew = async (form, limitation = null) => {
     }
   }
 
-  if (form.pickUpTime) {
-    if (new Date().getTime() > new Date(form.pickUpTime).getTime()) {
-      invalid400.push("Can't Set Pick Up Time In The Past");
-    }
-  }
+  // if (form.pickUpTime) {
+  //   if (new Date().getTime() > new Date(form.pickUpTime).getTime()) {
+  //     invalid400.push("Can't Set Pick Up Time In The Past");
+  //   }
+  // }
 
   const formItems = [];
   if (form.items.length) {

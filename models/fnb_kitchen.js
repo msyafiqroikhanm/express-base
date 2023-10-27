@@ -12,7 +12,7 @@ module.exports = (sequelize, DataTypes) => {
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
-      // define association here
+      FNB_Kitchen.hasMany(models.FNB_KitchenTarget, { foreignKey: 'kitchenId' });
     }
   }
   FNB_Kitchen.init(

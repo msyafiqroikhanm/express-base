@@ -25,7 +25,10 @@ const selectAllVehicleSchedule = async (where = {}) => {
   }
 
   const schedules = await TPT_VehicleSchedule.findAll({
-    order: [['pickUpTime', 'DESC']],
+    order: [
+      ['updatedAt', 'DESC'],
+      ['pickUpTime', 'DESC'],
+    ],
     where: Object.keys(query).length > 0 ? query : null,
     include: [
       {

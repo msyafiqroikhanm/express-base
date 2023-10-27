@@ -12,6 +12,8 @@ module.exports = (sequelize, DataTypes) => {
     static associate(models) {
       // define association here
       FNB_Menu.hasMany(models.FNB_Menu, { foreignKey: 'parentMenuId', as: 'child' });
+      FNB_Menu.hasMany(models.FNB_KitchenTarget, { foreignKey: 'menuId' });
+
       FNB_Menu.belongsTo(models.FNB_Menu, { foreignKey: 'parentMenuId', as: 'parent' });
       FNB_Menu.belongsTo(models.REF_MenuType, { foreignKey: 'menuTypeId', as: 'menuType' });
       FNB_Menu.belongsTo(models.REF_FoodType, { foreignKey: 'foodTypeId', as: 'foodType' });

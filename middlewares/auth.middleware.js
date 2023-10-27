@@ -218,17 +218,17 @@ class AuthMiddleware {
           limitation.access.accomodation = {};
 
           if (req.user?.Role?.name === 'Admin Accomodation') {
-            // case user is admin transportation
+            // case user is admin accomodation
             const locations = await ACM_Location.findAll({ attributes: ['id'] });
             const parsedLocation = locations.map((location) => location.id);
             limitation.access.accomodation.locations = locations.length > 0
               ? parsedLocation : [];
           } else if (req.user.PIC?.length > 0) {
-            // case user is pic location for a vendor
+            // case user is pic location for a hotel / venue
             const picLocTypes = await picTypeHelper().then((type) => [type.pic_location]);
             const picLocation = req.user.PIC.filter((pic) => pic.typeId === picLocTypes[0]);
 
-            if (picLocation.length > 0) {
+            if (picLocation?.length) {
               const locations = await ACM_Location.findAll({
                 where: { picId: picLocation[0].dataValues.id },
                 attributes: ['id'],
@@ -238,6 +238,8 @@ class AuthMiddleware {
 
               limitation.access.accomodation.locations = locations.length > 0
                 ? parsedLocation : [null];
+            } else {
+              limitation.access.accomodation.locations = [];
             }
           } else {
             limitation.access.accomodation.locations = [null];
@@ -260,7 +262,7 @@ class AuthMiddleware {
             const picTypes = await picTypeHelper().then((type) => [type.pic_transportation]);
             const picTransportation = req.user.PIC.filter((pic) => pic.typeId === picTypes[0]);
 
-            if (picTransportation.length > 0) {
+            if (picTransportation?.length) {
               const vendors = await TPT_Vendor.findAll({
                 where: { picId: picTransportation[0].dataValues.id },
                 attributes: ['id'],
@@ -270,11 +272,45 @@ class AuthMiddleware {
 
               limitation.access.transportation.vendors = parsedVendors.length > 0
                 ? parsedVendors : [null];
+            } else {
+              limitation.access.transportation.vendors = [];
             }
           }
         }
 
         // * fnb
+        if (roles.has('Create Menu') || roles.has('Create Kitchen') || roles.has('Create Kitchen Target') || roles.has('Create Courier') || roles.has('Create FNB Schedule')) {
+          limitation.allowedDashboard.push('FnB Management');
+          limitation.access.fnb = {};
+
+          if (req.user?.Role?.name === 'Admin FnB') {
+            // case user is admin FnB
+            const kitchens = await FNB_Kitchen.findAll({ attributes: ['id'] });
+            const parsedLocation = kitchens.map((kitchen) => kitchen.id);
+            limitation.access.fnb.kitchens = kitchens.length > 0
+              ? parsedLocation : [];
+          } else if (req.user.PIC?.length > 0) {
+            // case user is pic kitchen for a kitchen
+            const picKitchenType = await picTypeHelper().then((type) => [type.pic_kitchen]);
+            const picKitchen = req.user.PIC.filter((pic) => pic.typeId === picKitchenType[0]);
+
+            if (picKitchen?.length) {
+              const kitchens = await FNB_Kitchen.findAll({
+                where: { picId: picKitchen[0].dataValues.id },
+                attributes: ['id'],
+              });
+
+              const parsedKitchen = kitchens.map((kitchen) => kitchen.id);
+
+              limitation.access.fnb.kitchens = kitchens.length > 0
+                ? parsedKitchen : [null];
+            } else {
+              limitation.access.fnb.kitchens = [];
+            }
+          } else {
+            limitation.access.fnb.kitchens = [null];
+          }
+        }
 
         // * event
         if (roles.has('View Event') && (roles.has('Create Event') || roles.has('Update Event') || roles.has('Delete Event'))) {
@@ -292,7 +328,7 @@ class AuthMiddleware {
             const picTypes = await picTypeHelper().then((type) => [type.pic_event]);
             const picEvent = req.user.PIC.filter((pic) => pic.typeId === picTypes[0]);
 
-            if (picEvent.length) {
+            if (picEvent?.length) {
               const eventLimitation = await ENV_Event.findAll({
                 where: { picId: picEvent[0].dataValues.id },
                 attributes: ['id'],
@@ -303,6 +339,8 @@ class AuthMiddleware {
 
               limitation.access.event.events = events.length > 0
                 ? events : [null];
+            } else {
+              limitation.access.event.events = [];
             }
           }
         }
