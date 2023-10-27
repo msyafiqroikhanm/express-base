@@ -97,7 +97,7 @@ const selectBroadcast = async (id) => {
     delete receiver.dataValues.CSM_BroadcastParticipant;
   });
   broadcastInstance.dataValues.receiversList = receiversList;
-  broadcastInstance.dataValues.succesRate = `${succes}/${receiversList.length}`;
+  broadcastInstance.dataValues.succesRate = `${succes}/${receiversList?.length || 0}`;
 
   return {
     success: true,
