@@ -1,6 +1,7 @@
+/* eslint-disable no-await-in-loop */
 /* eslint-disable no-param-reassign */
-const util = require('util');
 const { relative } = require('path');
+const chalk = require('chalk');
 const { Op } = require('sequelize');
 const cron = require('node-schedule');
 const {
@@ -18,7 +19,11 @@ const { formatWhatsappMessage, metaSendMessage } = require('./whatsapp.integrati
 const deleteFile = require('../helpers/deleteFile.helper');
 const { createNotifications } = require('./notification.service');
 
-const setTimeoutPromise = util.promisify(setTimeout);
+function setTimeOutPromises(second) {
+  return new Promise((resolve) => { setTimeout(resolve, second * 1000); });
+}
+
+// const setTimeoutPromise = util.promisify(setTimeout);
 
 const selectAllBroadcasts = async () => {
   const data = await CSM_Broadcast.findAll({
@@ -108,7 +113,6 @@ const validateBroadcastInputs = async (form, file) => {
     include: [{ model: REF_TemplateHeaderType, as: 'headerType', attributes: ['name'] }],
   });
 
-  console.log(JSON.stringify(templateInstance, null, 2));
   if (!templateInstance) {
     invalid404.push('Broadcast Template Data Not Found');
   }
@@ -270,12 +274,12 @@ const scheduleBroadcast = async (broadcastId, io) => {
   cron.scheduleJob(`${broadcastInstance.id}`, date, async () => {
     console.log(`message send at ${new Date()}`);
 
-    receivers.forEach(async (receiver, index) => {
+    for (let index = 0; index < receivers.length; index += 1) {
       try {
         const messageData = {
           messaging_product: 'whatsapp',
           recipient_type: 'individual',
-          to: receiver.PAR_Participant.phoneNbr
+          to: receivers[index].PAR_Participant.phoneNbr
             .replace(/^0/g, '62')
             .match(/[0-9]/g || [])
             .join(''),
@@ -289,6 +293,12 @@ const scheduleBroadcast = async (broadcastId, io) => {
           },
         };
 
+        if ((index + 1) % 25 === 0) {
+          // Pause for 3 seconds using setTimeout
+          await setTimeOutPromises(3).then(() => console.log(chalk.bgBlueBright.black(`delay resolve at ${new Date()}`)));
+        }
+
+        console.log(chalk.bgGreenBright.black(`Sending message to ${receivers[index].PAR_Participant.phoneNbr} at ${new Date()}`));
         const metaResponse = await metaSendMessage(
           messageData,
           WhatsappPhoneId.value,
@@ -296,19 +306,55 @@ const scheduleBroadcast = async (broadcastId, io) => {
         );
 
         if (metaResponse.status === 200) {
-          // set message status as success
-          receiver.meta_id = metaResponse.data.messages[0].id;
-          await receiver.save();
-        }
-
-        if ((index + 1) % 30 === 0) {
-          // Pause for 2 seconds using setTimeout
-          await setTimeoutPromise(2000);
+          receivers[index].metaId = metaResponse.data.messages[0].id;
+          receivers[index].status = metaResponse.data.messages[0].message_status;
+          await receivers[index].save();
         }
       } catch (error) {
         console.error('Error sending message to employee:', error);
       }
-    });
+    }
+
+    // ? old ways of iterating trough reciever list and send messages
+    // receivers.forEach(async (receiver, index) => {
+    //   try {
+    //     const messageData = {
+    //       messaging_product: 'whatsapp',
+    //       recipient_type: 'individual',
+    //       to: receiver.PAR_Participant.phoneNbr
+    //         .replace(/^0/g, '62')
+    //         .match(/[0-9]/g || [])
+    //         .join(''),
+    //       type: 'template',
+    //       template: {
+    //         name: broadcastInstance.template.name,
+    //         language: {
+    //           code: broadcastInstance.template.language.value,
+    //         },
+    //         components,
+    //       },
+    //     };
+
+    //     const metaResponse = await metaSendMessage(
+    //       messageData,
+    //       WhatsappPhoneId.value,
+    //       WhatsappAccessToken.value,
+    //     );
+
+    //     if (metaResponse.status === 200) {
+    //       receiver.metaId = metaResponse.data.messages[0].id;
+    //       receiver.status = metaResponse.data.messages[0].message_status;
+    //       await receiver.save();
+    //     }
+
+    //     if ((index + 1) % 30 === 0) {
+    //       // Pause for 5 seconds using setTimeout
+    //       await setTimeoutPromise(5000);
+    //     }
+    //   } catch (error) {
+    //     console.error('Error sending message to employee:', error);
+    //   }
+    // });
 
     broadcastInstance.status = 'Sent';
     await broadcastInstance.save();
