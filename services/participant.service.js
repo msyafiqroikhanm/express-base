@@ -113,6 +113,12 @@ const selectAllParticipant = async (query, where) => {
         message: 'Limit query must be a number',
       };
     }
+    if (Math.floor(Number(query?.limit)) <= 0) {
+      return {
+        success: false,
+        message: 'Limit query must be 1 or greater',
+      };
+    }
 
     dataPerPage = query?.limit ? Math.floor(Number(query.limit)) : 10;
     page = query?.page ? (Math.floor(Number(query.page) - 1)) * dataPerPage : 0;
@@ -538,6 +544,13 @@ const validateParticipantInputs = async (form, files, id, where) => {
   const contingentInstance = await PAR_Contingent.findByPk(contingentId);
   if (!contingentInstance) {
     invalid404.push('Contingent Data Not Found');
+  }
+
+  const duplicateParticipant = await PAR_Participant.findOne({
+    where: { contingentId, name },
+  });
+  if (duplicateParticipant) {
+    invalid400.push(`Participant With Name ${name} From Contingent ${contingentInstance?.name || contingentId} Already Exist`);
   }
 
   if (where?.id && where.id !== Number(contingentId)) {
@@ -1375,29 +1388,94 @@ const selectParticipantAllSchedules = async (id, where) => {
   };
 };
 
-const selectAllNormalParticipants = async (where = {}) => {
-  const participants = await PAR_Participant.findAll({
-    where: { contingentId: { [Op.ne]: null }, committeeTypeId: null },
-    order: [['name', 'ASC']],
-    include: [
-      {
-        model: PAR_Contingent,
-        as: 'contingent',
-        where: where.contingentId ? { id: where.contingentId } : null,
-        attributes: ['name'],
-        include: { model: REF_Region, as: 'region', attributes: ['name'] },
-      },
-      { model: QRM_QR, as: 'qr' },
-      { model: REF_IdentityType, attributes: ['name'], as: 'identityType' },
-      { model: REF_ParticipantType, attributes: ['name'], as: 'participantType' },
-      {
-        model: PAR_Group,
-        as: 'groups',
-        attributes: { exclude: ['createdAt', 'updatedAt', 'deletedAt'] },
-        through: { attributes: [] },
-      },
-    ],
-  });
+const selectAllNormalParticipants = async (where = {}, query = {}) => {
+  let total;
+  let participants;
+  let page;
+  let dataPerPage;
+
+  if (query?.page) {
+    // eslint-disable-next-line no-restricted-globals
+    if (isNaN(query?.page)) {
+      return {
+        success: false,
+        message: 'Page query must be a number',
+      };
+    }
+    if (Math.floor(Number(query?.page)) <= 0) {
+      return {
+        success: false,
+        message: 'Page query must be 1 or greater',
+      };
+    }
+    // eslint-disable-next-line no-restricted-globals
+    if (isNaN(query?.limit) && query?.limit) {
+      return {
+        success: false,
+        message: 'Limit query must be a number',
+      };
+    }
+    if (Math.floor(Number(query?.limit)) <= 0) {
+      return {
+        success: false,
+        message: 'Limit query must be 1 or greater',
+      };
+    }
+
+    dataPerPage = query?.limit ? Math.floor(Number(query.limit)) : 10;
+    page = query?.page ? (Math.floor(Number(query.page) - 1)) * dataPerPage : 0;
+
+    const { count, rows } = await PAR_Participant.findAndCountAll({
+      where: { contingentId: { [Op.ne]: null }, committeeTypeId: null },
+      offset: page,
+      limit: dataPerPage,
+      order: [['name', 'ASC']],
+      include: [
+        {
+          model: PAR_Contingent,
+          as: 'contingent',
+          where: where.contingentId ? { id: where.contingentId } : null,
+          attributes: ['name'],
+          include: { model: REF_Region, as: 'region', attributes: ['name'] },
+        },
+        { model: QRM_QR, as: 'qr' },
+        { model: REF_IdentityType, attributes: ['name'], as: 'identityType' },
+        { model: REF_ParticipantType, attributes: ['name'], as: 'participantType' },
+        {
+          model: PAR_Group,
+          as: 'groups',
+          attributes: { exclude: ['createdAt', 'updatedAt', 'deletedAt'] },
+          through: { attributes: [] },
+        },
+      ],
+    });
+
+    total = count;
+    participants = rows;
+  } else {
+    participants = await PAR_Participant.findAll({
+      where: { contingentId: { [Op.ne]: null }, committeeTypeId: null },
+      order: [['name', 'ASC']],
+      include: [
+        {
+          model: PAR_Contingent,
+          as: 'contingent',
+          where: where.contingentId ? { id: where.contingentId } : null,
+          attributes: ['name'],
+          include: { model: REF_Region, as: 'region', attributes: ['name'] },
+        },
+        { model: QRM_QR, as: 'qr' },
+        { model: REF_IdentityType, attributes: ['name'], as: 'identityType' },
+        { model: REF_ParticipantType, attributes: ['name'], as: 'participantType' },
+        {
+          model: PAR_Group,
+          as: 'groups',
+          attributes: { exclude: ['createdAt', 'updatedAt', 'deletedAt'] },
+          through: { attributes: [] },
+        },
+      ],
+    });
+  }
 
   // parsed retun data
   participants.forEach((participant) => {
@@ -1408,6 +1486,19 @@ const selectAllNormalParticipants = async (where = {}) => {
     participant.dataValues.participantType = participant.participantType?.dataValues.name;
   });
 
+  if (query?.page) {
+    return {
+      success: true,
+      message: 'Successfully Getting All Participant',
+      content: {
+        totalData: total,
+        totalDataInPage: participants?.length,
+        totalPage: Math.ceil(Number(total) / dataPerPage),
+        currentPage: Math.floor(Number(query?.page)),
+        participants,
+      },
+    };
+  }
   return {
     success: true,
     message: 'Successfully Getting All Participant',
@@ -1415,16 +1506,68 @@ const selectAllNormalParticipants = async (where = {}) => {
   };
 };
 
-const selectAllCommitteeParticipants = async () => {
-  const committees = await PAR_Participant.findAll({
-    where: { contingentId: null },
-    order: [['name', 'ASC']],
-    include: [
-      { model: QRM_QR, as: 'qr' },
-      { model: REF_IdentityType, attributes: ['name'], as: 'identityType' },
-      { model: REF_CommitteeType, as: 'committeeType', attributes: ['name'] },
-    ],
-  });
+const selectAllCommitteeParticipants = async (query) => {
+  let total;
+  let committees;
+  let page;
+  let dataPerPage;
+
+  if (query?.page) {
+    // eslint-disable-next-line no-restricted-globals
+    if (isNaN(query?.page)) {
+      return {
+        success: false,
+        message: 'Page query must be a number',
+      };
+    }
+    if (Math.floor(Number(query?.page)) <= 0) {
+      return {
+        success: false,
+        message: 'Page query must be 1 or greater',
+      };
+    }
+    // eslint-disable-next-line no-restricted-globals
+    if (isNaN(query?.limit) && query?.limit) {
+      return {
+        success: false,
+        message: 'Limit query must be a number',
+      };
+    }
+    if (Math.floor(Number(query?.limit)) <= 0) {
+      return {
+        success: false,
+        message: 'Limit query must be 1 or greater',
+      };
+    }
+
+    dataPerPage = query?.limit ? Math.floor(Number(query.limit)) : 10;
+    page = query?.page ? (Math.floor(Number(query.page) - 1)) * dataPerPage : 0;
+
+    const { count, rows } = await PAR_Participant.findAndCountAll({
+      where: { contingentId: null },
+      offset: page,
+      limit: dataPerPage,
+      order: [['name', 'ASC']],
+      include: [
+        { model: QRM_QR, as: 'qr' },
+        { model: REF_IdentityType, attributes: ['name'], as: 'identityType' },
+        { model: REF_CommitteeType, as: 'committeeType', attributes: ['name'] },
+      ],
+    });
+
+    total = count;
+    committees = rows;
+  } else {
+    committees = await PAR_Participant.findAll({
+      where: { contingentId: null },
+      order: [['name', 'ASC']],
+      include: [
+        { model: QRM_QR, as: 'qr' },
+        { model: REF_IdentityType, attributes: ['name'], as: 'identityType' },
+        { model: REF_CommitteeType, as: 'committeeType', attributes: ['name'] },
+      ],
+    });
+  }
 
   // parsed retun data
   committees.forEach((committee) => {
@@ -1432,6 +1575,19 @@ const selectAllCommitteeParticipants = async () => {
     committee.dataValues.committeeType = committee.committeeType?.dataValues.name;
   });
 
+  if (query?.page) {
+    return {
+      success: true,
+      message: 'Successfully Getting All Participant',
+      content: {
+        totalData: total,
+        totalDataInPage: committees?.length,
+        totalPage: Math.ceil(Number(total) / dataPerPage),
+        currentPage: Math.floor(Number(query?.page)),
+        committees,
+      },
+    };
+  }
   return {
     success: true,
     message: 'Successfully Getting All Participant',

@@ -417,7 +417,7 @@ class Participant {
         where.contingentId = req.user.limitation.access.contingentId;
       }
 
-      const data = await selectAllNormalParticipants(where);
+      const data = await selectAllNormalParticipants(where, req.query);
       if (!data.success) {
         return ResponseFormatter.error400(res, 'Bad Request', data.message);
       }
@@ -432,7 +432,7 @@ class Participant {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
 
-      const data = await selectAllCommitteeParticipants();
+      const data = await selectAllCommitteeParticipants(req.query);
       if (!data.success) {
         return ResponseFormatter.error400(res, 'Bad Request', data.message);
       }

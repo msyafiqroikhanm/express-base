@@ -83,15 +83,21 @@ const selectBroadcast = async (id) => {
 
   // parse content data
   const receiversList = [];
+  let succes = 0;
   broadcastInstance.receivers.forEach((receiver) => {
     receiversList.push(receiver.dataValues.id);
     receiver.dataValues.region = receiver.contingent?.region.dataValues.name;
     receiver.dataValues.contingent = receiver.contingent?.dataValues.name;
     receiver.dataValues.status = receiver.CSM_BroadcastParticipant?.dataValues.status;
 
+    if (receiver.dataValues.status) {
+      succes += 1;
+    }
+
     delete receiver.dataValues.CSM_BroadcastParticipant;
   });
   broadcastInstance.dataValues.receiversList = receiversList;
+  broadcastInstance.dataValues.succesRate = `${succes}/${receiversList?.length || 0}`;
 
   return {
     success: true,
