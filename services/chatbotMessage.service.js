@@ -202,6 +202,14 @@ const sendFaq = async (content, faqInstance) => {
 
 const chatBotMessageEntry = async (content) => {
   if (content.messages) {
+    const Whatsapp_Status = await SYS_Configuration.findOne({
+      where: { name: 'Whatsapp CSM Platform' }, attributes: ['value'],
+    });
+
+    if (!Whatsapp_Status || Whatsapp_Status?.value?.toLowerCase() === 'off') {
+      return true;
+    }
+
     // Recieve message form user / customer / participant via whatsapp
 
     const conversationInstance = await CSM_Conversation.findOne({
