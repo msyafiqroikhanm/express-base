@@ -4,7 +4,8 @@ const {
   PAR_Participant, REF_Region, PAR_Contingent, ENV_Event, PAR_Group, TPT_Vehicle,
   TPT_Driver, TPT_Vendor, TPT_VehicleSchedule, REF_VehicleScheduleStatus, ACM_Location,
   REF_EventCategory, REF_GroupStatus, REF_VehicleType, CSM_Broadcast, REF_TemplateCategory,
-  CSM_BroadcastTemplate, REF_LocationType, ACM_Room, ACM_ParticipantLodger,
+  CSM_BroadcastTemplate, REF_LocationType, ACM_Room, ACM_ParticipantLodger, FNB_Kitchen, FNB_Menu,
+  FNB_Courier, FNB_KitchenTarget, FNB_Feedback,
 } = require('../models');
 
 const participantDasboard = async (limitation = null) => {
@@ -383,6 +384,92 @@ const accomodationDashboard = async (limitation = {}) => {
   };
 };
 
+const fnbDashboard = async (limitation = {}) => {
+  // Kitchen
+  const totalKitchen = await FNB_Kitchen.count();
+  const todayKitchenData = await FNB_Kitchen.findAll({
+    where: limitation?.kitchens?.length ? { id: { [Op.in]: limitation.kitchens } } : null,
+    attributes: ['name'],
+    include: {
+      model: FNB_KitchenTarget,
+      attributes: ['quantityTarget', 'quantityActual'],
+      where: {
+        date: {
+          [Op.gte]: new Date().setHours(0, 0, 0, 0),
+          [Op.lte]: new Date().setHours(23, 59, 59, 999),
+        },
+      },
+      required: false,
+      include: {
+        model: FNB_Menu,
+        attributes: ['name'],
+        as: 'menu',
+        required: false,
+      },
+    },
+  });
+  todayKitchenData?.forEach((kitchen) => {
+    kitchen?.FNB_KitchenTargets.forEach((target) => {
+      target.dataValues.quantityActual = target.dataValues.quantityActual || 0;
+      target.dataValues.menu = target.menu.dataValues.name;
+    });
+
+    kitchen.dataValues.targets = kitchen.FNB_KitchenTargets;
+    delete kitchen.dataValues.FNB_KitchenTargets;
+  });
+
+  // Menu
+  const todayMenu = await FNB_Menu.findAll({
+    where: {
+      date: {
+        [Op.gte]: new Date().setHours(0, 0, 0, 0),
+        [Op.lte]: new Date().setHours(23, 59, 59, 999),
+      },
+    },
+    attributes: ['name', 'quantity'],
+    include: { model: FNB_KitchenTarget, attributes: ['quantityActual'] },
+  });
+  todayMenu.forEach((menu) => {
+    menu.dataValues.targetQuantity = menu.dataValues.quantity || 0;
+    let produceQuantity = 0;
+    menu.FNB_KitchenTargets.forEach((target) => {
+      produceQuantity += target.dataValues.quantityActual || 0;
+    });
+    menu.dataValues.produceQuantity = produceQuantity;
+    delete menu.dataValues.quantity;
+    delete menu.dataValues.FNB_KitchenTargets;
+  });
+
+  // Courier
+  const totalCourier = await FNB_Courier.count();
+  const totalAvailableCourier = await FNB_Courier.count({ where: { isAvailable: true } });
+
+  // feedback
+  const totalFeedback = await FNB_Feedback.count();
+  const feedbacks = await FNB_Feedback.findAll({
+    attributes: [
+      [fn('avg', col('deliciousness')), 'averageDeliciousness'],
+      [fn('avg', col('combination')), 'averageCombination'],
+      [fn('avg', col('suitability')), 'averageSuitability'],
+      [fn('avg', col('arrangement')), 'averageArrangement'],
+      [fn('avg', col('appearance')), 'averageAppearance'],
+      [fn('avg', col('cleanliness')), 'averageCleanliness'],
+      [fn('avg', col('aroma')), 'averageAroma'],
+      [fn('avg', col('freshness')), 'averageFreshness'],
+    ],
+  });
+
+  return {
+    totalKitchen,
+    todayKitchenData,
+    todayMenu,
+    totalCourier,
+    totalAvailableCourier,
+    totalFeedback,
+    feedbacks,
+  };
+};
+
 const selectDashboard = async (limitation, modules = []) => {
   const dashboard = [];
 
@@ -405,6 +492,10 @@ const selectDashboard = async (limitation, modules = []) => {
   if (modules.includes('Accomodation Management')) {
     const accomodation = await accomodationDashboard(limitation?.accomodation || null);
     dashboard.push({ accomodation });
+  }
+  if (modules.includes('FnB Management')) {
+    const fnb = await fnbDashboard(limitation?.fnb || null);
+    dashboard.push({ fnb });
   }
   return {
     success: true,
