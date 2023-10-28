@@ -1,18 +1,30 @@
 const ResponseFormatter = require('../helpers/responseFormatter.helper');
 const {
-  selectAllTemplate, selectTemplate, validateTemplateInputs, formatTemplate,
+  selectAllTemplate,
+  selectTemplate,
+  validateTemplateInputs,
+  formatTemplate,
   createBroadcastTemplate,
   updateBroadcastTemplate,
   deleteBroadcastTemplate,
 } = require('../services/broadastTemplate.service');
-const { registerWhatsappTemplate, updateMetaWhatsappTemplate, deleteMetaWhatsappTemplate } = require('../services/whatsapp.integration.service');
+const {
+  registerWhatsappTemplate,
+  updateMetaWhatsappTemplate,
+  deleteMetaWhatsappTemplate,
+} = require('../services/whatsapp.integration.service');
 
 class BroadcastTemplateController {
   static async getAll(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
 
-      const data = await selectAllTemplate();
+      const query = {};
+      if (req.query?.metaStatus) {
+        query.metaStatus = req.query.metaStatus;
+      }
+
+      const data = await selectAllTemplate(query);
 
       return ResponseFormatter.success200(res, data.message, data.content);
     } catch (error) {

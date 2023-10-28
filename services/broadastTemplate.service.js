@@ -2,7 +2,10 @@
 const slug = require('slugify');
 const { Op } = require('sequelize');
 const {
-  CSM_BroadcastTemplate, REF_TemplateCategory, REF_MetaTemplateCategory, REF_TemplateHeaderType,
+  CSM_BroadcastTemplate,
+  REF_TemplateCategory,
+  REF_MetaTemplateCategory,
+  REF_TemplateHeaderType,
   REF_MetaTemplateLanguage,
 } = require('../models');
 const { metaMediaHandler } = require('./whatsapp.integration.service');
@@ -21,7 +24,9 @@ const validateTemplateInputs = async (form, file, id) => {
   // check name duplication
   if (form.name) {
     const duplicateName = await CSM_BroadcastTemplate.findOne({
-      where: id ? { id: { [Op.ne]: id }, name: slug(form.name, '_').toLowerCase() } : { name: slug(form.name, '_').toLowerCase() },
+      where: id
+        ? { id: { [Op.ne]: id }, name: slug(form.name, '_').toLowerCase() }
+        : { name: slug(form.name, '_').toLowerCase() },
     });
     if (duplicateName) {
       invalid400.push(`Template With Name ${form.name} Already Exist`);
@@ -67,7 +72,9 @@ const validateTemplateInputs = async (form, file, id) => {
   }
 
   if (Number(form.messageVariableExample?.length) !== Number(form.messageVariableNumber)) {
-    invalid400.push('The Amount Of Message Variable Example Should Be Equal With Message Variable Number');
+    invalid400.push(
+      'The Amount Of Message Variable Example Should Be Equal With Message Variable Number',
+    );
   }
 
   // validate footer
@@ -94,7 +101,10 @@ const validateTemplateInputs = async (form, file, id) => {
 
     const mimeType = file.mimetype;
 
-    if (headerTypeInstance.name === 'IMAGE' && !['image/jpeg', 'image/jpg', 'image/png'].includes(mimeType)) {
+    if (
+      headerTypeInstance.name === 'IMAGE' &&
+      !['image/jpeg', 'image/jpg', 'image/png'].includes(mimeType)
+    ) {
       invalid400.push('Header with type IMAGE requires a JPEG, JPG, or PNG file.');
     }
 
@@ -136,7 +146,9 @@ const validateTemplateInputs = async (form, file, id) => {
       header: {
         type: headerTypeInstance?.name,
         text: form.headerText,
-        example: ['IMAGE', 'VIDEO', 'DOCUMENT'].includes(headerTypeInstance.name) ? fileHandler : form.headerVariableExample,
+        example: ['IMAGE', 'VIDEO', 'DOCUMENT'].includes(headerTypeInstance.name)
+          ? fileHandler
+          : form.headerVariableExample,
       },
       message: {
         text: form.message,
@@ -167,9 +179,7 @@ const validateTemplateInputs = async (form, file, id) => {
 };
 
 const formatTemplate = async (form, method) => {
-  const {
-    name, header, message, footer, button, metaCategory, language,
-  } = form;
+  const { name, header, message, footer, button, metaCategory, language } = form;
 
   const components = [];
 
@@ -311,8 +321,9 @@ const formatTemplate = async (form, method) => {
   }
 };
 
-const selectAllTemplate = async () => {
+const selectAllTemplate = async (query) => {
   const templates = await CSM_BroadcastTemplate.findAll({
+    where: query,
     include: [
       {
         model: REF_TemplateCategory,
