@@ -15,6 +15,7 @@ const {
 const selectAllRooms = async (where) => {
   const rooms = await ACM_Room.findAll({
     where,
+    order: [['locationId', 'ASC']],
     include: [
       {
         model: ACM_Location,
@@ -136,7 +137,10 @@ const selectRoom = async (where) => {
 const createRoom = async (form) => {
   const room = await ACM_Room.create(form);
 
-  const locationInstance = await ACM_Location.findOne({ where: { id: form.locationId }, attributes: ['name'] });
+  const locationInstance = await ACM_Location.findOne({
+    where: { id: form.locationId },
+    attributes: ['name'],
+  });
   room.location = locationInstance.dataValues.name;
 
   return {
