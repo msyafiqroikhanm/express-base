@@ -983,7 +983,12 @@ const createParticipantViaImport = async (file) => {
       invalidData.push(
         `Duplicate identity number ${participants[index].identityNo} with type ${
           participants[index].identityTypeId
-        } for committee ${participants[index].name} at row ${index + 2}`,
+        } for participant ${participants[index].name} at row ${index + 2}`,
+      );
+    }
+    if (String(new Date(participants[index].birthDate)) === 'Invalid Date') {
+      invalidData.push(
+        `Invalid Birth Date ${participants[index].birthDate} for participant ${participants[index].name} at row ${index + 2}`,
       );
     }
 
@@ -1279,40 +1284,48 @@ const createCommitteeViaImport = async (file) => {
 
   const invalidRow = {};
   const validParticipants = [];
-  await Promise.all(
-    participants.map(async (participant, index) => {
-      const invalidData = [];
-      if (existPhoneNbr.includes(participant.phoneNbr)) {
-        invalidData.push(
-          `Duplicate phone number ${participant.phoneNbr} for committee ${
-            participant.name
-          } at row ${index + 2}`,
-        );
-      }
-      if (existIdentity.includes(`${participant.identityTypeId}-${participant.identityNo}`)) {
-        invalidData.push(
-          `Duplicate identity number ${participant.identityNo} with type ${
-            participant.identityTypeId
-          } for committee ${participant.name} at row ${index + 2}`,
-        );
-      }
+  for (let index = 0; index < participants.length; index += 1) {
+    const invalidData = [];
+    if (existPhoneNbr.includes(participants[index].phoneNbr)) {
+      invalidData.push(
+        `Duplicate phone number ${participants[index].phoneNbr} for committee ${
+          participants[index].name
+        } at row ${index + 2}`,
+      );
+    }
+    if (existIdentity.includes(`${participants[index].identityTypeId}-${participants[index].identityNo}`)) {
+      invalidData.push(
+        `Duplicate identity number ${participants[index].identityNo} with type ${
+          participants[index].identityTypeId
+        } for committee ${participants[index].name} at row ${index + 2}`,
+      );
+    }
+    if (String(new Date(participants[index].birthDate)) === 'Invalid Date') {
+      invalidData.push(
+        `Invalid Birth Date ${participants[index].birthDate} for committee ${participants[index].name} at row ${index + 2}`,
+      );
+    }
 
-      // validate participant inputs
-      const inputs = await validateCommitteeInputs(participant);
-      if (!inputs.isValid) {
-        invalidData.push(`${inputs.message} at row ${index + 2}`);
-      }
+    // validate committee inputs
+    // eslint-disable-next-line no-await-in-loop
+    const inputs = await validateCommitteeInputs(participants[index]);
+    if (!inputs.isValid && inputs.code === 404) {
+      invalidData.push(`${inputs.message} at row ${index + 2}`);
+    } else if (!inputs.isValid && inputs.code === 400) {
+      invalidData.push(`${inputs.message} at row ${index + 2}`);
+    } else if (!inputs.isValid) {
+      invalidData.push(`${inputs.message} at row ${index + 2}`);
+    }
 
-      if (invalidData.length === 0) {
-        // register new committee phoneNbr, and identityNo To Exist Array
-        validParticipants.push(inputs.form);
-        existPhoneNbr.push(participant.phoneNbr);
-        existIdentity.push(participant.identityNo);
-      } else {
-        invalidRow[index + 2] = invalidData;
-      }
-    }),
-  );
+    if (invalidData.length === 0) {
+      // register new committee phoneNbr, and identityNo To Exist Array
+      validParticipants.push(inputs.form);
+      existPhoneNbr.push(participants[index].phoneNbr);
+      existIdentity.push(participants[index].identityNo);
+    } else {
+      invalidRow[index + 2] = invalidData;
+    }
+  }
 
   if (Object.keys(invalidRow).length > 0) {
     const invalidData = `Total Invalid Row = ${
