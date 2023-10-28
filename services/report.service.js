@@ -88,6 +88,7 @@ const generateTransportationReport = async (limitation = {}) => {
   transportationReports.forEach((vendor) => {
     const schedulesId = new Set([]);
     const schedules = [];
+
     vendor.vehicles.forEach((vehicle) => {
       vehicle.dataValues.type = vehicle?.type?.dataValues.name;
       vehicle.schedules.forEach((schedule) => {
