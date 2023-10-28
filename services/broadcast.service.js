@@ -52,7 +52,7 @@ const selectBroadcast = async (id) => {
     include: [
       {
         model: CSM_BroadcastTemplate,
-        attributes: ['name'],
+        attributes: ['name', 'nameAlias'],
         as: 'template',
         required: true,
       },
