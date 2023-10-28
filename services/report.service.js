@@ -1,8 +1,9 @@
 /* eslint-disable no-param-reassign */
+const { Op } = require('sequelize');
 const {
   TPT_Vendor, TPT_Driver, TPT_Vehicle, TPT_VehicleSchedule, REF_VehicleType, ACM_Location,
   REF_VehicleScheduleStatus, ENV_Event, ENV_TimeEvent, PAR_Contingent, PAR_Participant, PAR_Group,
-  REF_EventCategory, REF_GroupStatus,
+  REF_EventCategory, REF_GroupStatus, REF_Region, REF_IdentityType, REF_ParticipantType, QRM_QR,
 } = require('../models');
 
 const generateTransportationReport = async (limitation = {}) => {
@@ -199,7 +200,58 @@ const generateEventReport = async (limitation = {}) => {
   };
 };
 
+const generateParticipantReport = async (limitation = {}) => {
+  console.log(limitation);
+
+  const participants = await PAR_Participant.findAll({
+    where: { contingentId: { [Op.ne]: null }, committeeTypeId: null },
+    order: [['contingentId', 'ASC'], ['name', 'ASC']],
+    attributes: ['name', 'gender', 'birthDate', 'identityNo', 'phoneNbr', 'email', 'address'],
+    include: [
+      {
+        model: PAR_Contingent,
+        as: 'contingent',
+        where: limitation?.contingentId ? { id: limitation.contingentId } : null,
+        attributes: ['name'],
+        required: true,
+        include: { model: REF_Region, as: 'region', attributes: ['name'] },
+      },
+      { model: QRM_QR, attributes: ['code'], as: 'qr' },
+      { model: REF_IdentityType, attributes: ['name'], as: 'identityType' },
+      { model: REF_ParticipantType, attributes: ['name'], as: 'participantType' },
+      {
+        model: PAR_Group,
+        as: 'groups',
+        attributes: ['id'],
+        through: { attributes: [] },
+        include: { model: ENV_Event, attributes: ['name'], as: 'event' },
+      },
+    ],
+  });
+
+  participants.forEach((participant) => {
+    participant.dataValues.region = participant.contingent?.region?.dataValues.name || null;
+    participant.dataValues.contingent = participant.contingent?.dataValues.name || null;
+    participant.dataValues.qrCode = participant.qr?.dataValues.code || null;
+    participant.dataValues.identityType = participant.identityType?.dataValues.name || null;
+    participant.dataValues.participantType = participant.participantType?.dataValues.name || null;
+    participant.dataValues.events = participant.groups.map(
+      (group) => group?.event?.dataValues.name,
+    );
+
+    delete participant.dataValues.groups;
+    delete participant.dataValues.qr;
+  });
+
+  return {
+    success: true,
+    message: 'Success Generating Event Report',
+    content: participants,
+  };
+};
+
 module.exports = {
   generateTransportationReport,
   generateEventReport,
+  generateParticipantReport,
 };
