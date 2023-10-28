@@ -110,6 +110,8 @@ const validateBroadcastInputs = async (form, file) => {
   const invalid400 = [];
   const invalid404 = [];
 
+  console.log(JSON.stringify(form, null, 2));
+
   // prevent backdate
   if (new Date().getTime() > new Date(form.sentAt)) {
     invalid400.push('Send at date must be after created date');
@@ -128,22 +130,22 @@ const validateBroadcastInputs = async (form, file) => {
 
   // * Validate Header
   let headerFile = null;
-  if (['IMAGE', 'VIDEO', 'DOCUMENT'].includes(templateInstance?.headerType.name)) {
+  if (['IMAGE', 'VIDEO', 'DOCUMENT'].includes(templateInstance?.headerType?.name)) {
     if (!file) {
       invalid400.push(
-        `Broadcast Using Template With Header ${templateInstance?.headerType.name} Required File`,
+        `Broadcast Using Template With Header ${templateInstance?.headerType?.name} Required File`,
       );
     }
 
-    if (templateInstance?.headerType.name === 'IMAGE' && !['jpeg', 'jpg', 'png'].includes(file?.originalname.split('.').pop())) {
+    if (templateInstance?.headerType?.name === 'IMAGE' && !['jpeg', 'jpg', 'png'].includes(file?.originalname.split('.').pop())) {
       invalid400.push('Header with type IMAGE requires a JPEG, JPG, or PNG file.');
     }
 
-    if (templateInstance?.headerType.name === 'VIDEO' && file?.originalname.split('.').pop() !== 'mp4') {
+    if (templateInstance?.headerType?.name === 'VIDEO' && file?.originalname.split('.').pop() !== 'mp4') {
       invalid400.push('Header with type VIDEO requires an MP4 file.');
     }
 
-    if (templateInstance?.headerType.name === 'DOCUMENT' && file?.originalname.split('.').pop() !== 'pdf') {
+    if (templateInstance?.headerType?.name === 'DOCUMENT' && file?.originalname.split('.').pop() !== 'pdf') {
       invalid400.push('Header with type DOCUMENT requires a PDF file.');
     }
     if (['jpeg', 'png', 'jpg'].includes(file?.originalname.split('.').pop())) {
@@ -154,7 +156,7 @@ const validateBroadcastInputs = async (form, file) => {
       headerFile = `public/documents/broadcasts/${file?.filename}`;
     }
   } else if (
-    templateInstance?.headerType.name === 'TEXT' && templateInstance?.headerVariableExample
+    templateInstance?.headerType?.name === 'TEXT' && templateInstance?.headerVariableExample
   ) {
     if (!form.headerText) {
       invalid400.push(
