@@ -92,6 +92,15 @@ const selectAllParticipant = async (query, where) => {
   let page;
   let dataPerPage;
 
+  let contingentId;
+  if (query?.contingentId === 'null') {
+    contingentId = null;
+  } else if (query?.contingentId) {
+    contingentId = query.contingentId;
+  }
+
+  console.log(contingentId);
+
   if (query?.page) {
     // eslint-disable-next-line no-restricted-globals
     if (isNaN(query?.page)) {
@@ -124,7 +133,7 @@ const selectAllParticipant = async (query, where) => {
     page = query?.page ? (Math.floor(Number(query.page) - 1)) * dataPerPage : 0;
 
     const { count, rows } = await PAR_Participant.findAndCountAll({
-      where: query?.contingentId ? { contingentId: query.contingentId } : null,
+      where: typeof contingentId !== 'undefined' ? { contingentId } : null,
       offset: page,
       limit: dataPerPage,
       order: [['name', 'ASC']],
@@ -152,7 +161,7 @@ const selectAllParticipant = async (query, where) => {
     participants = rows;
   } else {
     participants = await PAR_Participant.findAll({
-      where: query?.contingentId ? { contingentId: query.contingentId } : null,
+      where: typeof contingentId !== 'undefined' ? { contingentId } : null,
       order: [['name', 'ASC']],
       include: [
         {
