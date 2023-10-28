@@ -47,6 +47,7 @@ router.get(
       ]),
     );
   },
+  Authentication.participant,
   ReportController.getParticipantReport,
 );
 
