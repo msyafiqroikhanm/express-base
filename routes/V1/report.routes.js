@@ -31,6 +31,7 @@ router.get(
       ]),
     );
   },
+  Authentication.event,
   ReportController.getEventReport,
 );
 
