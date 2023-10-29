@@ -63,6 +63,7 @@ router.get(
       ]),
     );
   },
+  Authentication.accomodation,
   ReportController.getAccomodationReport,
 );
 

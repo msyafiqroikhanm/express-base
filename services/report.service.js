@@ -4,6 +4,7 @@ const {
   TPT_Vendor, TPT_Driver, TPT_Vehicle, TPT_VehicleSchedule, REF_VehicleType, ACM_Location,
   REF_VehicleScheduleStatus, ENV_Event, ENV_TimeEvent, PAR_Contingent, PAR_Participant, PAR_Group,
   REF_EventCategory, REF_GroupStatus, REF_Region, REF_IdentityType, REF_ParticipantType, QRM_QR,
+  ACM_Facility, ACM_Room, REF_RoomType, ACM_RoomBedType, ACM_ParticipantLodger, REF_LodgerStatus,
 } = require('../models');
 
 const generateTransportationReport = async (limitation = {}) => {
@@ -201,8 +202,6 @@ const generateEventReport = async (limitation = {}) => {
 };
 
 const generateParticipantReport = async (limitation = {}) => {
-  console.log(limitation);
-
   const participants = await PAR_Participant.findAll({
     where: { contingentId: { [Op.ne]: null }, committeeTypeId: null },
     order: [['contingentId', 'ASC'], ['name', 'ASC']],
@@ -245,8 +244,74 @@ const generateParticipantReport = async (limitation = {}) => {
 
   return {
     success: true,
-    message: 'Success Generating Event Report',
+    message: 'Success Generating Participant Report',
     content: participants,
+  };
+};
+
+const generateAccomodationReport = async (limitation = {}) => {
+  const accomodations = await ACM_Location.findAll({
+    where: limitation?.picId ? { picId: limitation.picId, typeId: 2 } : { typeId: 2 },
+    attributes: ['name', 'address', 'phoneNbr', 'address', 'latitude', 'longtitude', 'description'],
+    include: [
+      {
+        model: ACM_Location,
+        as: 'childLocation',
+      },
+      {
+        model: ACM_Facility,
+        as: 'facilities',
+        attributes: ['name', 'quantity'],
+      },
+      {
+        model: ACM_Room,
+        as: 'rooms',
+        attributes: ['name', 'floor', 'capacity'],
+        include: [
+          {
+            model: REF_RoomType,
+            as: 'type',
+            attributes: ['name'],
+          },
+          {
+            model: ACM_RoomBedType,
+            as: 'bed',
+            attributes: ['name'],
+          },
+          {
+            model: ACM_ParticipantLodger,
+            as: 'lodger',
+            attributes: ['reservationIn', 'reservationOut', 'checkIn', 'checkout'],
+            include: [
+              { model: PAR_Participant, attributes: ['name'], as: 'participant' },
+              { model: REF_LodgerStatus, attributes: ['name'], as: 'status' },
+            ],
+          },
+        ],
+      },
+    ],
+  });
+
+  accomodations.forEach((hotel) => {
+    hotel.dataValues.lodgers = [];
+    hotel.rooms.forEach((room) => {
+      room.dataValues.type = room?.type?.dataValues.name || null;
+      room.dataValues.bed = room?.bed?.dataValues.name || null;
+      room.lodger.forEach((lodger) => {
+        lodger.dataValues.participant = lodger?.participant?.dataValues.name || null;
+        lodger.dataValues.status = lodger?.status?.dataValues.name || null;
+        lodger.dataValues.room = room.dataValues.name;
+        hotel.dataValues.lodgers.push(lodger);
+      });
+
+      delete room.dataValues.lodger;
+    });
+  });
+
+  return {
+    success: true,
+    message: 'Success Generating Accomodation Report',
+    content: accomodations,
   };
 };
 
@@ -254,4 +319,5 @@ module.exports = {
   generateTransportationReport,
   generateEventReport,
   generateParticipantReport,
+  generateAccomodationReport,
 };

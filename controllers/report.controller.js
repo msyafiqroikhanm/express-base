@@ -1,5 +1,8 @@
 const ResponseFormatter = require('../helpers/responseFormatter.helper');
-const { generateTransportationReport, generateEventReport, generateParticipantReport } = require('../services/report.service');
+const {
+  generateTransportationReport, generateEventReport, generateParticipantReport,
+  generateAccomodationReport,
+} = require('../services/report.service');
 
 class ReportController {
   static async getParticipantReport(req, res, next) {
@@ -61,6 +64,16 @@ class ReportController {
   static async getAccomodationReport(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+
+      const where = {};
+      // resrict data that is not an admin
+      if (!req.user.limitation.isAdmin && req.user.limitation?.access?.picId) {
+        where.picId = req.user.limitation.access.picId;
+      }
+
+      const data = await generateAccomodationReport(where);
+
+      return ResponseFormatter.success200(res, data.message, data.content);
     } catch (error) {
       next(error);
     }
