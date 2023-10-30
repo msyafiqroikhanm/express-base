@@ -181,7 +181,7 @@ const updateRoom = async (where, form) => {
   }
 
   if (form.bedId) {
-    const bedInstance = await ACM_RoomBedType.findByPk(form.typeId);
+    const bedInstance = await ACM_RoomBedType.findByPk(form.bedId);
     if (!bedInstance) {
       errorMessages.push('Bed Type Data Not Found');
     }
