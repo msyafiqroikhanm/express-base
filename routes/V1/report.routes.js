@@ -79,6 +79,7 @@ router.get(
       ]),
     );
   },
+  Authentication.fnb,
   ReportController.getFnBReport,
 );
 

@@ -5,6 +5,9 @@ const {
   REF_VehicleScheduleStatus, ENV_Event, ENV_TimeEvent, PAR_Contingent, PAR_Participant, PAR_Group,
   REF_EventCategory, REF_GroupStatus, REF_Region, REF_IdentityType, REF_ParticipantType, QRM_QR,
   ACM_Facility, ACM_Room, REF_RoomType, ACM_RoomBedType, ACM_ParticipantLodger, REF_LodgerStatus,
+  FNB_Kitchen, FNB_KitchenTarget, FNB_Menu, FNB_Schedule, FNB_Courier, FNB_ScheduleMenu,
+  REF_MenuType, REF_FoodType, REF_FoodScheduleStatus,
+
 } = require('../models');
 
 const generateTransportationReport = async (limitation = {}) => {
@@ -315,9 +318,87 @@ const generateAccomodationReport = async (limitation = {}) => {
   };
 };
 
+const generateFNBReport = async (limitation = {}) => {
+  const fnb = await FNB_Kitchen.findAll({
+    where: limitation?.picId ? { picId: limitation.picId } : null,
+    attributes: ['name', 'phoneNbr', 'address'],
+    include: [
+      {
+        model: FNB_KitchenTarget,
+        attributes: ['date', 'quantityTarget', 'quantityActual'],
+        include: {
+          model: FNB_Menu,
+          attributes: ['name'],
+          as: 'menu',
+          include: [
+            { model: REF_MenuType, attributes: ['name'], as: 'menuType' },
+            { model: REF_FoodType, attributes: ['name'], as: 'foodType' },
+          ],
+        },
+      },
+      {
+        model: FNB_Schedule,
+        attributes: ['name', 'pickUpTime', 'dropOfTime', 'vehiclePlateNo'],
+        include: [
+          { model: REF_FoodScheduleStatus, attributes: ['name'], as: 'status' },
+          { model: FNB_Courier, attributes: ['name'], as: 'courier' },
+          {
+            model: FNB_ScheduleMenu,
+            attributes: ['quantity'],
+            as: 'items',
+            include: {
+              model: FNB_KitchenTarget,
+              attributes: ['id'],
+              as: 'kitchenTarget',
+              include: { model: FNB_Menu, attributes: ['name'], as: 'menu' },
+            },
+          },
+        ],
+      },
+    ],
+  });
+
+  fnb.forEach((kitchen) => {
+    kitchen.dataValues.productions = [];
+    kitchen.dataValues.deliveries = [];
+
+    kitchen.FNB_KitchenTargets.forEach((production) => {
+      production.dataValues.food = production?.menu?.dataValues.name || null;
+      production.dataValues.target = production?.menu?.foodType?.dataValues.name || null;
+      production.dataValues.type = production?.menu?.menuType?.dataValues.name || null;
+
+      delete production.dataValues.menu;
+      kitchen.dataValues.productions.push(production);
+    });
+
+    kitchen.FNB_Schedules.forEach((delivery) => {
+      delivery.dataValues.status = delivery?.status?.dataValues.name || null;
+      delivery.dataValues.courier = delivery?.courier?.dataValues.name || null;
+
+      delivery.items.forEach((item) => {
+        item.dataValues.food = item?.kitchenTarget?.menu?.dataValues.name || null;
+
+        delete item.dataValues.kitchenTarget;
+      });
+
+      kitchen.dataValues.deliveries.push(delivery);
+    });
+
+    delete kitchen.dataValues.FNB_KitchenTargets;
+    delete kitchen.dataValues.FNB_Schedules;
+  });
+
+  return {
+    success: true,
+    message: 'Success Generating FnB Report',
+    content: fnb,
+  };
+};
+
 module.exports = {
   generateTransportationReport,
   generateEventReport,
   generateParticipantReport,
   generateAccomodationReport,
+  generateFNBReport,
 };

@@ -13,6 +13,7 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       FNB_Kitchen.hasMany(models.FNB_KitchenTarget, { foreignKey: 'kitchenId' });
+      FNB_Kitchen.hasMany(models.FNB_Schedule, { foreignKey: 'kitchenId' });
     }
   }
   FNB_Kitchen.init(

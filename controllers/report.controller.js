@@ -4,6 +4,7 @@ const {
   generateEventReport,
   generateParticipantReport,
   generateAccomodationReport,
+  generateFNBReport,
 } = require('../services/report.service');
 
 class ReportController {
@@ -54,9 +55,9 @@ class ReportController {
       // resrict data that is not an admin
       const where = {};
       if (
-        !req.user.limitation.isAdmin &&
-        req.user.limitation?.access?.picId &&
-        req.user.Role.name !== 'Admin Event'
+        !req.user.limitation.isAdmin
+        && req.user.limitation?.access?.picId
+        && req.user.Role.name !== 'Admin Event'
       ) {
         where.picId = req.user.limitation.access.picId;
         where.events = req.user.limitation.access.events;
@@ -75,8 +76,8 @@ class ReportController {
       res.url = `${req.method} ${req.originalUrl}`;
       res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
-      const where = {};
       // resrict data that is not an admin
+      const where = {};
       if (!req.user.limitation.isAdmin && req.user.limitation?.access?.picId) {
         where.picId = req.user.limitation.access.picId;
       }
@@ -93,6 +94,16 @@ class ReportController {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
       res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
+
+      // resrict data that is not an admin
+      const where = {};
+      if (!req.user.limitation.isAdmin && req.user.limitation?.access?.picId) {
+        where.picId = req.user.limitation.access.picId;
+      }
+
+      const data = await generateFNBReport(where);
+
+      return ResponseFormatter.success200(res, data.message, data.content);
     } catch (error) {
       next(error);
     }
