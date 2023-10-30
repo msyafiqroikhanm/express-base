@@ -205,6 +205,7 @@ const updateRoom = async (where, form) => {
 
   Instance.locationId = form.locationId ? form.locationId : Instance.locationId;
   Instance.typeId = form.typeId ? form.typeId : Instance.typeId;
+  Instance.bedId = form.bedId ? form.bedId : Instance.bedId;
   Instance.statusId = form.statusId ? form.statusId : Instance.statusId;
   Instance.name = form.name ? form.name : Instance.name;
   Instance.floor = form.floor ? form.floor : Instance.floor;
