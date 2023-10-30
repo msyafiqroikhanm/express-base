@@ -1,13 +1,19 @@
 const ResponseFormatter = require('../helpers/responseFormatter.helper');
 const { createNotifications } = require('../services/notification.service');
 const {
-  selectAllVendors, selectVendor, deleteVendor, updateVendor, createVendor, validateVendorInputs,
+  selectAllVendors,
+  selectVendor,
+  deleteVendor,
+  updateVendor,
+  createVendor,
+  validateVendorInputs,
 } = require('../services/vendor.service');
 
 class VendorController {
   static async getAll(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       // resrict data that is not an admin
       const where = {};
@@ -29,6 +35,7 @@ class VendorController {
   static async getDetail(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       // resrict data that is not an admin
       const where = {};
@@ -53,6 +60,7 @@ class VendorController {
   static async create(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       const inputs = await validateVendorInputs(req.body);
       if (!inputs.isValid && inputs.code === 400) {
@@ -65,12 +73,7 @@ class VendorController {
       const data = await createVendor(inputs.form);
 
       const io = req.app.get('socketIo');
-      await createNotifications(
-        io,
-        'Vendor Created',
-        data.content.id,
-        [data.content.name],
-      );
+      await createNotifications(io, 'Vendor Created', data.content.id, [data.content.name]);
 
       return ResponseFormatter.success201(res, data.message, data.content);
     } catch (error) {
@@ -81,6 +84,7 @@ class VendorController {
   static async update(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       const inputs = await validateVendorInputs(req.body, req.params.id);
       if (!inputs.isValid && inputs.code === 400) {
@@ -104,6 +108,7 @@ class VendorController {
   static async delete(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       const data = await deleteVendor(req.params.id);
       if (!data.success && data.code === 404) {

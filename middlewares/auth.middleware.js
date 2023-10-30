@@ -15,6 +15,7 @@ class AuthMiddleware {
   static async authenticate(req, res, next, requiredFeatures) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       passport.authenticate('jwt', { session: false }, (err, userData, info) => {
         // authenticate if user have login or not
@@ -31,11 +32,16 @@ class AuthMiddleware {
           return ResponseFormatter.error401(res, 'Please login to access this feature');
         }
         req.user = userData;
+        res.userLog = {
+          id: userData.id,
+          username: userData.username,
+          role: userData.Role.name,
+        };
 
         // check user access
         if (requiredFeatures) {
-          const authorized = req.user.Role.USR_Features.some(
-            (feature) => requiredFeatures.includes(feature.id),
+          const authorized = req.user.Role.USR_Features.some((feature) =>
+            requiredFeatures.includes(feature.id),
           );
 
           if (!authorized) {
@@ -52,6 +58,7 @@ class AuthMiddleware {
   static async accomodation(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       const limitation = { isAdmin: true, access: {} };
 
@@ -92,6 +99,7 @@ class AuthMiddleware {
   static async fnb(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       const limitation = { isAdmin: true, access: {} };
       if (req.user.Role.id !== rolesLib.superAdmin) {
@@ -159,6 +167,7 @@ class AuthMiddleware {
   static async participant(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       const limitation = { isAdmin: true, access: {} };
       if (req.user.participant.contingentId && req.user.Role.id !== rolesLib.superAdmin) {
@@ -176,6 +185,7 @@ class AuthMiddleware {
   static async dashboard(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       if (!req.user.Role.isAdministrative) {
         return ResponseFormatter.error401(res, "You Don't Have Access To This Service");
@@ -213,7 +223,12 @@ class AuthMiddleware {
         }
 
         // * accomodation
-        if (roles.has('Create Location') || roles.has('Create Room') || roles.has('Create Facility') || roles.has('Create Lodger')) {
+        if (
+          roles.has('Create Location') ||
+          roles.has('Create Room') ||
+          roles.has('Create Facility') ||
+          roles.has('Create Lodger')
+        ) {
           limitation.allowedDashboard.push('Accomodation Management');
           limitation.access.accomodation = {};
 
@@ -221,8 +236,7 @@ class AuthMiddleware {
             // case user is admin accomodation
             const locations = await ACM_Location.findAll({ attributes: ['id'] });
             const parsedLocation = locations.map((location) => location.id);
-            limitation.access.accomodation.locations = locations.length > 0
-              ? parsedLocation : [];
+            limitation.access.accomodation.locations = locations.length > 0 ? parsedLocation : [];
           } else if (req.user.PIC?.length > 0) {
             // case user is pic location for a hotel / venue
             const picLocTypes = await picTypeHelper().then((type) => [type.pic_location]);
@@ -236,8 +250,8 @@ class AuthMiddleware {
 
               const parsedLocation = locations.map((location) => location.id);
 
-              limitation.access.accomodation.locations = locations.length > 0
-                ? parsedLocation : [null];
+              limitation.access.accomodation.locations =
+                locations.length > 0 ? parsedLocation : [null];
             } else {
               limitation.access.accomodation.locations = [];
             }
@@ -247,7 +261,12 @@ class AuthMiddleware {
         }
 
         // * transportation
-        if (roles.has('View Vehicle Schedule') && (roles.has('Provide Vehicle Schedule') || roles.has('Absent Vehicle Schedule') || roles.has('Create Vehicle Schedule'))) {
+        if (
+          roles.has('View Vehicle Schedule') &&
+          (roles.has('Provide Vehicle Schedule') ||
+            roles.has('Absent Vehicle Schedule') ||
+            roles.has('Create Vehicle Schedule'))
+        ) {
           limitation.allowedDashboard.push('Transportation Management');
           limitation.access.transportation = {};
 
@@ -255,8 +274,8 @@ class AuthMiddleware {
             // case user is admin transportation
             const vendors = await TPT_Vendor.findAll({ attributes: ['id'] });
             const parsedVendors = vendors.map((vendor) => vendor.id);
-            limitation.access.transportation.vendors = parsedVendors.length > 0
-              ? parsedVendors : [];
+            limitation.access.transportation.vendors =
+              parsedVendors.length > 0 ? parsedVendors : [];
           } else if (req.user.PIC?.length > 0) {
             // case user is pic transportation for a vendor
             const picTypes = await picTypeHelper().then((type) => [type.pic_transportation]);
@@ -270,8 +289,8 @@ class AuthMiddleware {
 
               const parsedVendors = vendors.map((vendor) => vendor.id);
 
-              limitation.access.transportation.vendors = parsedVendors.length > 0
-                ? parsedVendors : [null];
+              limitation.access.transportation.vendors =
+                parsedVendors.length > 0 ? parsedVendors : [null];
             } else {
               limitation.access.transportation.vendors = [];
             }
@@ -279,7 +298,13 @@ class AuthMiddleware {
         }
 
         // * fnb
-        if (roles.has('Create Menu') || roles.has('Create Kitchen') || roles.has('Create Kitchen Target') || roles.has('Create Courier') || roles.has('Create FNB Schedule')) {
+        if (
+          roles.has('Create Menu') ||
+          roles.has('Create Kitchen') ||
+          roles.has('Create Kitchen Target') ||
+          roles.has('Create Courier') ||
+          roles.has('Create FNB Schedule')
+        ) {
           limitation.allowedDashboard.push('FnB Management');
           limitation.access.fnb = {};
 
@@ -287,8 +312,7 @@ class AuthMiddleware {
             // case user is admin FnB
             const kitchens = await FNB_Kitchen.findAll({ attributes: ['id'] });
             const parsedLocation = kitchens.map((kitchen) => kitchen.id);
-            limitation.access.fnb.kitchens = kitchens.length > 0
-              ? parsedLocation : [];
+            limitation.access.fnb.kitchens = kitchens.length > 0 ? parsedLocation : [];
           } else if (req.user.PIC?.length > 0) {
             // case user is pic kitchen for a kitchen
             const picKitchenType = await picTypeHelper().then((type) => [type.pic_kitchen]);
@@ -302,8 +326,7 @@ class AuthMiddleware {
 
               const parsedKitchen = kitchens.map((kitchen) => kitchen.id);
 
-              limitation.access.fnb.kitchens = kitchens.length > 0
-                ? parsedKitchen : [null];
+              limitation.access.fnb.kitchens = kitchens.length > 0 ? parsedKitchen : [null];
             } else {
               limitation.access.fnb.kitchens = [];
             }
@@ -313,7 +336,10 @@ class AuthMiddleware {
         }
 
         // * event
-        if (roles.has('View Event') && (roles.has('Create Event') || roles.has('Update Event') || roles.has('Delete Event'))) {
+        if (
+          roles.has('View Event') &&
+          (roles.has('Create Event') || roles.has('Update Event') || roles.has('Delete Event'))
+        ) {
           limitation.allowedDashboard.push('Event Management');
           limitation.access.event = {};
 
@@ -321,8 +347,7 @@ class AuthMiddleware {
             // case user is admin event
             const events = await ENV_Event.findAll({ attributes: ['id'] });
             const parsedEvent = events.map((event) => event.id);
-            limitation.access.event.events = parsedEvent.length > 0
-              ? parsedEvent : [];
+            limitation.access.event.events = parsedEvent.length > 0 ? parsedEvent : [];
           } else if (req.user.PIC?.length > 0) {
             // case user is pic event
             const picTypes = await picTypeHelper().then((type) => [type.pic_event]);
@@ -337,8 +362,7 @@ class AuthMiddleware {
 
               const events = eventLimitation.map((event) => event.id);
 
-              limitation.access.event.events = events.length > 0
-                ? events : [null];
+              limitation.access.event.events = events.length > 0 ? events : [null];
             } else {
               limitation.access.event.events = [];
             }
@@ -346,13 +370,17 @@ class AuthMiddleware {
         }
 
         // * customer service
-        if (roles.has('View Broadcast Template') || (roles.has('View Broadcast'))) {
+        if (roles.has('View Broadcast Template') || roles.has('View Broadcast')) {
           limitation.allowedDashboard.push('Customer Service Management');
         }
       } else {
         limitation.allowedDashboard = [
-          'Participant Management', 'Accomodation Management', 'Event Management', 'Transportation Management',
-          'FnB Management', 'Customer Service Management',
+          'Participant Management',
+          'Accomodation Management',
+          'Event Management',
+          'Transportation Management',
+          'FnB Management',
+          'Customer Service Management',
         ];
       }
 
@@ -366,6 +394,7 @@ class AuthMiddleware {
   static async transportation(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       const driverInstance = await TPT_Driver.findOne({
         where: { userId: req.user.id },
@@ -410,6 +439,7 @@ class AuthMiddleware {
   static async event(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       const limitation = { isAdmin: true, access: {} };
 

@@ -1,6 +1,11 @@
 const ResponseFormatter = require('../helpers/responseFormatter.helper');
 const {
-  selectAllDrivers, selectDriver, updateDriver, deleteDriver, validateDriverInputs, createDriver,
+  selectAllDrivers,
+  selectDriver,
+  updateDriver,
+  deleteDriver,
+  validateDriverInputs,
+  createDriver,
 } = require('../services/driver.service');
 const { createNotifications } = require('../services/notification.service');
 
@@ -8,6 +13,7 @@ class DriverController {
   static async getAll(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       // resrict data that is not an admin
       const where = {};
@@ -30,6 +36,7 @@ class DriverController {
   static async getDetail(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       // resrict data that is not an admin
       const where = {};
@@ -54,6 +61,7 @@ class DriverController {
   static async create(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       // resrict data that is not an admin
       const where = {};
@@ -75,12 +83,10 @@ class DriverController {
       const data = await createDriver(inputs.form);
 
       const io = req.app.get('socketIo');
-      await createNotifications(
-        io,
-        'Driver Created',
-        data.content.id,
-        [data.content.name, data.content.vendor],
-      );
+      await createNotifications(io, 'Driver Created', data.content.id, [
+        data.content.name,
+        data.content.vendor,
+      ]);
 
       return ResponseFormatter.success201(res, data.message, data.content);
     } catch (error) {
@@ -91,6 +97,7 @@ class DriverController {
   static async update(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       // resrict data that is not an admin
       const where = {};
@@ -123,6 +130,7 @@ class DriverController {
   static async delete(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       // resrict data that is not an admin
       const where = {};

@@ -17,6 +17,7 @@ class LodgerController {
   static async getAll(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       // console.log(JSON.stringify(req.user, null, 2));
       const where = {};
@@ -55,6 +56,7 @@ class LodgerController {
   static async getParticipantsWhoHaveNotReveivedAccomodation(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       // const where = {};
       // if (req.query?.contingentId) {
@@ -86,6 +88,7 @@ class LodgerController {
   static async getDetail(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       const where = {};
       if (!req.user.limitation.isAdmin) {
@@ -104,6 +107,7 @@ class LodgerController {
   static async create(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       const inputs = await validateLodgerInputs(req.body);
       if (!inputs.isValid && inputs.code === 404) {
@@ -131,6 +135,7 @@ class LodgerController {
   static async update(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       const data = await updateLodger(req.params.id, req.body);
       if (!data.success && data.code === 404) {
@@ -149,6 +154,7 @@ class LodgerController {
   static async checkin(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       const data = await checkinLodger(req.params.id, req.body);
       if (!data.success && data.code === 404) {
@@ -174,6 +180,7 @@ class LodgerController {
   static async checkout(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       const data = await checkoutLodger(req.params.id, req.body);
       if (!data.success && data.code === 404) {
@@ -199,6 +206,7 @@ class LodgerController {
   static async delete(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       const data = await deleteLodger(req.params.id);
       if (!data.success) {

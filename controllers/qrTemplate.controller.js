@@ -14,6 +14,7 @@ class QrTemplate {
   static async getAll(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       const data = await selectAllQRTemplates();
 
@@ -26,6 +27,7 @@ class QrTemplate {
   static async getDetail(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       const data = await selectQrTemplate(req.params.id);
       if (!data.success) {
@@ -41,6 +43,7 @@ class QrTemplate {
   static async create(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       const inputs = await validateQRTemplateInputs(req.file, req.body);
       if (!inputs.isValid) {
@@ -74,6 +77,7 @@ class QrTemplate {
   static async update(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       const inputs = await validateQRTemplateInputs(req.file, req.body);
       if (!inputs.isValid) {
@@ -107,6 +111,7 @@ class QrTemplate {
   static async delete(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       const data = await deleteQRTemplate(req.params.id);
       if (!data.success) {

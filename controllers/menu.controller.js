@@ -13,6 +13,7 @@ class MenuController {
   static async getAll(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       // console.log(JSON.stringify(req.user.limitation, null, 2));
       const where = {};
@@ -39,6 +40,7 @@ class MenuController {
   static async getDetail(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       const where = { id: req.params.id };
 
@@ -56,6 +58,7 @@ class MenuController {
   static async create(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       const inputs = await validateMenuInputs(req.body);
       if (!inputs.isValid && inputs.code === 404) {
@@ -65,12 +68,7 @@ class MenuController {
       const data = await createMenu(inputs.form);
 
       const io = req.app.get('socketIo');
-      await createNotifications(
-        io,
-        'Menu Created',
-        data.content.id,
-        [data.content.name],
-      );
+      await createNotifications(io, 'Menu Created', data.content.id, [data.content.name]);
 
       return ResponseFormatter.success201(res, data.message, data.content);
     } catch (error) {
@@ -81,6 +79,7 @@ class MenuController {
   static async update(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       const where = { id: req.params.id };
 
@@ -98,6 +97,7 @@ class MenuController {
   static async delete(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       const where = { id: req.params.id };
 

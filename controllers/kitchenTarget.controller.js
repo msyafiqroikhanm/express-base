@@ -15,6 +15,7 @@ class KitchenTargetController {
   static async getAll(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       // console.log(JSON.stringify(req.user.limitation, null, 2));
       const where = {};
@@ -43,6 +44,7 @@ class KitchenTargetController {
   static async getDetail(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       const where = { id: req.params.id };
       if (!req.user.limitation.isAdmin) {
@@ -63,6 +65,7 @@ class KitchenTargetController {
   static async create(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       if (!req.user.limitation.isAdmin) {
         req.body.picId = req.user.limitation.access.picId;
@@ -81,12 +84,10 @@ class KitchenTargetController {
       const data = await createKitchenTarget(inputs.form);
 
       const io = req.app.get('socketIo');
-      await createNotifications(
-        io,
-        'Kitchen Target Created',
-        data.content.id,
-        [`menu ${data.content.menu} for ${data.content.quantityTarget} pax`, data.content.kitchen],
-      );
+      await createNotifications(io, 'Kitchen Target Created', data.content.id, [
+        `menu ${data.content.menu} for ${data.content.quantityTarget} pax`,
+        data.content.kitchen,
+      ]);
 
       return ResponseFormatter.success201(res, data.message, data.content);
     } catch (error) {
@@ -97,6 +98,7 @@ class KitchenTargetController {
   static async update(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       const where = { id: req.params.id };
       if (!req.user.limitation.isAdmin) {
@@ -120,6 +122,7 @@ class KitchenTargetController {
   static async updateActualKitchenTarget(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       const where = { id: req.params.id };
       if (!req.user.limitation.isAdmin) {
@@ -133,12 +136,10 @@ class KitchenTargetController {
       }
 
       const io = req.app.get('socketIo');
-      await createNotifications(
-        io,
-        'Kitchen Target Updated',
-        data.content.id,
-        [data.content.kitchen, `${data.content.quantityActual} pax for menu ${data.content.menu}`],
-      );
+      await createNotifications(io, 'Kitchen Target Updated', data.content.id, [
+        data.content.kitchen,
+        `${data.content.quantityActual} pax for menu ${data.content.menu}`,
+      ]);
 
       return ResponseFormatter.success200(res, data.message, data.content);
     } catch (error) {
@@ -149,6 +150,7 @@ class KitchenTargetController {
   static async delete(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       const where = { id: req.params.id };
       if (!req.user.limitation.isAdmin) {

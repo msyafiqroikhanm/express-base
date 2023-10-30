@@ -18,6 +18,7 @@ class FNBFeedbackController {
   static async summary(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       // resrict data that is not an admin
       // console.log(JSON.stringify(req.user.limitation));
@@ -41,6 +42,7 @@ class FNBFeedbackController {
   static async summaryContingent(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       // resrict data that is not an admin
       // console.log(JSON.stringify(req.user.limitation));
@@ -64,6 +66,7 @@ class FNBFeedbackController {
   static async getAll(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       // resrict data that is not an admin
       // console.log(JSON.stringify(req.user.limitation));
@@ -87,6 +90,7 @@ class FNBFeedbackController {
   static async getDetail(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       // resrict data that is not an admin
       const where = { id: req.params.id };
@@ -117,6 +121,7 @@ class FNBFeedbackController {
   static async create(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       // resrict data that is not an admin
       const limitation = {};
@@ -146,6 +151,7 @@ class FNBFeedbackController {
   static async update(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       // resrict data that is not an admin
       const where = { id: req.params.id };
@@ -178,6 +184,7 @@ class FNBFeedbackController {
   static async updateProgress(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       // resrict data that is not an admin
       const where = { id: req.params.id };
@@ -210,6 +217,7 @@ class FNBFeedbackController {
   static async delete(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       // resrict data that is not an admin
       const where = { id: req.params.id };

@@ -11,6 +11,7 @@ class SysConfiguration {
   static async getAll(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       const data = await selectAllConfigurations();
 
@@ -24,6 +25,7 @@ class SysConfiguration {
   static async getDetail(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
       const data = await selectConfiguration(req.params.id);
 
       if (!data.success) {
@@ -39,13 +41,18 @@ class SysConfiguration {
   static async create(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       const data = await createConfiguration(req.body);
       if (!data.success) {
         return ResponseFormatter.error400(res, 'Invalid Data', [data.message]);
       }
 
-      return ResponseFormatter.success201(res, 'System Configuration Successfully Created', data.content);
+      return ResponseFormatter.success201(
+        res,
+        'System Configuration Successfully Created',
+        data.content,
+      );
     } catch (error) {
       next(error);
     }
@@ -54,6 +61,7 @@ class SysConfiguration {
   static async update(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       const data = await updateConfiguration(req.params.id, req.body);
       if (!data.success && data.code === 400) {
@@ -63,7 +71,11 @@ class SysConfiguration {
         return ResponseFormatter.error404(res, 'Data Not Found', [data.message]);
       }
 
-      return ResponseFormatter.success200(res, 'System Configuration Successfully Updated', data.content);
+      return ResponseFormatter.success200(
+        res,
+        'System Configuration Successfully Updated',
+        data.content,
+      );
     } catch (error) {
       next(error);
     }
@@ -72,13 +84,18 @@ class SysConfiguration {
   static async delete(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       const data = await deleteConfiguration(req.params.id);
       if (!data.success) {
         return ResponseFormatter.error404(res, 'Data Not Found', [data.message]);
       }
 
-      return ResponseFormatter.success200(res, 'System Configuration Successfully Deleted', data.content);
+      return ResponseFormatter.success200(
+        res,
+        'System Configuration Successfully Deleted',
+        data.content,
+      );
     } catch (error) {
       next(error);
     }

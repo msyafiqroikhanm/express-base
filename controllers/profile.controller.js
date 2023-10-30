@@ -1,7 +1,10 @@
 const { deleteFiles } = require('../helpers/deleteMultipleFile.helper');
 const ResponseFormatter = require('../helpers/responseFormatter.helper');
 const {
-  selectDetailUser, validatePasswordInputs, updateUserPassword, validateProfileInputs,
+  selectDetailUser,
+  validatePasswordInputs,
+  updateUserPassword,
+  validateProfileInputs,
   updateUserProfile,
 } = require('../services/user.service');
 
@@ -9,6 +12,7 @@ class ProfileController {
   static async get(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       const data = await selectDetailUser(req.user.id);
       if (!data.success) {
@@ -24,6 +28,7 @@ class ProfileController {
   static async update(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       const inputs = await validateProfileInputs(req.body, req.user.id, req.files);
       if (!inputs.isValid && inputs.code === 404) {
@@ -63,6 +68,7 @@ class ProfileController {
   static async changePassword(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       const inputs = await validatePasswordInputs(req.user.id, req.body);
       if (!inputs.isValid && inputs.code === 400) {

@@ -12,6 +12,7 @@ class QR {
   static async getAll(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       const data = await selectAllQR();
       if (!data.success) {
@@ -27,6 +28,7 @@ class QR {
   static async getDetail(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       const data = await selectQR(req.params.id);
       if (!data.success && data.code === 404) {
@@ -42,6 +44,7 @@ class QR {
   static async create(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       // check validity of user input
       const inputs = await validateQRInputs(req.body);
@@ -67,6 +70,7 @@ class QR {
   static async update(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       // check validity of user input
       const inputs = await validateQRInputs(req.body);
@@ -95,6 +99,7 @@ class QR {
   static async delete(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       const data = await deleteQR(req.params.id);
       if (!data.success) {

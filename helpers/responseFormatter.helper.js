@@ -6,6 +6,9 @@ class ResponseFormatter {
     const code = 500;
     if (res.url) {
       const logger = new LoggerService(res.url);
+      if (res.userLog) {
+        logger.setUserData(res.userLog);
+      }
       logger.setLogData(msg);
       logger.error(code, status);
     }
@@ -29,6 +32,12 @@ class ResponseFormatter {
     const status = 'OK';
     if (res.url) {
       const logger = new LoggerService(res.url);
+      if (res.userLog) {
+        logger.setUserData(res.userLog);
+      }
+      if (res.ip) {
+        logger.setIP(res.ip);
+      }
       logger.info(code, message);
     }
     return res.status(code).json({
@@ -47,6 +56,13 @@ class ResponseFormatter {
     const status = 'Created';
     if (res.url) {
       const logger = new LoggerService(res.url);
+      if (res.userLog) {
+        logger.setUserData(res.userLog);
+      }
+      if (res.ip) {
+        logger.setIP(res.ip);
+      }
+
       logger.info(code, message);
     }
     return res.status(code).json({
@@ -65,6 +81,12 @@ class ResponseFormatter {
     const status = 'Bad Request';
     if (res.url) {
       const logger = new LoggerService(res.url);
+      if (res.userLog) {
+        logger.setUserData(res.userLog);
+      }
+      if (res.ip) {
+        logger.setIP(res.ip);
+      }
       logger.warn(code, message);
     }
     return res.status(code).json({
@@ -83,6 +105,12 @@ class ResponseFormatter {
     const status = 'Unauthorized';
     if (res.url) {
       const logger = new LoggerService(res.url);
+      if (res.userLog) {
+        logger.setUserData(res.userLog);
+      }
+      if (res.ip) {
+        logger.setIP(res.ip);
+      }
       logger.warn(code, message);
     }
     return res.status(code).json({
@@ -101,6 +129,12 @@ class ResponseFormatter {
     const status = 'Not Found';
     if (res.url) {
       const logger = new LoggerService(res.url);
+      if (res.userLog) {
+        logger.setUserData(res.userLog);
+      }
+      if (res.ip) {
+        logger.setIP(res.ip);
+      }
       logger.warn(code, message);
     }
     return res.status(code).json({
@@ -119,6 +153,12 @@ class ResponseFormatter {
     const status = 'Not Acceptable';
     if (res.url) {
       const logger = new LoggerService(res.url);
+      if (res.userLog) {
+        logger.setUserData(res.userLog);
+      }
+      if (res.ip) {
+        logger.setIP(res.ip);
+      }
       logger.warn(code, message);
     }
     return res.status(code).json({
@@ -137,6 +177,12 @@ class ResponseFormatter {
     const status = 'Conflict';
     if (res.url) {
       const logger = new LoggerService(res.url);
+      if (res.userLog) {
+        logger.setUserData(res.userLog);
+      }
+      if (res.ip) {
+        logger.setIP(res.ip);
+      }
       logger.warn(code, message);
     }
     return res.status(code).json({

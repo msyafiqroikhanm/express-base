@@ -1,6 +1,8 @@
 const ResponseFormatter = require('../helpers/responseFormatter.helper');
 const {
-  selectAllInformationCenters, validateInformationCenterInputs, createInformationCenter,
+  selectAllInformationCenters,
+  validateInformationCenterInputs,
+  createInformationCenter,
   validateInformationCenterQuery,
   selectInformationCenter,
   updateInfomationCenter,
@@ -11,6 +13,7 @@ class InformationCenterController {
   static async getAll(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       const query = await validateInformationCenterQuery(req.query);
 
@@ -25,6 +28,7 @@ class InformationCenterController {
   static async getDetail(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       const data = await selectInformationCenter(req.params.id);
       if (!data.success && data.code === 404) {
@@ -40,6 +44,7 @@ class InformationCenterController {
   static async create(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       const inputs = await validateInformationCenterInputs(req.body);
       if (!inputs.isValid && inputs.code === 400) {
@@ -60,6 +65,7 @@ class InformationCenterController {
   static async update(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       const inputs = await validateInformationCenterInputs(req.body);
       if (!inputs.isValid && inputs.code === 400) {
@@ -83,6 +89,7 @@ class InformationCenterController {
   static async delete(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       const data = await deleteInformationCenter(req.params.id);
       if (!data.success && data.code === 404) {

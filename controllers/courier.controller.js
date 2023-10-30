@@ -15,6 +15,7 @@ class CourierController {
   static async getAll(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       const where = {};
       if (req.query?.isAvailable) {
@@ -31,6 +32,7 @@ class CourierController {
   static async getDetail(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       const where = { id: req.params.id };
       const data = await selectCourier(where);
@@ -46,6 +48,7 @@ class CourierController {
   static async create(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       req.body.committeeTypeId = 4; //* fnb
       // req.body.roleId =
@@ -78,6 +81,7 @@ class CourierController {
   static async update(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       const where = { id: req.params.id };
 
@@ -95,6 +99,7 @@ class CourierController {
   static async delete(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       const where = { id: req.params.id };
 

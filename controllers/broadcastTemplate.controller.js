@@ -18,6 +18,7 @@ class BroadcastTemplateController {
   static async getAll(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       const query = {};
       if (req.query?.metaStatus) {
@@ -35,6 +36,7 @@ class BroadcastTemplateController {
   static async getDetail(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       const data = await selectTemplate(req.params.id);
       if (!data.success && data.code === 404) {
@@ -50,6 +52,7 @@ class BroadcastTemplateController {
   static async create(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       const inputs = await validateTemplateInputs(req.body, req.file);
       if (!inputs.isValid && inputs.code === 400) {
@@ -86,6 +89,7 @@ class BroadcastTemplateController {
   static async update(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       const inputs = await validateTemplateInputs(req.body, req.file, req.params.id);
       if (!inputs.isValid && inputs.code === 400) {
@@ -128,6 +132,7 @@ class BroadcastTemplateController {
   static async delete(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       const meta = await deleteMetaWhatsappTemplate(req.params.id);
       if (!meta.success && meta.code === 400) {

@@ -1,7 +1,11 @@
 const ResponseFormatter = require('../helpers/responseFormatter.helper');
 const {
-  selectAllContingents, selectContingent, validateContingentInput,
-  createContingent, updateContingent, deleteContingent,
+  selectAllContingents,
+  selectContingent,
+  validateContingentInput,
+  createContingent,
+  updateContingent,
+  deleteContingent,
 } = require('../services/continget.service');
 const { createNotifications } = require('../services/notification.service');
 
@@ -9,6 +13,7 @@ class Contingent {
   static async getAll(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       // resrict data that is not an admin
       const where = {};
@@ -27,6 +32,7 @@ class Contingent {
   static async getDetail(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       // resrict data that is not an admin
       const where = {};
@@ -48,6 +54,7 @@ class Contingent {
   static async create(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       const inputs = await validateContingentInput(req.body);
       if (!inputs.isValid && inputs.code === 400) {
@@ -63,12 +70,7 @@ class Contingent {
       }
 
       const io = req.app.get('socketIo');
-      await createNotifications(
-        io,
-        'Contingent Created',
-        data.content.id,
-        [data.content.name],
-      );
+      await createNotifications(io, 'Contingent Created', data.content.id, [data.content.name]);
 
       return ResponseFormatter.success201(res, data.message, data.content);
     } catch (error) {
@@ -79,6 +81,7 @@ class Contingent {
   static async update(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       const inputs = await validateContingentInput(req.body, req.params.id);
       if (!inputs.isValid && inputs.code === 400) {
@@ -102,6 +105,7 @@ class Contingent {
   static async delete(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       const data = await deleteContingent(req.params.id);
       if (!data.success && data.code === 404) {

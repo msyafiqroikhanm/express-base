@@ -1,13 +1,18 @@
 const ResponseFormatter = require('../helpers/responseFormatter.helper');
 const {
-  selectAllArrivalDepartures, selectArrivalDeparture, validateArrivalDepartureInputs,
-  createArrivalDeparture, updateArrivalDeparture, deleteArrivalDeparture,
+  selectAllArrivalDepartures,
+  selectArrivalDeparture,
+  validateArrivalDepartureInputs,
+  createArrivalDeparture,
+  updateArrivalDeparture,
+  deleteArrivalDeparture,
 } = require('../services/arrivalDeparture.service');
 
 class ArrivalDeparture {
   static async getAll(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       // resrict data that is not an admin
       const where = {};
@@ -26,6 +31,7 @@ class ArrivalDeparture {
   static async getDetail(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       // resrict data that is not an admin
       const where = {};
@@ -47,6 +53,7 @@ class ArrivalDeparture {
   static async create(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       // resrict data that is not an admin
       const where = {};
@@ -73,6 +80,7 @@ class ArrivalDeparture {
   static async update(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       // resrict data that is not an admin
       const where = {};
@@ -102,6 +110,7 @@ class ArrivalDeparture {
   static async delete(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       // resrict data that is not an admin
       const where = {};

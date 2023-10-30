@@ -2,7 +2,11 @@ const { relative } = require('path');
 const deleteFile = require('../helpers/deleteFile.helper');
 const ResponseFormatter = require('../helpers/responseFormatter.helper');
 const {
-  selectAllBroadcasts, selectBroadcast, validateBroadcastInputs, createBroadcast, scheduleBroadcast,
+  selectAllBroadcasts,
+  selectBroadcast,
+  validateBroadcastInputs,
+  createBroadcast,
+  scheduleBroadcast,
   updateBroadcast,
   deleteBroadcast,
 } = require('../services/broadcast.service');
@@ -11,6 +15,7 @@ class BroadcastController {
   static async getAll(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       const data = await selectAllBroadcasts();
 
@@ -23,6 +28,7 @@ class BroadcastController {
   static async getDetail(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       const data = await selectBroadcast(req.params.id);
       if (!data.success && data.code === 404) {
@@ -38,6 +44,7 @@ class BroadcastController {
   static async create(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       const inputs = await validateBroadcastInputs(req.body, req.file);
       if (!inputs.isValid && inputs.code === 400) {
@@ -73,6 +80,7 @@ class BroadcastController {
   static async update(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       const inputs = await validateBroadcastInputs(req.body, req.file);
       if (!inputs.isValid && inputs.code === 400) {
@@ -121,6 +129,7 @@ class BroadcastController {
   static async delete(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       const data = await deleteBroadcast(req.params.id);
       if (!data.success && data.code === 400) {

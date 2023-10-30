@@ -1,6 +1,8 @@
 const ResponseFormatter = require('../helpers/responseFormatter.helper');
 const {
-  generateTransportationReport, generateEventReport, generateParticipantReport,
+  generateTransportationReport,
+  generateEventReport,
+  generateParticipantReport,
   generateAccomodationReport,
 } = require('../services/report.service');
 
@@ -8,6 +10,7 @@ class ReportController {
   static async getParticipantReport(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       // resrict data that is not an admin
       const where = {};
@@ -26,6 +29,7 @@ class ReportController {
   static async getTransportationReport(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       // resrict data that is not an admin
       const where = {};
@@ -45,10 +49,15 @@ class ReportController {
   static async getEventReport(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       // resrict data that is not an admin
       const where = {};
-      if (!req.user.limitation.isAdmin && req.user.limitation?.access?.picId && req.user.Role.name !== 'Admin Event') {
+      if (
+        !req.user.limitation.isAdmin &&
+        req.user.limitation?.access?.picId &&
+        req.user.Role.name !== 'Admin Event'
+      ) {
         where.picId = req.user.limitation.access.picId;
         where.events = req.user.limitation.access.events;
       }
@@ -64,6 +73,7 @@ class ReportController {
   static async getAccomodationReport(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       const where = {};
       // resrict data that is not an admin
@@ -82,6 +92,7 @@ class ReportController {
   static async getFnBReport(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
     } catch (error) {
       next(error);
     }
