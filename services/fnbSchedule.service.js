@@ -870,7 +870,7 @@ const updateProgressFnBSchedule = async (form, where, limitation = null) => {
   if ([canceled, deliveryCompleted].includes(Number(form.statusId))) {
     // console.log({ test: 'test' });
     if (Number(form.statusId) === deliveryCompleted) {
-      formUpdateScheduleInstance.dropOfTime = new Date();
+      formUpdateScheduleInstance.dropOfTime = form.dropOfTime || new Date();
       console.log(formUpdateScheduleInstance.dropOfTime);
     }
     await FNB_Courier.update(
