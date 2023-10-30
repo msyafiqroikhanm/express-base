@@ -29,6 +29,7 @@ class Participant {
   static async getAll(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       // resrict data that is not an admin
       const where = {};
@@ -50,6 +51,7 @@ class Participant {
   static async search(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       // resrict data that is not an admin
       const where = {
@@ -84,6 +86,7 @@ class Participant {
   static async getDetail(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       // resrict data that is not an admin
       const where = {};
@@ -105,6 +108,7 @@ class Participant {
   static async create(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       // resrict data that is not an admin
       const where = {};
@@ -145,12 +149,7 @@ class Participant {
       }
 
       const io = req.app.get('socketIo');
-      await createNotifications(
-        io,
-        'Participant Created',
-        data.content.id,
-        [data.content.name],
-      );
+      await createNotifications(io, 'Participant Created', data.content.id, [data.content.name]);
 
       return ResponseFormatter.success201(res, data.message, data.content);
     } catch (error) {
@@ -165,6 +164,7 @@ class Participant {
   static async createViaImport(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       const data = await createParticipantViaImport(req.file);
       if (!data.success && data.code === 400) {
@@ -192,6 +192,7 @@ class Participant {
   static async update(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       // resrict data that is not an admin
       const where = {};
@@ -237,6 +238,7 @@ class Participant {
   static async delete(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       // resrict data that is not an admin
       const where = { id: req.params.id };
@@ -266,6 +268,7 @@ class Participant {
   static async track(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       const data = await trackingParticipant(req.body);
       if (!data.success && data.code === 404) {
@@ -281,6 +284,7 @@ class Participant {
   static async createCommittee(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       const inputs = await validateCommitteeInputs(req.body, req.file, null);
       if (!inputs.isValid && inputs.code === 404) {
@@ -304,12 +308,7 @@ class Participant {
       }
 
       const io = req.app.get('socketIo');
-      await createNotifications(
-        io,
-        'Participant Created',
-        data.content.id,
-        [data.content.name],
-      );
+      await createNotifications(io, 'Participant Created', data.content.id, [data.content.name]);
 
       return ResponseFormatter.success201(res, data.message, data.content);
     } catch (error) {
@@ -324,6 +323,7 @@ class Participant {
   static async updateCommittee(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       const inputs = await validateCommitteeInputs(req.body, req.file, req.params.id);
       if (!inputs.isValid && inputs.code === 404) {
@@ -359,6 +359,7 @@ class Participant {
   static async createCommitteeViaImport(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       const data = await createCommitteeViaImport(req.file);
       if (!data.success && data.code === 400) {
@@ -389,6 +390,7 @@ class Participant {
   static async TransportationSchedule(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       // resrict data that is not an admin
       const where = {};
@@ -410,6 +412,7 @@ class Participant {
   static async getAllParticipants(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       // resrict data that is not an admin
       const where = {};
@@ -431,6 +434,7 @@ class Participant {
   static async getAllCommittees(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       const data = await selectAllCommitteeParticipants(req.query);
       if (!data.success) {
@@ -450,10 +454,15 @@ class Participant {
       if (!req.user?.limitation.isAdmin) {
         where.contingentId = req.user.limitation.access.contingentId;
       }
-      if (!req.user?.limitation.isAdmin
-          && req.user?.Role.name?.toLowerCase() === 'pic participant'
-          && req.user.participantId !== req.params.id) {
-        return ResponseFormatter.error401(res, "Can't Access File That Belongs To Another Participant");
+      if (
+        !req.user?.limitation.isAdmin &&
+        req.user?.Role.name?.toLowerCase() === 'pic participant' &&
+        req.user.participantId !== req.params.id
+      ) {
+        return ResponseFormatter.error401(
+          res,
+          "Can't Access File That Belongs To Another Participant",
+        );
       }
 
       const data = await downloadParticipantSecretFile(req.params.id, req.params.file, where);

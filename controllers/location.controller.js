@@ -14,6 +14,7 @@ class LocationController {
   static async getAll(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       const where = {};
       if (!req.user.limitation.isAdmin) {
@@ -36,6 +37,7 @@ class LocationController {
   static async getDetail(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       const where = { id: req.params.id };
       if (!req.user.limitation.isAdmin) {
@@ -56,6 +58,7 @@ class LocationController {
   static async create(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       if (!req.user.limitation.isAdmin) {
         req.body.picId = req.user.limitation.access.picId;
@@ -80,6 +83,7 @@ class LocationController {
   static async update(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       const where = { id: req.params.id };
       if (!req.user.limitation.isAdmin) {
@@ -100,6 +104,7 @@ class LocationController {
   static async delete(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       const where = { id: req.params.id };
       if (!req.user.limitation.isAdmin) {
@@ -123,6 +128,7 @@ class LocationController {
   static async coordinate(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       const data = await findCoordinate(req.query);
 

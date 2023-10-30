@@ -1,12 +1,18 @@
 const ResponseFormatter = require('../helpers/responseFormatter.helper');
 const {
-  selectAllRoles, selectRole, validateRoleInputs, createRole, updateRole, deleteRole,
+  selectAllRoles,
+  selectRole,
+  validateRoleInputs,
+  createRole,
+  updateRole,
+  deleteRole,
 } = require('../services/role.service');
 
 class Role {
   static async getAll(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       const data = await selectAllRoles();
 
@@ -19,6 +25,7 @@ class Role {
   static async getDetail(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       const data = await selectRole(req.params.id);
       if (!data.success) {
@@ -34,6 +41,7 @@ class Role {
   static async create(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       const inputs = await validateRoleInputs(req.body);
       if (!inputs.isValid && inputs.code === 400) {
@@ -54,6 +62,7 @@ class Role {
   static async update(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       const inputs = await validateRoleInputs(req.body, req.params.id);
       if (!inputs.isValid && inputs.code === 400) {
@@ -77,6 +86,7 @@ class Role {
   static async delete(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       const data = await deleteRole(req.params.id);
       if (!data.success) {

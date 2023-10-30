@@ -18,6 +18,7 @@ class FNBScheduleController {
   static async getAll(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       // resrict data that is not an admin
       // console.log(JSON.stringify(req.user.limitation));
@@ -63,6 +64,7 @@ class FNBScheduleController {
   static async getDetail(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       // resrict data that is not an admin
       const where = { id: req.params.id };
@@ -93,6 +95,7 @@ class FNBScheduleController {
   static async create(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       // resrict data that is not an admin
       const limitation = {};
@@ -130,6 +133,7 @@ class FNBScheduleController {
   static async createNew(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
       // return ResponseFormatter.success200(res, 'OKO', { data: res.url });
 
       // resrict data that is not an admin
@@ -168,6 +172,7 @@ class FNBScheduleController {
   static async update(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       // resrict data that is not an admin
       const where = { id: req.params.id };
@@ -200,6 +205,7 @@ class FNBScheduleController {
   static async updateNew(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       // resrict data that is not an admin
       const where = { id: req.params.id };
@@ -232,6 +238,7 @@ class FNBScheduleController {
   static async updateProgress(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       // resrict data that is not an admin
       const where = { id: req.params.id };
@@ -271,6 +278,7 @@ class FNBScheduleController {
   static async delete(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       // resrict data that is not an admin
       const where = { id: req.params.id };

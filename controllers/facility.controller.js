@@ -14,6 +14,7 @@ class FacilityController {
   static async getAll(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       const where = {};
       if (!req.user.limitation.isAdmin) {
@@ -37,6 +38,7 @@ class FacilityController {
   static async getDetail(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       const where = { id: req.params.id };
       if (!req.user.limitation.isAdmin) {
@@ -57,6 +59,7 @@ class FacilityController {
   static async create(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       const where = { id: req.body.locationId };
       if (!req.user.limitation.isAdmin) {
@@ -71,12 +74,10 @@ class FacilityController {
       const data = await createFacility(inputs.form);
 
       const io = req.app.get('socketIo');
-      await createNotifications(
-        io,
-        'Facility Created',
-        data.content.id,
-        [data.content.name, data.content.location],
-      );
+      await createNotifications(io, 'Facility Created', data.content.id, [
+        data.content.name,
+        data.content.location,
+      ]);
       return ResponseFormatter.success201(res, data.message, data.content);
     } catch (error) {
       next(error);
@@ -86,6 +87,7 @@ class FacilityController {
   static async update(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       const where = { id: req.params.id };
       if (!req.user.limitation.isAdmin) {
@@ -108,6 +110,7 @@ class FacilityController {
   static async delete(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       const where = { id: req.params.id };
       if (!req.user.limitation.isAdmin) {

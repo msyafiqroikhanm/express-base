@@ -1,15 +1,23 @@
 const ResponseFormatter = require('../helpers/responseFormatter.helper');
 const { createNotifications } = require('../services/notification.service');
 const {
-  selectAllVehicles, validateVehicleQuery, selectVehicle, validateVehicleInputs,
-  createVehicle, updateVehicle, deleteVehicle, selectVehicleSchedules,
-  selectVehicleTracks, createTrackingVehicle,
+  selectAllVehicles,
+  validateVehicleQuery,
+  selectVehicle,
+  validateVehicleInputs,
+  createVehicle,
+  updateVehicle,
+  deleteVehicle,
+  selectVehicleSchedules,
+  selectVehicleTracks,
+  createTrackingVehicle,
 } = require('../services/vehicle.service');
 
 class VehicleController {
   static async getAll(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       const query = await validateVehicleQuery(req.query);
 
@@ -33,6 +41,7 @@ class VehicleController {
   static async getDetail(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       // resrict data that is not an admin
       const where = {};
@@ -57,6 +66,7 @@ class VehicleController {
   static async create(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       // resrict data that is not an admin
       const where = {};
@@ -78,12 +88,10 @@ class VehicleController {
       const data = await createVehicle(inputs.form);
 
       const io = req.app.get('socketIo');
-      await createNotifications(
-        io,
-        'Vehicle Created',
-        data.content.id,
-        [data.content.name, data.content.vendor],
-      );
+      await createNotifications(io, 'Vehicle Created', data.content.id, [
+        data.content.name,
+        data.content.vendor,
+      ]);
 
       return ResponseFormatter.success201(res, data.message, data.content);
     } catch (error) {
@@ -94,6 +102,7 @@ class VehicleController {
   static async update(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       // resrict data that is not an admin
       const where = {};
@@ -126,6 +135,7 @@ class VehicleController {
   static async delete(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       // resrict data that is not an admin
       const where = {};
@@ -150,6 +160,7 @@ class VehicleController {
   static async getSchedule(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       // resrict data that is not an admin
       const where = {};
@@ -174,6 +185,7 @@ class VehicleController {
   static async getTrack(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       // resrict data that is not an admin
       const where = {};
@@ -198,6 +210,7 @@ class VehicleController {
   static async track(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       // resrict data that is not an admin
       const where = {};

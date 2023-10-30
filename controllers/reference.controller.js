@@ -45,6 +45,7 @@ class SysConfigCategory {
   static async getAll(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       const data = await selectAllConfigCategories();
 
@@ -58,6 +59,7 @@ class SysConfigCategory {
   static async getDetail(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       const data = await selectConfiCategory(req.params.id);
       if (!data.success) {
@@ -73,6 +75,7 @@ class SysConfigCategory {
   static async create(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
       const data = await createSysConfigCategory(req.body);
 
       return ResponseFormatter.success201(res, data.message, data.content);
@@ -84,6 +87,7 @@ class SysConfigCategory {
   static async update(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
       const data = await updateSysConfigCategory(req.params.id, req.body);
       if (!data.success) {
         return ResponseFormatter.error404(res, 'Data Not Found', data.message);
@@ -98,6 +102,7 @@ class SysConfigCategory {
   static async delete(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       const data = await deleteSysConfigCategory(req.params.id);
       if (!data.success) {
@@ -115,6 +120,7 @@ class QrType {
   static async getAll(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       const data = await selectAllQRTypes();
 
@@ -128,6 +134,7 @@ class QrType {
   static async getDetail(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       const data = await selectQRType(req.params.id);
       if (!data.success) {
@@ -143,6 +150,7 @@ class QrType {
   static async create(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
       const data = await createQRType(req.body);
 
       return ResponseFormatter.success201(res, data.message, data.content);
@@ -154,6 +162,7 @@ class QrType {
   static async update(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       const data = await updateQRType(req.params.id, req.body);
       if (!data.success) {
@@ -169,6 +178,7 @@ class QrType {
   static async delete(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       const data = await deleteQRType(req.params.id);
       if (!data.success) {
@@ -186,6 +196,7 @@ class EventCategory {
   static async getAll(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       const data = await eventCategory.selectAllEventCategories();
 
@@ -198,6 +209,7 @@ class EventCategory {
   static async getDetail(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       const data = await eventCategory.selectEventCategory(req.params.id);
       if (!data.success && data.code === 404) {
@@ -213,6 +225,7 @@ class EventCategory {
   static async create(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       const data = await eventCategory.createEventCategory(req.body);
 
@@ -225,6 +238,7 @@ class EventCategory {
   static async update(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       const data = await eventCategory.updateEventCategory(req.params.id, req.body);
       if (!data.success && data.code === 404) {
@@ -240,6 +254,7 @@ class EventCategory {
   static async delete(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       const data = await eventCategory.deleteEventCategory(req.params.id);
       if (!data.success && data.code === 404) {
@@ -257,6 +272,7 @@ class Region {
   static async getAll(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       const data = await region.selectAllRegions();
 
@@ -269,6 +285,7 @@ class Region {
   static async getDetail(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       const data = await region.selectRegion(req.params.id);
       if (!data.success) {
@@ -284,6 +301,7 @@ class Region {
   static async create(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       const data = await region.createRegion(req.body);
 
@@ -296,6 +314,7 @@ class Region {
   static async update(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       const data = await region.updateRegion(req.params.id, req.body);
       if (!data.success) {
@@ -311,6 +330,7 @@ class Region {
   static async delete(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       const data = await region.deleteRegion(req.params.id);
       if (!data.success) {
@@ -328,6 +348,7 @@ class GroupStatus {
   static async getAll(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       const data = await groupStatus.selectAllGroupStatuses();
 
@@ -340,6 +361,7 @@ class GroupStatus {
   static async getDetail(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       const data = await groupStatus.selectGroupStatus(req.params.id);
       if (!data.success) {
@@ -355,6 +377,7 @@ class GroupStatus {
   static async create(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       const data = await groupStatus.createGroupStatus(req.body);
 
@@ -367,6 +390,7 @@ class GroupStatus {
   static async update(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       const data = await groupStatus.updateGroupStatus(req.params.id, req.body);
       if (!data.success) {
@@ -382,6 +406,7 @@ class GroupStatus {
   static async delete(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       const data = await groupStatus.deleteGroupStatus(req.params.id);
       if (!data.success) {
@@ -399,6 +424,7 @@ class ParticipantType {
   static async getAll(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       const data = await participantType.selectAllParticipantTypes();
 
@@ -411,6 +437,7 @@ class ParticipantType {
   static async getDetail(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       const data = await participantType.selectParticipantType(req.params.id);
       if (!data.success) {
@@ -426,6 +453,7 @@ class ParticipantType {
   static async create(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       const data = await participantType.createParticipantType(req.body);
 
@@ -438,6 +466,7 @@ class ParticipantType {
   static async update(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       const data = await participantType.updateParticipantType(req.params.id, req.body);
       if (!data.success) {
@@ -453,6 +482,7 @@ class ParticipantType {
   static async delete(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       const data = await participantType.deleteParticipantType(req.params.id);
       if (!data.success) {
@@ -470,6 +500,7 @@ class IdentityType {
   static async getAll(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       const data = await identityType.selectAllIdentityTypes();
 
@@ -482,6 +513,7 @@ class IdentityType {
   static async getDetail(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       const data = await identityType.selectIdentityType(req.params.id);
       if (!data.success) {
@@ -497,6 +529,7 @@ class IdentityType {
   static async create(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       const data = await identityType.createIdentityType(req.body);
 
@@ -509,6 +542,7 @@ class IdentityType {
   static async update(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       const data = await identityType.updateIdentityType(req.params.id, req.body);
       if (!data.success) {
@@ -524,6 +558,7 @@ class IdentityType {
   static async delete(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       const data = await identityType.deleteIdentityType(req.params.id);
       if (!data.success) {
@@ -541,6 +576,7 @@ class LocationType {
   static async getAll(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       const data = await locationType.selectAllLocationTypes();
 
@@ -553,6 +589,7 @@ class LocationType {
   static async getDetail(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       const data = await locationType.selectLocationType(req.params.id);
       if (!data.success) {
@@ -568,6 +605,7 @@ class LocationType {
   static async create(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       const data = await locationType.createLocationType(req.body);
 
@@ -580,6 +618,7 @@ class LocationType {
   static async update(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       const data = await locationType.updateLocationType(req.params.id, req.body);
       if (!data.success) {
@@ -595,6 +634,7 @@ class LocationType {
   static async delete(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       const data = await locationType.deleteLocationType(req.params.id);
       if (!data.success) {
@@ -612,6 +652,7 @@ class RoomType {
   static async getAll(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       const where = {};
 
@@ -632,6 +673,7 @@ class RoomType {
   static async getDetail(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       const where = { id: req.params.id };
       if (!req.user.limitation.isAdmin) {
@@ -651,6 +693,7 @@ class RoomType {
   static async create(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       // console.log(JSON.stringify(req.user.limitation.access.location, null, 2));
       if (!req.user.limitation.isAdmin) {
@@ -679,6 +722,7 @@ class RoomType {
   static async update(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       const where = { id: req.params.id };
       if (!req.user.limitation.isAdmin) {
@@ -699,6 +743,7 @@ class RoomType {
   static async delete(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       const where = { id: req.params.id };
       if (!req.user.limitation.isAdmin) {
@@ -720,6 +765,7 @@ class BedType {
   static async getAll(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       const where = {};
 
@@ -740,6 +786,7 @@ class BedType {
   static async getDetail(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       const where = { id: req.params.id };
       if (!req.user.limitation.isAdmin) {
@@ -760,6 +807,7 @@ class BedType {
   static async create(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       // console.log(JSON.stringify(req.user.limitation.access.location, null, 2));
       if (!req.user.limitation.isAdmin) {
@@ -787,6 +835,7 @@ class BedType {
   static async update(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       const where = { id: req.params.id };
       if (!req.user.limitation.isAdmin) {
@@ -807,6 +856,7 @@ class BedType {
   static async delete(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       const where = { id: req.params.id };
       if (!req.user.limitation.isAdmin) {
@@ -828,6 +878,7 @@ class RoomStatus {
   static async getAll(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       const data = await roomStatus.selectAllRoomStatuses();
 
@@ -840,6 +891,7 @@ class RoomStatus {
   static async getDetail(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       const data = await roomStatus.selectRoomStatus(req.params.id);
       if (!data.success) {
@@ -855,6 +907,7 @@ class RoomStatus {
   static async create(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       const data = await roomStatus.createRoomStatus(req.body);
 
@@ -867,6 +920,7 @@ class RoomStatus {
   static async update(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       const data = await roomStatus.updateRoomStatus(req.params.id, req.body);
       if (!data.success) {
@@ -882,6 +936,7 @@ class RoomStatus {
   static async delete(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       const data = await roomStatus.deleteRoomStatus(req.params.id);
       if (!data.success) {
@@ -899,6 +954,7 @@ class LodgerStatus {
   static async getAll(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       const data = await lodgerStatus.selectAllLodgerStatuses();
 
@@ -911,6 +967,7 @@ class LodgerStatus {
   static async getDetail(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       const data = await lodgerStatus.selectLodgerStatus(req.params.id);
       if (!data.success) {
@@ -926,6 +983,7 @@ class LodgerStatus {
   static async create(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       const data = await lodgerStatus.createLodgerStatus(req.body);
 
@@ -938,6 +996,7 @@ class LodgerStatus {
   static async update(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       const data = await lodgerStatus.updateLodgerStatus(req.params.id, req.body);
       if (!data.success) {
@@ -953,6 +1012,7 @@ class LodgerStatus {
   static async delete(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       const data = await lodgerStatus.deleteLodgerStatus(req.params.id);
       if (!data.success) {
@@ -970,6 +1030,7 @@ class PICType {
   static async getAll(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       const data = await picType.selectAllPICTypes();
 
@@ -982,6 +1043,7 @@ class PICType {
   static async getDetail(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       const data = await picType.selectPICType(req.params.id);
       if (!data.success) {
@@ -997,6 +1059,7 @@ class PICType {
   static async create(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       const data = await picType.createPICType(req.body);
 
@@ -1009,6 +1072,7 @@ class PICType {
   static async update(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       const data = await picType.updatePICType(req.params.id, req.body);
       if (!data.success) {
@@ -1024,6 +1088,7 @@ class PICType {
   static async delete(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       const data = await picType.deletePICType(req.params.id);
       if (!data.success) {
@@ -1041,6 +1106,7 @@ class ChatbotResponseType {
   static async getAll(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       const data = await chatbotResponseType.selectAllChatbotResponseTypes();
 
@@ -1053,6 +1119,7 @@ class ChatbotResponseType {
   static async getDetail(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       const data = await chatbotResponseType.selectChatbotResponsetype(req.params.id);
       if (!data.success && data.code === 404) {
@@ -1068,6 +1135,7 @@ class ChatbotResponseType {
   static async create(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       const data = await chatbotResponseType.createChatbotResponseType(req.body);
 
@@ -1080,6 +1148,7 @@ class ChatbotResponseType {
   static async update(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       const data = await chatbotResponseType.updateChatbotResponseType(req.body, req.params.id);
       if (!data.success && data.code === 404) {
@@ -1095,6 +1164,7 @@ class ChatbotResponseType {
   static async delete(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       const data = await chatbotResponseType.deleteChatbotResponseType(req.params.id);
       if (!data.success && data.code === 404) {
@@ -1112,6 +1182,7 @@ class FeedbackType {
   static async getAll(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       const data = await feedbackType.selectAllFeedbackTypes();
 
@@ -1124,6 +1195,7 @@ class FeedbackType {
   static async getDetail(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       const data = await feedbackType.selectFeedbackType(req.params.id);
       if (!data.success && data.code === 404) {
@@ -1139,6 +1211,7 @@ class FeedbackType {
   static async create(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       const data = await feedbackType.createFeedbackType(req.body);
 
@@ -1151,6 +1224,7 @@ class FeedbackType {
   static async update(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       const data = await feedbackType.updateFeedbackType(req.body, req.params.id);
       if (!data.success && data.code === 404) {
@@ -1166,6 +1240,7 @@ class FeedbackType {
   static async delete(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       const data = await feedbackType.deleteFeedbackType(req.params.id);
       if (!data.success && data.code === 404) {
@@ -1183,6 +1258,7 @@ class FeedbackTarget {
   static async getAll(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       const data = await feedbackTarget.selectAllFeedbackTargets();
 
@@ -1195,6 +1271,7 @@ class FeedbackTarget {
   static async getDetail(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       const data = await feedbackTarget.selectFeedbackTarget(req.params.id);
       if (!data.success && data.code === 404) {
@@ -1210,6 +1287,7 @@ class FeedbackTarget {
   static async create(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       const data = await feedbackTarget.createFeedbackTarget(req.body);
 
@@ -1222,6 +1300,7 @@ class FeedbackTarget {
   static async update(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       const data = await feedbackTarget.updateFeedbackTarget(req.body, req.params.id);
       if (!data.success && data.code === 404) {
@@ -1237,6 +1316,7 @@ class FeedbackTarget {
   static async delete(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       const data = await feedbackTarget.deleteFeedbackTarget(req.params.id);
       if (!data.success && data.code === 404) {
@@ -1254,6 +1334,7 @@ class FeedbackStatus {
   static async getAll(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       const data = await feedbackStatus.selectAllFeedbackStatuses();
 
@@ -1266,6 +1347,7 @@ class FeedbackStatus {
   static async getDetail(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       const data = await feedbackStatus.selectFeedbackStatus(req.params.id);
       if (!data.success && data.code === 404) {
@@ -1281,6 +1363,7 @@ class FeedbackStatus {
   static async create(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       const data = await feedbackStatus.createFeedbackStatus(req.body);
 
@@ -1293,6 +1376,7 @@ class FeedbackStatus {
   static async update(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       const data = await feedbackStatus.updateFeedbackStatus(req.body, req.params.id);
       if (!data.success && data.code === 404) {
@@ -1308,6 +1392,7 @@ class FeedbackStatus {
   static async delete(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       const data = await feedbackStatus.deleteFeedbackStatus(req.params.id);
       if (!data.success && data.code === 404) {
@@ -1325,6 +1410,7 @@ class FAQType {
   static async getAll(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       const data = await faqType.selectAllFAQTypes();
 
@@ -1337,6 +1423,7 @@ class FAQType {
   static async getDetail(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       const data = await faqType.selectFAQType(req.params.id);
       if (!data.success && data.code === 404) {
@@ -1352,6 +1439,7 @@ class FAQType {
   static async create(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       const data = await faqType.createFAQType(req.body);
 
@@ -1364,6 +1452,7 @@ class FAQType {
   static async update(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       const data = await faqType.updateFAQType(req.body, req.params.id);
       if (!data.success && data.code === 404) {
@@ -1379,6 +1468,7 @@ class FAQType {
   static async delete(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       const data = await faqType.deleteFAQType(req.params.id);
       if (!data.success && data.code === 404) {
@@ -1396,6 +1486,7 @@ class TemplateCategory {
   static async getAll(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       const data = await templateCategory.selectAllTemplateCategories();
 
@@ -1408,6 +1499,7 @@ class TemplateCategory {
   static async getDetail(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       const data = await templateCategory.selectTemplateCategory(req.params.id);
       if (!data.success && data.code === 404) {
@@ -1423,6 +1515,7 @@ class TemplateCategory {
   static async create(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       const data = await templateCategory.createTemplateCategory(req.body);
 
@@ -1435,6 +1528,7 @@ class TemplateCategory {
   static async update(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       const data = await templateCategory.updateTemplateCategory(req.body, req.params.id);
       if (!data.success && data.code === 404) {
@@ -1450,6 +1544,7 @@ class TemplateCategory {
   static async delete(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       const data = await templateCategory.deleteTemplateCategory(req.params.id);
       if (!data.success && data.code === 404) {
@@ -1467,6 +1562,7 @@ class MetaTemplateCategory {
   static async getAll(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       const data = await metaTemplateCategory.selectAllMetaTemplateCategories();
 
@@ -1479,6 +1575,7 @@ class MetaTemplateCategory {
   static async getDetail(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       const data = await metaTemplateCategory.selectMetaTemplateCategory(req.params.id);
       if (!data.success && data.code === 404) {
@@ -1494,6 +1591,7 @@ class MetaTemplateCategory {
   static async create(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       const data = await metaTemplateCategory.createMetaTemplateCategory(req.body);
 
@@ -1506,6 +1604,7 @@ class MetaTemplateCategory {
   static async update(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       const data = await metaTemplateCategory.updateMetaTemplateCategory(req.body, req.params.id);
       if (!data.success && data.code === 404) {
@@ -1521,6 +1620,7 @@ class MetaTemplateCategory {
   static async delete(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       const data = await metaTemplateCategory.deleteMetaTemplateCategory(req.params.id);
       if (!data.success && data.code === 404) {
@@ -1538,6 +1638,7 @@ class TemplateHeaderType {
   static async getAll(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       const data = await templateHeaderType.selectAllTemplateHeaderTypes();
 
@@ -1550,6 +1651,7 @@ class TemplateHeaderType {
   static async getDetail(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       const data = await templateHeaderType.selectTemplateHeaderType(req.params.id);
       if (!data.success && data.code === 404) {
@@ -1565,6 +1667,7 @@ class TemplateHeaderType {
   static async create(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       const data = await templateHeaderType.createTemplateHeaderType(req.body);
 
@@ -1577,6 +1680,7 @@ class TemplateHeaderType {
   static async update(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       const data = await templateHeaderType.updateTemplateHeaderType(req.body, req.params.id);
       if (!data.success && data.code === 404) {
@@ -1592,6 +1696,7 @@ class TemplateHeaderType {
   static async delete(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       const data = await templateHeaderType.deleteTemplateHeaderType(req.params.id);
       if (!data.success && data.code === 404) {
@@ -1609,6 +1714,7 @@ class MetaLanguage {
   static async getAll(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       const data = await metaLanguage.selectAllMetaLanguages();
 
@@ -1623,6 +1729,7 @@ class PassengerStatus {
   static async getAll(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       const data = await passengerStatus.selectAllPassengerStatuses();
 
@@ -1635,6 +1742,7 @@ class PassengerStatus {
   static async getDetail(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       const data = await passengerStatus.selectPassengerStatus(req.params.id);
       if (!data.success && data.code === 404) {
@@ -1650,6 +1758,7 @@ class PassengerStatus {
   static async create(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       const data = await passengerStatus.createPassengerStatus(req.body);
 
@@ -1662,6 +1771,7 @@ class PassengerStatus {
   static async update(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       const data = await passengerStatus.updatePassengerStatus(req.body, req.params.id);
       if (!data.success && data.code === 404) {
@@ -1677,6 +1787,7 @@ class PassengerStatus {
   static async delete(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       const data = await passengerStatus.deletePassengerStatus(req.params.id);
       if (!data.success && data.code === 404) {
@@ -1694,6 +1805,7 @@ class MenuType {
   static async getAll(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       const data = await menuType.selectAllMenuTypes();
 
@@ -1706,6 +1818,7 @@ class MenuType {
   static async getDetail(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       const data = await menuType.selectMenuType(req.params.id);
       if (!data.success && data.code === 404) {
@@ -1721,6 +1834,7 @@ class MenuType {
   static async create(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       const data = await menuType.createMenuType(req.body);
 
@@ -1733,6 +1847,7 @@ class MenuType {
   static async update(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       const data = await menuType.updateMenuType(req.body, req.params.id);
       if (!data.success && data.code === 404) {
@@ -1748,6 +1863,7 @@ class MenuType {
   static async delete(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       const data = await menuType.deleteMenuType(req.params.id);
       if (!data.success && data.code === 404) {
@@ -1765,6 +1881,7 @@ class FoodType {
   static async getAll(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       const data = await foodType.selectAllFoodTypes();
 
@@ -1777,6 +1894,7 @@ class FoodType {
   static async getDetail(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       const data = await foodType.selectFoodType(req.params.id);
       if (!data.success && data.code === 404) {
@@ -1792,6 +1910,7 @@ class FoodType {
   static async create(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       const data = await foodType.createFoodType(req.body);
 
@@ -1804,6 +1923,7 @@ class FoodType {
   static async update(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       const data = await foodType.updateFoodType(req.body, req.params.id);
       if (!data.success && data.code === 404) {
@@ -1819,6 +1939,7 @@ class FoodType {
   static async delete(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       const data = await foodType.deleteFoodType(req.params.id);
       if (!data.success && data.code === 404) {
@@ -1836,6 +1957,7 @@ class VehicleScheduleStatus {
   static async getAll(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       const data = await vehicleScheduleStatus.selectAllVehicleScheduleStatuses();
 
@@ -1848,6 +1970,7 @@ class VehicleScheduleStatus {
   static async getDetail(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       const data = await vehicleScheduleStatus.selectVehicleScheduleStatus(req.params.id);
       if (!data.success && data.code === 404) {
@@ -1863,6 +1986,7 @@ class VehicleScheduleStatus {
   static async create(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       const data = await vehicleScheduleStatus.createVehicleScheduleStatus(req.body);
 
@@ -1875,6 +1999,7 @@ class VehicleScheduleStatus {
   static async update(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       const data = await vehicleScheduleStatus.updateVehicleScheduleStatus(req.body, req.params.id);
       if (!data.success && data.code === 404) {
@@ -1890,6 +2015,7 @@ class VehicleScheduleStatus {
   static async delete(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       const data = await vehicleScheduleStatus.deleteVehicleScheduleStatus(req.params.id);
       if (!data.success && data.code === 404) {
@@ -1907,6 +2033,7 @@ class VehicleType {
   static async getAll(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       const data = await vehicleType.selectAllVehicletTypes();
 
@@ -1919,6 +2046,7 @@ class VehicleType {
   static async getDetail(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       const data = await vehicleType.selectVehicleType(req.params.id);
       if (!data.success && data.code === 404) {
@@ -1934,6 +2062,7 @@ class VehicleType {
   static async create(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       const data = await vehicleType.createVehicleType(req.body);
 
@@ -1946,6 +2075,7 @@ class VehicleType {
   static async update(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       const data = await vehicleType.updateVehicleType(req.body, req.params.id);
       if (!data.success && data.code === 404) {
@@ -1961,6 +2091,7 @@ class VehicleType {
   static async delete(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       const data = await vehicleType.deleteVehicleType(req.params.id);
       if (!data.success && data.code === 404) {
@@ -1978,6 +2109,7 @@ class FoodScheduleStatus {
   static async getAll(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       const data = await foodScheduleStatus.selectAllFoodScheduleStatuses();
 
@@ -1990,6 +2122,7 @@ class FoodScheduleStatus {
   static async getDetail(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       const data = await foodScheduleStatus.selectFoodScheduleStatus(req.params.id);
       if (!data.success && data.code === 404) {
@@ -2005,6 +2138,7 @@ class FoodScheduleStatus {
   static async create(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       const data = await foodScheduleStatus.createFoodScheduleStatus(req.body);
 
@@ -2017,6 +2151,7 @@ class FoodScheduleStatus {
   static async update(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       const data = await foodScheduleStatus.updateFoodScheduleStatus(req.body, req.params.id);
       if (!data.success && data.code === 404) {
@@ -2032,6 +2167,7 @@ class FoodScheduleStatus {
   static async delete(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       const data = await foodScheduleStatus.deleteFoodScheduleStatus(req.params.id);
       if (!data.success && data.code === 404) {
@@ -2049,6 +2185,7 @@ class CommitteeType {
   static async getAll(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       const data = await committeeType.selectAllCommitteeTypes();
 
@@ -2061,6 +2198,7 @@ class CommitteeType {
   static async getDetail(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       const data = await committeeType.selectCommitteeType(req.params.id);
       if (!data.success && data.code === 404) {
@@ -2076,6 +2214,7 @@ class CommitteeType {
   static async create(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       const data = await committeeType.createCommitteeType(req.body);
 
@@ -2088,6 +2227,7 @@ class CommitteeType {
   static async update(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       const data = await committeeType.updateCommitteeType(req.body, req.params.id);
       if (!data.success && data.code === 404) {
@@ -2103,6 +2243,7 @@ class CommitteeType {
   static async delete(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       const data = await committeeType.deleteCommitteeType(req.params.id);
       if (!data.success && data.code === 404) {

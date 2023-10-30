@@ -27,6 +27,8 @@ const infoFilter = winston.format((info, opts) => (info.level === 'info' ? info 
 class LoggerService {
   constructor(route) {
     this.log_data = null;
+    this.user_data = null;
+    this.ip = null;
     this.route = route;
 
     const logger = winston.createLogger({
@@ -47,6 +49,10 @@ class LoggerService {
               message = info.obj ? `${message}message:${JSON.stringify(info.obj)} | ` : message;
               message = this.log_data
                 ? `${message}log_data:${JSON.stringify(this.log_data)} | `
+                : message;
+              message = this.ip ? `${message}ip:${JSON.stringify(this.ip)} | ` : message;
+              message = this.user_data
+                ? `${message}user_data:${JSON.stringify(this.user_data)} | `
                 : message;
               return message;
             }),
@@ -69,6 +75,10 @@ class LoggerService {
               message = this.log_data
                 ? `${message}log_data:${JSON.stringify(this.log_data)} | `
                 : message;
+              message = this.ip ? `${message}ip:${JSON.stringify(this.ip)} | ` : message;
+              message = this.user_data
+                ? `${message}user_data:${JSON.stringify(this.user_data)} | `
+                : message;
               return message;
             }),
           ),
@@ -85,6 +95,10 @@ class LoggerService {
               message = info.obj ? `${message}message:${JSON.stringify(info.obj)} | ` : message;
               message = this.log_data
                 ? `${message}log_data:${JSON.stringify(this.log_data)} | `
+                : message;
+              message = this.ip ? `${message}ip:${JSON.stringify(this.ip)} | ` : message;
+              message = this.user_data
+                ? `${message}user_data:${JSON.stringify(this.user_data)} | `
                 : message;
               return message;
             }),
@@ -103,6 +117,10 @@ class LoggerService {
               message = this.log_data
                 ? `${message}log_data:${JSON.stringify(this.log_data)} | `
                 : message;
+              message = this.ip ? `${message}ip:${JSON.stringify(this.ip)} | ` : message;
+              message = this.user_data
+                ? `${message}user_data:${JSON.stringify(this.user_data)} | `
+                : message;
               return message;
             }),
           ),
@@ -115,6 +133,10 @@ class LoggerService {
           message = this.log_data
             ? `${message}log_data:${JSON.stringify(this.log_data)} | `
             : message;
+          message = this.ip ? `${message}ip:${JSON.stringify(this.ip)} | ` : message;
+          message = this.user_data
+            ? `${message}user_data:${JSON.stringify(this.user_data)} | `
+            : message;
           return message;
         }),
       ),
@@ -124,6 +146,14 @@ class LoggerService {
 
   setLogData(log_data) {
     this.log_data = log_data;
+  }
+
+  setUserData(user_data) {
+    this.user_data = user_data;
+  }
+
+  setIP(ip) {
+    this.ip = ip;
   }
 
   async info(message, obj) {

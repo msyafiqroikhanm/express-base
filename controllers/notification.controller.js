@@ -5,6 +5,7 @@ class Notification {
   static async getAll(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       const data = await selectAllNotification(req.user.id);
 
@@ -17,6 +18,7 @@ class Notification {
   static async update(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       const data = await updateNotifications(req.user.id, req.body?.notifications || []);
       if (!data.success) {

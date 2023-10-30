@@ -7,6 +7,7 @@ class AuthController {
   static async login(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       const user = await selectUser({
         // email: req.body.user,

@@ -13,6 +13,7 @@ class KitchenController {
   static async getAll(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       // console.log(JSON.stringify(req.user.limitation, null, 2));
       const where = {};
@@ -31,6 +32,7 @@ class KitchenController {
   static async getDetail(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       const where = { id: req.params.id };
       if (!req.user.limitation.isAdmin) {
@@ -51,6 +53,7 @@ class KitchenController {
   static async create(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       if (!req.user.limitation.isAdmin) {
         req.body.picId = req.user.limitation.access.picId;
@@ -75,6 +78,7 @@ class KitchenController {
   static async update(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       const where = { id: req.params.id };
       if (!req.user.limitation.isAdmin) {
@@ -95,6 +99,7 @@ class KitchenController {
   static async delete(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       const where = { id: req.params.id };
       if (!req.user.limitation.isAdmin) {

@@ -12,6 +12,7 @@ class PICController {
   static async getAll(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       const where = {};
       if (req.query?.typeId) {
@@ -29,6 +30,7 @@ class PICController {
   static async getDetail(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       const data = await selectPIC(req.params.id);
       if (!data.success) {
@@ -44,6 +46,7 @@ class PICController {
   static async create(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       const inputs = await validatePICInputs(req.body);
       if (!inputs.isValid && inputs.code === 404) {
@@ -61,6 +64,7 @@ class PICController {
   static async update(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       const data = await updatePIC(req.params.id, req.body);
       if (!data.success) {
@@ -76,6 +80,7 @@ class PICController {
   static async delete(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       const data = await deletePIC(req.params.id);
       if (!data.success) {

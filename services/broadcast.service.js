@@ -20,13 +20,16 @@ const deleteFile = require('../helpers/deleteFile.helper');
 const { createNotifications } = require('./notification.service');
 
 function setTimeOutPromises(second) {
-  return new Promise((resolve) => { setTimeout(resolve, second * 1000); });
+  return new Promise((resolve) => {
+    setTimeout(resolve, second * 1000);
+  });
 }
 
 // const setTimeoutPromise = util.promisify(setTimeout);
 
 const selectAllBroadcasts = async () => {
   const data = await CSM_Broadcast.findAll({
+    order: [['sentAt', 'DESC']],
     include: {
       model: CSM_BroadcastTemplate,
       attributes: ['name'],
@@ -137,15 +140,24 @@ const validateBroadcastInputs = async (form, file) => {
       );
     }
 
-    if (templateInstance?.headerType?.name === 'IMAGE' && !['jpeg', 'jpg', 'png'].includes(file?.originalname.split('.').pop())) {
+    if (
+      templateInstance?.headerType?.name === 'IMAGE' &&
+      !['jpeg', 'jpg', 'png'].includes(file?.originalname.split('.').pop())
+    ) {
       invalid400.push('Header with type IMAGE requires a JPEG, JPG, or PNG file.');
     }
 
-    if (templateInstance?.headerType?.name === 'VIDEO' && file?.originalname.split('.').pop() !== 'mp4') {
+    if (
+      templateInstance?.headerType?.name === 'VIDEO' &&
+      file?.originalname.split('.').pop() !== 'mp4'
+    ) {
       invalid400.push('Header with type VIDEO requires an MP4 file.');
     }
 
-    if (templateInstance?.headerType?.name === 'DOCUMENT' && file?.originalname.split('.').pop() !== 'pdf') {
+    if (
+      templateInstance?.headerType?.name === 'DOCUMENT' &&
+      file?.originalname.split('.').pop() !== 'pdf'
+    ) {
       invalid400.push('Header with type DOCUMENT requires a PDF file.');
     }
     if (['jpeg', 'png', 'jpg'].includes(file?.originalname.split('.').pop())) {
@@ -156,7 +168,8 @@ const validateBroadcastInputs = async (form, file) => {
       headerFile = `public/documents/broadcasts/${file?.filename}`;
     }
   } else if (
-    templateInstance?.headerType?.name === 'TEXT' && templateInstance?.headerVariableExample
+    templateInstance?.headerType?.name === 'TEXT' &&
+    templateInstance?.headerVariableExample
   ) {
     if (!form.headerText) {
       invalid400.push(
@@ -178,8 +191,8 @@ const validateBroadcastInputs = async (form, file) => {
 
   // * Validate Button
   if (
-    templateInstance?.button?.length > 0
-    && form.buttonParameters?.length !== templateInstance?.button?.length
+    templateInstance?.button?.length > 0 &&
+    form.buttonParameters?.length !== templateInstance?.button?.length
   ) {
     invalid400.push(
       `Button Parameters Required ${templateInstance?.button?.length} For Chosen Broadcast Template`,
@@ -303,10 +316,16 @@ const scheduleBroadcast = async (broadcastId, io) => {
 
         if ((index + 1) % 25 === 0) {
           // Pause for 3 seconds using setTimeout
-          await setTimeOutPromises(3).then(() => console.log(chalk.bgBlueBright.black(`delay resolve at ${new Date()}`)));
+          await setTimeOutPromises(3).then(() =>
+            console.log(chalk.bgBlueBright.black(`delay resolve at ${new Date()}`)),
+          );
         }
 
-        console.log(chalk.bgGreenBright.black(`Sending message to ${receivers[index].PAR_Participant.phoneNbr} at ${new Date()}`));
+        console.log(
+          chalk.bgGreenBright.black(
+            `Sending message to ${receivers[index].PAR_Participant.phoneNbr} at ${new Date()}`,
+          ),
+        );
         const metaResponse = await metaSendMessage(
           messageData,
           WhatsappPhoneId.value,

@@ -1,7 +1,13 @@
 const ResponseFormatter = require('../helpers/responseFormatter.helper');
 const {
-  selectAllUsers, createUser, validateUserInputs, updateUser,
-  deleteUser, validatePasswordInputs, updateUserPassword, selectDetailUser,
+  selectAllUsers,
+  createUser,
+  validateUserInputs,
+  updateUser,
+  deleteUser,
+  validatePasswordInputs,
+  updateUserPassword,
+  selectDetailUser,
   validatePublicRegisterUserInputs,
   validateResetPassword,
 } = require('../services/user.service');
@@ -10,6 +16,7 @@ class User {
   static async getAll(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       const data = await selectAllUsers(req.query);
 
@@ -22,6 +29,7 @@ class User {
   static async getDetail(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       const data = await selectDetailUser(req.params.id);
       if (!data.success) {
@@ -37,6 +45,7 @@ class User {
   static async create(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       const inputs = await validateUserInputs(req.body);
       if (!inputs.isValid && inputs.code === 404) {
@@ -57,6 +66,7 @@ class User {
   static async update(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       const inputs = await validateUserInputs(req.body, req.params.id);
       if (!inputs.isValid && inputs.code === 404) {
@@ -80,6 +90,7 @@ class User {
   static async delete(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       const data = await deleteUser(req.params.id);
       if (!data.success && data.code === 404) {
@@ -95,6 +106,7 @@ class User {
   static async changePassword(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       const inputs = await validatePasswordInputs(req.params.id, req.body);
       if (!inputs.isValid && inputs.code === 400) {
@@ -118,6 +130,7 @@ class User {
   static async registerPublic(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       const inputs = await validatePublicRegisterUserInputs(req.body);
       if (!inputs.isValid && inputs.code === 404) {
@@ -137,6 +150,7 @@ class User {
   static async resetPassword(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       const inputs = await validateResetPassword(req.body, req.params.id);
       if (!inputs.isValid && inputs.code === 400) {

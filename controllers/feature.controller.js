@@ -12,6 +12,7 @@ class Feature {
   static async getAll(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       const data = await selectAllFeatures();
       if (!data.success) {
@@ -26,6 +27,7 @@ class Feature {
   static async getDetail(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       const data = await selectFeature(req.params.id);
       if (!data.success) {
@@ -41,6 +43,7 @@ class Feature {
   static async create(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       const inputs = await validateFeatureInputs(req.body);
       if (!inputs.isValid) {
@@ -61,6 +64,7 @@ class Feature {
   static async update(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       const inputs = await validateFeatureInputs(req.body, req.params.id);
       if (!inputs.isValid && inputs.code === 404) {
@@ -87,6 +91,7 @@ class Feature {
   static async delete(req, res, next) {
     try {
       res.url = `${req.method} ${req.originalUrl}`;
+      res.ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
       const data = await deleteFeature(req.params.id);
       if (!data.success && data.code === 404) {

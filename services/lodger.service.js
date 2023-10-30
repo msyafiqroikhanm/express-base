@@ -25,6 +25,10 @@ const selectAllLodgers = async (where) => {
   // console.log(where);
   const lodgerInstance = await ACM_ParticipantLodger.findAll({
     // where,
+    order: [
+      [{ model: ACM_Room, as: 'room' }, 'locationId', 'ASC'],
+      ['roomId', 'ASC'],
+    ],
     include: [
       {
         model: ACM_Room,
