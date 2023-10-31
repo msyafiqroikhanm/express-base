@@ -11,6 +11,7 @@ const {
 const selectAllKitchens = async (where) => {
   const kitchens = await FNB_Kitchen.findAll({
     where,
+    order: [['name', 'ASC']],
   });
 
   await Promise.all(

@@ -9,6 +9,10 @@ const {
 const selectAllMenus = async (where) => {
   const menuInstance = await FNB_Menu.findAll({
     where,
+    order: [
+      ['date', 'DESC'],
+      ['name', 'ASC'],
+    ],
     include: [
       {
         model: REF_MenuType,
