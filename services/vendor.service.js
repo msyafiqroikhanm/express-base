@@ -1,13 +1,12 @@
 /* eslint-disable prefer-destructuring */
 /* eslint-disable no-param-reassign */
 const { Op } = require('sequelize');
-const {
-  TPT_Vendor, USR_PIC, USR_User, PAR_Participant,
-} = require('../models');
+const { TPT_Vendor, USR_PIC, USR_User, PAR_Participant } = require('../models');
 
 const selectAllVendors = async (where) => {
   const data = await TPT_Vendor.findAll({
     where: where.picId ? { id: { [Op.in]: where.vendors } } : null,
+    order: [['name', 'ASC']],
   });
   console.log(JSON.stringify(data, null, 2));
 
