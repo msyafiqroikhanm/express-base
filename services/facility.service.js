@@ -3,7 +3,10 @@ const { ACM_Facility, ACM_Location } = require('../models');
 const selectAllFacilities = async (where) => {
   const facilityInstance = await ACM_Facility.findAll({
     where,
-    order: [['locationId', 'ASC']],
+    order: [
+      ['locationId', 'ASC'],
+      ['name', 'ASC'],
+    ],
     include: [
       {
         model: ACM_Location,
