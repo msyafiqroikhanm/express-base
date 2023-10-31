@@ -1317,6 +1317,10 @@ const deleteTemplateHeaderType = async (id) => {
 const selectAllRoomTypes = async (where) => {
   const typeInstance = await REF_RoomType.findAll({
     where,
+    order: [
+      ['locationId', 'ASC'],
+      ['name', 'ASC'],
+    ],
     include: [
       {
         model: ACM_Location,
@@ -1445,6 +1449,10 @@ const deleteRoomType = async (where) => {
 const selectAllBedTypes = async (where) => {
   const typeInstance = await ACM_RoomBedType.findAll({
     where,
+    order: [
+      ['locationId', 'ASC'],
+      ['name', 'ASC'],
+    ],
     include: [
       {
         model: ACM_Location,
