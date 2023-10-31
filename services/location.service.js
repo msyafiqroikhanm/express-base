@@ -17,6 +17,7 @@ const {
 const selectAllLocations = async (where) => {
   const locations = await ACM_Location.findAll({
     where,
+    order: [['name', 'ASC']],
     include: [
       {
         model: REF_LocationType,
