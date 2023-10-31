@@ -10,8 +10,9 @@ const selectAllKitchenTargets = async (where) => {
   const kitchens = await FNB_KitchenTarget.findAll({
     where,
     order: [
+      ['date', 'ASC'],
       ['kitchenId', 'ASC'],
-      ['name', 'ASC'],
+      ['menuId', 'ASC'],
     ],
     include: [
       {
