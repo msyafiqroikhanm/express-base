@@ -1,11 +1,31 @@
 /* eslint-disable no-param-reassign */
 const { fn, col, Op } = require('sequelize');
 const {
-  PAR_Participant, REF_Region, PAR_Contingent, ENV_Event, PAR_Group, TPT_Vehicle,
-  TPT_Driver, TPT_Vendor, TPT_VehicleSchedule, REF_VehicleScheduleStatus, ACM_Location,
-  REF_EventCategory, REF_GroupStatus, REF_VehicleType, CSM_Broadcast, REF_TemplateCategory,
-  CSM_BroadcastTemplate, REF_LocationType, ACM_Room, ACM_ParticipantLodger, FNB_Kitchen, FNB_Menu,
-  FNB_Courier, FNB_KitchenTarget, FNB_Feedback,
+  PAR_Participant,
+  REF_Region,
+  PAR_Contingent,
+  ENV_Event,
+  PAR_Group,
+  TPT_Vehicle,
+  TPT_Driver,
+  TPT_Vendor,
+  TPT_VehicleSchedule,
+  REF_VehicleScheduleStatus,
+  ACM_Location,
+  REF_EventCategory,
+  REF_GroupStatus,
+  REF_VehicleType,
+  CSM_Broadcast,
+  REF_TemplateCategory,
+  CSM_BroadcastTemplate,
+  REF_LocationType,
+  ACM_Room,
+  ACM_ParticipantLodger,
+  FNB_Kitchen,
+  FNB_Menu,
+  FNB_Courier,
+  FNB_KitchenTarget,
+  FNB_Feedback,
 } = require('../models');
 
 const participantDasboard = async (limitation = null) => {
@@ -90,7 +110,9 @@ const transportationDashboard = async (limitation = {}) => {
     ],
   });
   const vendor = vendors.map((data) => ({
-    name: data.name, vehicles: data.vehicles.length, drivers: data.drivers.length,
+    name: data.name,
+    vehicles: data.vehicles.length,
+    drivers: data.drivers.length,
   }));
 
   // vehicle
@@ -113,8 +135,10 @@ const transportationDashboard = async (limitation = {}) => {
     include: { model: TPT_Vendor, as: 'vendor', required: true },
   });
   const totalAvailableVehicle = await TPT_Vehicle.count({
-    where: limitation?.vendors.length > 0
-      ? { isAvailable: true, vendorId: { [Op.in]: limitation.vendors } } : { isAvailable: true },
+    where:
+      limitation?.vendors.length > 0
+        ? { isAvailable: true, vendorId: { [Op.in]: limitation.vendors } }
+        : { isAvailable: true },
     include: { model: TPT_Vendor, as: 'vendor', required: true },
   });
 
@@ -124,8 +148,10 @@ const transportationDashboard = async (limitation = {}) => {
     include: { model: TPT_Vendor, as: 'vendor', required: true },
   });
   const totalAvailableDriver = await TPT_Driver.count({
-    where: limitation?.vendors.length > 0
-      ? { isAvailable: true, vendorId: { [Op.in]: limitation.vendors } } : { isAvailable: true },
+    where:
+      limitation?.vendors.length > 0
+        ? { isAvailable: true, vendorId: { [Op.in]: limitation.vendors } }
+        : { isAvailable: true },
     include: { model: TPT_Vendor, as: 'vendor', required: true },
   });
 
@@ -148,16 +174,16 @@ const transportationDashboard = async (limitation = {}) => {
         attributes: ['name'],
         as: 'vehicle',
         include: { model: TPT_Vendor, attributes: ['name'], as: 'vendor' },
-        where: limitation?.vendors.length > 0
-          ? { vendorId: { [Op.in]: limitation.vendors } } : null,
+        where:
+          limitation?.vendors.length > 0 ? { vendorId: { [Op.in]: limitation.vendors } } : null,
       },
       {
         model: TPT_Driver,
         attributes: ['name'],
         as: 'driver',
         include: { model: TPT_Vendor, attributes: ['name'], as: 'vendor' },
-        where: limitation?.vendors.length > 0
-          ? { vendorId: { [Op.in]: limitation.vendors } } : null,
+        where:
+          limitation?.vendors.length > 0 ? { vendorId: { [Op.in]: limitation.vendors } } : null,
       },
       { model: REF_VehicleScheduleStatus, attributes: ['name'], as: 'status' },
       {
@@ -194,16 +220,16 @@ const transportationDashboard = async (limitation = {}) => {
         attributes: ['name'],
         as: 'vehicle',
         include: { model: TPT_Vendor, attributes: ['name'], as: 'vendor' },
-        where: limitation?.vendors.length > 0
-          ? { vendorId: { [Op.in]: limitation.vendors } } : null,
+        where:
+          limitation?.vendors.length > 0 ? { vendorId: { [Op.in]: limitation.vendors } } : null,
       },
       {
         model: TPT_Driver,
         attributes: ['name'],
         as: 'driver',
         include: { model: TPT_Vendor, attributes: ['name'], as: 'vendor' },
-        where: limitation?.vendors.length > 0
-          ? { vendorId: { [Op.in]: limitation.vendors } } : null,
+        where:
+          limitation?.vendors.length > 0 ? { vendorId: { [Op.in]: limitation.vendors } } : null,
       },
     ],
   });
@@ -237,14 +263,20 @@ const eventDashboard = async (limitation = {}) => {
       where: limitation?.events.length ? { id: { [Op.in]: limitation.events } } : null,
       include: [
         {
-          model: ACM_Location, attributes: ['name'], as: 'location', required: true,
+          model: ACM_Location,
+          attributes: ['name'],
+          as: 'location',
+          required: true,
         },
         {
           model: PAR_Group,
           attributes: ['contingentId'],
           include: [
             {
-              model: PAR_Contingent, attributes: ['name'], as: 'contingent', required: true,
+              model: PAR_Contingent,
+              attributes: ['name'],
+              as: 'contingent',
+              required: true,
             },
             {
               model: PAR_Participant,
@@ -255,7 +287,9 @@ const eventDashboard = async (limitation = {}) => {
               },
             },
             {
-              model: REF_GroupStatus, attributes: ['name'], as: 'status',
+              model: REF_GroupStatus,
+              attributes: ['name'],
+              as: 'status',
             },
           ],
         },
@@ -316,10 +350,7 @@ const customerServiceDashboard = async () => {
   });
 
   const broadcastByStatus = await CSM_Broadcast.findAll({
-    attributes: [
-      'status',
-      [fn('count', col('id')), 'total'],
-    ],
+    attributes: ['status', [fn('count', col('id')), 'total']],
     group: ['status'],
   });
 
@@ -350,7 +381,8 @@ const accomodationDashboard = async (limitation = {}) => {
   const perHotelInformation = await ACM_Location.findAll({
     attributes: ['name'],
     where: limitation?.locations?.length
-      ? { id: { [Op.in]: limitation.locations }, typeId: 2 } : { typeId: 2 },
+      ? { id: { [Op.in]: limitation.locations }, typeId: 2 }
+      : { typeId: 2 },
     include: {
       model: ACM_Room,
       attributes: ['id', 'statusId'],
@@ -446,7 +478,7 @@ const fnbDashboard = async (limitation = {}) => {
 
   // feedback
   const totalFeedback = await FNB_Feedback.count();
-  const feedbacks = await FNB_Feedback.findAll({
+  const feedbacks = await FNB_Feedback.findOne({
     attributes: [
       [fn('avg', col('deliciousness')), 'averageDeliciousness'],
       [fn('avg', col('combination')), 'averageCombination'],
