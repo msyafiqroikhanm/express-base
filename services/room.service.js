@@ -15,7 +15,10 @@ const {
 const selectAllRooms = async (where) => {
   const rooms = await ACM_Room.findAll({
     where,
-    order: [['locationId', 'ASC']],
+    order: [
+      ['locationId', 'ASC'],
+      ['name', 'ASC'],
+    ],
     include: [
       {
         model: ACM_Location,
