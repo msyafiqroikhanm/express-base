@@ -6,7 +6,7 @@ const selectAllArrivalDepartures = async (where) => {
   const data = await TPT_ArrivalDepartureInformation.findAll({
     where: where?.contingentId ? { contingentId: where.contingentId } : null,
     order: [
-      ['typeId', 'ASC'],
+      ['type', 'ASC'],
       ['time', 'ASC'],
     ],
     include: [
