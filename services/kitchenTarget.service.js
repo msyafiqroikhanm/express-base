@@ -9,6 +9,10 @@ const {
 const selectAllKitchenTargets = async (where) => {
   const kitchens = await FNB_KitchenTarget.findAll({
     where,
+    order: [
+      ['kitchenId', 'ASC'],
+      ['name', 'ASC'],
+    ],
     include: [
       {
         model: FNB_Kitchen,

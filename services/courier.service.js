@@ -14,6 +14,7 @@ const { createUser } = require('./user.service');
 const selectAllCouriers = async (where) => {
   const courierInstances = await FNB_Courier.findAll({
     where,
+    order: [['name', 'ASC']],
     include: [
       {
         model: USR_User,
