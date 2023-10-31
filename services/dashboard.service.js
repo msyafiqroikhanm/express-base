@@ -370,7 +370,7 @@ const accomodationDashboard = async (limitation = {}) => {
       totalLodgers += room.lodger?.length || 0;
     });
     hotel.dataValues.totalAvailableRoom = totalAvailableRooms;
-    hotel.dataValues.totalOccupiedRoom = hotel.rooms?.length || 0 - totalAvailableRooms;
+    hotel.dataValues.totalOccupiedRoom = hotel.dataValues.total - totalAvailableRooms;
     hotel.dataValues.totalLodger = totalLodgers;
     delete hotel.dataValues.rooms;
   });
