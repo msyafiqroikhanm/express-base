@@ -498,7 +498,16 @@ const fnbDashboard = async (limitation = {}) => {
     totalCourier,
     totalAvailableCourier,
     totalFeedback,
-    feedbacks,
+    feedbacks: {
+      averageDeliciousness: `${Number(feedbacks.dataValues.averageDeliciousness).toFixed(2)} / 10`,
+      averageCombination: `${Number(feedbacks.dataValues.averageCombination).toFixed(2)} / 10`,
+      averageSuitability: `${Number(feedbacks.dataValues.averageSuitability).toFixed(2)} / 10`,
+      averageArrangement: `${Number(feedbacks.dataValues.averageArrangement).toFixed(2)} / 10`,
+      averageAppearance: `${Number(feedbacks.dataValues.averageAppearance).toFixed(2)} / 10`,
+      averageCleanliness: `${Number(feedbacks.dataValues.averageCleanliness).toFixed(2)} / 10`,
+      averageAroma: `${Number(feedbacks.dataValues.averageAroma).toFixed(2)} / 10`,
+      averageFreshness: `${Number(feedbacks.dataValues.averageFreshness).toFixed(2)} / 10`,
+    },
   };
 };
 
