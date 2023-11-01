@@ -137,6 +137,7 @@ const generateTransportationReport = async (limitation = {}) => {
   // });
 
   const transportationReports = await TPT_VehicleSchedule.findAll({
+    order: [['updatedAt', 'DESC']],
     attributes: ['name', 'pickUpTime', 'dropOffTime', 'totalPassengers', 'dropOffOtherLocation', 'pickUpOtherLocation'],
     include: [
       {
