@@ -5,6 +5,10 @@ const { TPT_ArrivalDepartureInformation, PAR_Contingent, ACM_Location } = requir
 const selectAllArrivalDepartures = async (where) => {
   const data = await TPT_ArrivalDepartureInformation.findAll({
     where: where?.contingentId ? { contingentId: where.contingentId } : null,
+    order: [
+      ['type', 'ASC'],
+      ['time', 'ASC'],
+    ],
     include: [
       { model: PAR_Contingent, attributes: ['name'], as: 'contingent' },
       { model: ACM_Location, attributes: ['name'], as: 'location' },
@@ -62,7 +66,9 @@ const validateArrivalDepartureInputs = async (form, where) => {
     invalid404.push('Contingent Data Not Found');
   }
 
-  const locationInstance = await ACM_Location.findOne({ where: { name: { [Op.substring]: 'Other' } } });
+  const locationInstance = await ACM_Location.findOne({
+    where: { name: { [Op.substring]: 'Other' } },
+  });
 
   if (!['Arrival', 'Departure'].includes(form.type)) {
     invalid400.push('Type Option Either Arrival Or Departure');
@@ -161,8 +167,10 @@ const deleteArrivalDeparture = async (id, where) => {
     };
   }
 
-  if (where.contingentId
-      && Number(where.contingentId) !== Number(informationInstance.contingentId)) {
+  if (
+    where.contingentId &&
+    Number(where.contingentId) !== Number(informationInstance.contingentId)
+  ) {
     return {
       success: false,
       code: 404,

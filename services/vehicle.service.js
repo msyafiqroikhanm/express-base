@@ -1,8 +1,16 @@
 /* eslint-disable no-param-reassign */
 const { Op } = require('sequelize');
 const {
-  TPT_Vehicle, TPT_Vendor, REF_VehicleType, QRM_QR, QRM_QRTemplate, TPT_VehicleSchedule,
-  TPT_Driver, ACM_Location, REF_VehicleScheduleStatus, TPT_VehicleTracking,
+  TPT_Vehicle,
+  TPT_Vendor,
+  REF_VehicleType,
+  QRM_QR,
+  QRM_QRTemplate,
+  TPT_VehicleSchedule,
+  TPT_Driver,
+  ACM_Location,
+  REF_VehicleScheduleStatus,
+  TPT_VehicleTracking,
 } = require('../models');
 const { createQR } = require('./qr.service');
 
@@ -17,9 +25,7 @@ const validateVehicleQuery = async (query) => {
 };
 
 const validateVehicleInputs = async (form, where, id) => {
-  const {
-    vendorId, typeId, vehicleNo, vehiclePlateNo, name, capacity,
-  } = form;
+  const { vendorId, typeId, vehicleNo, vehiclePlateNo, name, capacity } = form;
 
   const invalid400 = [];
   const invalid404 = [];
@@ -89,6 +95,10 @@ const selectAllVehicles = async (query, where) => {
 
   const data = await TPT_Vehicle.findAll({
     where: Object.keys(parsedQuery).length > 0 ? parsedQuery : null,
+    order: [
+      ['vendorId', 'ASC'],
+      ['name', 'ASC'],
+    ],
     include: [
       { model: TPT_Vendor, as: 'vendor', attributes: ['name'] },
       { model: REF_VehicleType, as: 'type', attributes: ['name'] },
@@ -137,8 +147,16 @@ const selectVehicle = async (id, where) => {
 
 const createVehicle = async (form) => {
   // QR setup for transportation
-  const templateInstance = await QRM_QRTemplate.findOne({ where: { name: { [Op.like]: '%vehicle%' } } });
-  const qrInstance = await createQR({ templateId: templateInstance?.id || 1 }, { rawFile: `public/images/qrs/qrs-${Date.now()}.png`, combineFile: `public/images/qrCombines/combines-${Date.now()}.png` });
+  const templateInstance = await QRM_QRTemplate.findOne({
+    where: { name: { [Op.like]: '%vehicle%' } },
+  });
+  const qrInstance = await createQR(
+    { templateId: templateInstance?.id || 1 },
+    {
+      rawFile: `public/images/qrs/qrs-${Date.now()}.png`,
+      combineFile: `public/images/qrCombines/combines-${Date.now()}.png`,
+    },
+  );
 
   // create vehicle
   const vehicleInstance = await TPT_Vehicle.create({
@@ -179,7 +197,8 @@ const updateVehicle = async (form, id, where) => {
   vehicleInstance.vehiclePlateNo = form.vehiclePlateNo;
   vehicleInstance.name = form.name;
   vehicleInstance.capacity = form.capacity;
-  vehicleInstance.isAvailable = typeof form.isAvailable !== 'object' ? form.isAvailable === 'true' : true;
+  vehicleInstance.isAvailable =
+    typeof form.isAvailable !== 'object' ? form.isAvailable === 'true' : true;
   await vehicleInstance.save();
 
   return {
@@ -220,7 +239,8 @@ const deleteVehicle = async (id, where) => {
 const selectVehicleSchedules = async (vehicleId, where) => {
   const vehicleInstance = await TPT_Vehicle.findOne({
     where: where.picId
-      ? { id: vehicleId, vendorId: { [Op.in]: where.vendors } } : { id: vehicleId },
+      ? { id: vehicleId, vendorId: { [Op.in]: where.vendors } }
+      : { id: vehicleId },
   });
   if (!vehicleInstance) {
     return {
@@ -255,7 +275,8 @@ const selectVehicleSchedules = async (vehicleId, where) => {
 const selectVehicleTracks = async (vehicleId, where) => {
   const vehicleInstance = await TPT_Vehicle.findOne({
     where: where.picId
-      ? { id: vehicleId, vendorId: { [Op.in]: where.vendors } } : { id: vehicleId },
+      ? { id: vehicleId, vendorId: { [Op.in]: where.vendors } }
+      : { id: vehicleId },
   });
   if (!vehicleInstance) {
     return {
@@ -277,7 +298,8 @@ const selectVehicleTracks = async (vehicleId, where) => {
 const createTrackingVehicle = async (form, vehicleId, where) => {
   const vehicleInstance = await TPT_Vehicle.findOne({
     where: where.picId
-      ? { id: vehicleId, vendorId: { [Op.in]: where.vendors } } : { id: vehicleId },
+      ? { id: vehicleId, vendorId: { [Op.in]: where.vendors } }
+      : { id: vehicleId },
   });
   if (!vehicleInstance) {
     return {

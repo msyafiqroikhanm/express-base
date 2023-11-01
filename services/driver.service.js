@@ -30,6 +30,10 @@ const selectAllDrivers = async (where = {}) => {
   const data = await TPT_Driver.findAll({
     // eslint-disable-next-line no-nested-ternary
     where: Object.keys(query).length > 0 ? query : null,
+    order: [
+      ['vendorId', 'ASC'],
+      ['name', 'ASC'],
+    ],
     include: {
       model: TPT_Vendor,
       as: 'vendor',
@@ -83,9 +87,7 @@ const selectDriver = async (id, where) => {
 };
 
 const validateDriverInputs = async (form, where, file, id) => {
-  const {
-    vendorId, name, phoneNbr, email,
-  } = form;
+  const { vendorId, name, phoneNbr, email } = form;
 
   const invalid400 = [];
   const invalid404 = [];
@@ -280,7 +282,8 @@ const updateDriver = async (form, id, where) => {
   driverInstance.name = form.name;
   driverInstance.phoneNbr = form.phoneNbr;
   driverInstance.email = form.email;
-  driverInstance.isAvailable = typeof form.isAvailable !== 'object' ? form.isAvailable === 'true' : true;
+  driverInstance.isAvailable =
+    typeof form.isAvailable !== 'object' ? form.isAvailable === 'true' : true;
   await driverInstance.save();
 
   // updating committee / participant
