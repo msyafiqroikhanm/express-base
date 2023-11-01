@@ -11,128 +11,194 @@ const {
 } = require('../models');
 
 const generateTransportationReport = async (limitation = {}) => {
-  const transportationReports = await TPT_Vendor.findAll({
-    attributes: ['name', 'phoneNbr', 'email', 'address'],
-    where: limitation?.picId ? { picId: limitation.picId } : null,
+  // const transportationReports = await TPT_Vendor.findAll({
+  //   attributes: ['name', 'phoneNbr', 'email', 'address'],
+  //   where: limitation?.picId ? { picId: limitation.picId } : null,
+  //   include: [
+  //     {
+  //       model: TPT_Driver,
+  //       attributes: ['name', 'phoneNbr', 'email'],
+  //       as: 'drivers',
+  //       include: {
+  //         model: TPT_VehicleSchedule,
+  //         attributes: ['id', 'name', 'pickUpTime', 'dropOffTime'],
+  //         as: 'schedules',
+  //         include: [
+  //           {
+  //             model: TPT_Vehicle,
+  //             attributes: ['name', 'vendorId'],
+  //             as: 'vehicle',
+  //             required: false,
+  //           },
+  //           {
+  //             model: TPT_Driver,
+  //             attributes: ['name', 'vendorId'],
+  //             as: 'driver',
+  //             required: false,
+  //           },
+  //           { model: REF_VehicleScheduleStatus, attributes: ['name'], as: 'status' },
+  //           {
+  //             model: ACM_Location,
+  //             attributes: ['id', 'name', 'address'],
+  //             as: 'pickUp',
+  //           },
+  //           {
+  //             model: ACM_Location,
+  //             attributes: ['id', 'name', 'address'],
+  //             as: 'destination',
+  //           },
+  //         ],
+  //       },
+  //     },
+  //     {
+  //       model: TPT_Vehicle,
+  //       attributes: ['name', 'vehicleNo', 'vehiclePlateNo'],
+  //       as: 'vehicles',
+  //       include: [
+  //         { model: REF_VehicleType, attributes: ['name'], as: 'type' },
+  //         {
+  //           model: TPT_VehicleSchedule,
+  //           attributes: [
+  //        'id', 'name', 'pickUpTime', 'dropOffTime', 'pickUpOtherLocation', 'dropOffOtherLocation'
+  //       ],
+  //           as: 'schedules',
+  //           include: [
+  //             {
+  //               model: TPT_Vehicle,
+  //               attributes: ['name'],
+  //               as: 'vehicle',
+  //               required: false,
+  //             },
+  //             {
+  //               model: TPT_Driver,
+  //               attributes: ['name'],
+  //               as: 'driver',
+  //               required: false,
+  //             },
+  //             { model: REF_VehicleScheduleStatus, attributes: ['name'], as: 'status' },
+  //             {
+  //               model: ACM_Location,
+  //               attributes: ['id', 'name', 'address'],
+  //               as: 'pickUp',
+  //             },
+  //             {
+  //               model: ACM_Location,
+  //               attributes: ['id', 'name', 'address'],
+  //               as: 'destination',
+  //             },
+  //           ],
+  //         },
+  //       ],
+  //     },
+  //   ],
+  // });
+
+  // transportationReports.forEach((vendor) => {
+  //   const schedulesId = new Set([]);
+  //   const schedules = [];
+
+  //   vendor.vehicles.forEach((vehicle) => {
+  //     vehicle.dataValues.type = vehicle?.type?.dataValues.name || null;
+  //     vehicle.schedules.forEach((schedule) => {
+  //       if (!schedulesId.has(schedule.id)) {
+  //         schedulesId.add(schedule.id);
+  //         delete schedule.dataValues.id;
+  //         schedules.push(schedule);
+  //       }
+  //       schedule.dataValues.driver = schedule?.driver?.dataValues.name || null;
+  //       schedule.dataValues.vehicle = schedule?.vehicle?.dataValues.name || null;
+  //       schedule.dataValues.status = schedule?.status?.dataValues.name || null;
+  //       schedule.dataValues.pickUpLocation = schedule.dataValues.pickUpOtherLocation
+  //         ? schedule.dataValues.pickUpOtherLocation : schedule.pickUp?.dataValues?.name;
+  //       schedule.dataValues.dropOffLocation = schedule.dataValues.dropOffOtherLocation
+  //         ? schedule.dataValues.dropOffOtherLocation : schedule.destination?.dataValues?.name;
+
+  //       delete schedule.dataValues.pickUpOtherLocation;
+  //       delete schedule.dataValues.dropOffOtherLocation;
+  //       delete schedule.dataValues.pickUp;
+  //       delete schedule.dataValues.destination;
+  //     });
+  //     delete vehicle.dataValues.schedules;
+  //   });
+
+  //   vendor.drivers.forEach((driver) => {
+  //     driver.dataValues.type = driver?.type?.dataValues.name || null;
+  //     driver.schedules.forEach((schedule) => {
+  //       if (!schedulesId.has(schedule.id)) {
+  //         schedulesId.add(schedule.id);
+  //         delete schedule.dataValues.id;
+  //         schedules.push(schedule);
+  //       }
+  //     });
+  //     delete driver.dataValues.schedules;
+  //   });
+
+  //   vendor.dataValues.schedules = schedules;
+  // });
+
+  const transportationReports = await TPT_VehicleSchedule.findAll({
+    order: [['updatedAt', 'DESC']],
+    attributes: ['name', 'pickUpTime', 'dropOffTime', 'totalPassengers', 'dropOffOtherLocation', 'pickUpOtherLocation'],
     include: [
+      {
+        model: TPT_Vehicle,
+        attributes: ['name', 'capacity'],
+        as: 'vehicle',
+        required: true,
+        include: { model: REF_VehicleType, attributes: ['name'], as: 'type' },
+      },
       {
         model: TPT_Driver,
         attributes: ['name', 'phoneNbr', 'email'],
-        as: 'drivers',
+        as: 'driver',
+        required: true,
         include: {
-          model: TPT_VehicleSchedule,
-          attributes: ['id', 'name', 'pickUpTime', 'dropOffTime'],
-          as: 'schedules',
-          include: [
-            {
-              model: TPT_Vehicle,
-              attributes: ['name', 'vendorId'],
-              as: 'vehicle',
-              required: false,
-            },
-            {
-              model: TPT_Driver,
-              attributes: ['name', 'vendorId'],
-              as: 'driver',
-              required: false,
-            },
-            { model: REF_VehicleScheduleStatus, attributes: ['name'], as: 'status' },
-            {
-              model: ACM_Location,
-              attributes: ['id', 'name', 'address'],
-              as: 'pickUp',
-            },
-            {
-              model: ACM_Location,
-              attributes: ['id', 'name', 'address'],
-              as: 'destination',
-            },
-          ],
+          model: TPT_Vendor,
+          attributes: ['name', 'phoneNbr', 'email', 'address'],
+          as: 'vendor',
+          where: limitation?.picId ? { picId: limitation.picId } : null,
         },
       },
+      { model: REF_VehicleScheduleStatus, attributes: ['name'], as: 'status' },
       {
-        model: TPT_Vehicle,
-        attributes: ['name', 'vehicleNo', 'vehiclePlateNo'],
-        as: 'vehicles',
-        include: [
-          { model: REF_VehicleType, attributes: ['name'], as: 'type' },
-          {
-            model: TPT_VehicleSchedule,
-            attributes: ['id', 'name', 'pickUpTime', 'dropOffTime', 'pickUpOtherLocation', 'dropOffOtherLocation'],
-            as: 'schedules',
-            include: [
-              {
-                model: TPT_Vehicle,
-                attributes: ['name'],
-                as: 'vehicle',
-                required: false,
-              },
-              {
-                model: TPT_Driver,
-                attributes: ['name'],
-                as: 'driver',
-                required: false,
-              },
-              { model: REF_VehicleScheduleStatus, attributes: ['name'], as: 'status' },
-              {
-                model: ACM_Location,
-                attributes: ['id', 'name', 'address'],
-                as: 'pickUp',
-              },
-              {
-                model: ACM_Location,
-                attributes: ['id', 'name', 'address'],
-                as: 'destination',
-              },
-            ],
-          },
-        ],
+        model: ACM_Location,
+        attributes: ['id', 'name', 'address'],
+        as: 'pickUp',
+      },
+      {
+        model: ACM_Location,
+        attributes: ['id', 'name', 'address'],
+        as: 'destination',
       },
     ],
   });
 
-  transportationReports.forEach((vendor) => {
-    const schedulesId = new Set([]);
-    const schedules = [];
+  transportationReports.forEach((schedule) => {
+    schedule.dataValues.totalPassengers = schedule.dataValues.totalPassengers || 0;
 
-    vendor.vehicles.forEach((vehicle) => {
-      vehicle.dataValues.type = vehicle?.type?.dataValues.name || null;
-      vehicle.schedules.forEach((schedule) => {
-        if (!schedulesId.has(schedule.id)) {
-          schedulesId.add(schedule.id);
-          delete schedule.dataValues.id;
-          schedules.push(schedule);
-        }
-        schedule.dataValues.driver = schedule?.driver?.dataValues.name || null;
-        schedule.dataValues.vehicle = schedule?.vehicle?.dataValues.name || null;
-        schedule.dataValues.status = schedule?.status?.dataValues.name || null;
-        schedule.dataValues.pickUpLocation = schedule.dataValues.pickUpOtherLocation
-          ? schedule.dataValues.pickUpOtherLocation : schedule.pickUp?.dataValues?.name;
-        schedule.dataValues.dropOffLocation = schedule.dataValues.dropOffOtherLocation
-          ? schedule.dataValues.dropOffOtherLocation : schedule.destination?.dataValues?.name;
+    schedule.dataValues.vendor = schedule?.driver?.vendor?.dataValues.name || null;
+    schedule.dataValues.vendorPhoneNbr = schedule?.driver?.vendor?.dataValues.phoneNbr || null;
+    schedule.dataValues.vendorEmail = schedule?.driver?.vendor?.dataValues.email || null;
+    schedule.dataValues.vendorAddress = schedule?.driver?.vendor?.dataValues.address || null;
 
-        delete schedule.dataValues.pickUpOtherLocation;
-        delete schedule.dataValues.dropOffOtherLocation;
-        delete schedule.dataValues.pickUp;
-        delete schedule.dataValues.destination;
-      });
-      delete vehicle.dataValues.schedules;
-    });
+    schedule.dataValues.vehicle = schedule?.vehicle?.dataValues.name || null;
+    schedule.dataValues.vehicleType = schedule?.vehicle?.type?.dataValues.name || null;
 
-    vendor.drivers.forEach((driver) => {
-      driver.dataValues.type = driver?.type?.dataValues.name || null;
-      driver.schedules.forEach((schedule) => {
-        if (!schedulesId.has(schedule.id)) {
-          schedulesId.add(schedule.id);
-          delete schedule.dataValues.id;
-          schedules.push(schedule);
-        }
-      });
-      delete driver.dataValues.schedules;
-    });
+    schedule.dataValues.driver = schedule?.driver?.dataValues.name || null;
+    schedule.dataValues.driverPhoneNbr = schedule?.driver?.dataValues.phoneNbr || null;
+    schedule.dataValues.driverEmail = schedule?.driver?.dataValues.email || null;
 
-    vendor.dataValues.schedules = schedules;
+    schedule.dataValues.pickUp = schedule.dataValues.pickUpOtherLocation
+      || schedule.pickUp?.dataValues.name;
+    schedule.dataValues.destination = schedule.dataValues.dropOffOtherLocation
+      || schedule.destination?.dataValues.name;
+
+    schedule.dataValues.status = schedule?.status?.dataValues.name || null;
+
+    delete schedule.dataValues.dropOffOtherLocation;
+    delete schedule.dataValues.pickUpOtherLocation;
   });
+
   return {
     success: true,
     message: 'Success Generating Transportation Report',

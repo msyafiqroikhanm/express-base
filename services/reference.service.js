@@ -35,6 +35,7 @@ const {
   PAR_Participant,
   ACM_Location,
   ACM_RoomBedType,
+  ACM_Room,
 } = require('../models');
 
 // * Configuration Category
@@ -1433,6 +1434,9 @@ const deleteRoomType = async (where) => {
     };
   }
 
+  // * update dependencies
+  await ACM_Room.update({ typeId: null }, { where: { typeId: typeInstance.id } });
+
   const { name } = typeInstance.dataValues;
 
   await typeInstance.destroy();
@@ -1561,17 +1565,19 @@ const updateBedType = async (where, form) => {
 
 const deleteBedType = async (where) => {
   // check identity type id validity
-  const typeInstance = await ACM_RoomBedType.findOne({ where });
-  if (!typeInstance) {
+  const bedInstance = await ACM_RoomBedType.findOne({ where });
+  if (!bedInstance) {
     return {
       success: false,
       message: ['Bed Type Data Not Found'],
     };
   }
+  // * Update dependencies data
+  await ACM_Room.update({ bedId: null }, { where: { bedId: bedInstance.id } });
 
-  const { name } = typeInstance.dataValues;
+  const { name } = bedInstance.dataValues;
 
-  await typeInstance.destroy();
+  await bedInstance.destroy();
 
   return {
     success: true,

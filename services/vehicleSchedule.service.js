@@ -550,7 +550,7 @@ const validateProvideScheduleInputs = async (form, id, where) => {
   } else if (scheduleInstance?.vehicleId !== vehicleInstance.id && !vehicleInstance.isAvailable) {
     // check when with different vehicle data, is the vehicle available
     invalid400.push('Vehicle Is Not Available');
-  } else if (vehicleInstance.capacity < scheduleInstance.totalPassengers) {
+  } else if (vehicleInstance.capacity < scheduleInstance?.totalPassengers) {
     invalid400.push('Please select a larger vehicle: The scheduled passengers exceed the vehicle\'s capacity');
   }
 
