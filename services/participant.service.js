@@ -560,7 +560,7 @@ const validateParticipantInputs = async (form, files, id, where) => {
   }
 
   const duplicateParticipant = await PAR_Participant.findOne({
-    where: { contingentId, name },
+    where: id? { contingentId, name, id: { [Op.ne]: id } } : { contingentId, name },
   });
   if (duplicateParticipant) {
     invalid400.push(`Participant With Name ${name} From Contingent ${contingentInstance?.name || contingentId} Already Exist`);
