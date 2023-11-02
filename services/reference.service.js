@@ -36,6 +36,7 @@ const {
   ACM_Location,
   ACM_RoomBedType,
   ACM_Room,
+  FNB_Menu,
 } = require('../models');
 
 // * Configuration Category
@@ -1979,8 +1980,8 @@ const updateMenuType = async (form, id) => {
 };
 
 const deleteMenuType = async (id) => {
-  const statusInstance = await REF_MenuType.findByPk(id);
-  if (!statusInstance) {
+  const typeInstance = await REF_MenuType.findByPk(id);
+  if (!typeInstance) {
     return {
       success: false,
       code: 404,
@@ -1988,9 +1989,10 @@ const deleteMenuType = async (id) => {
     };
   }
 
-  const { name } = statusInstance.dataValues;
+  const { name } = typeInstance.dataValues;
 
-  await statusInstance.destroy();
+  await FNB_Menu.update({ menuTypeId: null }, { where: { menuTypeId: typeInstance.id } });
+  await typeInstance.destroy();
 
   return {
     success: true,
@@ -2058,8 +2060,8 @@ const updateFoodType = async (form, id) => {
 };
 
 const deleteFoodType = async (id) => {
-  const statusInstance = await REF_FoodType.findByPk(id);
-  if (!statusInstance) {
+  const typeInstance = await REF_FoodType.findByPk(id);
+  if (!typeInstance) {
     return {
       success: false,
       code: 404,
@@ -2067,9 +2069,10 @@ const deleteFoodType = async (id) => {
     };
   }
 
-  const { name } = statusInstance.dataValues;
+  const { name } = typeInstance.dataValues;
 
-  await statusInstance.destroy();
+  await FNB_Menu.update({ foodTypeId: null }, { where: { foodTypeId: typeInstance.id } });
+  await typeInstance.destroy();
 
   return {
     success: true,
