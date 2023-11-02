@@ -1,8 +1,6 @@
 'use strict';
 
-const {
-  Model,
-} = require('sequelize');
+const { Model } = require('sequelize');
 
 module.exports = (sequelize, DataTypes) => {
   class REF_LocationType extends Model {
@@ -15,14 +13,17 @@ module.exports = (sequelize, DataTypes) => {
       REF_LocationType.hasMany(models.ACM_Location, { foreignKey: 'typeId' });
     }
   }
-  REF_LocationType.init({
-    name: {
-      type: DataTypes.STRING,
-      allowNull: false,
+  REF_LocationType.init(
+    {
+      name: {
+        type: DataTypes.STRING,
+        allowNull: false,
+      },
     },
-  }, {
-    sequelize,
-    modelName: 'REF_LocationType',
-  });
+    {
+      sequelize,
+      modelName: 'REF_LocationType',
+    },
+  );
   return REF_LocationType;
 };
