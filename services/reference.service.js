@@ -36,6 +36,8 @@ const {
   ACM_Location,
   ACM_RoomBedType,
   ACM_Room,
+  PAR_Contingent,
+  PAR_Group,
 } = require('../models');
 
 // * Configuration Category
@@ -344,6 +346,11 @@ const deleteRegion = async (id) => {
 
   await regionInstance.destroy();
 
+  await PAR_Contingent.update(
+    { regionId: null },
+    { where: { regionId: id } },
+  );
+
   return {
     success: true,
     message: 'Region Successfully Deleted',
@@ -423,6 +430,11 @@ const deleteGroupStatus = async (id) => {
   const { name } = statusInstance.dataValues;
 
   await statusInstance.destroy();
+
+  await PAR_Group.update(
+    { statusId: null },
+    { where: { statusId: id } },
+  );
 
   return {
     success: true,
@@ -504,6 +516,11 @@ const deleteParticipantType = async (id) => {
 
   await typeInstance.destroy();
 
+  await PAR_Participant.update(
+    { typeId: null },
+    { where: { typeId: id } },
+  );
+
   return {
     success: true,
     message: 'Participant Type Successfully Deleted',
@@ -583,6 +600,11 @@ const deleteIdentityType = async (id) => {
   const { name } = typeInstance.dataValues;
 
   await typeInstance.destroy();
+
+  await PAR_Participant.update(
+    { identityTypeId: null },
+    { where: { identityTypeId: id } },
+  );
 
   return {
     success: true,
@@ -2317,6 +2339,8 @@ const deleteVehicleType = async (id) => {
     content: `Vehicle Type ${name} Successfully Deleted`,
   };
 };
+
+// * Committee Type
 
 const selectAllCommitteeTypes = async () => {
   const data = await REF_CommitteeType.findAll();
