@@ -1,8 +1,6 @@
 'use strict';
 
-const {
-  Model,
-} = require('sequelize');
+const { Model } = require('sequelize');
 
 module.exports = (sequelize, DataTypes) => {
   class REF_FoodScheduleStatus extends Model {
@@ -15,14 +13,17 @@ module.exports = (sequelize, DataTypes) => {
       // define association here
     }
   }
-  REF_FoodScheduleStatus.init({
-    name: {
-      type: DataTypes.STRING,
-      allowNull: false,
+  REF_FoodScheduleStatus.init(
+    {
+      name: {
+        type: DataTypes.STRING,
+        allowNull: false,
+      },
     },
-  }, {
-    sequelize,
-    modelName: 'REF_FoodScheduleStatus',
-  });
+    {
+      sequelize,
+      modelName: 'REF_FoodScheduleStatus',
+    },
+  );
   return REF_FoodScheduleStatus;
 };

@@ -39,6 +39,9 @@ const {
   PAR_Contingent,
   PAR_Group,
   FNB_Menu,
+  CSM_FAQ,
+  CSM_ChatbotResponse,
+  CSM_CustomerFeedback,
   USR_PIC,
 } = require('../models');
 
@@ -348,10 +351,7 @@ const deleteRegion = async (id) => {
 
   await regionInstance.destroy();
 
-  await PAR_Contingent.update(
-    { regionId: null },
-    { where: { regionId: id } },
-  );
+  await PAR_Contingent.update({ regionId: null }, { where: { regionId: id } });
 
   return {
     success: true,
@@ -433,10 +433,7 @@ const deleteGroupStatus = async (id) => {
 
   await statusInstance.destroy();
 
-  await PAR_Group.update(
-    { statusId: null },
-    { where: { statusId: id } },
-  );
+  await PAR_Group.update({ statusId: null }, { where: { statusId: id } });
 
   return {
     success: true,
@@ -518,10 +515,7 @@ const deleteParticipantType = async (id) => {
 
   await typeInstance.destroy();
 
-  await PAR_Participant.update(
-    { typeId: null },
-    { where: { typeId: id } },
-  );
+  await PAR_Participant.update({ typeId: null }, { where: { typeId: id } });
 
   return {
     success: true,
@@ -603,10 +597,7 @@ const deleteIdentityType = async (id) => {
 
   await typeInstance.destroy();
 
-  await PAR_Participant.update(
-    { identityTypeId: null },
-    { where: { identityTypeId: id } },
-  );
+  await PAR_Participant.update({ identityTypeId: null }, { where: { identityTypeId: id } });
 
   return {
     success: true,
@@ -769,6 +760,10 @@ const deleteChatbotResponseType = async (id) => {
 
   const { name } = typeInstance.dataValues;
 
+  await CSM_ChatbotResponse.update(
+    { responseTypeId: null },
+    { where: { responseTypeId: typeInstance.id } },
+  );
   await typeInstance.destroy();
 
   return {
@@ -849,12 +844,13 @@ const deleteFeedbackType = async (id) => {
 
   const { name } = typeInstance.dataValues;
 
+  await CSM_CustomerFeedback.update({ typeId: null }, { where: { typeId: typeInstance.id } });
   await typeInstance.destroy();
 
   return {
     success: true,
-    message: 'Feedback Type Successfully Deleted',
-    content: `Feedback Type ${name} Successfully Deleted`,
+    message: 'Feedback Type Successfully Not Deleted',
+    content: `Feedback Type ${name} Successfully Not Deleted`,
   };
 };
 
@@ -929,6 +925,7 @@ const deleteFeedbackTarget = async (id) => {
 
   const { name } = targetInstance.dataValues;
 
+  await CSM_CustomerFeedback.update({ targetId: null }, { where: { targetId: targetInstance.id } });
   await targetInstance.destroy();
 
   return {
@@ -988,6 +985,7 @@ const updateFeedbackStatus = async (form, id) => {
   }
 
   statusInstance.name = form.name;
+
   await statusInstance.save();
 
   return {
@@ -1009,12 +1007,13 @@ const deleteFeedbackStatus = async (id) => {
 
   const { name } = statusInstance.dataValues;
 
-  await statusInstance.destroy();
+  // * you cannot delete status
+  // await statusInstance.destroy();
 
   return {
     success: true,
-    message: 'Feedback Status Successfully Deleted',
-    content: `Feedback Status ${name} Successfully Deleted`,
+    message: 'Feedback Status Successfully Not Deleted',
+    content: `Feedback Status ${name} Successfully Not Deleted`,
   };
 };
 
@@ -1089,6 +1088,7 @@ const deleteFAQType = async (id) => {
 
   const { name } = typeInstance.dataValues;
 
+  await CSM_FAQ.update({ typeId: null }, { where: { typeId: typeInstance.id } });
   await typeInstance.destroy();
 
   return {
@@ -2179,12 +2179,13 @@ const deleteFoodScheduleStatus = async (id) => {
 
   const { name } = statusInstance.dataValues;
 
-  await statusInstance.destroy();
+  // ? You cannot delete status
+  // await statusInstance.destroy();
 
   return {
     success: true,
-    message: 'Food Schedule Status Successfully Deleted',
-    content: `Food Schedule Status ${name} Successfully Deleted`,
+    message: 'Food Schedule Status Successfully Not Deleted',
+    content: `Food Schedule Status ${name} Successfully Not Deleted`,
   };
 };
 

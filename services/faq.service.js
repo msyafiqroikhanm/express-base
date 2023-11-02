@@ -102,9 +102,7 @@ const validateFAQInputs = async (form) => {
 };
 
 const createFAQ = async (form) => {
-  const {
-    parentFaq, type, isMain, title, message,
-  } = form;
+  const { parentFaq, type, isMain, title, message } = form;
 
   const faqInstance = await CSM_FAQ.create({
     parentFaqId: parentFaq?.id || null,
@@ -122,9 +120,7 @@ const createFAQ = async (form) => {
 };
 
 const updateFAQ = async (form, id) => {
-  const {
-    parentFaq, type, isMain, title, message,
-  } = form;
+  const { parentFaq, type, isMain, title, message } = form;
 
   // validate faq id
   const faqInstance = await CSM_FAQ.findByPk(id);
