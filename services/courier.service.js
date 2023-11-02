@@ -8,6 +8,7 @@ const {
   PAR_Participant,
   USR_Role,
   USR_User,
+  FNB_Schedule,
 } = require('../models');
 const { createUser } = require('./user.service');
 
@@ -256,6 +257,7 @@ const deleteCourier = async (where) => {
     });
   }
 
+  await FNB_Schedule.update({ courierId: null }, { where: { courierId: courierInstance.id } });
   if (userInstance) {
     await userInstance.destroy();
   }

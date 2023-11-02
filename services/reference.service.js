@@ -347,10 +347,7 @@ const deleteRegion = async (id) => {
 
   await regionInstance.destroy();
 
-  await PAR_Contingent.update(
-    { regionId: null },
-    { where: { regionId: id } },
-  );
+  await PAR_Contingent.update({ regionId: null }, { where: { regionId: id } });
 
   return {
     success: true,
@@ -432,10 +429,7 @@ const deleteGroupStatus = async (id) => {
 
   await statusInstance.destroy();
 
-  await PAR_Group.update(
-    { statusId: null },
-    { where: { statusId: id } },
-  );
+  await PAR_Group.update({ statusId: null }, { where: { statusId: id } });
 
   return {
     success: true,
@@ -517,10 +511,7 @@ const deleteParticipantType = async (id) => {
 
   await typeInstance.destroy();
 
-  await PAR_Participant.update(
-    { typeId: null },
-    { where: { typeId: id } },
-  );
+  await PAR_Participant.update({ typeId: null }, { where: { typeId: id } });
 
   return {
     success: true,
@@ -602,10 +593,7 @@ const deleteIdentityType = async (id) => {
 
   await typeInstance.destroy();
 
-  await PAR_Participant.update(
-    { identityTypeId: null },
-    { where: { identityTypeId: id } },
-  );
+  await PAR_Participant.update({ identityTypeId: null }, { where: { identityTypeId: id } });
 
   return {
     success: true,
@@ -2173,12 +2161,13 @@ const deleteFoodScheduleStatus = async (id) => {
 
   const { name } = statusInstance.dataValues;
 
-  await statusInstance.destroy();
+  // ? You cannot delete status
+  // await statusInstance.destroy();
 
   return {
     success: true,
-    message: 'Food Schedule Status Successfully Deleted',
-    content: `Food Schedule Status ${name} Successfully Deleted`,
+    message: 'Food Schedule Status Successfully Not Deleted',
+    content: `Food Schedule Status ${name} Successfully Not Deleted`,
   };
 };
 

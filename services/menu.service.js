@@ -198,7 +198,7 @@ const deleteMenu = async (where) => {
 
   //* Checking dependencies
 
-  //* Schedule
+  //* Schedule Menu
   await FNB_ScheduleMenu.update(
     { menuId: null },
     {
@@ -208,7 +208,7 @@ const deleteMenu = async (where) => {
     },
   );
 
-  //* Facilities
+  //* Kitchen Target
   await FNB_KitchenTarget.update(
     { menuId: null },
     {
@@ -218,7 +218,7 @@ const deleteMenu = async (where) => {
     },
   );
 
-  await menuInstance.destroy();
+  // await menuInstance.destroy();
 
   return {
     success: true,
