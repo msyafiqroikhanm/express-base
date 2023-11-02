@@ -661,6 +661,7 @@ const deleteLocationType = async (id) => {
 
   const { name } = typeInstance.dataValues;
 
+  await ACM_Location.update({ typeId: null }, { where: { typeId: typeInstance.id } });
   await typeInstance.destroy();
 
   return {
