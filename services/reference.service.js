@@ -39,6 +39,7 @@ const {
   PAR_Contingent,
   PAR_Group,
   FNB_Menu,
+  USR_PIC,
 } = require('../models');
 
 // * Configuration Category
@@ -1839,6 +1840,11 @@ const deletePICType = async (id) => {
   const { name } = typeInstance.dataValues;
 
   await typeInstance.destroy();
+
+  await USR_PIC.update(
+    { typeId: null },
+    { where: { typeId: id } },
+  );
 
   return {
     success: true,

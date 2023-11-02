@@ -1,6 +1,6 @@
 /* eslint-disable no-param-reassign */
 const {
-  USR_PIC, REF_PICType, USR_User, PAR_Participant,
+  USR_PIC, REF_PICType, USR_User, PAR_Participant, TPT_Vendor, ACM_Location, ENV_Event, FNB_Kitchen,
 } = require('../models');
 
 const selectAllPICs = async (query) => {
@@ -133,6 +133,23 @@ const deletePIC = async (id) => {
   }
 
   await picInstance.destroy();
+
+  await TPT_Vendor.update(
+    { picId: null },
+    { where: { picId: id }}
+  );
+  await ACM_Location.update(
+    { picId: null },
+    { where: { picId: id }}
+  );
+  await ENV_Event.update(
+    { picId: null },
+    { where: { picId: id }}
+  );
+  await FNB_Kitchen.update(
+    { picId: null },
+    { where: { picId: id }}
+  );
 
   return {
     success: true,
