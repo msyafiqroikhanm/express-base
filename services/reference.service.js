@@ -36,6 +36,12 @@ const {
   ACM_Location,
   ACM_RoomBedType,
   ACM_Room,
+  PAR_Contingent,
+  PAR_Group,
+  FNB_Menu,
+  CSM_FAQ,
+  CSM_ChatbotResponse,
+  CSM_CustomerFeedback,
 } = require('../models');
 
 // * Configuration Category
@@ -344,6 +350,8 @@ const deleteRegion = async (id) => {
 
   await regionInstance.destroy();
 
+  await PAR_Contingent.update({ regionId: null }, { where: { regionId: id } });
+
   return {
     success: true,
     message: 'Region Successfully Deleted',
@@ -423,6 +431,8 @@ const deleteGroupStatus = async (id) => {
   const { name } = statusInstance.dataValues;
 
   await statusInstance.destroy();
+
+  await PAR_Group.update({ statusId: null }, { where: { statusId: id } });
 
   return {
     success: true,
@@ -504,6 +514,8 @@ const deleteParticipantType = async (id) => {
 
   await typeInstance.destroy();
 
+  await PAR_Participant.update({ typeId: null }, { where: { typeId: id } });
+
   return {
     success: true,
     message: 'Participant Type Successfully Deleted',
@@ -584,6 +596,8 @@ const deleteIdentityType = async (id) => {
 
   await typeInstance.destroy();
 
+  await PAR_Participant.update({ identityTypeId: null }, { where: { identityTypeId: id } });
+
   return {
     success: true,
     message: 'Identity Type Successfully Deleted',
@@ -661,6 +675,7 @@ const deleteLocationType = async (id) => {
 
   const { name } = typeInstance.dataValues;
 
+  await ACM_Location.update({ typeId: null }, { where: { typeId: typeInstance.id } });
   await typeInstance.destroy();
 
   return {
@@ -744,6 +759,10 @@ const deleteChatbotResponseType = async (id) => {
 
   const { name } = typeInstance.dataValues;
 
+  await CSM_ChatbotResponse.update(
+    { responseTypeId: null },
+    { where: { responseTypeId: typeInstance.id } },
+  );
   await typeInstance.destroy();
 
   return {
@@ -824,12 +843,13 @@ const deleteFeedbackType = async (id) => {
 
   const { name } = typeInstance.dataValues;
 
+  await CSM_CustomerFeedback.update({ typeId: null }, { where: { typeId: typeInstance.id } });
   await typeInstance.destroy();
 
   return {
     success: true,
-    message: 'Feedback Type Successfully Deleted',
-    content: `Feedback Type ${name} Successfully Deleted`,
+    message: 'Feedback Type Successfully Not Deleted',
+    content: `Feedback Type ${name} Successfully Not Deleted`,
   };
 };
 
@@ -904,6 +924,7 @@ const deleteFeedbackTarget = async (id) => {
 
   const { name } = targetInstance.dataValues;
 
+  await CSM_CustomerFeedback.update({ targetId: null }, { where: { targetId: targetInstance.id } });
   await targetInstance.destroy();
 
   return {
@@ -963,6 +984,7 @@ const updateFeedbackStatus = async (form, id) => {
   }
 
   statusInstance.name = form.name;
+
   await statusInstance.save();
 
   return {
@@ -984,12 +1006,13 @@ const deleteFeedbackStatus = async (id) => {
 
   const { name } = statusInstance.dataValues;
 
-  await statusInstance.destroy();
+  // * you cannot delete status
+  // await statusInstance.destroy();
 
   return {
     success: true,
-    message: 'Feedback Status Successfully Deleted',
-    content: `Feedback Status ${name} Successfully Deleted`,
+    message: 'Feedback Status Successfully Not Deleted',
+    content: `Feedback Status ${name} Successfully Not Deleted`,
   };
 };
 
@@ -1064,6 +1087,7 @@ const deleteFAQType = async (id) => {
 
   const { name } = typeInstance.dataValues;
 
+  await CSM_FAQ.update({ typeId: null }, { where: { typeId: typeInstance.id } });
   await typeInstance.destroy();
 
   return {
@@ -1978,8 +2002,8 @@ const updateMenuType = async (form, id) => {
 };
 
 const deleteMenuType = async (id) => {
-  const statusInstance = await REF_MenuType.findByPk(id);
-  if (!statusInstance) {
+  const typeInstance = await REF_MenuType.findByPk(id);
+  if (!typeInstance) {
     return {
       success: false,
       code: 404,
@@ -1987,9 +2011,10 @@ const deleteMenuType = async (id) => {
     };
   }
 
-  const { name } = statusInstance.dataValues;
+  const { name } = typeInstance.dataValues;
 
-  await statusInstance.destroy();
+  await FNB_Menu.update({ menuTypeId: null }, { where: { menuTypeId: typeInstance.id } });
+  await typeInstance.destroy();
 
   return {
     success: true,
@@ -2057,8 +2082,8 @@ const updateFoodType = async (form, id) => {
 };
 
 const deleteFoodType = async (id) => {
-  const statusInstance = await REF_FoodType.findByPk(id);
-  if (!statusInstance) {
+  const typeInstance = await REF_FoodType.findByPk(id);
+  if (!typeInstance) {
     return {
       success: false,
       code: 404,
@@ -2066,9 +2091,10 @@ const deleteFoodType = async (id) => {
     };
   }
 
-  const { name } = statusInstance.dataValues;
+  const { name } = typeInstance.dataValues;
 
-  await statusInstance.destroy();
+  await FNB_Menu.update({ foodTypeId: null }, { where: { foodTypeId: typeInstance.id } });
+  await typeInstance.destroy();
 
   return {
     success: true,
@@ -2147,12 +2173,13 @@ const deleteFoodScheduleStatus = async (id) => {
 
   const { name } = statusInstance.dataValues;
 
-  await statusInstance.destroy();
+  // ? You cannot delete status
+  // await statusInstance.destroy();
 
   return {
     success: true,
-    message: 'Food Schedule Status Successfully Deleted',
-    content: `Food Schedule Status ${name} Successfully Deleted`,
+    message: 'Food Schedule Status Successfully Not Deleted',
+    content: `Food Schedule Status ${name} Successfully Not Deleted`,
   };
 };
 
@@ -2317,6 +2344,8 @@ const deleteVehicleType = async (id) => {
     content: `Vehicle Type ${name} Successfully Deleted`,
   };
 };
+
+// * Committee Type
 
 const selectAllCommitteeTypes = async () => {
   const data = await REF_CommitteeType.findAll();

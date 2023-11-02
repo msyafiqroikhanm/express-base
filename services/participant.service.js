@@ -31,6 +31,9 @@ const {
   ACM_RoomBedType,
   USR_User,
   USR_Role,
+  PAR_GroupMember,
+  TPT_SchedulePassenger,
+  CSM_BroadcastParticipant,
 } = require('../models');
 const { createQR } = require('./qr.service');
 const deleteFile = require('../helpers/deleteFile.helper');
@@ -872,9 +875,16 @@ const deleteParticipant = async (where) => {
     };
   }
 
-  const { name } = participantInstance.dataValues;
+  const { name, id } = participantInstance.dataValues;
 
   await participantInstance.destroy();
+
+  await USR_User.destroy({ where: { participantId: id } });
+  await ACM_ParticipantLodger.destroy({ where: { participantId: id } });
+  await PAR_GroupMember.destroy({ where: { participantId: id } });
+  await PAR_ParticipantTracking.destroy({ where: { participantId: id } });
+  await TPT_SchedulePassenger.destroy({ where: { participantId: id } });
+  await CSM_BroadcastParticipant.destroy({ where: { participantId: id } });
 
   return {
     success: true,

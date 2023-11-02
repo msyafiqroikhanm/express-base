@@ -176,6 +176,15 @@ const deleteContingent = async (id) => {
 
   await contingentInstance.destroy();
 
+  await PAR_Participant.update(
+    { contingentId: null },
+    { where: { contingentId: id } },
+  );
+  await PAR_Group.update(
+    { contingentId: null },
+    { where: { contingentId: id } },
+  );
+
   return {
     success: true,
     message: 'Contingent Successfully Deleted',
