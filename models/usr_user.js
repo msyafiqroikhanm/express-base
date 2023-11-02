@@ -34,11 +34,9 @@ module.exports = (sequelize, DataTypes) => {
     {
       qrId: {
         type: DataTypes.INTEGER,
-        allowNull: false,
       },
       roleId: {
         type: DataTypes.INTEGER,
-        allowNull: false,
       },
       participantId: DataTypes.INTEGER,
       username: {

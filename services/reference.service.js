@@ -42,6 +42,7 @@ const {
   CSM_FAQ,
   CSM_ChatbotResponse,
   CSM_CustomerFeedback,
+  USR_PIC,
 } = require('../models');
 
 // * Configuration Category
@@ -1839,6 +1840,11 @@ const deletePICType = async (id) => {
   const { name } = typeInstance.dataValues;
 
   await typeInstance.destroy();
+
+  await USR_PIC.update(
+    { typeId: null },
+    { where: { typeId: id } },
+  );
 
   return {
     success: true,

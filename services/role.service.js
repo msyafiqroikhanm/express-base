@@ -1,7 +1,7 @@
 /* eslint-disable no-param-reassign */
 const { Op } = require('sequelize');
 const {
-  USR_Role, USR_Feature, USR_Module, QRM_QRTemplate,
+  USR_Role, USR_Feature, USR_Module, QRM_QRTemplate, USR_User,
 } = require('../models');
 
 const selectAllRoles = async () => {
@@ -239,6 +239,11 @@ const deleteRole = async (id) => {
   const { name } = roleInstance.dataValues;
 
   await roleInstance.destroy();
+
+  await USR_User.update(
+    { roleId: null },
+    { where: { roleId: id } },
+  );
 
   return {
     success: true,

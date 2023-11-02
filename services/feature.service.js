@@ -117,6 +117,8 @@ const deleteFeature = async (id) => {
 
     await featureInstance.destroy();
 
+    await featureInstance.setUSR_Roles([]);
+
     return {
       success: true,
       message: 'Feature Successfully Deleted',

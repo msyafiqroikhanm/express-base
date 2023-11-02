@@ -17,6 +17,10 @@ const {
   USR_PIC,
   REF_PICType,
   REF_CommitteeType,
+  TPT_Vendor,
+  ACM_Location,
+  ENV_Event,
+  FNB_Kitchen,
 } = require('../models');
 const { createQR, updateQR } = require('./qr.service');
 const { parsingUserModules } = require('../helpers/parsing.helper');
@@ -319,6 +323,27 @@ const deleteUser = async (id) => {
 
   // delete the user after passsing the check
   await userInstance.destroy();
+
+  const pics = await USR_PIC.findAll({ where: { userId: id }, attributes: ['id'] } );
+  const picIds = pics?.map((pic) => pic.id);
+
+  await USR_PIC.destroy({ where: { userId: id } });
+  await TPT_Vendor.update(
+    { picId: null },
+    { where: { picId: { [Op.in]: picIds }}}
+  );
+  await ACM_Location.update(
+    { picId: null },
+    { where: { picId: { [Op.in]: picIds }}}
+  );
+  await ENV_Event.update(
+    { picId: null },
+    { where: { picId: { [Op.in]: picIds }}}
+  );
+  await FNB_Kitchen.update(
+    { picId: null },
+    { where: { picId: { [Op.in]: picIds }}}
+  );
 
   return {
     success: true,

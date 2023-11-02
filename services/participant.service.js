@@ -34,6 +34,7 @@ const {
   PAR_GroupMember,
   TPT_SchedulePassenger,
   CSM_BroadcastParticipant,
+  USR_PIC
 } = require('../models');
 const { createQR } = require('./qr.service');
 const deleteFile = require('../helpers/deleteFile.helper');
@@ -559,7 +560,7 @@ const validateParticipantInputs = async (form, files, id, where) => {
   }
 
   const duplicateParticipant = await PAR_Participant.findOne({
-    where: { contingentId, name },
+    where: id? { contingentId, name, id: { [Op.ne]: id } } : { contingentId, name },
   });
   if (duplicateParticipant) {
     invalid400.push(`Participant With Name ${name} From Contingent ${contingentInstance?.name || contingentId} Already Exist`);
@@ -879,7 +880,11 @@ const deleteParticipant = async (where) => {
 
   await participantInstance.destroy();
 
-  await USR_User.destroy({ where: { participantId: id } });
+  const user = await USR_User.findOne({ where: { participantId: id }, attributes: ['id'] });
+  if (user) {
+    await USR_User.destroy({ where: { participantId: id } });
+    await USR_PIC.destroy({ where: { userId: user.dataValues.id }});
+  }
   await ACM_ParticipantLodger.destroy({ where: { participantId: id } });
   await PAR_GroupMember.destroy({ where: { participantId: id } });
   await PAR_ParticipantTracking.destroy({ where: { participantId: id } });
