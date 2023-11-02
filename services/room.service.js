@@ -1,4 +1,3 @@
-const { Op } = require('sequelize');
 const {
   ACM_Location,
   ACM_Room,
@@ -263,7 +262,7 @@ const validateRoomInputs = async (form, where) => {
 
   //* Unique Name and Location Checking
   const roomInstanceCheck = await ACM_Room.findOne({
-    where: { locationId: locationInstance.id, name: { [Op.substring]: form.name } },
+    where: { locationId: locationInstance.id, name: form.name },
   });
   if (roomInstanceCheck) {
     invalid400.push('Room Data Already Exists');
