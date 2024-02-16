@@ -16,24 +16,31 @@ const initializeTelegramBot = async () => {
     return true;
   }
 
-  const bot = new TelegramBot(TELEGRAM_TOKEN.value, { polling: true });
+  const Telegram_Status = await SYS_Configuration.findOne({
+    where: { name: 'Telegram CSM Platform' }, attributes: ['value'],
+  });
 
-  bot.on('message', async (message) => {
-    if (!message.from.is_bot) {
-      const Telegram_Status = await SYS_Configuration.findOne({
-        where: { name: 'Telegram CSM Platform' }, attributes: ['value'],
-      });
-      if (!Telegram_Status || Telegram_Status?.value?.toLowerCase() === 'off') {
-        return true;
+  if (Telegram_Status?.value?.toLowerCase() === 'on') {
+    const bot = new TelegramBot(TELEGRAM_TOKEN.value, { polling: true });
+  
+    bot.on('message', async (message) => {
+      if (!message.from.is_bot) {
+        
+        if (!Telegram_Status || Telegram_Status?.value?.toLowerCase() === 'off') {
+          return true;
+        }
+  
+        await telegramChatBotMessageEntry(bot, message);
       }
-
-      await telegramChatBotMessageEntry(bot, message);
-    }
-  });
-
-  bot.on('callback_query', async (query) => {
-    await telegramMenuEntry(bot, query.message, query.data);
-  });
+    });
+  
+    bot.on('callback_query', async (query) => {
+      await telegramMenuEntry(bot, query.message, query.data);
+    });
+  } else {
+    console.log('Telegeram Bot Is Offline Set By System Configuration');
+    return true;
+  }
 };
 
 module.exports = {
